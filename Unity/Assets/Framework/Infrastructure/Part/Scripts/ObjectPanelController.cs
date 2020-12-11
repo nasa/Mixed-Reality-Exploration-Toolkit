@@ -1,0 +1,166 @@
+﻿using UnityEngine;
+using UnityEngine.UI;
+
+public class ObjectPanelController : MonoBehaviour
+{
+    public GameObject selectedObject;
+    public Toggle physics, gravity, explode, visible;
+    public Slider opacity;
+    public Text titleText;
+
+    private bool enabling = false;
+
+    public void OnEnable()
+    {
+        enabling = true;
+
+        // Initialize physics toggle.
+        physics.isOn = !selectedObject.GetComponent<Rigidbody>().isKinematic;
+
+        // Initialize gravity toggle.
+        gravity.isOn = selectedObject.GetComponent<Rigidbody>().useGravity;
+
+        // Initialize explode toggle.
+        explode.isOn = selectedObject.GetComponent<InteractablePart>().isExploded;
+
+        // Initialize visibility toggle.
+        visible.isOn = selectedObject.GetComponentInChildren<MeshRenderer>().enabled;
+
+        enabling = false;
+    }
+
+    public void SetTitle(string titleToSet)
+    {
+        if (titleText != null)
+        {
+            // Limit title to 15 characters.
+            titleText.text = titleToSet.Substring(0, System.Math.Min(titleToSet.Length, 15));
+            if (titleToSet.Length > 15)
+            {
+                titleText.text = titleText.text + "...";
+            }
+        }
+    }
+
+    public void ToggleGravity()
+    {
+        if (!enabling)
+        {
+            bool state = gravity.isOn;
+            if (selectedObject != null)
+            {
+                Rigidbody rBody = selectedObject.GetComponent<Rigidbody>();
+
+                // Only turn on gravity if physics is on.
+                if ((!physics.isOn) || (!state))
+                {
+                    rBody.useGravity = false;
+                    gravity.isOn = false;
+                }
+                else if (physics.isOn)
+                {
+                    rBody.useGravity = true;
+                }
+
+                InteractablePart iPart = selectedObject.GetComponent<InteractablePart>();
+                UndoManager.instance.AddAction(ProjectAction.UpdateObjectSettingsAction(iPart.name,
+                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    !rBody.isKinematic, rBody.useGravity), iPart.guid.ToString()),
+                    ProjectAction.UpdateObjectSettingsAction(iPart.name,
+                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    !rBody.isKinematic, !rBody.useGravity), iPart.guid.ToString()));
+            }
+        }
+    }
+
+    public void TogglePhysics()
+    {
+        if (!enabling)
+        {
+            bool state = physics.isOn;
+            if (selectedObject != null)
+            {
+                // Turn off gravity if physics is off.
+                if (!state)
+                {
+                    if (gravity.isOn)
+                    {
+                        ToggleGravity();
+                    }
+                }
+
+                Rigidbody rBody = selectedObject.GetComponent<Rigidbody>();
+                rBody.isKinematic = !state;
+
+                InteractablePart iPart = selectedObject.GetComponent<InteractablePart>();
+                UndoManager.instance.AddAction(ProjectAction.UpdateObjectSettingsAction(iPart.name,
+                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    !rBody.isKinematic, rBody.useGravity), iPart.guid.ToString()),
+                    ProjectAction.UpdateObjectSettingsAction(iPart.name,
+                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    rBody.isKinematic, rBody.useGravity), iPart.guid.ToString()));
+            }
+        }
+    }
+
+    public void ToggleExplosion()
+    {
+        if (!enabling)
+        {
+            bool state = explode.isOn;
+            if (selectedObject != null)
+            {
+                InteractablePart iPart = selectedObject.GetComponent<InteractablePart>();
+                if (iPart)
+                {
+                    if (state)
+                    {
+                        // Unexplode.
+                        iPart.Explode();
+                    }
+                    else
+                    {
+                        // Explode.
+                        iPart.Unexplode();
+                    }
+                }
+            }
+        }
+    }
+
+    public void ToggleVisibility()
+    {
+        if (!enabling)
+        {
+            bool state = visible.isOn;
+            if (selectedObject != null)
+            {
+                foreach (MeshRenderer rend in selectedObject.GetComponentsInChildren<MeshRenderer>())
+                {
+                    rend.enabled = state;
+                }
+            }
+        }
+    }
+
+    public void ChangeOpacity()
+    {
+        Renderer[] rends = selectedObject.GetComponentsInChildren<Renderer>();
+        for (int i = 0; i < rends.Length; i++)
+        {
+            Color colorToChange = rends[i].material.color;
+            colorToChange.a = opacity.value;
+            rends[i].material.color = colorToChange;
+        }
+    }
+
+    public void physicsToggle(bool state)
+    {
+        physics.isOn = state;
+    }
+
+    public void gravityToggle(bool state)
+    {
+        gravity.isOn = state;
+    }
+}

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<MRETKioskMode>
+
+  <SceneToLoad>
+    <SceneName>Standard-Cleanroom</SceneName>
+  </SceneToLoad>
+
+  <MenuControls>
+	<NewProject>True</NewProject>
+	<OpenProject>True</OpenProject>
+	<SaveProject>True</SaveProject>
+	
+	<Home>True</Home>
+	
+	<Undo>True</Undo>
+	<Redo>True</Redo>
+	
+	<Cut>True</Cut>
+	<Copy>True</Copy>
+	<Paste>True</Paste>
+	
+	<Preferences>True</Preferences>
+	<MenuSettings>True</MenuSettings>
+	<Help>True</Help>
+	<ClippingPlanes>True</ClippingPlanes>
+	
+	<Teleport>True</Teleport>
+    <Fly>True</Fly>
+	
+	<RotateX>True</RotateX>
+	<RotateY>True</RotateY>
+	<RotateZ>True</RotateZ>
+	<Scale>True</Scale>
+	
+	<HUD>True</HUD>
+	<Displays>True</Displays>
+	
+	<Notes>True</Notes>
+	<Drawing>True</Drawing>
+	<Animations>True</Animations>
+	<TimeSimulation>True</TimeSimulation>
+	<Selection>True</Selection>
+	<IK>True</IK>
+	<RemoteControl>True</RemoteControl>
+	<DataDocumentation>True</DataDocumentation>
+	<Eraser>True</Eraser>
+	<Cameras>True</Cameras>
+	<Rulers>True</Rulers>
+	<Screens>True</Screens>
+  </MenuControls>
+
+  <Other>
+    <ObjectPanels>True</ObjectPanels>
+  </Other>
+
+</MRETKioskMode>

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 789911a0db8286645a74a4ea5c29036a
+timeCreated: 1510778644
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - grabAttachMechanicScript: {instanceID: 0}
+  - secondaryGrabActionScript: {instanceID: 0}
+  - partPanelPrefab: {fileID: 1452865119912028, guid: 0da4af4a388646a488328d21b89c16e4,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

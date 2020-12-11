@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: cb8b1d961cd14c74c86b650bd1a0c32d
+timeCreated: 1511270617
+licenseType: Free
+MonoImporter:
+  serializedVersion: 2
+  defaultReferences:
+  - collisionMaterial: {fileID: 2100000, guid: 41bbaf741ccbb2f4ca7bac66d07f9baf, type: 2}
+  - collisionClip: {fileID: 8300000, guid: c84ad328ea07713419af77aad028dc52, type: 3}
+  - grabbingObj: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
