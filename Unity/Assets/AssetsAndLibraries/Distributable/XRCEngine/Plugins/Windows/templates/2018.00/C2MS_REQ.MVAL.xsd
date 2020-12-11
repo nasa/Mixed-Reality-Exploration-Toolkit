@@ -1,0 +1,224 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+    <xs:simpleType name="REQUEST-TYPE_Type">
+        <xs:restriction base="xs:NMTOKEN">
+            <xs:enumeration value="1"/>
+            <xs:enumeration value="2"/>
+            <xs:enumeration value="3"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:element name="MNEMONIC">
+        <xs:complexType>
+            <xs:all>
+
+                <xs:element name="NAME">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="xs:string">
+                                <xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Name of the mnemonic. Required only for Oneshot and Start.</xs:documentation>
+					</xs:annotation>
+                </xs:element>
+
+                <xs:element name="DATA-TYPE" minOccurs="0">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="DATA-TYPE_Type">
+                                <xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates the data type to be returned, either the raw value, or the converted value (Engineering Units or Text converted), or both. Defaults to both.</xs:documentation>
+					</xs:annotation>
+                </xs:element>
+
+                <xs:element name="STATE-ATTRIBUTES" minOccurs="0">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="STATE-ATTRIBUTES_Type">
+                                <xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates if State Attributes (flags, limits, static flag, and data quality) are to be returned. Defaults to No.</xs:documentation>
+					</xs:annotation>
+                </xs:element>
+
+                <xs:element name="CRITERIA" minOccurs="0">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="CRITERIA_Type">
+                                <xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Identification of when data should be provided for the mnemonic. Includes either upon change of data (value, flags or status), or every sample, or at a specified sampling rate. The default Criteria is “Change” only data.</xs:documentation>
+					</xs:annotation>
+                </xs:element>
+
+                <xs:element name="SAMPLE-RATE" minOccurs="0">
+                    <xs:complexType>
+                        <xs:simpleContent>
+                            <xs:extension base="NATURAL_Type">
+                                <xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+                            </xs:extension>
+                        </xs:simpleContent>
+                    </xs:complexType>
+					<xs:annotation>
+						<xs:documentation>If CRITERIA is specified as “Sample Rate”, this field will specify the data sampling rate for the mnemonic.</xs:documentation>
+					</xs:annotation>
+                </xs:element>
+
+            </xs:all>
+            <xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="REQ.MVAL">
+        <xs:complexType>
+            <xs:all>
+
+                <xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+
+                <xs:element name="CONTENT">
+                    <xs:complexType>
+                        <xs:all>
+
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version Number for this message content description</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+                            <xs:element name="REQUEST-TYPE">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="REQUEST-TYPE_Type">
+                                            <xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Identifies the type of mnemonic value request message</xs:documentation>
+								</xs:annotation>
+                            </xs:element>
+
+                            <xs:element name="PUBLISH-RATE" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:unsignedInt">
+                                            <xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Identifies the rate, in number of seconds, which the Mnemonic Value Data messages are published. Zero means the server should publish the data as fast as possible. Default rate = 5 seconds.</xs:documentation>
+								</xs:annotation>
+                            </xs:element>
+
+                            <xs:element name="START-TIME" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="TIME_Type">
+                                            <xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Requested start time of the mnemonic values.</xs:documentation>
+								</xs:annotation>
+                            </xs:element>
+
+                            <xs:element name="STOP-TIME" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="TIME_Type">
+                                            <xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Requested stop time of the mnemonic values.</xs:documentation>
+								</xs:annotation>
+                            </xs:element>
+
+                            <xs:element name="DURATION" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="NATURAL_Type">
+                                            <xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Length of time from “now”, in seconds, for the request to be active, after which the data messages will automatically cease.</xs:documentation>
+								</xs:annotation>
+                            </xs:element>
+
+                            <xs:element name="COLLECTION-POINT" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:string">
+                                            <xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Receiver, device, point, path, etc. where data was received. Used to distinguish data simultaneously received at multiple collection points.</xs:documentation>
+								</xs:annotation>
+                            </xs:element>
+
+                            <xs:element name="NUM-OF-MNEMONICS">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="NATURAL_Type">
+                                            <xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Total Number of mnemonics being requested. Required only for Oneshot and Start.</xs:documentation>
+								</xs:annotation>
+                            </xs:element>
+
+                            <xs:element name="MNEMONICS" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:sequence>
+                                        <xs:element ref="MNEMONIC" minOccurs="0" maxOccurs="1000"/>
+                                    </xs:sequence>
+                                </xs:complexType>
+                            </xs:element>
+
+                        </xs:all>
+                    </xs:complexType>
+                </xs:element>
+
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

@@ -1,0 +1,300 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+	
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="DATATYPE_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="FLOAT"/>
+			<xs:enumeration value="INTEGER"/>
+			<xs:enumeration value="UNSIGNED"/>
+			<xs:enumeration value="ENUMERATED"/>
+			<xs:enumeration value="STRING"/>
+			<xs:enumeration value="BOOLEAN"/>
+			<xs:enumeration value="BINARY"/>
+			<xs:enumeration value="ABSOLUTETIME"/>
+			<xs:enumeration value="RELATIVETIME"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="DATA-ENCODING_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="UNSIGNED"/>
+			<xs:enumeration value="TWOSCOMPLEMENT"/>
+			<xs:enumeration value="ONESCOMPLEMENT"/>
+			<xs:enumeration value="BCD"/>
+			<xs:enumeration value="PACKEDBCD"/>
+			<xs:enumeration value="SIGNEDMAGNITUDE"/>
+			<xs:enumeration value="IEEE-754_1985"/>
+			<xs:enumeration value="MIL_1759A"/>
+			<xs:enumeration value="UTF-8"/>
+			<xs:enumeration value="UTF-16"/>
+			<xs:enumeration value="BINARY"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="END-RANGE-EXCLUSIVE_Type">
+		<xs:restriction base="xs:unsignedInt">
+			<xs:minInclusive value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:complexType name="PARAMETER_Type">
+		<xs:all>
+		
+			<xs:element name="NAME">
+				<xs:annotation>
+					<xs:documentation>Name of the parameter.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="SHORT-DESCRIPTION" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Short description of the parameter.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="LONG-DESCRIPTION" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Long description of the parameter.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="DATATYPE">
+				<xs:annotation>
+					<xs:documentation>One of Float, Integer, Unsigned, Enumerated, String, Boolean, Binary, AbsoluteTime, RelativeTime.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="DATATYPE_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="DATA-ENCODING" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>One of Unsigned, twosComplement, OnesComplement, BCD, packedBCD, signedMagnitude, IEEE-754_1985, MIL_1759A, UTF-8, UTF-16, binary.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="DATA-ENCODING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+			<xs:element name="SIZE-IN-BITS" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Size of the raw value data – typically either 8, 16, 32, or 64.</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+			</xs:element>
+
+		</xs:all>
+		<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+	</xs:complexType>
+	
+	<xs:element name="RESP.DBQUERY">
+		<xs:annotation>
+			<xs:documentation>Message Type RESPONSE.</xs:documentation>
+		</xs:annotation>
+		
+		<xs:complexType>
+			<xs:all>
+			
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+				
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+						
+							<xs:element name="CONTENT-VERSION">
+								<xs:annotation>
+									<xs:documentation>Version Number for this message</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="RESPONSE-STATUS">
+								<xs:annotation>
+									<xs:documentation>Identifies the status of the Request being processed.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="RESPONSE-STATUS_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="TIME-COMPLETED">
+								<xs:annotation>
+									<xs:documentation>Time application completed processing the directive.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="RETURN-VALUE">
+								<xs:annotation>
+									<xs:documentation>Return value or status based on the RESPONSE-STATUS. Useful to provide function call status or error code in the case of failed completion.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="SEARCH-RESULTS-MEDIA-TYPE" default="MSG-FIELDS">
+								<xs:annotation>
+									<xs:documentation>Should normally be the same value as the corresponding field from the request message. If MSG-FIELDS: use fields in this message for results (default); If XML or JSON: get results from the RESULTS-EXPRESSION field.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="MEDIA_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="BEGIN-RANGE-INCLUSIVE">
+								<xs:annotation>
+									<xs:documentation>Valid range is 1 to 2^32-2. The start of the range for the results. Note: 1s based indices.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="END-RANGE-EXCLUSIVE">
+								<xs:annotation>
+									<xs:documentation>Valid range is 2 to 2^32-1. Note: 1s based indices.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="END-RANGE-EXCLUSIVE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="RESULTS-EXPRESSION" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This field is the string (e.g., XML or JSON) containing the results of the search. (Only used if SEARCH-RESULTS-MEDIA-TYPE is XML or JSON.)</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="NUM-OF-PARAMETERS">
+								<xs:annotation>
+									<xs:documentation>Number of parameter fields in the results. Equal to BEGIN-RANGE-EXCLUSIVE - BEGIN-RANGE-INCLUSIVE.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="PARAMETERS" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Match set of parameter mnemonics.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="PARAMETER" minOccurs="0" maxOccurs="10000">
+											<xs:annotation>
+												<xs:documentation>A parameter has a name and data type, and may have some other features.</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="TOTAL-MATCHES">
+								<xs:annotation>
+									<xs:documentation>Number of total matches found by the request. Range 0 to 2^32-1</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

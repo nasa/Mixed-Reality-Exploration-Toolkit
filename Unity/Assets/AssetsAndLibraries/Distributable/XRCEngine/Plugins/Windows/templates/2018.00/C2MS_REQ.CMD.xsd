@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="CMD-FORMAT_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CCSDSPACKET"/>
+			<xs:enumeration value="CCSDSFRAME"/>
+			<xs:enumeration value="CLTU"/>
+			<xs:enumeration value="MNEMONIC"/>
+			<xs:enumeration value="RAW"/>
+			<xs:enumeration value="TDM"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="CMD-TYPE_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="REALTIME"/>
+			<xs:enumeration value="FUTURE"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="REQ.CMD">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version Number for this message content description</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="CMD-SOURCE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Which user/work position/proc/schedule the message originated from</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="CMD-FORMAT">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CMD-FORMAT_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Type of command</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="CMD-DATA">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:hexBinary">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BIN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Command data</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="VCID" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:short">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>CCSDS Virtual Channel ID</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="BYPASS" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:boolean">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>CCSDS COP-1 flag for “Bypass of Acceptance Check”, i.e. without verification</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FRAME-COUNTER" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedInt">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Reset to next expected command counter</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="APID" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Application Process Identifier</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="PACKET-COUNTER" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedInt">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Reset to next expected command packet</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="CMD-TYPE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CMD-TYPE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>If REALTIME, execute upon receipt. If FUTURE, execute at SPACECRAFT-EXECTION-TIME.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="RELEASE-TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Time the command should begin being released from the front-end processor to the remote tracking station.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="EARLIEST-UPLINK-TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Absolute or relative time can apply.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="LATEST-UPLINK-TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Absolute or relative time can apply.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="SPACECRAFT-EXECUTION-TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Required if CMD-TYPE = ‘FUTURE”. Absolute or relative time can apply.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="RESPONSE">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:boolean">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Indicates if a response is required.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

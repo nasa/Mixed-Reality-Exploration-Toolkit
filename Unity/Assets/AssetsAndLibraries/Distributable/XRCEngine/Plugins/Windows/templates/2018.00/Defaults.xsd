@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- File: Defaults.xsd -->
+<!-- Purpose: XML-Schema for the values of selected fields in Messages -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+	<xs:simpleType name="HEADER-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="LEVEL0_SPECIFICATION_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="C2MS"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="LEVEL1_SPECIFICATION_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="GMSEC"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TIME-TYPE_Type">
+		<xs:restriction base="xs:unsignedShort">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="DATA-TYPE_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="STATE-ATTRIBUTES_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="CRITERIA_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="RESPONSE-STATUS_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="MNEMONIC.STATUS_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="PROD-TYPE_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AAA"/>
+			<xs:enumeration value="AUTO"/>
+			<xs:enumeration value="FD"/>
+			<xs:enumeration value="MAS"/>
+			<xs:enumeration value="PAS"/>
+			<xs:enumeration value="SC"/>
+			<xs:enumeration value="TAC"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="RESPOND-VIA_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="URI"/>
+			<xs:enumeration value="MSG"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="RESPOND-VIA-MSG-PROD_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="MSG.PROD"/>
+			<xs:enumeration value="RESP.PROD"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="RESPOND-VIA-MSG-AMVAL_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="MSG.AMVAL"/>
+			<xs:enumeration value="RESP.AMVAL"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ACTION_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="ATTRIBUTE-TYPE_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+			<xs:enumeration value="5"/>
+			<xs:enumeration value="6"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="MNEMONIC.LIMIT-TYPE_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="MNEMONIC.LIMIT-CONDITION_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="DELIVER-VIA-INCLUDE_Type">
+		<xs:restriction base="xs:unsignedShort">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TLM-FORMAT_Type">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="ALL"/>
+			<xs:enumeration value="CCSDSPKT"/>
+			<xs:enumeration value="CCSDSFRAME"/>
+			<xs:enumeration value="PROCESSED"/>
+			<xs:enumeration value="TDM"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NDM-FORMAT_Type">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="KVN"/>
+			<xs:enumeration value="XML"/>
+			<xs:enumeration value="RAW"/>
+			<xs:enumeration value="BIN"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="STREAM-MODE_Type">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="RT"/>
+			<xs:enumeration value="RPY"/>
+			<xs:enumeration value="SIM"/>
+			<xs:enumeration value="TEST"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="FRAMESYNC-STATUS_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TEXT-TYPE_Type">
+		<xs:restriction base="xs:unsignedShort">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="MEDIA_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="MSG-FIELDS"/>
+			<xs:enumeration value="JSON"/>
+			<xs:enumeration value="XML"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="FEATURE_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="NAME"/>
+			<xs:enumeration value="SHORTDESCRIPTION"/>
+			<xs:enumeration value="LONGDESCRIPTION"/>
+			<xs:enumeration value="ALL"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NATURAL_Type">
+		<xs:restriction base="xs:unsignedInt">
+			<xs:minInclusive value="1"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+</xs:schema>

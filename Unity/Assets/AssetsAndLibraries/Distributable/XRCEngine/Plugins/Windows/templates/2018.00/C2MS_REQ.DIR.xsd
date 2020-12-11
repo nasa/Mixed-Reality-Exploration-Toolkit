@@ -1,0 +1,155 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="PRIORITY_Type">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="REQ.DIR">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version Number for this message content description</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="USER" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Which user/work position/proc/schedule the message is coming from</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="DIRECTIVE-KEYWORD" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="HEADER_STRING_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Keyword extracted from the directive string. Useful for routing/processing</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="DIRECTIVE-STRING">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Full directive string that includes the keyword</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="SPECIAL-INFO" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:hexBinary">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BIN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>For application use</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="PRIORITY" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="PRIORITY_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Indicates processing priority, if applicable</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="RESPONSE">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:boolean">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Indicates if a response is required.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="REQUESTED-EXECUTION-TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Absolute or relative time can apply.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="REQUESTED-EXPIRATION-TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Absolute or relative time can apply.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+                                                 
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

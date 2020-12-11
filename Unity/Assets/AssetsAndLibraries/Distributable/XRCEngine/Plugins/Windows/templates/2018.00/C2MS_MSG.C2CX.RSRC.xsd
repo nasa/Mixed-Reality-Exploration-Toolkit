@@ -1,0 +1,497 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+	
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="PERCENT_Type">
+		<xs:restriction base="xs:float">
+			<xs:minInclusive value="0"/>
+			<xs:maxInclusive value="100"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="C2CX-SUBTYPE_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="RSRC"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:element name="CPU">
+		<xs:complexType>
+			<xs:all>
+			
+				<xs:element name="MEM" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="NATURAL_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Amount of memory for this CPU.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="MEM-UTIL" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="PERCENT_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Memory utilization. Percentage of memory utilized.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="UTIL" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="PERCENT_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>CPU utilization. Percentage of CPU utilized.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="PAGE-FAULTS" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="NATURAL_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Number of page faults.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="DISK">
+		<xs:complexType>
+			<xs:all>
+			
+				<xs:element name="NAME" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					<xs:annotation>
+						<xs:documentation>Name of the disk.</xs:documentation>
+					</xs:annotation> 
+					</xs:complexType>
+					
+				</xs:element>
+				<xs:element name="SIZE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:unsignedInt">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Absolute size of the disk.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="UTIL" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="PERCENT_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Disk space utilization. Percentage of disk space utilized.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="NET-PORT">
+		<xs:complexType>
+			<xs:all>
+			
+				<xs:element name="NAME" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Nme of the network port.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="EUI-ADR" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Media Access Control (MAC) or Extended Unique Identifier (EUI) physical address. MAC-48, EUI-48, or EUI-64 format.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="IP-ADR" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Internet Protocol (IP) logical address. IPv4 (32-bit) or IPv6 (128-bit) format.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="TOTAL-BANDWIDTH" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:unsignedInt">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Bandwidth of the port in Kbps.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="UTIL" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="PERCENT_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Percentage of network port utilization.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="BYTES-SENT" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:unsignedLong">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="U64"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Number of bytes sent over the port.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="BYTES-RECEIVED" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:unsignedLong">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="U64"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Number of bytes received over the port.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="ERRORS" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:unsignedInt">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Number of errors encountered on the port.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="MSG.C2CX.RSRC">
+		<xs:complexType>
+			<xs:all>
+			
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+				
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+						
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version number for this message content description.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="C2CX-SUBTYPE">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="C2CX-SUBTYPE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Identifies the type of information being transferred between the components.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="COUNTER" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Indicates the number of times that the C2CX Resource message has been published, including this message.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="PUB-RATE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedShort">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Rate the data is being collected and published. The default publishing rate is 30 seconds.  A rate of zero indicates this message is not being repeatedly published.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="OPER-SYS" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Operating system the component is using.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="NUM-OF-CPUS" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Number of CPUs being monitored</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="CPUS" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="CPU" minOccurs="0" maxOccurs="100"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							
+							<xs:element name="NUM-OF-DISKS" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedShort">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Number of disks being monitored.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="DISKS" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="DISK" minOccurs="0" maxOccurs="100"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							
+							<xs:element name="MEM.UTIL" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="PERCENT_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Percent of main memory utilized.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="MEM.PHYSICAL.TOTAL" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U64"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Total amount of physical memory present, in bytes.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="MEM.PHYSICAL.AVAIL" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedLong">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U64"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Total amount of physical memory available, in bytes.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="MEM.VIRTUAL.TOTAL" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U64"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Total amount of virtual memory present, in bytes.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="MEM.VIRTUAL.AVAIL" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedLong">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U64"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Total amount of virtual memory available, in bytes.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="MEM.SWAP-UTIL" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="PERCENT_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Percent of swap space used.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="PROC.ZOMBIES" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedInt">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Number of zombie processes.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="PROC.TOTAL" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedInt">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Number of total processes.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="NUM-OF-NET-PORTS" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Number of network ports.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="NET-PORTS" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="NET-PORT" minOccurs="0" maxOccurs="100"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	
+</xs:schema>

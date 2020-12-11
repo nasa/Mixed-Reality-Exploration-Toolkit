@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+	
+	<xs:simpleType name="C2CX-SUBTYPE_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DEV"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="STATUS_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:element name="DEVICE">
+		<xs:complexType>
+			<xs:all>
+			
+				<xs:element name="NAME">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Name of the device.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="NUMBER" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:short">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Number assigned to the device to distinguish it from identical devices.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="MODEL" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Model number of the device.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="SERIAL" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Serial number of the device.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="VERSION" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Version of the firmware operating within the device.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="GROUP" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Name of the group with which the device is associated.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="ROLE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Role of the device, if known.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="STATUS">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="STATUS_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Condition of the device being reported.  The criteria for selecting the DEVICE.n.STATUS description is left to the reporting component.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="INFO" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:short">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>An additional status code tat can be supplied that is specific to that device.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="NUM-OF-PARAMS" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="NATURAL_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Number of additional parameters being reported that are associated with the device.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="PARAMS" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="PARAM" minOccurs="0" maxOccurs="100"/>
+						</xs:sequence>
+					</xs:complexType>
+    			</xs:element>
+				
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="PARAM">
+		<xs:complexType>
+			<xs:all>
+			
+				<xs:element name="NAME" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Name of the additional parameter/</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="TIME" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="TIME_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Time of paramater sampling.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+				<xs:element name="VALUE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Value of the named parameter being reported.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="MSG.C2CX.DEV">
+		<xs:complexType>
+			<xs:all>
+			
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+				
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+						
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version number for this message content description.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="C2CX-SUBTYPE">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="C2CX-SUBTYPE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Type of information being transferred between the Components.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="NUM-OF-DEVICES">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Number of devices beign reported in this message.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="DEVICES" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="DEVICE" minOccurs="0" maxOccurs="100"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	
+</xs:schema>

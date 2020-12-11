@@ -1,0 +1,179 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+	
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="SEARCH-OPERATION_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EXACTMATCH"/>
+			<xs:enumeration value="REGEXMATCH"/>
+			<xs:enumeration value="GLOBMATCH"/>
+			<xs:enumeration value="CONTAINS"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="END-RANGE-EXCLUSIVE_Type">
+		<xs:restriction base="xs:unsignedInt">
+			<xs:minInclusive value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="REQ.DBQUERY">
+		<xs:annotation>
+			<xs:documentation>Message Type REQUEST.</xs:documentation>
+		</xs:annotation>
+		
+		<xs:complexType>
+			<xs:all>
+			
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+				
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+						
+							<xs:element name="CONTENT-VERSION">
+								<xs:annotation>
+									<xs:documentation>Version Number for this message</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="SEARCH-EXPRESSION-MEDIA-TYPE">
+								<xs:annotation>
+									<xs:documentation>MSG-FIELDS: use fields in this message (default); If XML or JSON: use the QUERY-EXPRESSION field.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="MEDIA_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="SEARCH-RESULTS-MEDIA-TYPE">
+								<xs:annotation>
+									<xs:documentation>MSG-FIELDS: use fields in the response message for results (default); XML or JSON: request that responder use this format for the results.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="MEDIA_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="BEGIN-RANGE-INCLUSIVE" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Valid range is 1 to 2^32-2. The start of the range results for this request. If not present, request is to start at the beginning of all mnemonics. (Must include either both begin and end or neither.) Note: 1s based indices.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="END-RANGE-EXCLUSIVE" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>Valid range is 2 to 2^32-1. The end of the range results exclusive for this request. If not present, request is to end with the last mnemonic. (Must include either both begin and end or neither.) Note: 1s based indices.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="END-RANGE-EXCLUSIVE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="QUERY-EXPRESSION" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>This field is the string (e.g., XML or JSON) containing the search information. (Only used if SEARCH-EXPRESSION- MEDIA-TYPE is XML or JSON)</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="QUERY-SEARCH-OPERATION" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>EXACTMATCH, REGEXMATCH, GLOBMATCH, CONTAINS. CONTAINS is a substring comparison – the matched string contains the given string. (default is CONTAINS.)</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="SEARCH-OPERATION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="SPACESYSTEM-TO-SEARCH" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>If this field is not present, search all spacesystem paths.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="FEATURE-TO-SEARCH" minOccurs="0">
+								<xs:annotation>
+									<xs:documentation>NAME, SHORTDESCRIPTION, LONGDESCRIPTION, ALL. The feature in XTCE to search; these are shared by Parameter, Packet and Command. All means search Name, Short and Long descriptions.</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="FEATURE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="QUERY-SEARCH-TEXT">
+								<xs:annotation>
+									<xs:documentation>The query search text for the operation. The search text is interpreted against the kind of operation; see QUERY-SEARCH-OPERATION. </xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+							</xs:element>
+
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
