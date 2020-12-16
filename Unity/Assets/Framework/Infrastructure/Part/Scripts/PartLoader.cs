@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using AssetBundles;
+using GSFC.ARVR.MRET.Infrastructure.Components.AssetBundles;
 using GSFC.ARVR.MRET.Common.Schemas;
 
 public class PartLoader : MonoBehaviour
@@ -484,127 +484,173 @@ public class PartLoader : MonoBehaviour
         }
     }
 
-    protected IEnumerator InstantiateGameObjectAsync(PartType part, Transform parent)
+    void FinishGameObjectInstantiation(GameObject obj, PartType part, Transform parent)
     {
-        // This is simply to get the elapsed time for this phase of Asset Loading.
-        float startTime = Time.realtimeSinceStartup;
-
-        // Load asset from assetBundle.
-        AssetBundleLoadAssetOperation request = AssetBundleManager.LoadAssetAsync(part.AssetBundle, part.PartName[0], typeof(GameObject));
-        if (request == null)
+        if (obj == null)
         {
-            yield break;
+            Debug.LogError("Error loading gameobject.");
+            return;
         }
-        yield return StartCoroutine(request);
 
-        // Get the asset.
-        GameObject prefab = request.GetAsset<GameObject>();
+        // Reset object rotation (for accurate render bounds).
+        obj.transform.eulerAngles = Vector3.zero;
 
-        if (prefab != null)
+        // Create new bounds and add the bounds of all child objects together.
+        var bou = new Bounds(obj.transform.position, Vector3.zero);
+        foreach (Renderer ren in obj.GetComponentsInChildren<Renderer>())
         {
-            GameObject obj = Instantiate(prefab);
+            bou.Encapsulate(ren.bounds);
+        }
 
-            // Reset object rotation (for accurate render bounds).
-            obj.transform.eulerAngles = Vector3.zero;
+        Vector3 size = bou.size;
+        Vector3 rescale = obj.transform.localScale;
+        Vector3 dimensions = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
 
-            // Create new bounds and add the bounds of all child objects together.
-            var bou = new Bounds(obj.transform.position, Vector3.zero);
+        rescale.x = dimensions.x * rescale.x / size.x;
+        rescale.y = dimensions.y * rescale.y / size.y;
+        rescale.z = dimensions.z * rescale.z / size.z;
+
+        obj.transform.localScale = rescale;
+
+        /*BoxCollider bCollider = obj.GetComponent<BoxCollider>();
+        if (bCollider == null)
+        {
+            // Recalculate the bounds.
+            bou = new Bounds(obj.transform.position, Vector3.zero);
             foreach (Renderer ren in obj.GetComponentsInChildren<Renderer>())
             {
                 bou.Encapsulate(ren.bounds);
             }
 
-            Vector3 size = bou.size;
-            Vector3 rescale = obj.transform.localScale;
-            Vector3 dimensions = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
+            bCollider = obj.AddComponent<BoxCollider>();
+            bCollider.size = Vector3.Scale(bou.size,
+                new Vector3(1 / obj.transform.localScale.x, 1 / obj.transform.localScale.y, 1 / obj.transform.localScale.z));
+            bCollider.center = obj.transform.InverseTransformPoint(bou.center);
+        }*/
 
-            rescale.x = dimensions.x * rescale.x / size.x;
-            rescale.y = dimensions.y * rescale.y / size.y;
-            rescale.z = dimensions.z * rescale.z / size.z;
-
-            obj.transform.localScale = rescale;
-
-            /*BoxCollider bCollider = obj.GetComponent<BoxCollider>();
-            if (bCollider == null)
+        Collider collider = obj.GetComponent<Collider>();
+        if (collider == null)
+        {
+            switch (configMan.colliderMode)
             {
-                // Recalculate the bounds.
-                bou = new Bounds(obj.transform.position, Vector3.zero);
-                foreach (Renderer ren in obj.GetComponentsInChildren<Renderer>())
-                {
-                    bou.Encapsulate(ren.bounds);
-                }
+                case ConfigurationManager.ColliderMode.Box:
+                    Debug.Log("No collider detected. Generating box collder...");
+                    // Recalculate the bounds.
+                    bou = new Bounds(obj.transform.position, Vector3.zero);
+                    foreach (Renderer ren in obj.GetComponentsInChildren<Renderer>())
+                    {
+                        bou.Encapsulate(ren.bounds);
+                    }
 
-                bCollider = obj.AddComponent<BoxCollider>();
-                bCollider.size = Vector3.Scale(bou.size,
-                    new Vector3(1 / obj.transform.localScale.x, 1 / obj.transform.localScale.y, 1 / obj.transform.localScale.z));
-                bCollider.center = obj.transform.InverseTransformPoint(bou.center);
-            }*/
+                    collider = obj.AddComponent<BoxCollider>();
+                    ((BoxCollider)collider).size = Vector3.Scale(bou.size,
+                        new Vector3(1 / obj.transform.localScale.x, 1 / obj.transform.localScale.y, 1 / obj.transform.localScale.z));
+                    ((BoxCollider)collider).center = obj.transform.InverseTransformPoint(bou.center);
+                    obj.layer = SessionConfiguration.previewLayer;
+                    break;
 
-            Collider collider = obj.GetComponent<Collider>();
-            if (collider == null)
-            {
-                switch (configMan.colliderMode)
-                {
-                    case ConfigurationManager.ColliderMode.Box:
-                        Debug.Log("No collider detected. Generating box collder...");
-                        // Recalculate the bounds.
-                        bou = new Bounds(obj.transform.position, Vector3.zero);
-                        foreach (Renderer ren in obj.GetComponentsInChildren<Renderer>())
-                        {
-                            bou.Encapsulate(ren.bounds);
-                        }
+                case ConfigurationManager.ColliderMode.NonConvex:
+                    Debug.Log("No collider detected. Generating non-convex colliders...");
+                    foreach (MeshFilter mesh in obj.GetComponentsInChildren<MeshFilter>())
+                    {
+                        NonConvexMeshCollider ncmc = mesh.gameObject.AddComponent<NonConvexMeshCollider>();
+                        ncmc.boxesPerEdge = 20;
+                        ncmc.Calculate();
+                        mesh.gameObject.layer = SessionConfiguration.previewLayer;
+                    }
+                    break;
 
-                        collider = obj.AddComponent<BoxCollider>();
-                        ((BoxCollider) collider).size = Vector3.Scale(bou.size,
-                            new Vector3(1 / obj.transform.localScale.x, 1 / obj.transform.localScale.y, 1 / obj.transform.localScale.z));
-                        ((BoxCollider)collider).center = obj.transform.InverseTransformPoint(bou.center);
-                        obj.layer = SessionConfiguration.previewLayer;
-                        break;
-
-                    case ConfigurationManager.ColliderMode.NonConvex:
-                        Debug.Log("No collider detected. Generating non-convex colliders...");
-                        foreach (MeshFilter mesh in obj.GetComponentsInChildren<MeshFilter>())
-                        {
-                            NonConvexMeshCollider ncmc = mesh.gameObject.AddComponent<NonConvexMeshCollider>();
-                            ncmc.boxesPerEdge = 20;
-                            ncmc.Calculate();
-                            mesh.gameObject.layer = SessionConfiguration.previewLayer;
-                        }
-                        break;
-
-                    case ConfigurationManager.ColliderMode.None:
-                    default:
-                        Debug.Log("No collider detected. Not generating collider.");
-                        break;
-                }
+                case ConfigurationManager.ColliderMode.None:
+                default:
+                    Debug.Log("No collider detected. Not generating collider.");
+                    break;
             }
-
-            // Add colliders to be used for raycasting.
-            AddRaycastMeshColliders(obj);
-
-            obj.transform.position = new Vector3(part.PartTransform.Position.X, part.PartTransform.Position.Y, part.PartTransform.Position.Z);
-            obj.transform.rotation = new Quaternion(part.PartTransform.Rotation.X, part.PartTransform.Rotation.Y, part.PartTransform.Rotation.Z, part.PartTransform.Rotation.W);
-            obj.transform.SetParent((parent == null) ? projectObjectContainer.transform : parent);
-
-            // Get/Set all Mandatory Components.
-            ApplyStandardPropertiesToPart(obj, part);
-
-            part.transform = obj.transform;
-            part.loaded = true;
         }
 
-        // Calculate and display the elapsed time.
-        float elapsedTime = Time.realtimeSinceStartup - startTime;
-        if (prefab == null)
+        // Add colliders to be used for raycasting.
+        AddRaycastMeshColliders(obj);
+
+        obj.transform.position = new Vector3(part.PartTransform.Position.X, part.PartTransform.Position.Y, part.PartTransform.Position.Z);
+        obj.transform.rotation = new Quaternion(part.PartTransform.Rotation.X, part.PartTransform.Rotation.Y, part.PartTransform.Rotation.Z, part.PartTransform.Rotation.W);
+        obj.transform.SetParent((parent == null) ? projectObjectContainer.transform : parent);
+
+        // Get/Set all Mandatory Components.
+        ApplyStandardPropertiesToPart(obj, part);
+
+        part.transform = obj.transform;
+        part.loaded = true;
+    }
+
+    void FinishEnclosureInstantiation(GameObject obj, PartType part, Transform parent)
+    {
+        if (obj == null)
         {
-            Debug.Log("[PartImportMenuManager->InstantiateGameObjectAsync] Failed to Load Part " + part.Name
-                + " after " + elapsedTime + " seconds");
+            Debug.LogError("Error loading gameobject.");
+            return;
+        }
+
+        obj.transform.position = new Vector3(part.PartTransform.Position.X, part.PartTransform.Position.Y, part.PartTransform.Position.Z);
+        obj.transform.rotation = Quaternion.Euler(part.PartTransform.Rotation.X, part.PartTransform.Rotation.Y, part.PartTransform.Rotation.Z);
+        obj.transform.localScale = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
+        
+        obj.transform.SetParent((parent == null) ? projectObjectContainer.transform : parent);
+
+        // Ensure that a rigidbody is attached.
+        Rigidbody rBody = obj.GetComponent<Rigidbody>();
+        if (rBody == null)
+        {
+            rBody = obj.AddComponent<Rigidbody>();
+            rBody.mass = 1;
+            rBody.angularDrag = 0.99f;
+            rBody.drag = 0.99f;
+            rBody.useGravity = false;
+            rBody.isKinematic = false;
+        }
+
+        // Set up enclosure.
+        part.transform = obj.transform;
+        AssemblyGrabber enclosureGrabber = obj.AddComponent<AssemblyGrabber>();
+        enclosureGrabber.isGrabbable = true;
+        enclosureGrabber.isUsable = false;
+        //enclosureGrabber.disableWhenIdle = false;
+        enclosureGrabber.disableWhenIdle = true;
+        enclosureGrabber.enabled = true;
+        VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach gAttach = obj.GetComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
+        if (gAttach == null)
+        {
+            gAttach = obj.AddComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
+        }
+        gAttach.precisionGrab = true;
+        enclosureGrabber.assemblyRoot = parent.gameObject;
+        parent.GetComponent<InteractablePart>().enclosure = part.transform.gameObject;
+        if (part.EnableCollisions[0])
+        {
+            rBody.isKinematic = false;
+            if (part.EnableGravity[0])
+            {
+                rBody.useGravity = true;
+            }
         }
         else
         {
-            Debug.Log("[PartImportMenuManager->InstantiateGameObjectAsync] Finished Loading Part " + part.Name
-                + " in " + elapsedTime + " seconds");
+            rBody.isKinematic = true;
         }
+
+        part.transform = obj.transform;
+        part.loaded = true;
+    }
+
+    protected IEnumerator InstantiateGameObjectAsync(PartType part, Transform parent)
+    {
+        // Load asset from assetBundle.
+        Action<object> action = (object loaded) =>
+        {
+            FinishGameObjectInstantiation((GameObject) loaded, part, parent);
+        };
+        AssetBundleHelper.instance.LoadAssetAsync(Application.dataPath
+            + "/StreamingAssets/Windows/" + part.AssetBundle, part.PartName[0], typeof(GameObject), action);
+
+        yield return null;
     }
 
     protected IEnumerator InstantiateEmptyGameObjectAsync(PartType part, Transform parent)
@@ -626,86 +672,15 @@ public class PartLoader : MonoBehaviour
 
     protected IEnumerator InstantiateEnclosureAsync(PartType part, Transform parent)
     {
-        // This is simply to get the elapsed time for this phase of Asset Loading.
-        float startTime = Time.realtimeSinceStartup;
-
         // Load asset from assetBundle.
-        AssetBundleLoadAssetOperation request = AssetBundleManager.LoadAssetAsync(part.AssetBundle, part.Name, typeof(GameObject));
-        if (request == null)
+        Action<object> action = (object loaded) =>
         {
-            yield break;
-        }
-        yield return StartCoroutine(request);
+            FinishEnclosureInstantiation((GameObject) loaded, part, parent);
+        };
+        AssetBundleHelper.instance.LoadAssetAsync(Application.dataPath
+            + "/StreamingAssets/Windows/" + part.AssetBundle, part.PartName[0], typeof(GameObject), action);
 
-        // Get the asset.
-        GameObject prefab = request.GetAsset<GameObject>();
-
-        if (prefab != null)
-        {
-            prefab.transform.position = new Vector3(part.PartTransform.Position.X, part.PartTransform.Position.Y, part.PartTransform.Position.Z);
-            prefab.transform.rotation = Quaternion.Euler(part.PartTransform.Rotation.X, part.PartTransform.Rotation.Y, part.PartTransform.Rotation.Z);
-            prefab.transform.localScale = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
-            GameObject obj = Instantiate(prefab);
-
-            obj.transform.SetParent((parent == null) ? projectObjectContainer.transform : parent);
-
-            // Ensure that a rigidbody is attached.
-            Rigidbody rBody = obj.GetComponent<Rigidbody>();
-            if (rBody == null)
-            {
-                rBody = obj.AddComponent<Rigidbody>();
-                rBody.mass = 1;
-                rBody.angularDrag = 0.99f;
-                rBody.drag = 0.99f;
-                rBody.useGravity = false;
-                rBody.isKinematic = false;
-            }
-
-            // Set up enclosure.
-            part.transform = obj.transform;
-            AssemblyGrabber enclosureGrabber = obj.AddComponent<AssemblyGrabber>();
-            enclosureGrabber.isGrabbable = true;
-            enclosureGrabber.isUsable = false;
-            //enclosureGrabber.disableWhenIdle = false;
-            enclosureGrabber.disableWhenIdle = true;
-            enclosureGrabber.enabled = true;
-            VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach gAttach = obj.GetComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
-            if (gAttach == null)
-            {
-                gAttach = obj.AddComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
-            }
-            gAttach.precisionGrab = true;
-            enclosureGrabber.assemblyRoot = parent.gameObject;
-            parent.GetComponent<InteractablePart>().enclosure = part.transform.gameObject;
-            if (part.EnableCollisions[0])
-            {
-                rBody.isKinematic = false;
-                if (part.EnableGravity[0])
-                {
-                    rBody.useGravity = true;
-                }
-            }
-            else
-            {
-                rBody.isKinematic = true;
-            }
-
-            part.transform = obj.transform;
-            part.loaded = true;
-        }
-
-        // Calculate and display the elapsed time.
-        float elapsedTime = Time.realtimeSinceStartup - startTime;
-        if (prefab == null)
-        {
-            Debug.Log("[PartImportMenuManager->InitializeGameObjectAsync] Failed to Load Part " + part.Name
-                + " after " + elapsedTime + " seconds");
-        }
-        else
-        {
-            Debug.Log("[PartImportMenuManager->InitializeGameObjectAsync] Finished Loading Part " + part.Name
-                + " in " + elapsedTime + " seconds");
-        }
+        yield return null;
     }
 
     protected IEnumerator InitializeAssetBundleManager()
@@ -715,14 +690,16 @@ public class PartLoader : MonoBehaviour
         // Don't destroy this gameObject as we depend on it to run the loading script.
         //DontDestroyOnLoad(gameObject);
 
-        AssetBundleManager.SetSourceAssetBundleURL("file://" + Application.dataPath + "/StreamingAssets/");
+        //AssetBundleManager.SetSourceAssetBundleURL("file://" + Application.dataPath + "/StreamingAssets/");
 
         // Initialize AssetBundleManifest which loads the AssetBundleManifest object.
-        var request = AssetBundleManager.Initialize();
-        if (request != null)
-        {
-            yield return StartCoroutine(request);
-        }
+        //var request = AssetBundleManager.Initialize();
+        //if (request != null)
+        //{
+        //    yield return StartCoroutine(request);
+        //}
+
+        yield return null;
     }
 
     private void ApplyStandardPropertiesToPart(GameObject obj, PartType part)

@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using AssetBundles;
+using GSFC.ARVR.MRET.Infrastructure.Components.AssetBundles;
 using GSFC.ARVR.MRET.Randomize;
 using GSFC.ARVR.MRET.Common.Schemas;
 
@@ -547,7 +547,54 @@ namespace GSFC.ARVR.MRET.ProceduralObjectGeneration
         }
 
         /**
-         * Performs an asynchronous load of the mesh and optional meterial assets.<br/>
+         * Performs a load of optional material assets.<br/>
+         * 
+         * @param loadedMesh The <code>GameObject</code> The gameobject that was loaded
+         * 
+         * @param serialized The <code>ObjectGenerationPrefabType</code> The serialized object generation prefab
+         *      information
+         * @param deserializedPrefab The <code>DeserializedPrefab</code> object that will contain the deserialized
+         *      object generation prefab information
+         */
+        private void FinishLoadingMaterial(Material loadedMaterial, ObjectGenerationPrefabType serialized, DeserializedPrefab deserializedPrefab)
+        {
+            // Store the loaded asset
+            deserializedPrefab.assets.material = loadedMaterial;
+
+            // Mark as loaded
+            deserializedPrefab.loaded = true;
+        }
+
+        /**
+         * Performs a load of the mesh and initiates the loading optional material assets.<br/>
+         * 
+         * @param loadedMesh The <code>GameObject</code> The gameobject that was loaded
+         * 
+         * @param serialized The <code>ObjectGenerationPrefabType</code> The serialized object generation prefab
+         *      information
+         * @param deserializedPrefab The <code>DeserializedPrefab</code> object that will contain the deserialized
+         *      object generation prefab information
+         */
+        private void FinishLoadingMesh(GameObject loadedMesh, ObjectGenerationPrefabType serialized, DeserializedPrefab deserializedPrefab)
+        {
+            // Store the loaded asset
+            deserializedPrefab.assets.mesh = loadedMesh;
+
+            // Check if the material was specified
+            if (serialized.MaterialAsset != null)
+            {
+                // Perform the asychronous loading of the material from the asset bundle
+                System.Action<object> action = (object loaded) =>
+                {
+                    FinishLoadingMaterial((Material) loaded, serialized, deserializedPrefab);
+                };
+                AssetBundleHelper.instance.LoadAssetAsync("file://" + Application.dataPath
+                + "/StreamingAssets/Windows/" + serialized.MeshAsset.AssetBundle, serialized.MeshAsset.Name, typeof(Material), action);
+            }
+        }
+
+        /**
+         * Initiates an asynchronous load of the mesh and optional material assets.<br/>
          * 
          * @param serialized The <code>ObjectGenerationPrefabType</code> The serialized object generation prefab
          *      information
@@ -558,42 +605,16 @@ namespace GSFC.ARVR.MRET.ProceduralObjectGeneration
          */
         private IEnumerator LoadMeshAndMaterial(ObjectGenerationPrefabType serialized, DeserializedPrefab deserializedPrefab)
         {
-            // Perform the asychronous loading of the mesh from the asset bundle
-            AssetBundleLoadAssetOperation meshRequest =
-                AssetBundleManager.LoadAssetAsync(serialized.MeshAsset.AssetBundle, serialized.MeshAsset.Name, typeof(GameObject));
-            if (meshRequest == null)
+            if (serialized.MeshAsset != null)
             {
-                // Error condition so stop the asynchonous handler
-                Debug.LogWarning("[" + NAME + "]: Mesh '" + serialized.MeshAsset.Name +
-                    "' could not be loaded from asset bundle '" + serialized.MeshAsset.AssetBundle + "'");
-                yield break;
-            }
-            yield return StartCoroutine(meshRequest);
-
-            // Store the loaded asset
-            deserializedPrefab.assets.mesh = meshRequest.GetAsset<GameObject>();
-
-            // Check if the material was specified
-            if (serialized.MaterialAsset != null)
-            {
-                // Perform the asychronous loading of the material from the asset bundle
-                AssetBundleLoadAssetOperation matRequest =
-                    AssetBundleManager.LoadAssetAsync(serialized.MaterialAsset.AssetBundle, serialized.MaterialAsset.Name, typeof(GameObject));
-                if (matRequest == null)
+                // Perform the asychronous loading of the mesh from the asset bundle
+                System.Action<object> action = (object loadedMesh) =>
                 {
-                    // Error condition so stop the asynchonous handler
-                    Debug.LogWarning("[" + NAME + "]: Material '" + serialized.MaterialAsset.Name +
-                        "' could not be loaded from asset bundle '" + serialized.MaterialAsset.AssetBundle + "'");
-                    yield break;
-                }
-                yield return StartCoroutine(matRequest);
-
-                // Store the loaded asset
-                deserializedPrefab.assets.material = matRequest.GetAsset<Material>();
+                    FinishLoadingMesh((GameObject) loadedMesh, serialized, deserializedPrefab);
+                };
+                AssetBundleHelper.instance.LoadAssetAsync("file://" + Application.dataPath
+                + "/StreamingAssets/Windows/" + serialized.MeshAsset.AssetBundle, serialized.MeshAsset.Name, typeof(GameObject), action);
             }
-
-            // Mark as loaded
-            deserializedPrefab.loaded = true;
 
             yield return null;
         }

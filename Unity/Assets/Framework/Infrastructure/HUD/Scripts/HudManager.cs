@@ -2,7 +2,6 @@
 using UnityEngine;
 using System;
 using System.Xml;
-using AssetBundles;
 using System.Collections;
 using System.Xml.Serialization;
 using GSFC.ARVR.MRET.Common.Schemas;
@@ -137,14 +136,16 @@ public class HudManager : MonoBehaviour
         // Don't destroy this gameObject as we depend on it to run the loading script.
         //DontDestroyOnLoad(gameObject);
 
-        AssetBundleManager.SetSourceAssetBundleURL("file://" + Application.dataPath + "/StreamingAssets/");
+        //AssetBundleManager.SetSourceAssetBundleURL("file://" + Application.dataPath + "/StreamingAssets/");
 
         // Initialize AssetBundleManifest which loads the AssetBundleManifest object.
-        var request = AssetBundleManager.Initialize();
-        if (request != null)
-        {
-            yield return StartCoroutine(request);
-        }
+        //var request = AssetBundleManager.Initialize();
+        //if (request != null)
+        //{
+        //    yield return StartCoroutine(request);
+        //}
+
+        yield return null;
     }
 
 

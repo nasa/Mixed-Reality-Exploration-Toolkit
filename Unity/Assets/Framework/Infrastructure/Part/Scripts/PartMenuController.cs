@@ -5,7 +5,7 @@ using System.Xml;
 using System.Xml.Serialization;
 using UnityEngine;
 using UnityEngine.UI;
-using AssetBundles;
+using GSFC.ARVR.MRET.Infrastructure.Components.AssetBundles;
 using GSFC.ARVR.MRET.Common.Schemas;
 
 public class PartMenuController : MonoBehaviour
@@ -214,50 +214,96 @@ public class PartMenuController : MonoBehaviour
         }
     }
 
-    protected IEnumerator InstantiateGameObjectAsync(PartType part, Transform parent)
+    void FinishGameObjectInstantiation(GameObject obj, PartType part, Transform parent)
     {
-        // This is simply to get the elapsed time for this phase of Asset Loading.
-        float startTime = Time.realtimeSinceStartup;
-
-        // Load asset from assetBundle.
-        AssetBundleLoadAssetOperation request = AssetBundleManager.LoadAssetAsync(part.AssetBundle, part.Name, typeof(GameObject));
-        if (request == null)
+        if (obj == null)
         {
-            yield break;
-        }
-        yield return StartCoroutine(request);
-
-        // Get the asset.
-        GameObject prefab = request.GetAsset<GameObject>();
-
-        if (prefab != null)
-        {
-            prefab.transform.position = new Vector3(part.PartTransform.Position.X, part.PartTransform.Position.Y, part.PartTransform.Position.Z);
-            prefab.transform.rotation = Quaternion.Euler(part.PartTransform.Rotation.X, part.PartTransform.Rotation.Y, part.PartTransform.Rotation.Z);
-            prefab.transform.localScale = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
-            GameObject obj = Instantiate(prefab);
-
-            obj.transform.SetParent((parent == null) ? projectObjectContainer.transform : parent);
-
-            // Get/Set all Mandatory Components.
-            ApplyStandardPropertiesToPart(obj, part);
-
-            part.transform = obj.transform;
-            part.loaded = true;
+            Debug.LogError("Error loading gameobject.");
+            return;
         }
 
-        // Calculate and display the elapsed time.
-        float elapsedTime = Time.realtimeSinceStartup - startTime;
-        if (prefab == null)
+        obj.transform.position = new Vector3(part.PartTransform.Position.X, part.PartTransform.Position.Y, part.PartTransform.Position.Z);
+        obj.transform.rotation = Quaternion.Euler(part.PartTransform.Rotation.X, part.PartTransform.Rotation.Y, part.PartTransform.Rotation.Z);
+        obj.transform.localScale = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
+
+        obj.transform.SetParent((parent == null) ? projectObjectContainer.transform : parent);
+
+        // Get/Set all Mandatory Components.
+        ApplyStandardPropertiesToPart(obj, part);
+
+        part.transform = obj.transform;
+        part.loaded = true;
+    }
+
+    void FinishEnclosureInstantiation(GameObject obj, PartType part, Transform parent)
+    {
+        if (obj == null)
         {
-            Debug.Log("[UnityProject->InitializeGameObjectAsync] Failed to Load Part " + part.Name
-                + " after " + elapsedTime + " seconds");
+            Debug.LogError("Error loading gameobject.");
+            return;
+        }
+
+        obj.transform.position = new Vector3(part.PartTransform.Position.X, part.PartTransform.Position.Y, part.PartTransform.Position.Z);
+        obj.transform.rotation = Quaternion.Euler(part.PartTransform.Rotation.X, part.PartTransform.Rotation.Y, part.PartTransform.Rotation.Z);
+        obj.transform.localScale = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
+
+        obj.transform.SetParent((parent == null) ? projectObjectContainer.transform : parent);
+
+        // Ensure that a rigidbody is attached.
+        Rigidbody rBody = obj.GetComponent<Rigidbody>();
+        if (rBody == null)
+        {
+            rBody = obj.AddComponent<Rigidbody>();
+            rBody.mass = 1;
+            rBody.angularDrag = 0.99f;
+            rBody.drag = 0.99f;
+            rBody.useGravity = false;
+            rBody.isKinematic = false;
+        }
+
+        // Set up enclosure.
+        part.transform = obj.transform;
+        AssemblyGrabber enclosureGrabber = obj.AddComponent<AssemblyGrabber>();
+        enclosureGrabber.isGrabbable = true;
+        enclosureGrabber.isUsable = false;
+        enclosureGrabber.disableWhenIdle = false;
+        enclosureGrabber.enabled = true;
+        VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach gAttach = obj.GetComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
+        if (gAttach == null)
+        {
+            gAttach = obj.AddComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
+        }
+        gAttach.precisionGrab = true;
+        enclosureGrabber.assemblyRoot = parent.gameObject;
+        parent.GetComponent<InteractablePart>().enclosure = part.transform.gameObject;
+        if (part.EnableCollisions[0])
+        {
+            rBody.isKinematic = false;
+            if (part.EnableGravity[0])
+            {
+                rBody.useGravity = true;
+            }
         }
         else
         {
-            Debug.Log("[UnityProject->InitializeGameObjectAsync] Finished Loading Part " + part.Name
-                + " in " + elapsedTime + " seconds");
+            rBody.isKinematic = true;
         }
+
+        part.transform = obj.transform;
+        part.loaded = true;
+    }
+
+    protected IEnumerator InstantiateGameObjectAsync(PartType part, Transform parent)
+    {
+        // Load asset from assetBundle.
+        Action<object> action = (object loaded) =>
+        {
+            FinishGameObjectInstantiation((GameObject)loaded, part, parent);
+        };
+        AssetBundleHelper.instance.LoadAssetAsync(Application.dataPath
+            + "/StreamingAssets/Windows/" + part.AssetBundle, part.PartName[0], typeof(GameObject), action);
+
+        yield return null;
     }
 
     protected IEnumerator InstantiateEmptyGameObjectAsync(PartType part, Transform parent)
@@ -279,85 +325,15 @@ public class PartMenuController : MonoBehaviour
 
     protected IEnumerator InstantiateEnclosureAsync(PartType part, Transform parent)
     {
-        // This is simply to get the elapsed time for this phase of Asset Loading.
-        float startTime = Time.realtimeSinceStartup;
-
         // Load asset from assetBundle.
-        AssetBundleLoadAssetOperation request = AssetBundleManager.LoadAssetAsync(part.AssetBundle, part.Name, typeof(GameObject));
-        if (request == null)
+        Action<object> action = (object loaded) =>
         {
-            yield break;
-        }
-        yield return StartCoroutine(request);
+            FinishEnclosureInstantiation((GameObject)loaded, part, parent);
+        };
+        AssetBundleHelper.instance.LoadAssetAsync(Application.dataPath
+            + "/StreamingAssets/Windows/" + part.AssetBundle, part.PartName[0], typeof(GameObject), action);
 
-        // Get the asset.
-        GameObject prefab = request.GetAsset<GameObject>();
-
-        if (prefab != null)
-        {
-            prefab.transform.position = new Vector3(part.PartTransform.Position.X, part.PartTransform.Position.Y, part.PartTransform.Position.Z);
-            prefab.transform.rotation = Quaternion.Euler(part.PartTransform.Rotation.X, part.PartTransform.Rotation.Y, part.PartTransform.Rotation.Z);
-            prefab.transform.localScale = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
-            GameObject obj = Instantiate(prefab);
-
-            obj.transform.SetParent((parent == null) ? projectObjectContainer.transform : parent);
-
-            // Ensure that a rigidbody is attached.
-            Rigidbody rBody = obj.GetComponent<Rigidbody>();
-            if (rBody == null)
-            {
-                rBody = obj.AddComponent<Rigidbody>();
-                rBody.mass = 1;
-                rBody.angularDrag = 0.99f;
-                rBody.drag = 0.99f;
-                rBody.useGravity = false;
-                rBody.isKinematic = false;
-            }
-
-            // Set up enclosure.
-            part.transform = obj.transform;
-            AssemblyGrabber enclosureGrabber = obj.AddComponent<AssemblyGrabber>();
-            enclosureGrabber.isGrabbable = true;
-            enclosureGrabber.isUsable = false;
-            enclosureGrabber.disableWhenIdle = false;
-            enclosureGrabber.enabled = true;
-            VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach gAttach = obj.GetComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
-            if (gAttach == null)
-            {
-                gAttach = obj.AddComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
-            }
-            gAttach.precisionGrab = true;
-            enclosureGrabber.assemblyRoot = parent.gameObject;
-            parent.GetComponent<InteractablePart>().enclosure = part.transform.gameObject;
-            if (part.EnableCollisions[0])
-            {
-                rBody.isKinematic = false;
-                if (part.EnableGravity[0])
-                {
-                    rBody.useGravity = true;
-                }
-            }
-            else
-            {
-                rBody.isKinematic = true;
-            }
-
-            part.transform = obj.transform;
-            part.loaded = true;
-        }
-
-        // Calculate and display the elapsed time.
-        float elapsedTime = Time.realtimeSinceStartup - startTime;
-        if (prefab == null)
-        {
-            Debug.Log("[UnityProject->InitializeGameObjectAsync] Failed to Load Part " + part.Name
-                + " after " + elapsedTime + " seconds");
-        }
-        else
-        {
-            Debug.Log("[UnityProject->InitializeGameObjectAsync] Finished Loading Part " + part.Name
-                + " in " + elapsedTime + " seconds");
-        }
+        yield return null;
     }
 
     protected IEnumerator InitializeAssetBundleManager()
@@ -367,14 +343,16 @@ public class PartMenuController : MonoBehaviour
         // Don't destroy this gameObject as we depend on it to run the loading script.
         //DontDestroyOnLoad(gameObject);
 
-        AssetBundleManager.SetSourceAssetBundleURL("file://" + Application.dataPath + "/StreamingAssets/");
+        //AssetBundleManager.SetSourceAssetBundleURL("file://" + Application.dataPath + "/StreamingAssets/");
 
         // Initialize AssetBundleManifest which loads the AssetBundleManifest object.
-        var request = AssetBundleManager.Initialize();
-        if (request != null)
-        {
-            yield return StartCoroutine(request);
-        }
+        //var request = AssetBundleManager.Initialize();
+        //if (request != null)
+        //{
+        //    yield return StartCoroutine(request);
+        //}
+
+        yield return null;
     }
 
     private void ApplyStandardPropertiesToPart(GameObject obj, PartType part)
