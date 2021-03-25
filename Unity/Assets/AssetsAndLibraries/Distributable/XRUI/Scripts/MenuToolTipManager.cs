@@ -1,42 +1,52 @@
-﻿using UnityEngine;
-using UnityEngine.EventSystems;
-using UnityEngine.UI;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class MenuToolTipManager : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+using UnityEngine;
+using UnityEngine.UI;
+using GSFC.ARVR.XRUI.ControllerMenu;
+
+public class MenuToolTipManager : MonoBehaviour
 {
     public string TooltipText;
 
     public Text InfoTextBox;
 
-    private ControllerMenuManager controllerMenuManager;
+    public ControllerMenuPanel controllerMenuPanel;
 
     void Start()
     {
         if (InfoTextBox == null)
         {
-            controllerMenuManager = GetComponentInParent<ControllerMenuManager>();
-            InfoTextBox = controllerMenuManager.infoText;
+            controllerMenuPanel = GetComponentInParent<ControllerMenuPanel>();
+            if (controllerMenuPanel)
+            {
+                InfoTextBox = controllerMenuPanel.tooltipText;
+            }
         }
        
     }
 
-    public void OnPointerEnter(PointerEventData eventData)
+    public void StartedHitting()
     {
-
-
-        if (TooltipText != "" && InfoTextBox)
+        if (controllerMenuPanel)
         {
-            InfoTextBox.text = TooltipText;
+            if (TooltipText != "" && InfoTextBox)
+            {
+                InfoTextBox.text = TooltipText;
+            }
         }
     }
 
-    public void OnPointerExit(PointerEventData eventData)
+    public void StoppedHitting()
     {
-        if (TooltipText != "")
+        if (controllerMenuPanel)
         {
-            if (InfoTextBox.text == TooltipText)
+            if (TooltipText != "")
             {
-                InfoTextBox.text = "";
+                if (InfoTextBox.text == TooltipText)
+                {
+                    InfoTextBox.text = "";
+                }
             }
         }
     }

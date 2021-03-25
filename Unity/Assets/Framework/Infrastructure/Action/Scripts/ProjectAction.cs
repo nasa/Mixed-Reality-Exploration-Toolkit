@@ -1,6 +1,8 @@
 ﻿using System;
 using UnityEngine;
 using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Components.Notes;
+using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
 
 public class ProjectAction : BaseAction
 {
@@ -31,7 +33,7 @@ public class ProjectAction : BaseAction
     private string titleValue, contentValue;
     private InteractablePart.InteractablePartSettings partSettings;
     private string parentGUIDOfInterest;
-    
+
     public static ProjectAction MoveObjectAction(string partName, Vector3 pos, Quaternion rot, string guid = null)
     {
         return new ProjectAction()
@@ -139,7 +141,7 @@ public class ProjectAction : BaseAction
         };
     }
 
-    public static ProjectAction AddNoteAction(NoteType note, string noteName, Vector3 pos, Quaternion rot)
+    public static ProjectAction AddNoteAction(NoteType note, string noteName, Vector3 pos, Quaternion rot, string guid = null)
     {
         return new ProjectAction()
         {
@@ -147,7 +149,8 @@ public class ProjectAction : BaseAction
             noteNameOfInterest = noteName,
             noteOfInterest = note,
             positionValue = pos,
-            rotationValue = rot
+            rotationValue = rot,
+            guidOfInterest = guid
         };
     }
 
@@ -310,7 +313,7 @@ public class ProjectAction : BaseAction
                             iPart = part.GetComponent<InteractablePart>();
                         }
                     }
-                    
+
                     if (iPart)
                     {
                         iPart.transform.position = positionValue;
@@ -369,11 +372,11 @@ public class ProjectAction : BaseAction
                     partOfInterest.EnableGravity = new bool[] { partSettings.gravityEnabled };
                     partOfInterest.ChildParts = new PartsType(); // TODO.
                     TimeStampUtility.LogTime("PerformAction 7");
-                    PartLoader pLoader = FindObjectOfType<PartLoader>();
+                    PartManager pman = FindObjectOfType<PartManager>();
                     TimeStampUtility.LogTime("PerformAction 8");
-                    if (pLoader)
+                    if (pman)
                     {
-                        pLoader.InstantiatePartInEnvironment(partOfInterest, null);
+                        pman.InstantiatePartInEnvironment(partOfInterest, null);
                         TimeStampUtility.LogTime("PerformAction 9");
                     }
                 }
@@ -424,7 +427,7 @@ public class ProjectAction : BaseAction
 
                     if (iPart && rBody)
                     {
-                        iPart.isGrabbable = partSettings.interactionEnabled;
+                        iPart.grabbable = partSettings.interactionEnabled;
                         rBody.isKinematic = !partSettings.collisionEnabled;
                         rBody.useGravity = partSettings.gravityEnabled;
                     }
@@ -507,7 +510,7 @@ public class ProjectAction : BaseAction
 
                         dlm.AddPredefinedDrawing(DeserializeVector3ArrayToList(drawingOfInterest.Points),
                             (LineDrawing.RenderTypes)Enum.Parse(typeof(LineDrawing.RenderTypes),
-                            drawingOfInterest.RenderType.ToString()), (LineDrawing.unit) Enum.Parse(typeof(LineDrawing.unit),
+                            drawingOfInterest.RenderType.ToString()), (LineDrawing.unit)Enum.Parse(typeof(LineDrawing.unit),
                             drawingOfInterest.DesiredUnits.ToString()), drawingOfInterest.Name, new Guid(drawingOfInterest.GUID));
                     }
                 }
@@ -583,7 +586,15 @@ public class ProjectAction : BaseAction
                             title = noteOfInterest.Title,
                             information = noteOfInterest.Details
                         };
-                        Note.fromSerializable(noteData, noteOfInterest.Drawings.NoteDrawings, noteNameOfInterest, new Guid(noteOfInterest.GUID));
+
+                        // DZB quick hack this needs to be refactored.
+                        if (noteOfInterest.Drawings == null)
+                        {
+                            noteOfInterest.Drawings = new NoteDrawingsType();
+                            noteOfInterest.Drawings.NoteDrawings = new NoteDrawingType[0];
+                        }
+
+                        Note.fromSerializable(noteData, noteOfInterest.Drawings.NoteDrawings, noteNameOfInterest, new Guid(guidOfInterest));
                     }
                 }
                 break;
@@ -717,7 +728,7 @@ public class ProjectAction : BaseAction
     public override ActionType Serialize()
     {
         ActionType sAction = new ActionType();
-        
+
         switch (actionType)
         {
             case ProjectActionType.AddDrawing:
@@ -789,7 +800,7 @@ public class ProjectAction : BaseAction
                 sAction.Type = ActionTypeType.Unset;
                 break;
         }
-        
+
         sAction.PartName = partNameOfInterest;
         sAction.Part = partOfInterest;
 

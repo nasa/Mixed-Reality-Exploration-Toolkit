@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using UnityEngine;
 using GSFC.ARVR.Utilities.Properties;
 
@@ -76,14 +79,14 @@ namespace GSFC.ARVR.MRET.Time
         }
 
         /**
-         * Only called once after enabled
+         * Called to perform initialization on the time Manager.
          */
-        private void Start()
+        public void Initialize()
         {
             // Try to get a reference to the data manager if not explictly set
             if (dataManager == null)
             {
-                dataManager = SessionManager.instance.dataManager;
+                dataManager = Infrastructure.Framework.MRET.DataManager;
             }
 
             // Initialize the time

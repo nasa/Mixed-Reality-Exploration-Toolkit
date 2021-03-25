@@ -1,9 +1,13 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections.Generic;
 using GSFC.ARVR.MRET.XRC;
 using GSFC.ARVR.MRET.Project;
 using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Components.UI;
 
 public class CollaborationShareMenuManager : MonoBehaviour
 {
@@ -81,13 +85,12 @@ public class CollaborationShareMenuManager : MonoBehaviour
 
                 XRCUnity.StartSession(UnityProject.instance.userUUID.ToString(),
                     UnityProject.instance.userAlias,
-                    (VRDesktopSwitcher.isVREnabled()) ? (int) SynchronizedUser.UserType.VR :
-                    (int) SynchronizedUser.UserType.Desktop,
+                    (int) SynchronizedUser.UserType.VR,
                     UnityProject.instance.userLabelColor.ToString(),
                     UnityProject.instance.lcUUID.ToString(),
                     UnityProject.instance.rcUUID.ToString(),
                     UnityProject.instance.lpUUID.ToString(),
-                    UnityProject.instance.rpUUID.ToString());
+                    UnityProject.instance.rpUUID.ToString()); // TODO type
 
                 XRCManager.AddControllersToSession(UnityProject.instance.userAlias,
                     UnityProject.instance.userUUID.ToString(),

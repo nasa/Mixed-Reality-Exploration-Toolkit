@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using GSFC.ARVR.MRET.Common;
 using GSFC.ARVR.MRET.Common.Schemas;
 
@@ -35,9 +38,7 @@ namespace GSFC.ARVR.MRET.Part
 
             if (selectedFile is PartType)
             {
-                PartLoader.instance.InstantiatePart((PartType) selectedFile,
-                    VRDesktopSwitcher.isDesktopEnabled() ?
-                    SessionConfiguration.instance.objectPlacementContainer.transform : null);
+                Infrastructure.Framework.MRET.PartManager.InstantiatePart((PartType) selectedFile, null);
             }
         }
 

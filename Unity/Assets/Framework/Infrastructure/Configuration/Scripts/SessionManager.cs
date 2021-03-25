@@ -1,6 +1,12 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
+using UnityEngine;
 using GSFC.ARVR.MRET.Time;
 using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 /**
  * Defines the MRET session manager. This class contains common (system-wide) GameObject references
@@ -76,7 +82,10 @@ using GSFC.ARVR.MRET.Common.Schemas;
  * @see Camera
  * 
  * @author Jeffrey Hosler
+ * Edits:
+ * 18 February 2021: Removing fields that are no longer needed.
  */
+[Obsolete("Refer to the 'MRET' class.")]
 public class SessionManager : MonoBehaviour
 {
     public static readonly string NAME = nameof(SessionManager);
@@ -139,97 +148,86 @@ public class SessionManager : MonoBehaviour
     // PlayArea scripts
     #region SCRIPT_ACCESS_PLAY_AREA
 
-    private VRTK.VRTK_BasicTeleport basicTeleport;
+    public static InputRig inputRig
+    {
+        get
+        {
+            return MRET.InputRig;
+        }
+    }
+
+    /*private VRTK.VRTK_BasicTeleport basicTeleport;
     public VRTK.VRTK_BasicTeleport BasicTeleport
     {
         get
         {
             return basicTeleport;
         }
-    }
+    }*/
 
-    private VRTK.VRTK_BodyPhysics bodyPhysics;
+    /*private VRTK.VRTK_BodyPhysics bodyPhysics;
     public VRTK.VRTK_BodyPhysics BodyPhysics
     {
         get
         {
             return bodyPhysics;
         }
-    }
+    }*/
 
-    private VRTK.VRTK_MoveInPlace moveInPlace;
+    /*private VRTK.VRTK_MoveInPlace moveInPlace;
     public VRTK.VRTK_MoveInPlace MoveInPlace
     {
         get
         {
             return moveInPlace;
         }
-    }
+    }*/
 
     #endregion //SCRIPT_ACCESS_PLAY_AREA
-
-    // HeadsetFollower scripts
-    #region SCRIPT_ACCESS_HEADSET_FOLLOWER
-
-    private Camera userCamera;
-    public Camera UserCamera
-    {
-        get
-        {
-            // Make sure we do not assign the userCamera during the initialization process
-            // in the Awake method of this script because the Camera may be NULL at the time
-            // we try to access the reference. By using a smart helper method here, a call in
-            // the Start method to this accessor by another script will ensure that all Awake
-            // calls have completed and the Camera will be available.
-            return GetUserCamera();
-        }
-    }
-
-    #endregion //SCRIPT_ACCESS_HEADSET_FOLLOWER
 
     // LeftController scripts
     #region SCRIPT_ACCESS_LEFT_CONTROLLER
 
-    private VRTK.VRTK_Pointer pointerLeft;
+    /*private VRTK.VRTK_Pointer pointerLeft;
     public VRTK.VRTK_Pointer PointerLeft
     {
         get
         {
             return pointerLeft;
         }
-    }
+    }*/
 
-    private VRTK.VRTK_UIPointer uiPointerLeft;
+    /*private VRTK.VRTK_UIPointer uiPointerLeft;
     public VRTK.VRTK_UIPointer UIPointerLeft
     {
         get
         {
             return uiPointerLeft;
         }
-    }
+    }*/
 
     #endregion //SCRIPT_ACCESS_LEFT_CONTROLLER
 
     // RightController scripts
     #region SCRIPT_ACCESS_RIGHT_CONTROLLER
 
-    private VRTK.VRTK_Pointer pointerRight;
+    /*private VRTK.VRTK_Pointer pointerRight;
     public VRTK.VRTK_Pointer PointerRight
     {
         get
         {
             return pointerRight;
         }
-    }
+    }*/
 
-    private VRTK.VRTK_UIPointer uiIPointerRight;
+    /*private VRTK.VRTK_UIPointer uiIPointerRight;
     public VRTK.VRTK_UIPointer UIPointerRight
     {
         get
         {
             return uiIPointerRight;
         }
-    }
+    }*/
 
     #endregion //SCRIPT_ACCESS_RIGHT_CONTROLLER
 
@@ -424,9 +422,9 @@ public class SessionManager : MonoBehaviour
         if (playArea != null)
         {
             // Obtain a reference to the PlayArea scripts
-            basicTeleport = playArea.GetComponentInChildren<VRTK.VRTK_BasicTeleport>();
-            bodyPhysics = playArea.GetComponentInChildren<VRTK.VRTK_BodyPhysics>();
-            moveInPlace = playArea.GetComponentInChildren<VRTK.VRTK_MoveInPlace>();
+            //basicTeleport = playArea.GetComponentInChildren<VRTK.VRTK_BasicTeleport>();
+            //bodyPhysics = playArea.GetComponentInChildren<VRTK.VRTK_BodyPhysics>();
+            //moveInPlace = playArea.GetComponentInChildren<VRTK.VRTK_MoveInPlace>();
         }
         else
         {
@@ -473,8 +471,8 @@ public class SessionManager : MonoBehaviour
         if (leftController != null)
         {
             // Obtain a reference to the LeftController scripts
-            pointerLeft = leftController.GetComponentInChildren<VRTK.VRTK_Pointer>();
-            uiPointerLeft = leftController.GetComponentInChildren<VRTK.VRTK_UIPointer>();
+            //pointerLeft = leftController.GetComponentInChildren<VRTK.VRTK_Pointer>();
+            //uiPointerLeft = leftController.GetComponentInChildren<VRTK.VRTK_UIPointer>();
         }
         else
         {
@@ -492,8 +490,8 @@ public class SessionManager : MonoBehaviour
         if (rightController != null)
         {
             // Obtain a reference to the RightController scripts
-            pointerRight = rightController.GetComponentInChildren<VRTK.VRTK_Pointer>();
-            uiIPointerRight = rightController.GetComponentInChildren<VRTK.VRTK_UIPointer>();
+            //pointerRight = rightController.GetComponentInChildren<VRTK.VRTK_Pointer>();
+            //uiIPointerRight = rightController.GetComponentInChildren<VRTK.VRTK_UIPointer>();
         }
         else
         {
@@ -503,31 +501,4 @@ public class SessionManager : MonoBehaviour
     }
 
     #endregion // INITIALIZATION_METHODS
-
-    #region HELPER_METHODS
-
-    /**
-     * Obtains a reference to the user camera
-     *
-     * @return A <code>Camera</code> reference to the user's camera. NULL is not found
-     */
-    public Camera GetUserCamera()
-    {
-        // Check if we need to perform the search for the Camera
-        if (userCamera == null)
-        {
-            if (VRDesktopSwitcher.isVREnabled())
-            {
-                userCamera = headsetFollower.GetComponentInParent<Camera>();
-            }
-            else
-            {
-                userCamera = headsetFollower.transform.parent.parent.GetComponentInChildren<Camera>();
-            }
-        }
-
-        return userCamera;
-    }
-
-    #endregion //HELPER_METHODS
 }

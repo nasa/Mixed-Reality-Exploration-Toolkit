@@ -1,259 +1,224 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class CameraMenuController : MonoBehaviour
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+using GSFC.ARVR.MRET.Integrations.XRUI;
+
+namespace GSFC.ARVR.MRET.Components.Camera
 {
-    public VRTK.SDK_BaseController.ControllerHand hand;
-    public VRTK.VRTK_ControllerEvents controllerEvents;
-    public GameObject imageCamera, videoCamera, cameraHolder;
-    public CameraMenuController otherCameras;
-    public ImageCameraCaptureManager imageCameraManager;
-    public VideoCameraCaptureManager videoCameraManager;
-    public ControlMode controlMode;
-    public Toggle imageToggle, videoToggle, offToggle;
-    public Vector3 imageCameraPosition, videoCameraPosition, imageCameraRotation, videoCameraRotation;
-    public bool initialized = false;
-    public GameObject menuPanel;
-    public bool mostRecent = false;
-
-    private bool initializingToggles = true;
-    private int toggleCountDown = 0;
-    private bool needToReinitializeToggles = false;
-
-    public void Start()
+    public class CameraMenuController : MenuController
     {
-        if (!initialized && (!otherCameras || !otherCameras.initialized))
-        {
-            ExitMode();
-            initialized = true;
-        }
-	}
+        /*
+         * For switching between cameras on the SpectatorRendererManager call spectatorManager.SwitchCamera(index_of_camera_to_switch_to)
+         * 
+         * "index_of_camera_to_switch_to" is defined in the SpectatorRendererManager in the scene under 
+         * MRET/Managers/SpectatorRendererManager. Ensure index 0 is always the Rig head location
+         * it can be intrepreted as the "default" location for the camera to be rendered from.
+         */
 
-    public void Update()
-    {
-        if (toggleCountDown > 0)
+
+        public static readonly string imageCamera0Key = "MRET.INTERNAL.TOOLS.CAMERA.IMAGE.0";
+        public static readonly string imageCamera1Key = "MRET.INTERNAL.TOOLS.CAMERA.IMAGE.1";
+        public static readonly string videoCamera0Key = "MRET.INTERNAL.TOOLS.CAMERA.VIDEO.0";
+        public static readonly string videoCamera1Key = "MRET.INTERNAL.TOOLS.CAMERA.VIDEO.1";
+        public static readonly string bodyCameraKey = "MRET.INTERNAL.TOOLS.CAMERA.BODY.0";
+
+        [Header("Camera Game Objects")]
+        public GameObject imageCamera;
+        public GameObject videoCamera;
+        public GameObject bodyCamera;
+        public GameObject cameraHolder;
+        public GameObject bodyCameraHolder;
+
+
+        [Header("Camera Managers")]
+        public CameraMenuController otherCameras;
+        public ImageCameraCaptureManager imageCameraManager;
+        public VideoCameraCaptureManager videoCameraManager;
+        public VideoCameraCaptureManager bodyCameraManager;
+        public SpectatorController spectatorManager;
+
+
+        [Header("Other Options")]
+        public InputHand hand;
+        public Vector3 imageCameraPosition, videoCameraPosition, bodyCameraPosition,
+            imageCameraRotation, videoCameraRotation, bodyCameraRotation;
+        public bool initialized = false;
+        public bool mostRecent = false;
+
+        public override void Initialize()
         {
-            toggleCountDown--;
-            if (toggleCountDown == 0)
+            Infrastructure.Framework.MRET.DataManager.SaveValue(imageCamera0Key, false);
+            Infrastructure.Framework.MRET.DataManager.SaveValue(imageCamera1Key, false);
+            Infrastructure.Framework.MRET.DataManager.SaveValue(videoCamera0Key, false);
+            Infrastructure.Framework.MRET.DataManager.SaveValue(videoCamera1Key, false);
+            Infrastructure.Framework.MRET.DataManager.SaveValue(bodyCameraKey, false);
+
+            mostRecent = true;
+            if (otherCameras) otherCameras.mostRecent = false;
+
+            if (!initialized && (!otherCameras || !otherCameras.initialized))
             {
-                if (needToReinitializeToggles)
-                {
-                    if (otherCameras)
-                    {
-                        if (otherCameras.imageToggle.isOn)
-                        {
-                            imageToggle.isOn = true;
-                        }
-                        else if (otherCameras.videoToggle.isOn)
-                        {
-                            videoToggle.isOn = true;
-                        }
-                        else
-                        {
-                            offToggle.isOn = true;
-                        }
-                    }
-                    needToReinitializeToggles = false;
-                }
-                else
-                {
-                    if (hand == VRTK.SDK_BaseController.ControllerHand.Left)
-                    {
-                        if (imageCameraManager.capturingLeft || imageCameraManager.capturingRight)
-                        {
-                            initializingToggles = true;
-                            if (otherCameras) otherCameras.initializingToggles = true;
-                            imageToggle.isOn = true;
-                            videoToggle.isOn = false;
-                            offToggle.isOn = false;
-                            initializingToggles = false;
-                            if (otherCameras) otherCameras.initializingToggles = false;
-                        }
-                        else if (videoCameraManager.capturingLeft || videoCameraManager.capturingRight)
-                        {
-                            initializingToggles = true;
-                            if (otherCameras) otherCameras.initializingToggles = true;
-                            imageToggle.isOn = false;
-                            videoToggle.isOn = true;
-                            offToggle.isOn = false;
-                            initializingToggles = false;
-                            if (otherCameras) otherCameras.initializingToggles = false;
-                        }
-                        else
-                        {
-                            initializingToggles = true;
-                            if (otherCameras) otherCameras.initializingToggles = true;
-                            imageToggle.isOn = false;
-                            videoToggle.isOn = false;
-                            offToggle.isOn = true;
-                            initializingToggles = false;
-                            if (otherCameras) otherCameras.initializingToggles = false;
-                        }
-                    }
-                    else
-                    {
-                        initializingToggles = true;
-                        if (imageCameraManager.capturingRight || imageCameraManager.capturingLeft)
-                        {
-                            initializingToggles = true;
-                            if (otherCameras) otherCameras.initializingToggles = true;
-                            imageToggle.isOn = true;
-                            videoToggle.isOn = false;
-                            offToggle.isOn = false;
-                            initializingToggles = false;
-                            if (otherCameras) otherCameras.initializingToggles = false;
-                        }
-                        else if (videoCameraManager.capturingRight || videoCameraManager.capturingLeft)
-                        {
-                            initializingToggles = true;
-                            if (otherCameras) otherCameras.initializingToggles = true;
-                            imageToggle.isOn = false;
-                            videoToggle.isOn = true;
-                            offToggle.isOn = false;
-                            initializingToggles = false;
-                            if (otherCameras) otherCameras.initializingToggles = false;
-                        }
-                        else
-                        {
-                            initializingToggles = otherCameras.initializingToggles = true;
-                            imageToggle.isOn = false;
-                            videoToggle.isOn = false;
-                            offToggle.isOn = true;
-                            initializingToggles = otherCameras.initializingToggles = false;
-                        }
-                    }
-                }
+                ExitMode();
+                initialized = true;
             }
         }
-    }
 
-    public void OnEnable()
-    {
-        toggleCountDown = 3;
-        if (otherCameras)
-        {
-            if (otherCameras.mostRecent)
-            {
-                needToReinitializeToggles = true;
-            }
-            else
-            {
-                needToReinitializeToggles = false;
-            }
-        }
-        mostRecent = true;
-        if (otherCameras) otherCameras.mostRecent = false;
-    }
-
-    public void OnDisable()
-    {
-        toggleCountDown = -1;
-    }
-
-    public void ToggleImageCamera()
-    {
-        if (!initializingToggles && imageToggle.isOn && toggleCountDown == 0 && menuPanel.activeSelf)
+        public void ToggleImageCamera()
         {
             EnableImageCamera();
         }
-    }
 
-    public void ToggleVideoCamera()
-    {
-        if (!initializingToggles && videoToggle.isOn && toggleCountDown == 0 && menuPanel.activeSelf)
+        public void ToggleVideoCamera()
         {
             EnableVideoCamera();
         }
-    }
 
-    public void ToggleCamerasOff()
-    {
-        if (!initializingToggles && offToggle.isOn && toggleCountDown == 0 && menuPanel.activeSelf)
+        public void ToggleBodyCamera()
         {
-            DisableAllCameras();
-        }
-    }
-
-    public void DisableAllCameras()
-    {
-        if (imageCamera.activeSelf || videoCamera.activeSelf && toggleCountDown == 0)
-        {
-            if (!menuPanel.activeInHierarchy || toggleCountDown > 0)
+        
+                
+            if ((bool) Infrastructure.Framework.MRET.DataManager.FindPoint(bodyCameraKey) == false)
             {
-                return;
-            }
-            imageCamera.SetActive(false);
-            imageCameraManager.capturingLeft = imageCameraManager.capturingRight = false;
-            videoCamera.SetActive(false);
-            videoCameraManager.capturingLeft = videoCameraManager.capturingRight = false;
-            controlMode.DisableAllControlTypes();
-        }
-    }
-
-    // Exit camera without setting the global control mode.
-    public void ExitMode()
-    {
-        imageCamera.SetActive(false);
-        imageCameraManager.capturingLeft = imageCameraManager.capturingRight = false;
-        videoCamera.SetActive(false);
-        videoCameraManager.capturingLeft = videoCameraManager.capturingRight = false;
-        initializingToggles = true;
-        offToggle.isOn = true;
-        initializingToggles = false;
-    }
-
-    public void EnableImageCamera()
-    {
-        if (toggleCountDown == 0)
-        {
-            if (otherCameras) otherCameras.ExitMode();
-            imageCamera.SetActive(true);
-
-            if (hand == VRTK.SDK_BaseController.ControllerHand.Left)
-            {
-                imageCameraManager.capturingLeft = true;
-                imageCameraManager.capturingRight = false;
+                EnableBodyCamera();
             }
             else
             {
-                imageCameraManager.capturingLeft = false;
-                imageCameraManager.capturingRight = true;
+                DisableBodyCamera();
+            }
+            
+        }
+
+        public void ToggleCamerasOff()
+        {
+            DisableAllCameras();
+        }
+
+        public void DisableAllCameras()
+        {
+            if (imageCamera.activeSelf || videoCamera.activeSelf)
+            {
+                imageCamera.SetActive(false);
+                videoCamera.SetActive(false);
+                videoCameraManager.capturingLeft = videoCameraManager.capturingRight = false;
+                Infrastructure.Framework.MRET.ControlMode.DisableAllControlTypes();
+
+
             }
 
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(imageCamera0Key, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(imageCamera1Key, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(videoCamera0Key, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(videoCamera1Key, false));
+        }
+
+        // Exit camera without setting the global control mode.
+        public void ExitMode()
+        {
+            imageCamera.SetActive(false);
             videoCamera.SetActive(false);
             videoCameraManager.capturingLeft = videoCameraManager.capturingRight = false;
-            controlMode.EnterCameraMode();
+
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(imageCamera0Key, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(imageCamera1Key, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(videoCamera0Key, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(videoCamera1Key, false));
+
+            //spectatorManager.SwitchCamera(0);
+        }
+
+        public void EnableImageCamera()
+        {
+            if (otherCameras) otherCameras.ExitMode();
+            imageCamera.SetActive(true);
+            videoCamera.SetActive(false);
+
+            videoCameraManager.capturingLeft = videoCameraManager.capturingRight = false;
+            Infrastructure.Framework.MRET.ControlMode.EnterCameraMode();
             imageCamera.transform.SetParent(cameraHolder.transform);
             imageCamera.transform.localPosition = imageCameraPosition;
             imageCamera.transform.localRotation = Quaternion.Euler(imageCameraRotation);
-        }
-    }
 
-    public void EnableVideoCamera()
-    {
-        if (toggleCountDown == 0)
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(imageCamera0Key, hand.handedness == InputHand.Handedness.left));
+            DataManager.instance.SaveValue(new DataManager.DataValue(imageCamera1Key, hand.handedness == InputHand.Handedness.right));
+            DataManager.instance.SaveValue(new DataManager.DataValue(videoCamera0Key, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(videoCamera1Key, false));
+        }
+
+        public void EnableVideoCamera()
         {
             if (otherCameras) otherCameras.ExitMode();
             imageCamera.SetActive(false);
-            imageCameraManager.capturingLeft = false;
-            imageCameraManager.capturingRight = false;
             videoCamera.SetActive(true);
 
-            if (hand == VRTK.SDK_BaseController.ControllerHand.Left)
+            if (hand.handedness == InputHand.Handedness.left)
             {
                 videoCameraManager.capturingLeft = true;
                 videoCameraManager.capturingRight = false;
             }
-            else
+            else if (hand.handedness == InputHand.Handedness.right)
             {
                 videoCameraManager.capturingLeft = false;
                 videoCameraManager.capturingRight = true;
             }
 
-            controlMode.EnterCameraMode();
+            Infrastructure.Framework.MRET.ControlMode.EnterCameraMode();
             videoCamera.transform.SetParent(cameraHolder.transform);
             videoCamera.transform.localPosition = videoCameraPosition;
             videoCamera.transform.localRotation = Quaternion.Euler(videoCameraRotation);
+
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(imageCamera0Key, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(imageCamera1Key, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(videoCamera0Key, hand.handedness == InputHand.Handedness.left));
+            DataManager.instance.SaveValue(new DataManager.DataValue(videoCamera1Key, hand.handedness == InputHand.Handedness.right));
+
+            //Index of the Camera is set in the SpectatorRendererManager in the Attachment points
+
+        }
+
+        public void EnableBodyCamera()
+        {
+            bodyCamera.SetActive(true);
+            /*
+            if (hand.handedness == InputHand.Handedness.left)
+            {
+                bodyCameraManager.capturingLeft = true;
+                bodyCameraManager.capturingRight = false;
+            }
+            else if (hand.handedness == InputHand.Handedness.right)
+            {
+                bodyCameraManager.capturingLeft = false;
+                bodyCameraManager.capturingRight = true;
+            }
+            */
+
+            bodyCamera.transform.SetParent(bodyCameraHolder.transform);
+            bodyCamera.transform.localPosition = bodyCameraPosition;
+            bodyCamera.transform.localRotation = Quaternion.Euler(bodyCameraRotation);
+
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(bodyCameraKey, true));
+            
+
+
+        }
+
+        public void DisableBodyCamera()
+        {
+            bodyCamera.SetActive(false);
+            
+            //Body camera doesn't have a manager on it currently calling this would call errors
+            //uncomment this section of code when future implimentation of the body camera includes a dedicated manager
+            //bodyCameraManager.capturingLeft = bodyCameraManager.capturingRight = false;
+
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(bodyCameraKey, false));
+
         }
     }
 }

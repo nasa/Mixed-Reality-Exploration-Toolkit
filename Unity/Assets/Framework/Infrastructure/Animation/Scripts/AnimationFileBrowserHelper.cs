@@ -1,14 +1,18 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using UnityEngine.Events;
 using GSFC.ARVR.MRET.Common;
 using GSFC.ARVR.MRET.Common.Schemas;
 
-namespace GSFC.ARVR.MRET.Animation
+namespace GSFC.ARVR.MRET.Infrastructure.Framework.Animation
 {
     public class AnimationFileBrowserHelper : MonoBehaviour
     {
+        private MRETAnimationManager animationManager;
+
         public FileBrowserManager fileBrowserManager;
-        public AnimationMenuController animationMenuController;
 
         public UnityEvent successEvent;
         public UnityEvent failEvent;
@@ -40,7 +44,7 @@ namespace GSFC.ARVR.MRET.Animation
 
             if (selectedFile is AnimationType)
             {
-                MRETAnimation anim = MRETAnimation.Deserialize((AnimationType) selectedFile);
+                MRETBaseAnimation anim = animationManager.DeserializeAnimation((AnimationType) selectedFile);
 
                 if (anim == null)
                 {
@@ -49,27 +53,44 @@ namespace GSFC.ARVR.MRET.Animation
                     return;
                 }
 
-                animationMenuController.loopToggle.isOn = anim.loop;
-                animationMenuController.autoplayToggle.isOn = anim.autoplay;
-                animationMenuController.SetAnimation(anim);
+                animationManager.AddSelectAnimation(anim);
                 successEvent.Invoke();
             }
         }
 
         public void SaveAnimationFile()
         {
-            AnimationType anim = animationMenuController.activeAnimation.Serialize(
-                animationMenuController.loopToggle.isOn,
-                    animationMenuController.autoplayToggle.isOn);
-            anim.Loop = animationMenuController.loopToggle.isOn;
-            anim.Autoplay = animationMenuController.autoplayToggle.isOn;
+            string filePath = fileBrowserManager.GetSaveFilePath();
+            string animationName = System.IO.Path.GetFileNameWithoutExtension(filePath);
 
-            SchemaHandler.WriteXML(fileBrowserManager.GetSaveFilePath(), anim);
+            if (!string.IsNullOrEmpty(animationName))
+            {
+                //animationManager.ActiveAnimation.Name = animationName;
+            }
+
+            AnimationType anim = animationManager.SerializeAnimation();
+
+            if (string.IsNullOrEmpty(System.IO.Path.GetExtension(filePath)))
+            {
+                filePath = filePath + AnimationFileSchema.fileExtension;
+            }
+
+            SchemaHandler.WriteXML(filePath, anim);
             successEvent.Invoke();
         }
 
         private void Start()
         {
+            if (animationManager == null)
+            {
+                animationManager = FindObjectOfType<MRETAnimationManager>();
+                if (animationManager == null)
+                {
+                    Debug.LogWarning(
+                        "[AnimationFileBrowserHelper] Unable to find AnimationManager.");
+                }
+            }
+
             if (fileBrowserManager == null)
             {
                 fileBrowserManager = GetComponent<FileBrowserManager>();

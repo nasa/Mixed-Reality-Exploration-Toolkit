@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: a3a43d0516ba62041a4bb901b7633afe
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - titleField: {instanceID: 0}
+  - textField: {instanceID: 0}
+  - image: {fileID: 1232693017132704220, guid: cdf3f5dbfd37b364a91b11d9d0ac79f0, type: 3}
+  - NoteMenu: {instanceID: 0}
+  - myTexture2D: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

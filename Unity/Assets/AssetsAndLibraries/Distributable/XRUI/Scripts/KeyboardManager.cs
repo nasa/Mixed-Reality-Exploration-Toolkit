@@ -1,184 +1,153 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class KeyboardManager : MonoBehaviour
+using UnityEngine;
+using GSFC.ARVR.MRET.Components.UI;
+using GSFC.ARVR.XRUI.WorldSpaceMenu;
+
+namespace GSFC.ARVR.MRET.Components.Keyboard
 {
-    public InputField textToControl;
-    public GameObject mainKeyboard, shiftKeyboard;
-    public string enteredText = "";
-    public bool allowNewLine = true, allowTab = true;
-    public List<Button> alphaKeys = new List<Button>();
-
-    private bool capsOn = false;
-
-    void Start()
+    /// <remarks>
+    /// History:
+    /// 11 February 2021: Created
+    /// </remarks>
+    /// <summary>
+    /// This script manages virtual keyboards in MRET.
+    /// Author: Dylan Z. Baker
+    /// </summary>
+    public class KeyboardManager : MonoBehaviour
     {
-        CapsOff();
-    }
+        /// <summary>
+        /// Type of keyboard.
+        /// </summary>
+        public enum KeyboardType { Full, Numeric }
 
-    public void Close()
-    {
-        gameObject.SetActive(false);
-    }
+        /// <summary>
+        /// The full keyboard GameObject.
+        /// </summary>
+        [Tooltip("The full keyboard GameObject.")]
+        public KeyboardController fullKeyboard;
 
-    #region String Management
-    public void Enter()
-    {
-        if (allowNewLine)
+        /// <summary>
+        /// The numeric keyboard GameObject.
+        /// </summary>
+        [Tooltip("The numeric keyboard GameObject.")]
+        public KeyboardController numericKeyboard;
+
+        /// <summary>
+        /// The instance of the keyboard manager.
+        /// </summary>
+        private static KeyboardManager instance;
+
+        /// <summary>
+        /// Returns the global keyboard, or a custom instance.
+        /// </summary>
+        /// <param name="inputField">Input field to attach to keyboard.</param>
+        /// <param name="position">Position to place the keyboard.</param>
+        /// <param name="rotation">Rotation to apply to the keyboard.</param>
+        /// <param name="customInstance">If true, an instance will be returned.</param>
+        /// <param name="type">Type of keyboard.</param>
+        /// <returns>A reference to the instance of the requested keyboard.</returns>
+        public KeyboardController GetKeyboard(VR_InputField inputField, Vector3 position, Quaternion rotation,
+            bool customInstance = false, KeyboardType type = KeyboardType.Full)
         {
-            AddNewLine();
-        }
-        else
-        {
-            Clear();
-        }
-    }
+            fullKeyboard.gameObject.SetActive(false);
+            fullKeyboard.gameObject.SetActive(false);
+            fullKeyboard.textToControl = null;
+            fullKeyboard.textToControl = null;
 
-    public void AddString(string stringToAdd)
-    {
-        if (capsOn)
-        {
-            enteredText = enteredText + stringToAdd.ToUpper();
-        }
-        else
-        {
-            enteredText = enteredText + stringToAdd.ToLower();
-        }
-        UpdateControlledText();
-    }
-
-    public void AddTab()
-    {
-        if (allowTab)
-        {
-            enteredText = enteredText + "\t";
-        }
-        UpdateControlledText();
-    }
-
-    public void AddNewLine()
-    {
-        if (allowNewLine)
-        {
-            enteredText = enteredText + "\n";
-        }
-        UpdateControlledText();
-    }
-
-    public void DeleteCharAtPosition(int position)
-    {
-        if (position > -1)
-        {
-            enteredText.Remove(position, 1);
-        }
-        UpdateControlledText();
-    }
-
-    public void DeleteLastChar()
-    {
-        if (enteredText.Length > 0)
-        {
-            enteredText = enteredText.Remove(enteredText.Length - 1);
-        }
-        UpdateControlledText();
-    }
-
-    public void Clear()
-    {
-        enteredText = "";
-        UpdateControlledText();
-    }
-
-    private void UpdateControlledText()
-    {
-        textToControl.text = enteredText;
-    }
-    #endregion
-
-    #region Keyboard Management
-    public void ToggleKeyboard()
-    {
-        if (mainKeyboard.activeSelf)
-        {
-            SwitchToShiftKeyboard();
-        }
-        else
-        {
-            SwitchToMainKeyboard();
-        }
-    }
-
-    public void SwitchToMainKeyboard()
-    {
-        mainKeyboard.SetActive(true);
-        shiftKeyboard.SetActive(false);
-        CapsOff();
-    }
-
-    public void SwitchToShiftKeyboard()
-    {
-        shiftKeyboard.SetActive(true);
-        mainKeyboard.SetActive(false);
-        CapsOn();
-    }
-
-    public void ToggleCaps()
-    {
-        if (capsOn)
-        {
-            CapsOff();
-        }
-        else
-        {
-            CapsOn();
-        }
-    }
-
-    public void KeyUp()
-    {
-
-    }
-
-    public void KeyDown()
-    {
-
-    }
-
-    public void KeyLeft()
-    {
-
-    }
-
-    public void KeyRight()
-    {
-
-    }
-
-    private void CapsOn()
-    {
-        capsOn = true;
-        foreach (Button key in alphaKeys)
-        {
-            Text keyText = key.GetComponentInChildren<Text>();
-            if (keyText)
+            KeyboardController keyboard = fullKeyboard;
+            if (type == KeyboardType.Full)
             {
-                keyText.text = keyText.text.ToUpper();
+                if (customInstance)
+                {
+                    keyboard = Instantiate(fullKeyboard);
+                }
+                else
+                {
+                    keyboard = fullKeyboard;
+                }
             }
-        }
-    }
-
-    private void CapsOff()
-    {
-        capsOn = false;
-        foreach (Button key in alphaKeys)
-        {
-            Text keyText = key.GetComponentInChildren<Text>();
-            if (keyText)
+            else if (type == KeyboardType.Numeric)
             {
-                keyText.text = keyText.text.ToLower();
+                if (customInstance)
+                {
+                    keyboard = Instantiate(numericKeyboard);
+                }
+                else
+                {
+                    keyboard = numericKeyboard;
+                }
             }
+            
+            keyboard.gameObject.SetActive(true);
+            keyboard.transform.position = position;
+            keyboard.transform.rotation = rotation;
+            keyboard.textToControl = inputField;
+
+            MoveKeyboardOut(keyboard.gameObject, inputField.gameObject);
+
+            // Reset keyboard text.
+            keyboard.enteredText = inputField.text;
+
+            return keyboard;
+        }
+
+        /// <summary>
+        /// Initializes the keyboard manager.
+        /// </summary>
+        public void Initialize()
+        {
+            instance = this;
+        }
+
+        private const int maxIterations = 1000;
+        private void MoveKeyboardOut(GameObject keyboard, GameObject textObject)
+        {
+            // Get collider corresponding to keyboard.
+            Collider keyboardCollider = keyboard.GetComponent<Collider>();
+            if (keyboardCollider == null)
+            {
+                return;
+            }
+
+            // Get collider corresponding to menu.
+            WorldSpaceMenuManager textMenu = textObject.GetComponentInParent<WorldSpaceMenuManager>();
+            if (textMenu == null)
+            {
+                return;
+            }
+
+            Collider textMenuCollider = textMenu.GetComponent<Collider>();
+            if (textMenuCollider == null)
+            {
+                return;
+            }
+
+            Transform originalParent = keyboard.transform.parent;
+            keyboard.transform.SetParent(textMenu.transform);
+            keyboard.transform.localPosition = Vector3.zero;
+            keyboard.transform.localRotation = Quaternion.identity;
+
+            int iterations = 0;
+            float amtToIncrement = -0.1f;
+            while (iterations < maxIterations)
+            {
+                if (keyboardCollider.bounds.Intersects(textMenuCollider.bounds))
+                {
+                    // TODO: I know this is hacky, I'm being lazy.
+                    keyboard.transform.localPosition += new Vector3(0, amtToIncrement, 0);
+                    amtToIncrement *= 1.25f;
+                }
+                else
+                {
+                    break;
+                }
+
+                iterations++;
+            }
+
+            keyboard.transform.SetParent(originalParent);
         }
     }
-    #endregion
 }

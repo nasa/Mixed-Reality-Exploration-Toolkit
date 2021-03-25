@@ -1,4 +1,7 @@
-﻿/*
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+/*
  * 
  * This file handles setting menus and submenus active and inactive for the desktop version of MRET. 
  * A empty gameobject called Menus located under the FPSController is required.

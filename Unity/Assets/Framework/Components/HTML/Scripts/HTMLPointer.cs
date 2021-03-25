@@ -1,87 +1,95 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 
 public class HTMLPointer : MonoBehaviour
 {
     public ControllerUIRaycastDetectionManager raycastDetector;
     public GameObject controller;
-    public VR_PointerMode pointerMode;
+    public InputHand hand;
     public Material laserMaterial;
 
     private GameObject laserObject;
     private LineRenderer laser;
-    private VR_PointerMode.PointerMode lastPointerMode = VR_PointerMode.PointerMode.Environment;
 
     void Update()
     {
-        if (VRDesktopSwitcher.isVREnabled())
+        if (raycastDetector.intersectionStatus)
         {
-            if (raycastDetector.intersectionStatus)
+            if (raycastDetector.intersectingObject)
             {
-                if (raycastDetector.intersectingObject)
+                if (raycastDetector.intersectingObject.GetComponentInChildren<ZenFulcrum.EmbeddedBrowser.Browser>() != null)
                 {
-                    if (raycastDetector.intersectingObject.GetComponentInChildren<ZenFulcrum.EmbeddedBrowser.Browser>() != null)
+                    if (raycastDetector.intersectingObject.GetComponentInChildren<ZenFulcrum.EmbeddedBrowser.Browser>().EnableInput)
                     {
-                        if (raycastDetector.intersectingObject.GetComponentInChildren<ZenFulcrum.EmbeddedBrowser.Browser>().EnableInput)
+                        // TODO.
+                        /*
+                        if (!laserObject)
                         {
-                            if (!laserObject)
+                            if (pointerMode.pointerMode != VR_PointerMode.PointerMode.Disabled)
                             {
-                                if (pointerMode.pointerMode != VR_PointerMode.PointerMode.Disabled)
-                                {
-                                    lastPointerMode = pointerMode.pointerMode;
-                                    pointerMode.SwitchMode(VR_PointerMode.PointerMode.Disabled);
-                                }
-
-                                laserObject = new GameObject("htmlLaser");
-                                laserObject.transform.SetParent(controller.transform);
-                                laser = laserObject.AddComponent<LineRenderer>();
-                                laser.widthMultiplier = 0.0025f;
-                                laser.material = laserMaterial;
-                                laser.useWorldSpace = true;
-                                laser.positionCount = 2;
-                                laser.SetPosition(0, controller.transform.position);
-                                laser.SetPosition(1, raycastDetector.raycastPoint);
+                                lastPointerMode = pointerMode.pointerMode;
+                                pointerMode.SwitchMode(VR_PointerMode.PointerMode.Disabled);
                             }
-                            else
-                            {
-                                if (pointerMode.pointerMode != VR_PointerMode.PointerMode.Disabled)
-                                {
-                                    lastPointerMode = pointerMode.pointerMode;
-                                    pointerMode.SwitchMode(VR_PointerMode.PointerMode.Disabled);
-                                }
 
-                                laser.SetPosition(0, controller.transform.position);
-                                laser.SetPosition(1, raycastDetector.raycastPoint);
-                            }
+                            laserObject = new GameObject("htmlLaser");
+                            laserObject.transform.SetParent(controller.transform);
+                            laser = laserObject.AddComponent<LineRenderer>();
+                            laser.widthMultiplier = 0.0025f;
+                            laser.material = laserMaterial;
+                            laser.useWorldSpace = true;
+                            laser.positionCount = 2;
+                            laser.SetPosition(0, controller.transform.position);
+                            laser.SetPosition(1, raycastDetector.raycastPoint);
                         }
                         else
                         {
-                            if (pointerMode.pointerMode == VR_PointerMode.PointerMode.Disabled)
+                            if (pointerMode.pointerMode != VR_PointerMode.PointerMode.Disabled)
                             {
-                                pointerMode.SwitchMode(lastPointerMode);
+                                lastPointerMode = pointerMode.pointerMode;
+                                pointerMode.SwitchMode(VR_PointerMode.PointerMode.Disabled);
                             }
 
-                            if (laserObject)
-                            {
-                                Destroy(laserObject);
-                            }
-                            laserObject = null;
+                            laser.SetPosition(0, controller.transform.position);
+                            laser.SetPosition(1, raycastDetector.raycastPoint);
                         }
+                        */
+                    }
+                    else
+                    {
+                        /*
+                        if (pointerMode.pointerMode == VR_PointerMode.PointerMode.Disabled)
+                        {
+                            pointerMode.SwitchMode(lastPointerMode);
+                        }
+
+                        if (laserObject)
+                        {
+                            Destroy(laserObject);
+                        }
+                        laserObject = null;
+                        */
                     }
                 }
             }
-            else
+        }
+        else
+        {
+            // TODO.
+            /*
+            if (pointerMode.pointerMode == VR_PointerMode.PointerMode.Disabled)
             {
-                if (pointerMode.pointerMode == VR_PointerMode.PointerMode.Disabled)
-                {
-                    pointerMode.SwitchMode(lastPointerMode);
-                }
-
-                if (laserObject)
-                {
-                    Destroy(laserObject);
-                }
-                laserObject = null;
+                pointerMode.SwitchMode(lastPointerMode);
             }
+
+            if (laserObject)
+            {
+                Destroy(laserObject);
+            }
+            laserObject = null;
+            */
         }
     }
 }

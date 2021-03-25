@@ -1,4 +1,7 @@
-﻿using System.Collections;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -45,14 +48,14 @@ public class HudOpenMenuManager : MonoBehaviour {
         ConfigurationManager configManger = FindObjectOfType<ConfigurationManager>();
         if (configManger)
         {
-            huds = configManger.huds;
+            /*(huds = configManger.huds;
             for(int i=0; i < huds.Count; i++)
             {
                 int indexToSelect = i;
                 UnityEngine.Events.UnityEvent clickEvent = new UnityEngine.Events.UnityEvent();
                 clickEvent.AddListener(new UnityEngine.Events.UnityAction(() => { SetActiveSelection(indexToSelect); }));
                 hudListDisplay.AddScrollListItem(huds[i].name, clickEvent);
-            }
+            }*/
         }
     }
 

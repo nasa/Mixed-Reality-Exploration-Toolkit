@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 /**
  * Attaches the user camera to a canvas. If a canvas is not specified, the parent will
@@ -26,10 +30,9 @@ public class AttachUserCameraToCanvas : MonoBehaviour
         if (canvas != null)
         {
             // Obtain a reference to the session manager which should have the headset follower assigned
-            SessionManager sessionManager = SessionManager.instance;
 
             // Assign the camera
-            canvas.worldCamera = sessionManager.UserCamera;
+            canvas.worldCamera = MRET.InputRig.activeCamera;
             canvas.planeDistance = planeDistance;
         }
     }

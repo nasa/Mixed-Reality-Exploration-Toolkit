@@ -1,16 +1,22 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using UnityEngine;
 using System.Collections.Generic;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 
 public class DrawLineManager : MonoBehaviour
 {
+    public const string ISDRAWINGFLAGKEY = "MRET.INTERNAL.DRAWING.ACTIVE";
+
     // Public Enumerations.
     public enum CaptureTypes { None, Free, Lines, Laser };
 
     // Public Declarations.
     public GameObject cablePrefab, cornerPrefab, panelPrefab;
     public GameObject drawingContainer;
-    public GameObject leftController, rightController;
     public List<LaserDrawingRaycastManager> controllerRaycast;
     public Material cableMat, drawingMat, measurementMat, highlightMat;
     public CaptureTypes captureType = CaptureTypes.None;
@@ -18,17 +24,16 @@ public class DrawLineManager : MonoBehaviour
     public LineDrawing.unit desiredUnits = LineDrawing.unit.meters;
     public float cableCutoff = 0, lineWidth = 0.005f;
     public Material laserMaterial;
-    public Color highlightColor;
+    public Material highlightMaterial;
 
     // Private Classes.
     private class DrawingController
     {
-        public GameObject controller;
+        public InputHand controller;
         public LineDrawing currentDrawing;
         public int previewLineTimer = 0, touchpadHoldTimer = 0, waitAfterSnap = 0;
         public Vector3 snappedPos;
         public bool touchpadHeld = false, initializedLine = false, newLine = true, snappingLine = false, justSnappedLine = false;
-        public VRTK.VRTK_ControllerEvents cEvents;
     }
 
     // Private Declarations.
@@ -50,33 +55,24 @@ public class DrawLineManager : MonoBehaviour
 
     public void Start()
     {
-        if (!VRDesktopSwitcher.isDesktopEnabled())
+        foreach (InputHand hand in MRET.InputRig.hands)
         {
-            // Set up left drawing controller.
-            drawingControllers[0] = new DrawingController();
-            drawingControllers[0].controller = leftController;
-            drawingControllers[0].cEvents = drawingControllers[0].controller.GetComponent<VRTK.VRTK_ControllerEvents>();
-            drawingControllers[0].cEvents.TouchpadPressed += new VRTK.ControllerInteractionEventHandler(LTouchpadPressed);
-            drawingControllers[0].cEvents.TouchpadReleased += new VRTK.ControllerInteractionEventHandler(LTouchpadReleased);
-            drawingControllers[0].cEvents.GripPressed += new VRTK.ControllerInteractionEventHandler(LGripPressed);
-
-            // Set up right drawing controller;
-            drawingControllers[1] = new DrawingController();
-            drawingControllers[1].controller = rightController;
-            drawingControllers[1].cEvents = drawingControllers[1].controller.GetComponent<VRTK.VRTK_ControllerEvents>();
-            drawingControllers[1].cEvents.TouchpadPressed += new VRTK.ControllerInteractionEventHandler(RTouchpadPressed);
-            drawingControllers[1].cEvents.TouchpadReleased += new VRTK.ControllerInteractionEventHandler(RTouchpadReleased);
-            drawingControllers[1].cEvents.GripPressed += new VRTK.ControllerInteractionEventHandler(RGripPressed);
-        }
-        else
-        {
-            drawingControllers[0] = new DrawingController();
-            drawingControllers[0].controller = leftController;
-            EventManager.OnLeftClick += LTouchpadPressed;
-            EventManager.OnLeftClickUp += LTouchpadReleased;
+            if (hand.handedness == InputHand.Handedness.left || hand.handedness == InputHand.Handedness.neutral)
+            {
+                drawingControllers[0] = new DrawingController();
+                drawingControllers[0].controller = hand;
+            }
+            else if (hand.handedness == InputHand.Handedness.right)
+            {
+                drawingControllers[1] = new DrawingController();
+                drawingControllers[1].controller = hand;
+            }
         }
 
         undoManager = FindObjectOfType<UndoManager>();
+
+        // DZB: Stopgap solution, want control mode handling.
+        MRET.DataManager.SaveValue(ISDRAWINGFLAGKEY, false);
     }
 
     // This method adds a new line drawing with all of its points in one step.
@@ -129,12 +125,10 @@ public class DrawLineManager : MonoBehaviour
             MeshCollider coll = drw.meshModel.AddComponent<MeshCollider>();
             coll.convex = true;
             coll.isTrigger = true;
-            //VRTK.VRTK_InteractableObject iObj = drw.meshModel.AddComponent<VRTK.VRTK_InteractableObject>();
-            //iObj.disableWhenIdle = false;
-            //iObj.isGrabbable = false;
-            //iObj.isUsable = true;
-            //iObj.touchHighlightColor = highlightColor;
-            //iObj.enabled = true;
+            InteractableDrawing idraw = drw.meshModel.AddComponent<InteractableDrawing>();
+            idraw.grabbable = false;
+            idraw.useable = true;
+            idraw.highlightMaterial = highlightMaterial;
             if (rType == LineDrawing.RenderTypes.Cable)
             {
                 drw.meshModel.GetComponent<MeshRenderer>().enabled = false;
@@ -149,6 +143,8 @@ public class DrawLineManager : MonoBehaviour
         matToUse = drawingMat;
         renderType = LineDrawing.RenderTypes.Drawing;
         captureType = CaptureTypes.Free;
+        // DZB: Stopgap solution, want control mode handling.
+        MRET.DataManager.SaveValue(ISDRAWINGFLAGKEY, true);
     }
 
     public void StartStraightDrawings()
@@ -158,11 +154,16 @@ public class DrawLineManager : MonoBehaviour
         renderType = LineDrawing.RenderTypes.Drawing;
         captureType = CaptureTypes.Lines;
         
-        for (int i = 0; i < (VRDesktopSwitcher.isDesktopEnabled() ? 1 : 2); i++)
+        for (int i = 0; i < 2; i++)
         {
-            drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
-            drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            if (drawingControllers[i] != null)
+            {
+                drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
+                drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            }
         }
+        // DZB: Stopgap solution, want control mode handling.
+        MRET.DataManager.SaveValue(ISDRAWINGFLAGKEY, true);
     }
 
     public void StartLaserDrawings()
@@ -172,11 +173,16 @@ public class DrawLineManager : MonoBehaviour
         renderType = LineDrawing.RenderTypes.Drawing;
         captureType = CaptureTypes.Laser;
 
-        for (int i = 0; i < (VRDesktopSwitcher.isDesktopEnabled() ? 1 : 2); i++)
+        for (int i = 0; i < 2; i++)
         {
-            drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
-            drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            if (drawingControllers[i] != null)
+            {
+                drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
+                drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            }
         }
+        // DZB: Stopgap solution, want control mode handling.
+        MRET.DataManager.SaveValue(ISDRAWINGFLAGKEY, true);
     }
 
     public void StartFreeformCables()
@@ -185,6 +191,8 @@ public class DrawLineManager : MonoBehaviour
         matToUse = cableMat;
         renderType = LineDrawing.RenderTypes.Cable;
         captureType = CaptureTypes.Free;
+        // DZB: Stopgap solution, want control mode handling.
+        MRET.DataManager.SaveValue(ISDRAWINGFLAGKEY, true);
     }
 
     public void StartStraightCables()
@@ -194,11 +202,16 @@ public class DrawLineManager : MonoBehaviour
         renderType = LineDrawing.RenderTypes.Cable;
         captureType = CaptureTypes.Lines;
 
-        for (int i = 0; i < (VRDesktopSwitcher.isDesktopEnabled() ? 1 : 2); i++)
+        for (int i = 0; i < 2; i++)
         {
-            drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
-            drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            if (drawingControllers[i] != null)
+            {
+                drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
+                drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            }
         }
+        // DZB: Stopgap solution, want control mode handling.
+        MRET.DataManager.SaveValue(ISDRAWINGFLAGKEY, true);
     }
 
     public void StartLaserCables()
@@ -208,11 +221,16 @@ public class DrawLineManager : MonoBehaviour
         renderType = LineDrawing.RenderTypes.Cable;
         captureType = CaptureTypes.Laser;
 
-        for (int i = 0; i < (VRDesktopSwitcher.isDesktopEnabled() ? 1 : 2); i++)
+        for (int i = 0; i < 2; i++)
         {
-            drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
-            drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            if (drawingControllers[i] != null)
+            {
+                drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
+                drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            }
         }
+        // DZB: Stopgap solution, want control mode handling.
+        MRET.DataManager.SaveValue(ISDRAWINGFLAGKEY, true);
     }
 
     public void StartFreeformMeasurements()
@@ -221,6 +239,8 @@ public class DrawLineManager : MonoBehaviour
         matToUse = measurementMat;
         renderType = LineDrawing.RenderTypes.Measurement;
         captureType = CaptureTypes.Free;
+        // DZB: Stopgap solution, want control mode handling.
+        MRET.DataManager.SaveValue(ISDRAWINGFLAGKEY, true);
     }
 
     public void StartStraightMeasurements()
@@ -230,11 +250,16 @@ public class DrawLineManager : MonoBehaviour
         renderType = LineDrawing.RenderTypes.Measurement;
         captureType = CaptureTypes.Lines;
 
-        for (int i = 0; i < (VRDesktopSwitcher.isDesktopEnabled() ? 1 : 2); i++)
+        for (int i = 0; i < 2; i++)
         {
-            drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
-            drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            if (drawingControllers[i] != null)
+            {
+                drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
+                drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            }
         }
+        // DZB: Stopgap solution, want control mode handling.
+        MRET.DataManager.SaveValue(ISDRAWINGFLAGKEY, true);
     }
 
     public void StartLaserMeasurements()
@@ -244,22 +269,24 @@ public class DrawLineManager : MonoBehaviour
         renderType = LineDrawing.RenderTypes.Measurement;
         captureType = CaptureTypes.Laser;
 
-        for (int i = 0; i < (VRDesktopSwitcher.isDesktopEnabled() ? 1 : 2); i++)
+        for (int i = 0; i < 2; i++)
         {
-            drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
-            drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            if (drawingControllers[i] != null)
+            {
+                drawingControllers[i].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, true);
+                drawingControllers[i].currentDrawing.desiredUnits = desiredUnits;
+            }
         }
+        // DZB: Stopgap solution, want control mode handling.
+        MRET.DataManager.SaveValue(ISDRAWINGFLAGKEY, true);
     }
 
     public void ExitDrawings()
     {
         TurnOffLasers();
         captureType = CaptureTypes.None;
-    }
-
-    public void LTouchpadPressed(object sender, VRTK.ControllerInteractionEventArgs e)
-    {
-        CaptureTouchpadPressEvent(0);
+        // DZB: Stopgap solution, want control mode handling.
+        MRET.DataManager.SaveValue(ISDRAWINGFLAGKEY, false);
     }
 
     public void LTouchpadPressed()
@@ -267,14 +294,9 @@ public class DrawLineManager : MonoBehaviour
         CaptureTouchpadPressEvent(0);
     }
 
-    public void RTouchpadPressed(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void RTouchpadPressed()
     {
         CaptureTouchpadPressEvent(1);
-    }
-
-    public void LTouchpadReleased(object sender, VRTK.ControllerInteractionEventArgs e)
-    {
-        CaptureTouchpadReleaseEvent(0);
     }
 
     public void LTouchpadReleased()
@@ -282,31 +304,31 @@ public class DrawLineManager : MonoBehaviour
         CaptureTouchpadReleaseEvent(0);
     }
 
-    public void RTouchpadReleased(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void RTouchpadReleased()
     {
         CaptureTouchpadReleaseEvent(1);
     }
 
-    public void LGripPressed(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void LGripPressed()
     {
         CaptureGripPressEvent(0);
     }
 
-    public void RGripPressed(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void RGripPressed()
     {
         CaptureGripPressEvent(1);
     }
 
     private void SetLaserPosition(int index, Vector3 posToSet)
     {
-        if (index == 0 && leftLaser)
+        if (index == 0 && leftLaser && drawingControllers[0] != null)
         {
-            leftLaser.SetPosition(0, leftController.transform.position);
+            leftLaser.SetPosition(0, drawingControllers[0].controller.transform.position);
             leftLaser.SetPosition(1, posToSet);
         }
-        else if (index == 1 && rightLaser)
+        else if (index == 1 && rightLaser && drawingControllers[1] != null)
         {
-            rightLaser.SetPosition(0, rightController.transform.position);
+            rightLaser.SetPosition(0, drawingControllers[1].controller.transform.position);
             rightLaser.SetPosition(1, posToSet);
         }
     }
@@ -315,25 +337,31 @@ public class DrawLineManager : MonoBehaviour
     {
         TurnOffLasers();
 
-        leftLaserObject = new GameObject("DrawingLaser");
-        leftLaserObject.transform.SetParent(leftController.transform);
-        leftLaser = leftLaserObject.AddComponent<LineRenderer>();
-        leftLaser.widthMultiplier = 0.0025f;
-        leftLaser.material = laserMaterial;
-        leftLaser.useWorldSpace = true;
-        leftLaser.positionCount = 2;
-        leftLaser.SetPosition(0, leftController.transform.position);
-        leftLaser.SetPosition(1, leftController.transform.position);
+        if (drawingControllers[0] != null)
+        {
+            leftLaserObject = new GameObject("DrawingLaser");
+            leftLaserObject.transform.SetParent(drawingControllers[0].controller.transform);
+            leftLaser = leftLaserObject.AddComponent<LineRenderer>();
+            leftLaser.widthMultiplier = 0.0025f;
+            leftLaser.material = laserMaterial;
+            leftLaser.useWorldSpace = true;
+            leftLaser.positionCount = 2;
+            leftLaser.SetPosition(0, drawingControllers[0].controller.transform.position);
+            leftLaser.SetPosition(1, drawingControllers[0].controller.transform.position);
+        }
 
-        rightLaserObject = new GameObject("DrawingLaser");
-        rightLaserObject.transform.SetParent(rightController.transform);
-        rightLaser = rightLaserObject.AddComponent<LineRenderer>();
-        rightLaser.widthMultiplier = 0.0025f;
-        rightLaser.material = laserMaterial;
-        rightLaser.useWorldSpace = true;
-        rightLaser.positionCount = 2;
-        rightLaser.SetPosition(0, rightController.transform.position);
-        rightLaser.SetPosition(1, rightController.transform.position);
+        if (drawingControllers[1] != null)
+        {
+            rightLaserObject = new GameObject("DrawingLaser");
+            rightLaserObject.transform.SetParent(drawingControllers[1].controller.transform);
+            rightLaser = rightLaserObject.AddComponent<LineRenderer>();
+            rightLaser.widthMultiplier = 0.0025f;
+            rightLaser.material = laserMaterial;
+            rightLaser.useWorldSpace = true;
+            rightLaser.positionCount = 2;
+            rightLaser.SetPosition(0, drawingControllers[1].controller.transform.position);
+            rightLaser.SetPosition(1, drawingControllers[1].controller.transform.position);
+        }
     }
 
     private void TurnOffLasers()
@@ -363,16 +391,7 @@ public class DrawLineManager : MonoBehaviour
                 // Start new line if touchpad pressed down.
                 drawingControllers[ctrlIndex].currentDrawing = new LineDrawing(renderType, matToUse, highlightMat, cablePrefab, cornerPrefab, lineWidth, drawingContainer, false);
                 drawingControllers[ctrlIndex].currentDrawing.desiredUnits = desiredUnits;
-                if (!VRDesktopSwitcher.isDesktopEnabled())
-                {
-                    drawingControllers[ctrlIndex].currentDrawing.AddPoint(drawingControllers[ctrlIndex].controller.transform.position);
-                }
-                else
-                {
-                    mousePosition = Input.mousePosition;
-                    mousePosition.z = 3f;
-                    drawingControllers[ctrlIndex].currentDrawing.AddPoint(Camera.main.ScreenToWorldPoint(mousePosition));
-                }
+                drawingControllers[ctrlIndex].currentDrawing.AddPoint(drawingControllers[ctrlIndex].controller.transform.position);
                 drawingControllers[ctrlIndex].initializedLine = true;
                 break;
 
@@ -387,16 +406,8 @@ public class DrawLineManager : MonoBehaviour
                             break;
                         }
                     }
-                    if (!VRDesktopSwitcher.isDesktopEnabled())
-                    {
-                        drawingControllers[ctrlIndex].currentDrawing.AddPoint(drawingControllers[ctrlIndex].controller.transform.position);
-                    }
-                    else
-                    {
-                        mousePosition = Input.mousePosition;
-                        mousePosition.z = 3f;
-                        drawingControllers[ctrlIndex].currentDrawing.AddPoint(Camera.main.ScreenToWorldPoint(mousePosition));
-                    }
+
+                    drawingControllers[ctrlIndex].currentDrawing.AddPoint(drawingControllers[ctrlIndex].controller.transform.position);
                 }
                 break;
 
@@ -434,12 +445,10 @@ public class DrawLineManager : MonoBehaviour
                     MeshCollider coll = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<MeshCollider>();
                     coll.convex = true;
                     coll.isTrigger = true;
-                    //VRTK.VRTK_InteractableObject iObj = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<VRTK.VRTK_InteractableObject>();
-                    //iObj.disableWhenIdle = false;
-                    //iObj.isGrabbable = false;
-                    //iObj.isUsable = true;
-                    //iObj.touchHighlightColor = highlightColor;
-                    //iObj.enabled = true;
+                    InteractableDrawing drw = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<InteractableDrawing>();
+                    drw.grabbable = false;
+                    drw.useable = true;
+                    drw.highlightMaterial = highlightMaterial;
                     if (renderType == LineDrawing.RenderTypes.Cable)
                     {
                         drawingControllers[ctrlIndex].currentDrawing.meshModel.GetComponent<MeshRenderer>().enabled = false;
@@ -481,12 +490,10 @@ public class DrawLineManager : MonoBehaviour
                         MeshCollider coll = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<MeshCollider>();
                         coll.convex = true;
                         coll.isTrigger = true;
-                        //VRTK.VRTK_InteractableObject iObj = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<VRTK.VRTK_InteractableObject>();
-                        //iObj.disableWhenIdle = false;
-                        //iObj.isGrabbable = false;
-                        //iObj.isUsable = true;
-                        //iObj.touchHighlightColor = highlightColor;
-                        //iObj.enabled = true;
+                        InteractableDrawing drw = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<InteractableDrawing>();
+                        drw.grabbable = false;
+                        drw.useable = true;
+                        drw.highlightMaterial = highlightMaterial;
                         if (renderType == LineDrawing.RenderTypes.Cable)
                         {
                             drawingControllers[ctrlIndex].currentDrawing.meshModel.GetComponent<MeshRenderer>().enabled = false;
@@ -514,12 +521,11 @@ public class DrawLineManager : MonoBehaviour
                         MeshCollider coll = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<MeshCollider>();
                         coll.convex = true;
                         coll.isTrigger = true;
-                        //VRTK.VRTK_InteractableObject iObj = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<VRTK.VRTK_InteractableObject>();
-                        //iObj.disableWhenIdle = false;
-                        //iObj.isGrabbable = false;
-                        //iObj.isUsable = true;
-                        //iObj.touchHighlightColor = highlightColor;
-                        //iObj.enabled = true;
+
+                        InteractableDrawing drw = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<InteractableDrawing>();
+                        drw.grabbable = false;
+                        drw.useable = true;
+                        drw.highlightMaterial =  highlightMaterial;
                         if (renderType == LineDrawing.RenderTypes.Cable)
                         {
                             drawingControllers[ctrlIndex].currentDrawing.meshModel.GetComponent<MeshRenderer>().enabled = false;
@@ -546,27 +552,26 @@ public class DrawLineManager : MonoBehaviour
     private void Update()
     {
         HandleControllerState(0);
-
-        if (VRDesktopSwitcher.isVREnabled())
+        if (drawingControllers[1] != null)
         {
             HandleControllerState(1);
         }
-
-        if (!VRDesktopSwitcher.isDesktopEnabled())
+        
+        if (controllerRaycast[0] && captureType == CaptureTypes.Laser && drawingControllers[0] != null)
         {
-            if (controllerRaycast[0] && captureType == CaptureTypes.Laser)
+            if (controllerRaycast[0].intersectionStatus)
             {
-                if (controllerRaycast[0].intersectionStatus)
-                {
-                    SetLaserPosition(0, controllerRaycast[0].raycastPoint);
-                }
-                else
-                {
-                    SetLaserPosition(0, leftController.transform.position);
-                }
+                SetLaserPosition(0, controllerRaycast[0].raycastPoint);
             }
+            else
+            {
+                SetLaserPosition(0, drawingControllers[0].controller.transform.position);
+            }
+        }
 
-            if (controllerRaycast[1] && captureType == CaptureTypes.Laser)
+        if (drawingControllers[1] != null)
+        {
+            if (controllerRaycast[1] && captureType == CaptureTypes.Laser && drawingControllers[1] != null)
             {
                 if (controllerRaycast[1].intersectionStatus)
                 {
@@ -574,7 +579,7 @@ public class DrawLineManager : MonoBehaviour
                 }
                 else
                 {
-                    SetLaserPosition(1, rightController.transform.position);
+                    SetLaserPosition(1, drawingControllers[1].controller.transform.position);
                 }
             }
         }
@@ -606,18 +611,9 @@ public class DrawLineManager : MonoBehaviour
 
                     if (drawingControllers[ctrlIndex].initializedLine)
                     {
-                        if (VRDesktopSwitcher.isDesktopEnabled())
+                        if (Vector3.Magnitude(drawingControllers[ctrlIndex].controller.transform.position - drawingControllers[ctrlIndex].currentDrawing.GetLastPoint()) >= 0.001f)
                         {
-                            mousePosition = Input.mousePosition;
-                            mousePosition.z = 3f;
-                            drawingControllers[ctrlIndex].currentDrawing.AddPoint(Camera.main.ScreenToWorldPoint(mousePosition));
-                        }
-                        else
-                        {
-                            if (Vector3.Magnitude(drawingControllers[ctrlIndex].controller.transform.position - drawingControllers[ctrlIndex].currentDrawing.GetLastPoint()) >= 0.001f)
-                            {
-                                drawingControllers[ctrlIndex].currentDrawing.AddPoint(drawingControllers[ctrlIndex].controller.transform.position);
-                            }
+                            drawingControllers[ctrlIndex].currentDrawing.AddPoint(drawingControllers[ctrlIndex].controller.transform.position);
                         }
                     }
                 }
@@ -646,16 +642,7 @@ public class DrawLineManager : MonoBehaviour
                                 }
                             }
 
-                            if (!VRDesktopSwitcher.isDesktopEnabled())
-                            {
-                                drawingControllers[ctrlIndex].snappedPos = drawingControllers[ctrlIndex].currentDrawing.SetPreviewLine(drawingControllers[ctrlIndex].controller.transform.position, true);
-                            }
-                            else
-                            {
-                                mousePosition = Input.mousePosition;
-                                mousePosition.z = 3f;
-                                drawingControllers[ctrlIndex].snappedPos = drawingControllers[ctrlIndex].currentDrawing.SetPreviewLine(Camera.main.ScreenToWorldPoint(mousePosition), true);
-                            }
+                            drawingControllers[ctrlIndex].snappedPos = drawingControllers[ctrlIndex].currentDrawing.SetPreviewLine(drawingControllers[ctrlIndex].controller.transform.position, true);
                         }
                         drawingControllers[ctrlIndex].previewLineTimer++;
                     }
@@ -695,16 +682,7 @@ public class DrawLineManager : MonoBehaviour
                                     break;
                                 }
                             }
-                            if (VRDesktopSwitcher.isVREnabled())
-                            {
-                                drawingControllers[ctrlIndex].currentDrawing.SetPreviewLine(drawingControllers[ctrlIndex].controller.transform.position, false);
-                            }
-                            else
-                            {
-                                Vector3 tempMousePosition = Input.mousePosition;
-                                tempMousePosition.z = 3f;
-                                drawingControllers[ctrlIndex].currentDrawing.SetPreviewLine(Camera.main.ScreenToWorldPoint(tempMousePosition), false);
-                            }
+                            drawingControllers[ctrlIndex].currentDrawing.SetPreviewLine(drawingControllers[ctrlIndex].controller.transform.position, false);
                         }
                         drawingControllers[ctrlIndex].previewLineTimer++;
                     }

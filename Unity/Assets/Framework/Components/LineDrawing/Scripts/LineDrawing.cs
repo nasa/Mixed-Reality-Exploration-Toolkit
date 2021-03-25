@@ -1,8 +1,12 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using UnityEngine.UI;
 using System;
 using System.Collections.Generic;
 using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class LineDrawing
 {
@@ -290,10 +294,9 @@ public class LineDrawing
         textSubObject.AddComponent<BoxCollider>();
         textSubObject.GetComponent<BoxCollider>().isTrigger = true;
         textSubObject.AddComponent<InteractableLabel>();
-        textSubObject.GetComponent<InteractableLabel>().disableWhenIdle = false;
         textSubObject.GetComponent<InteractableLabel>().enabled = true;
-        textSubObject.GetComponent<InteractableLabel>().isGrabbable = true;
-        textSubObject.GetComponent<InteractableLabel>().isUsable = true;
+        textSubObject.GetComponent<InteractableLabel>().grabbable = true;
+        textSubObject.GetComponent<InteractableLabel>().useable = true;
     }
 
     public void Render()
@@ -317,11 +320,10 @@ public class LineDrawing
                     meshLine.hmat = highlightMat;
                     meshLine.drawingScript = this;
                     interactableDrawing = meshModel.AddComponent<InteractableDrawing>();
-                    interactableDrawing.disableWhenIdle = false;
                     interactableDrawing.enabled = true;
-                    interactableDrawing.isUsable = true;
-                    interactableDrawing.headsetObject = VRTK.VRTK_DeviceFinder.HeadsetTransform();
-                    interactableDrawing.drawingPanelPrefab = SessionConfiguration.instance.drawingPanelPrefab;
+                    interactableDrawing.useable = true;
+                    interactableDrawing.headsetObject = MRET.InputRig.head.transform;
+                    interactableDrawing.drawingPanelPrefab = MRET.DrawingPanelPrefab;
 
                     isRendered = true;
                     initialized = true;
@@ -338,11 +340,10 @@ public class LineDrawing
                     meshLine.hmat = highlightMat;
                     meshLine.drawingScript = this;
                     interactableDrawing = meshModel.AddComponent<InteractableDrawing>();
-                    interactableDrawing.disableWhenIdle = false;
                     interactableDrawing.enabled = true;
-                    interactableDrawing.isUsable = true;
-                    interactableDrawing.headsetObject = VRTK.VRTK_DeviceFinder.HeadsetTransform();
-                    interactableDrawing.drawingPanelPrefab = SessionConfiguration.instance.drawingPanelPrefab;
+                    interactableDrawing.useable = true;
+                    interactableDrawing.headsetObject = MRET.InputRig.head.transform;
+                    interactableDrawing.drawingPanelPrefab = MRET.DrawingPanelPrefab;
 
                     isRendered = true;
                     initialized = true;
@@ -359,11 +360,10 @@ public class LineDrawing
                     meshLine.hmat = highlightMat;
                     meshLine.drawingScript = this;
                     interactableDrawing = meshModel.AddComponent<InteractableDrawing>();
-                    interactableDrawing.disableWhenIdle = false;
                     interactableDrawing.enabled = true;
-                    interactableDrawing.isUsable = true;
-                    interactableDrawing.headsetObject = VRTK.VRTK_DeviceFinder.HeadsetTransform();
-                    interactableDrawing.drawingPanelPrefab = SessionConfiguration.instance.drawingPanelPrefab;
+                    interactableDrawing.useable = true;
+                    interactableDrawing.headsetObject = MRET.InputRig.head.transform;
+                    interactableDrawing.drawingPanelPrefab = MRET.DrawingPanelPrefab;
 
                     isRendered = true;
 

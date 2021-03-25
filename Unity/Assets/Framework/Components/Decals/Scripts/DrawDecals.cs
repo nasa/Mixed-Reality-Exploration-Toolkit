@@ -1,6 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
 using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 /// <summary>
 /// Class to draw decals on a surface -- e.g. used for footprints on the moon.
@@ -70,8 +73,7 @@ public class DrawDecals : MonoBehaviour
     /// </summary>
     public void updateTerrain()
     {
-        Transform headSetTrans = VRTK.VRTK_DeviceFinder.DeviceTransform(
-            VRTK.VRTK_DeviceFinder.Devices.Headset);
+        Transform headSetTrans = MRET.InputRig.head.transform;
         var position1 = headSetTrans.position;
         var forwardDir = headSetTrans.forward;
         RaycastHit hit;
@@ -98,8 +100,7 @@ public class DrawDecals : MonoBehaviour
     {
         if (walking && Time.time >= nextTime )
         {
-            Transform headSetTrans = VRTK.VRTK_DeviceFinder.DeviceTransform(
-            VRTK.VRTK_DeviceFinder.Devices.Headset);
+            Transform headSetTrans = MRET.InputRig.head.transform;
             var curPos = headSetTrans.position;
             var curRot = headSetTrans.rotation;
             if (Vector3.Distance(curPos, initHitPos) >= 1 || Quaternion.Angle(curRot, initHitRot) >= 45)

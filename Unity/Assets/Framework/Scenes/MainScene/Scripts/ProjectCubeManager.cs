@@ -1,8 +1,12 @@
-﻿using UnityEngine.UI;
-using VRTK;
-using GSFC.ARVR.MRET.Common.Schemas;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class ProjectCubeManager : VRTK_InteractableObject
+using UnityEngine.UI;
+using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Infrastructure.Framework.Interactable;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
+
+public class ProjectCubeManager : Interactable
 {
     public enum CubeType { Projects, Templates, Collaborative };
 
@@ -16,29 +20,29 @@ public class ProjectCubeManager : VRTK_InteractableObject
     public UnityProject projectManager;
     public CubeType cubeType = CubeType.Projects;
 
-    public override void StartTouching(VRTK_InteractTouch currentTouchingObject)
+    public void StartTouching()
     {
         billboardImage.sprite = screenshot.sprite;
         billboardName.text = projectName.text;
         billboardEdited.text = lastEdited1.text;
     }
 
-    public override void StartUsing(VRTK_InteractUse currentUsingObject)
+    public void StartUsing()
     {
         switch (cubeType)
         {
             case CubeType.Projects:
-                modeNavigator.configManager.AddRecentProject(projectToOpen);
+                MRET.ConfigurationManager.AddRecentProject(projectToOpen);
                 modeNavigator.OpenProject(projectToOpen, false);
                 break;
 
             case CubeType.Templates:
-                modeNavigator.configManager.AddRecentTemplate(projectToOpen);
+                MRET.ConfigurationManager.AddRecentTemplate(projectToOpen);
                 modeNavigator.OpenProject(projectToOpen, false);
                 break;
 
             case CubeType.Collaborative:
-                modeNavigator.configManager.AddRecentCollaboration(projectToOpen);
+                MRET.ConfigurationManager.AddRecentCollaboration(projectToOpen);
                 modeNavigator.OpenProject(projectToOpen, true);
                 break;
 

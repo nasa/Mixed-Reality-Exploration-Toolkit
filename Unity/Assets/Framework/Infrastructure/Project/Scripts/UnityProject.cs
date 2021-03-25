@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using System.Xml;
 using UnityEngine;
 using GSFC.ARVR.MRET.Infrastructure.Components.AssetBundles;
@@ -7,6 +10,9 @@ using System.Collections;
 using System.Xml.Serialization;
 using System.Collections.Generic;
 using GSFC.ARVR.MRET.ProceduralObjectGeneration;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+using GSFC.ARVR.MRET.Infrastructure.Framework.Animation;
+using GSFC.ARVR.MRET.Components.Notes;
 
 namespace GSFC.ARVR.MRET.Common.Schemas
 {
@@ -24,14 +30,9 @@ namespace GSFC.ARVR.MRET.Common.Schemas
 
         public static UnityProject instance;
 
-        // We don't need to expose this to the editor. We will just obtain the reference in Start
-        private SessionManager sessionManager;
-
         public GameObject lobbyArea;
         public GameObject projectObjectContainer, projectDrawingContainer, projectNoteContainer, dataSourcesContainer, animationPanelsContainer,
             pointCloudContainer, proceduralObjectGeneratorContainer, userContainer;
-        // TODO: Too many other scripts reference this field. They should be modified to reference the DataManager reference in SessionManager
-        public DataManager dataManager;
         public GameObject partPanelPrefab, grabCubePrefab, gmsecSourcePrefab, animationPanelPrefab;
         public Color partTouchHighlightColor;
         public float scaleMultiplier = 1;
@@ -55,14 +56,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             lcUUID = Guid.NewGuid(), rcUUID = Guid.NewGuid(),
             lpUUID = Guid.NewGuid(), rpUUID = Guid.NewGuid();
 
-        private bool loaded = false;
-        public bool Loaded
-        {
-            get
-            {
-                return this.loaded;
-            }
-        }
+        public bool Loaded { get; private set; } = false;
 
         // Loaded Project Information.
         private ViewType loadedProject_currentView = null;
@@ -73,35 +67,12 @@ namespace GSFC.ARVR.MRET.Common.Schemas
 
         private LoadingIndicatorManager loadingIndicatorManager = null;
 
-        /**
-         * Only called once during initialization
-         */
-        private void Awake()
+        public void Initialize()
         {
             instance = this;
-        }
-
-        /**
-         * Only called once after enabled. Guaranteed to be called after all component Awake methods have been called
-         */
-        void Start()
-        {
-            // Obtain a reference to the session manager that will contain references to system-wide references
-            // we will need
-            sessionManager = SessionManager.instance;
 
             // Locate the loading indicator
             loadingIndicatorManager = FindObjectOfType<LoadingIndicatorManager>();
-
-            // Obtain a reference to the DataManager if not assigned
-            if (dataManager == null)
-            {
-                dataManager = sessionManager.dataManager;
-                if (dataManager == null)
-                {
-                    Debug.LogError("[" + NAME + "] Unable to obtain a reference to a DataManager");
-                }
-            }
         }
 
         public void LoadFromXML(string filePath)
@@ -113,7 +84,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             {
                 ProjectType proj = (ProjectType)ser.Deserialize(reader);
 
-                StartCoroutine(Deserialize(proj));
+                Deserialize(proj);
                 reader.Close();
             }
             catch (Exception e)
@@ -151,9 +122,9 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             Debug.Log("Unloading project.");
 
             // Leave collaboration session if in one.
-            if (GSFC.ARVR.MRET.XRC.XRCUnity.IsSessionActive)
+            if (XRC.XRCUnity.IsSessionActive)
             {
-                GSFC.ARVR.XRC.XRCInterface.LeaveSession();
+                ARVR.XRC.XRCInterface.LeaveSession();
             }
 
             // Detatch all objects from the controllers.
@@ -375,8 +346,8 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                         AnimationMenuController menuContr = panel.animationPanel.GetComponent<AnimationMenuController>();
                         if (menuContr)
                         {
-                            serializedPanel.Animation =
-                                menuContr.activeAnimation.Serialize(menuContr.loopToggle.isOn, menuContr.autoplayToggle.isOn);
+                            //serializedPanel.Animation =
+                            //    menuContr.activeAnimation.Serialize(menuContr.loopToggle.isOn, menuContr.autoplayToggle.isOn);
                             serializedPanel.Position = new Vector3Type()
                             {
                                 X = panel.transform.position.x,
@@ -410,16 +381,13 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             return serializationDestination;
         }
 
-        public IEnumerator Deserialize(ProjectType serializedProject)
+        public void Deserialize(ProjectType serializedProject)
         {
             // Hide the Lobby area.
             lobbyArea.SetActive(false);
 
             // Indicate that the project is loading.
             loadingIndicatorManager.ShowLoadingIndicator("Loading Project...");
-
-            // Initialize the Asset Bundle Manager.
-            yield return StartCoroutine(InitializeAssetBundleManager());
 
             loadedProject_gmsecSources = new List<GMSECSourceType>();
 
@@ -447,10 +415,10 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                                             AnimationMenuController panelController = instantiatedPanel.GetComponentInChildren<AnimationMenuController>(true);
                                             if (panelController)
                                             {
-                                                MRETAnimation anim = MRETAnimation.Deserialize(panel.Animation);
-                                                panelController.loopToggle.isOn = anim.loop;
-                                                panelController.autoplayToggle.isOn = anim.autoplay;
-                                                panelController.SetAnimation(anim);
+                                                //MRETAnimationGroup anim = MRETAnimationGroup.Deserialize(panel.Animation);
+                                                //panelController.loopToggle.isOn = anim.LoopCount > 1;
+                                                //panelController.autoplayToggle.isOn = anim.Autostart;
+                                                //panelController.SetAnimation(anim);
                                             }
                                         }
                                     }
@@ -481,180 +449,103 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                                 RenderSettings.skybox = Resources.Load("Skyboxes/" + loadedProject_environment.Skybox.MaterialName, typeof(Material)) as Material;
 
                                 // Place the user.
-                                if (sessionManager.headsetFollower != null)
+                                float yOffset = 0f;
+                                Transform transformToSet = MRET.Infrastructure.Framework.MRET.InputRig.transform;
+                                transformToSet.position = new Vector3(loadedProject_environment.DefaultUserTransform.Position.X,
+                                    loadedProject_environment.DefaultUserTransform.Position.Y + yOffset, loadedProject_environment.DefaultUserTransform.Position.Z);
+                                transformToSet.rotation = Quaternion.Euler(loadedProject_environment.DefaultUserTransform.Rotation.X,
+                                    loadedProject_environment.DefaultUserTransform.Rotation.Y, loadedProject_environment.DefaultUserTransform.Rotation.Z);
+                                transformToSet.localScale = new Vector3(loadedProject_environment.DefaultUserTransform.Scale.X,
+                                    loadedProject_environment.DefaultUserTransform.Scale.Y, loadedProject_environment.DefaultUserTransform.Scale.Z);
+
+                                // Apply locomotion settings.
+                                if (loadedProject_environment.LocomotionSettings != null)
                                 {
-                                    float yOffset = VRDesktopSwitcher.isDesktopEnabled() ? 0.85f : 0;
-                                    Transform transformToSet = sessionManager.headsetFollower.transform.parent.parent;
-                                    transformToSet.position = new Vector3(loadedProject_environment.DefaultUserTransform.Position.X,
-                                        loadedProject_environment.DefaultUserTransform.Position.Y + yOffset, loadedProject_environment.DefaultUserTransform.Position.Z);
-                                    transformToSet.rotation = Quaternion.Euler(loadedProject_environment.DefaultUserTransform.Rotation.X,
-                                        loadedProject_environment.DefaultUserTransform.Rotation.Y, loadedProject_environment.DefaultUserTransform.Rotation.Z);
-                                    transformToSet.localScale = new Vector3(loadedProject_environment.DefaultUserTransform.Scale.X,
-                                        loadedProject_environment.DefaultUserTransform.Scale.Y, loadedProject_environment.DefaultUserTransform.Scale.Z);
-
-                                    // Apply locomotion settings.
-                                    if (loadedProject_environment.LocomotionSettings != null)
+                                    if (loadedProject_environment.LocomotionSettings.ArmswingSpeed > 0)
                                     {
-                                        if (loadedProject_environment.LocomotionSettings.ArmswingSpeed > 0)
-                                        {
-                                            if (VRDesktopSwitcher.isVREnabled())
-                                            {
-                                                DataManagerLocomotion.instance.armswingSpeedScale
-                                                    = loadedProject_environment.LocomotionSettings.ArmswingSpeed;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (VRDesktopSwitcher.isVREnabled())
-                                            {
-                                                DataManagerLocomotion.instance.armswingSpeedScale = 1.5f;
-                                            }
-                                        }
-
-                                        if (loadedProject_environment.LocomotionSettings.FlySpeed > 0)
-                                        {
-                                            if (VRDesktopSwitcher.isVREnabled())
-                                            {
-                                                DataManagerLocomotion.instance.flySpeedScale
-                                                    = loadedProject_environment.LocomotionSettings.FlySpeed;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (VRDesktopSwitcher.isVREnabled())
-                                            {
-                                                DataManagerLocomotion.instance.flySpeedScale = 1.5f;
-                                            }
-                                        }
-
-                                        if (loadedProject_environment.LocomotionSettings.TeleportDistance > 0)
-                                        {
-                                            if (VRDesktopSwitcher.isVREnabled())
-                                            {
-                                                DataManagerLocomotion.instance.laserDistance
-                                                    = loadedProject_environment.LocomotionSettings.TeleportDistance;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (VRDesktopSwitcher.isVREnabled())
-                                            {
-                                                DataManagerLocomotion.instance.laserDistance = 100f;
-                                            }
-                                        }
-
-                                        if (loadedProject_environment.LocomotionSettings.TouchpadSpeed > 0)
-                                        {
-                                            if (VRDesktopSwitcher.isVREnabled())
-                                            {
-                                                DataManagerLocomotion.instance.touchpadSpeedScale
-                                                    = loadedProject_environment.LocomotionSettings.TouchpadSpeed;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            if (VRDesktopSwitcher.isVREnabled())
-                                            {
-                                                DataManagerLocomotion.instance.touchpadSpeedScale = 1.5f;
-                                            }
-                                        }
+                                        Infrastructure.Framework.MRET.LocomotionManager.ArmswingNormalMotionConstraintMultiplier
+                                            = loadedProject_environment.LocomotionSettings.ArmswingSpeed;
                                     }
-                                    if (VRDesktopSwitcher.isVREnabled())
+                                        
+                                    if (loadedProject_environment.LocomotionSettings.FlySpeed > 0)
                                     {
-                                        DataManagerLocomotion.instance.UpdateScriptableObject();
+                                        Infrastructure.Framework.MRET.LocomotionManager.FlyingNormalMotionConstraintMultiplier
+                                            = loadedProject_environment.LocomotionSettings.FlySpeed;
                                     }
-
-                                    Debug.Log("Setting up controlled user...");
-                                    if (collaborationEnabled)
+                                        
+                                    if (loadedProject_environment.LocomotionSettings.TeleportDistance > 0)
                                     {
-                                        synchedUser = transformToSet.GetComponentInChildren<Camera>().gameObject.AddComponent<SynchronizedUser>();
-                                        synchedUser.userObject = sessionManager.headsetFollower.transform.parent.gameObject;
-                                        synchedUser.userAlias = userAlias;
-                                        synchedUser.isControlled = true;
-                                        synchedUser.uuid = userUUID;
-                                        synchedUser.userLabelColor = userLabelColor;
-
-                                        if (VRDesktopSwitcher.isVREnabled())
-                                        {
-                                            synchedUser.leftController = VRTK.VRTK_DeviceFinder.GetControllerLeftHand().transform.parent.gameObject.AddComponent<SynchronizedController>();
-                                        }
-                                        else
-                                        {
-                                            synchedUser.leftController = FindObjectOfType<UnityStandardAssets.Characters.FirstPerson.FirstPersonController>().gameObject.AddComponent<SynchronizedController>();
-                                        }
-
-                                        synchedUser.leftController.controllerSide = SynchronizedController.ControllerSide.Left;
-                                        synchedUser.leftController.synchronizedUser = synchedUser;
-                                        synchedUser.leftController.uuid = lcUUID;
-
-                                        GameObject leftLaser = new GameObject("Laser");
-                                        if (VRDesktopSwitcher.isVREnabled())
-                                        {
-                                            leftLaser.transform.parent = VRTK.VRTK_DeviceFinder.GetControllerLeftHand().transform.parent;
-                                        }
-                                        else
-                                        {
-                                            UnityStandardAssets.Characters.FirstPerson.DesktopController fpc = FindObjectOfType<UnityStandardAssets.Characters.FirstPerson.DesktopController>();
-                                            if (fpc)
-                                            {
-                                                Camera cam = fpc.transform.GetComponentInChildren<Camera>();
-                                                if (cam)
-                                                {
-                                                    leftLaser.transform.parent = cam.transform;
-                                                }
-                                            }
-                                        }
-                                        synchedUser.leftController.pointer = leftLaser.AddComponent<SynchronizedPointer>();
-                                        synchedUser.leftController.pointer.synchronizedController = synchedUser.leftController;
-                                        if (VRDesktopSwitcher.isVREnabled())
-                                        {
-                                            synchedUser.leftController.pointer.pointer = VRTK.VRTK_DeviceFinder.GetControllerLeftHand().GetComponent<VRTK.VRTK_Pointer>();
-                                            synchedUser.leftController.pointer.pointerRenderer = VRTK.VRTK_DeviceFinder.GetControllerLeftHand().GetComponent<VRTK.VRTK_StraightPointerRenderer>();
-                                        }
-                                        synchedUser.leftController.pointer.uuid = lpUUID;
-
-                                        if (VRDesktopSwitcher.isVREnabled())
-                                        {
-                                            synchedUser.rightController = VRTK.VRTK_DeviceFinder.GetControllerRightHand().transform.parent.gameObject.AddComponent<SynchronizedController>();
-                                            synchedUser.rightController.controllerSide = SynchronizedController.ControllerSide.Right;
-                                            synchedUser.rightController.synchronizedUser = synchedUser;
-                                            synchedUser.rightController.uuid = rcUUID;
-
-                                            GameObject rightLaser = new GameObject("Laser");
-                                            rightLaser.transform.parent = VRTK.VRTK_DeviceFinder.GetControllerRightHand().transform.parent;
-                                            synchedUser.rightController.pointer = rightLaser.AddComponent<SynchronizedPointer>();
-                                            synchedUser.rightController.pointer.synchronizedController = synchedUser.rightController;
-                                            synchedUser.rightController.pointer.pointer = VRTK.VRTK_DeviceFinder.GetControllerRightHand().GetComponent<VRTK.VRTK_Pointer>();
-                                            synchedUser.rightController.pointer.pointerRenderer = VRTK.VRTK_DeviceFinder.GetControllerRightHand().GetComponent<VRTK.VRTK_StraightPointerRenderer>();
-                                            synchedUser.rightController.pointer.uuid = rpUUID;
-                                        }
-
-                                        Debug.Log("Synchronized user added.");
-
-                                        CollaborationManager collabMgr = FindObjectOfType<CollaborationManager>();
-                                        if (collabMgr.engineType == CollaborationManager.EngineType.XRC)
-                                        {
-                                            Debug.Log("Engine is XRC. Adding synchronized user...");
-                                            collabMgr.xrcManager.synchedUsers.Add(synchedUser);
-                                            Debug.Log("Synchronized user added. User count is "
-                                                + collabMgr.xrcManager.synchedUsers.Count + ".");
-                                        }
-                                        else
-                                        {
-                                            Debug.Log("Engine is Legacy. Adding synchronized user...");
-                                            collabMgr.masterNode.synchronizedUsers.Add(synchedUser);
-                                            Debug.Log("Synchronized user added. User count is "
-                                                + collabMgr.masterNode.synchronizedUsers.Count);
-                                        }
+                                        Infrastructure.Framework.MRET.LocomotionManager.TeleportMaxDistance
+                                            = loadedProject_environment.LocomotionSettings.TeleportDistance;
                                     }
-
-                                    // Set the user's clipping planes.
-                                    Camera headsetCam = sessionManager.UserCamera;
-                                    if (headsetCam != null)
+                                        
+                                    if (loadedProject_environment.LocomotionSettings.TouchpadSpeed > 0)
                                     {
-                                        headsetCam.nearClipPlane = loadedProject_environment.ClippingPlanes.Near;
-                                        headsetCam.farClipPlane = loadedProject_environment.ClippingPlanes.Far;
+                                        Infrastructure.Framework.MRET.LocomotionManager.NavigationNormalMotionConstraintMultiplier
+                                            = loadedProject_environment.LocomotionSettings.TouchpadSpeed;
                                     }
+                                }
+                                    
+                                Debug.Log("Setting up controlled user...");
+                                if (collaborationEnabled)
+                                {
+                                    synchedUser = transformToSet.GetComponentInChildren<Camera>().gameObject.AddComponent<SynchronizedUser>();
+                                    synchedUser.userObject = Infrastructure.Framework.MRET.InputRig.gameObject;
+                                    synchedUser.userAlias = userAlias;
+                                    synchedUser.isControlled = true;
+                                    synchedUser.uuid = userUUID;
+                                    synchedUser.userLabelColor = userLabelColor;
+
+                                    synchedUser.leftController = Infrastructure.Framework.MRET.InputRig.leftHand.gameObject.AddComponent<SynchronizedController>();
+                                    synchedUser.leftController.controllerSide = SynchronizedController.ControllerSide.Left;
+                                    synchedUser.leftController.synchronizedUser = synchedUser;
+                                    synchedUser.leftController.uuid = lcUUID;
+
+                                    GameObject leftLaser = new GameObject("Laser");
+                                    leftLaser.transform.parent = Infrastructure.Framework.MRET.InputRig.leftHand.transform.parent;
+                                        
+                                    synchedUser.leftController.pointer = leftLaser.AddComponent<SynchronizedPointer>();
+                                    synchedUser.leftController.pointer.synchronizedController = synchedUser.leftController;
+                                    synchedUser.leftController.pointer.uuid = lpUUID;
+                                    synchedUser.leftController.pointer.hand = Infrastructure.Framework.MRET.InputRig.leftHand;
+
+                                    synchedUser.rightController = Infrastructure.Framework.MRET.InputRig.rightHand.gameObject.AddComponent<SynchronizedController>();
+                                    synchedUser.rightController.controllerSide = SynchronizedController.ControllerSide.Right;
+                                    synchedUser.rightController.synchronizedUser = synchedUser;
+                                    synchedUser.rightController.uuid = rcUUID;
+
+                                    GameObject rightLaser = new GameObject("Laser");
+                                    rightLaser.transform.parent = Infrastructure.Framework.MRET.InputRig.rightHand.transform.parent;
+                                    synchedUser.rightController.pointer = rightLaser.AddComponent<SynchronizedPointer>();
+                                    synchedUser.rightController.pointer.synchronizedController = synchedUser.rightController;
+                                    synchedUser.rightController.pointer.uuid = rpUUID;
+                                    synchedUser.rightController.pointer.hand = Infrastructure.Framework.MRET.InputRig.rightHand;
+
+                                    Debug.Log("Synchronized user added.");
+
+                                    CollaborationManager collabMgr = FindObjectOfType<CollaborationManager>();
+                                    if (collabMgr.engineType == CollaborationManager.EngineType.XRC)
+                                    {
+                                        Debug.Log("Engine is XRC. Adding synchronized user...");
+                                        collabMgr.xrcManager.synchedUsers.Add(synchedUser);
+                                        Debug.Log("Synchronized user added. User count is "
+                                            + collabMgr.xrcManager.synchedUsers.Count + ".");
+                                    }
+                                    else
+                                    {
+                                        Debug.Log("Engine is Legacy. Adding synchronized user...");
+                                        collabMgr.masterNode.synchronizedUsers.Add(synchedUser);
+                                        Debug.Log("Synchronized user added. User count is "
+                                            + collabMgr.masterNode.synchronizedUsers.Count);
+                                    }
+                                }
+
+                                // Set the user's clipping planes.
+                                Camera headsetCam = Infrastructure.Framework.MRET.InputRig.activeCamera;
+                                if (headsetCam != null)
+                                {
+                                    headsetCam.nearClipPlane = loadedProject_environment.ClippingPlanes.Near;
+                                    headsetCam.farClipPlane = loadedProject_environment.ClippingPlanes.Far;
                                 }
 
                                 // Force realtime reflection probes to reinitialize.
@@ -669,14 +560,14 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                                 break;
 
                             case ItemsChoiceType.Parts:
-                                PartsType parts = (PartsType)serializedProject.Items[i];
+                                PartsType parts = (PartsType) serializedProject.Items[i];
 
                                 // Load each part into the environment.
                                 if (parts.Parts != null)
                                 {
                                     foreach (PartType part in parts.Parts)
                                     {
-                                        StartCoroutine(InstantiateAPart(part, null));
+                                        Infrastructure.Framework.MRET.PartManager.InstantiatePartInEnvironment(part, null);
                                     }
                                 }
                                 break;
@@ -709,7 +600,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                                         gmsecSourceObject.transform.SetParent(dataSourcesContainer.transform);
                                         GMSECBusToDataManager gmsecListener = gmsecSourceObject.GetComponent<GMSECBusToDataManager>();
 
-                                        gmsecListener.dataManager = sessionManager.dataManager;
+                                        gmsecListener.dataManager = Infrastructure.Framework.MRET.DataManager;
                                         switch (gmsecSource.ConnectionType)
                                         {
                                             case "gmsec_activemq383":
@@ -874,7 +765,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             loadingIndicatorManager.StopLoadingIndicator();
         }
 
-        // TODO: The parts should be indexed into a dictionary to enable efficient searching.
+        // TODO: The parts should be indexed into a dictionary to enable efficient searching. Move to part manager.
         public InteractablePart GetPartByUUID(Guid guidToGet)
         {
             foreach (InteractablePart iPart in projectObjectContainer.GetComponentsInChildren<InteractablePart>())
@@ -948,238 +839,6 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             }
         }
 
-        private IEnumerator InstantiateAPart(PartType part, Transform parent)
-        {
-            // Instantiate Game Object.
-            if (part.AssetBundle != "NULL")
-            {   // Load from an asset bundle.
-                yield return InstantiateGameObjectAsync(part, parent);
-            }
-            else
-            {   // Load an empty part.
-                yield return InstantiateEmptyGameObjectAsync(part, parent);
-            }
-
-            // Wait for the parent's transform to be set before loading any children.
-            while (!part.loaded)
-            {
-                yield return new WaitForSeconds(0.1f);
-            }
-
-            foreach (RootMotion.FinalIK.CCDIK ikScript in part.transform.GetComponentsInChildren<RootMotion.FinalIK.CCDIK>())
-            {
-                ikScript.enabled = false;
-            }
-
-            // Reinitialize TouchControl dropdowns.
-            foreach (DualAxisRotationControl control in FindObjectsOfType<DualAxisRotationControl>())
-            {
-                if (control.enabled)
-                {
-                    control.enabled = false;
-                    control.enabled = true;
-                }
-            }
-
-            // Collaboration.
-            if (collaborationEnabled)
-            {
-                SynchronizedObject synchedObject = part.transform.gameObject.AddComponent<SynchronizedObject>();
-                if (parent != null)
-                {
-                    SynchronizedObject parentSynchedObject = parent.GetComponent<SynchronizedObject>();
-                    if (parentSynchedObject)
-                    {
-                        synchedObject.entityLock = parentSynchedObject.entityLock;
-                    }
-                }
-            }
-
-            if (part.ChildParts.Parts != null)
-            {
-                // Instantiate children.
-                foreach (PartType pt in part.ChildParts.Parts)
-                {
-                    yield return InstantiateAPart(pt, part.transform);
-                }
-
-                // Wait for all children to be instantiated.
-                foreach (PartType pt in part.ChildParts.Parts)
-                {
-                    while (!pt.loaded)
-                    {
-                        yield return new WaitForSeconds(0.1f);
-                    }
-                }
-
-                // Instantiate any enclosures if this is the parent.
-                if (parent == null)
-                {
-                    // Instantiate enclosure.
-                    if (part.Enclosure != null)
-                    {
-                        if (part.Enclosure.AssetBundle != null)
-                        {
-                            yield return InstantiateEnclosureAsync(part.Enclosure, part.transform);
-                        }
-                        else
-                        {
-                            yield return InstantiateEmptyGameObjectAsync(part.Enclosure, part.transform);
-                        }
-                    }
-
-                    // Wait for enclosure to be instantiated.
-                    if (part.Enclosure != null)
-                    {
-                        while (!part.Enclosure.loaded)
-                        {
-                            yield return new WaitForSeconds(0.1f);
-                        }
-                    }
-                }
-
-                // Instantiate grab cube.
-                GameObject grabCube = Instantiate(grabCubePrefab);
-                grabCube.transform.localScale = new Vector3(0.1f, 0.1f, 0.1f);
-                grabCube.transform.SetParent(part.transform);
-                PlaceGrabCube(grabCube);
-                grabCube.GetComponent<AssemblyGrabber>().assemblyRoot = part.transform.gameObject;
-                if (part.Enclosure != null)
-                {
-                    grabCube.GetComponent<AssemblyGrabber>().otherGrabbers.Add(part.Enclosure.transform.GetComponent<AssemblyGrabber>());
-
-                    AssemblyGrabber grabber = part.Enclosure.transform.GetComponent<AssemblyGrabber>();
-                    grabber.otherGrabbers.Add(grabCube.GetComponent<AssemblyGrabber>());
-                    grabber.assetBundle = part.Enclosure.AssetBundle;
-                    if (part.Enclosure.Description != null)
-                    {
-                        grabber.description = (part.Enclosure.Description[0] == null) ? "" : part.Enclosure.Description[0];
-                    }
-                    grabber.dimensions = new Vector3(part.Enclosure.PartTransform.Scale.X, part.Enclosure.PartTransform.Scale.Y, part.Enclosure.PartTransform.Scale.Z);
-                    grabber.id = part.Enclosure.ID;
-                    if (part.Enclosure.MinMass != null)
-                    {
-                        grabber.minMass = part.Enclosure.MinMass[0];
-                    }
-                    if (part.Enclosure.MaxMass != null)
-                    {
-                        grabber.maxMass = part.Enclosure.MaxMass[0];
-                    }
-                    grabber.serializationName = part.Enclosure.Name;
-                    grabber.gameObject.name = part.Enclosure.Name;
-                    grabber.notes = part.Enclosure.Notes;
-                    if (part.Enclosure.PartFileName != null)
-                    {
-                        grabber.partFileName = (part.Enclosure.PartFileName[0] == null) ? "" : part.Enclosure.PartFileName[0];
-                    }
-                    if (part.Enclosure.PartName != null)
-                    {
-                        grabber.partName = (part.Enclosure.PartName[0] == null) ? "" : part.Enclosure.PartName[0];
-                    }
-                    if (part.Enclosure.PartType1 != null)
-                    {
-                        grabber.partType = (part.Enclosure.PartType1.Length < 1) ? PartTypePartType.Chassis : part.Enclosure.PartType1[0];
-                    }
-                    grabber.reference = part.Enclosure.Reference;
-                    grabber.subsystem = part.Enclosure.Subsystem;
-                    if (part.Enclosure.Vendor != null)
-                    {
-                        grabber.vendor = (part.Enclosure.Vendor[0] == null) ? "" : part.Enclosure.Vendor[0];
-                    }
-                    grabber.version = part.Enclosure.Version;
-                }
-                part.transform.GetComponent<InteractablePart>().grabCube = grabCube;
-
-                // If this isn't the root object, hide the grab cube.
-                if (parent != null)
-                {
-                    grabCube.SetActive(false);
-                }
-            }
-
-            // Store part information.
-            InteractablePart iPart = part.transform.GetComponent<InteractablePart>();
-            iPart.assetBundle = part.AssetBundle;
-            if (part.Description != null)
-            {
-                iPart.description = (part.Description[0] == null) ? "" : part.Description[0];
-            }
-            iPart.dimensions = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
-            iPart.id = part.ID;
-            if (part.MinMass != null)
-            {
-                iPart.minMass = part.MinMass[0];
-            }
-            if (part.MaxMass != null)
-            {
-                iPart.maxMass = part.MaxMass[0];
-            }
-            if (part.MassContingency != null)
-            {
-                iPart.massContingency = part.MassContingency[0];
-            }
-            iPart.serializationName = part.Name;
-            iPart.gameObject.name = part.Name;
-            iPart.notes = part.Notes;
-            if (part.PartFileName != null)
-            {
-                iPart.partFileName = (part.PartFileName[0] == null) ? "" : part.PartFileName[0];
-            }
-            if (part.PartName != null)
-            {
-                iPart.partName = (part.PartName[0] == null) ? "" : part.PartName[0];
-            }
-            if (part.PartType1 != null)
-            {
-                iPart.partType = (part.PartType1.Length < 1) ? PartTypePartType.Chassis : part.PartType1[0];
-            }
-            iPart.idlePower = part.IdlePower;
-            iPart.averagePower = part.AveragePower;
-            iPart.peakPower = part.PeakPower;
-            iPart.powerContingency = part.PowerContingency;
-            iPart.reference = part.Reference;
-            iPart.subsystem = part.Subsystem;
-            if (part.Vendor != null)
-            {
-                iPart.vendor = (part.Vendor[0] == null) ? "" : part.Vendor[0];
-            }
-            iPart.version = part.Version;
-            iPart.randomizeTexture = part.RandomizeTexture;
-            if (part.GUID != null)
-            {
-                iPart.guid = new Guid(part.GUID);
-            }
-
-            // Force realtime reflection probes to reinitialize.
-            foreach (ReflectionProbe rProbe in projectObjectContainer.GetComponentsInChildren<ReflectionProbe>())
-            {
-                if (rProbe.mode == UnityEngine.Rendering.ReflectionProbeMode.Realtime)
-                {
-                    rProbe.mode = UnityEngine.Rendering.ReflectionProbeMode.Baked;
-                    rProbe.mode = UnityEngine.Rendering.ReflectionProbeMode.Realtime;
-                }
-            }
-        }
-
-        protected IEnumerator InitializeAssetBundleManager()
-        {
-            Debug.Log("[UnityProject->InitializeAssetBundleManager] Initializing Asset Bundles...");
-
-            // Don't destroy this gameObject as we depend on it to run the loading script.
-            //DontDestroyOnLoad(gameObject);
-
-            //AssetBundleManager.SetSourceAssetBundleURL("file://" + Application.dataPath + "/StreamingAssets/");
-
-            // Initialize AssetBundleManifest which loads the AssetBundleManifest object.
-            //var request = AssetBundleManager.Initialize();
-            //if (request != null)
-            //{
-            //    yield return StartCoroutine(request);
-            //}
-
-            yield return null;
-        }
-
         public Vector3 GlobalToLocalPosition(Vector3 globalPosition)
         {
             return transform.InverseTransformPoint(globalPosition);
@@ -1190,6 +849,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             return transform.TransformPoint(localPosition);
         }
 
+        // TODO: Need Scene Manager.
         void FinishSceneInstantiation(bool loaded, VirtualEnvironmentType environment)
         {
             if (loaded == false)
@@ -1199,7 +859,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             }
 
             Debug.Log("Scene " + environment.Name + " loaded. Setting up.");
-            Debug.Log(UnityEngine.SceneManagement.SceneManager.GetSceneByName(environment.Name).rootCount);
+            
             // Capture all GameObjects in scene and place them in hierarchy.
             GameObject[] goArray = UnityEngine.SceneManagement.SceneManager.GetSceneByName(environment.Name).GetRootGameObjects();
             if (goArray.Length > 0)
@@ -1209,7 +869,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                     sceneObject.transform.SetParent(projectObjectContainer.transform);
                 }
             }
-            
+
             UnityEngine.SceneManagement.SceneManager.UnloadSceneAsync(UnityEngine.SceneManagement.SceneManager.GetSceneByName(environment.Name));
 
             // Reload all reflection probes.
@@ -1247,221 +907,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                 + "/StreamingAssets/Windows/" + environment.AssetBundle, environment.Name, isAdditive, action);
 
             yield return null;
-            
-        }
 
-        void FinishGameObjectInstantiation(GameObject obj, PartType part, Transform parent)
-        {
-            if (obj == null)
-            {
-                Debug.LogError("Error loading gameobject.");
-                return;
-            }
-
-            // Reset object rotation (for accurate render bounds).
-            obj.transform.eulerAngles = Vector3.zero;
-
-            // Create new bounds and add the bounds of all child objects together.
-            var bou = new Bounds(obj.transform.position, Vector3.zero);
-            foreach (Renderer ren in obj.GetComponentsInChildren<Renderer>())
-            {
-                bou.Encapsulate(ren.bounds);
-            }
-
-            Vector3 size = bou.size;
-            Vector3 rescale = obj.transform.localScale;
-            Vector3 dimensions = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
-
-            rescale.x = dimensions.x * rescale.x / size.x;
-            rescale.y = dimensions.y * rescale.y / size.y;
-            rescale.z = dimensions.z * rescale.z / size.z;
-
-            obj.transform.localScale = rescale;
-
-            /*BoxCollider bCollider = obj.GetComponent<BoxCollider>();
-            if (bCollider == null)
-            {
-                // Recalculate the bounds.
-                bou = new Bounds(obj.transform.position, Vector3.zero);
-                foreach (Renderer ren in obj.GetComponentsInChildren<Renderer>())
-                {
-                    bou.Encapsulate(ren.bounds);
-                }
-
-                bCollider = obj.AddComponent<BoxCollider>();
-                bCollider.size = Vector3.Scale(bou.size,
-                    new Vector3(1 / obj.transform.localScale.x, 1 / obj.transform.localScale.y, 1 / obj.transform.localScale.z));
-                bCollider.center = obj.transform.InverseTransformPoint(bou.center);
-            }*/
-
-            Collider collider = obj.GetComponentInChildren<Collider>();
-            if (collider == null)
-            {
-                // Obtain the default collider mode from the kiosk loader configuration manager
-                ConfigurationManager.ColliderMode colliderMode = ConfigurationManager.ColliderMode.None;
-                if (sessionManager.configurationManager)
-                {
-                    colliderMode = sessionManager.configurationManager.colliderMode;
-                }
-
-                // Determine how to handle a null collider based upon the system configuration
-                switch (colliderMode)
-                {
-                    case ConfigurationManager.ColliderMode.Box:
-                        Debug.Log("No collider detected. Generating box collder...");
-                        // Recalculate the bounds.
-                        bou = new Bounds(obj.transform.position, Vector3.zero);
-                        foreach (Renderer ren in obj.GetComponentsInChildren<Renderer>())
-                        {
-                            bou.Encapsulate(ren.bounds);
-                        }
-
-                        collider = obj.AddComponent<BoxCollider>();
-                        ((BoxCollider)collider).size = Vector3.Scale(bou.size,
-                            new Vector3(1 / obj.transform.localScale.x, 1 / obj.transform.localScale.y, 1 / obj.transform.localScale.z));
-                        ((BoxCollider)collider).center = obj.transform.InverseTransformPoint(bou.center);
-                        break;
-
-                    case ConfigurationManager.ColliderMode.NonConvex:
-                        Debug.Log("No collider detected. Generating non-convex colliders...");
-                        foreach (MeshFilter mesh in obj.GetComponentsInChildren<MeshFilter>())
-                        {
-                            NonConvexMeshCollider ncmc = mesh.gameObject.AddComponent<NonConvexMeshCollider>();
-                            ncmc.boxesPerEdge = 20;
-                            ncmc.Calculate();
-                        }
-                        break;
-
-                    case ConfigurationManager.ColliderMode.None:
-                    default:
-                        Debug.Log("No collider detected. Not generating collider.");
-                        break;
-                }
-            }
-
-            // Add colliders to be used for raycasting.
-            PartLoader.AddRaycastMeshColliders(obj);
-
-            obj.transform.position = new Vector3(part.PartTransform.Position.X, part.PartTransform.Position.Y, part.PartTransform.Position.Z);
-            obj.transform.rotation = new Quaternion(part.PartTransform.Rotation.X, part.PartTransform.Rotation.Y, part.PartTransform.Rotation.Z, part.PartTransform.Rotation.W);
-            obj.transform.SetParent((parent == null) ? projectObjectContainer.transform : parent);
-
-            // Get/Set all Mandatory Components.
-            ApplyStandardPropertiesToPart(obj, part);
-
-            // Apply telemetry transforms.
-            ApplyTelemetryTransformsToPart(obj, part);
-
-            part.transform = obj.transform;
-            part.loaded = true;
-        }
-
-        void FinishEnclosureInstantiation(GameObject obj, PartType part, Transform parent)
-        {
-            if (obj == null)
-            {
-                Debug.LogError("Error loading gameobject.");
-                return;
-            }
-
-            obj.transform.position = new Vector3(part.PartTransform.Position.X, part.PartTransform.Position.Y, part.PartTransform.Position.Z);
-            obj.transform.rotation = new Quaternion(part.PartTransform.Rotation.X, part.PartTransform.Rotation.Y, part.PartTransform.Rotation.Z, part.PartTransform.Rotation.W);
-            obj.transform.localScale = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
-
-            obj.transform.SetParent((parent == null) ? projectObjectContainer.transform : parent);
-
-            // Ensure that a rigidbody is attached.
-            Rigidbody rBody = obj.GetComponent<Rigidbody>();
-            if (rBody == null)
-            {
-                rBody = obj.AddComponent<Rigidbody>();
-                rBody.mass = 1;
-                rBody.angularDrag = 0.99f;
-                rBody.drag = 0.99f;
-                rBody.useGravity = false;
-                rBody.isKinematic = false;
-            }
-
-            // Set up enclosure.
-            part.transform = obj.transform;
-            AssemblyGrabber enclosureGrabber = obj.AddComponent<AssemblyGrabber>();
-            enclosureGrabber.isGrabbable = true;
-            enclosureGrabber.isUsable = false;
-            //enclosureGrabber.disableWhenIdle = false;
-            enclosureGrabber.disableWhenIdle = true;
-            enclosureGrabber.enabled = true;
-            VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach gAttach = obj.GetComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
-            if (gAttach == null)
-            {
-                gAttach = obj.AddComponent<VRTK.GrabAttachMechanics.VRTK_FixedJointGrabAttach>();
-            }
-            gAttach.precisionGrab = true;
-            enclosureGrabber.assemblyRoot = parent.gameObject;
-            parent.GetComponent<InteractablePart>().enclosure = part.transform.gameObject;
-            if (part.EnableCollisions[0])
-            {
-                rBody.isKinematic = false;
-                if (part.EnableGravity[0])
-                {
-                    rBody.useGravity = true;
-                }
-            }
-            else
-            {
-                rBody.isKinematic = true;
-            }
-
-            // Apply telemetry transforms.
-            ApplyTelemetryTransformsToPart(obj, part);
-
-            part.transform = obj.transform;
-            part.loaded = true;
-        }
-
-        protected IEnumerator InstantiateGameObjectAsync(PartType part, Transform parent)
-        {
-            // Load asset from assetBundle.
-            Action<object> action = (object loaded) =>
-            {
-                FinishGameObjectInstantiation((GameObject)loaded, part, parent);
-            };
-            AssetBundleHelper.instance.LoadAssetAsync(Application.dataPath
-                + "/StreamingAssets/Windows/" + part.AssetBundle, part.PartName[0], typeof(GameObject), action);
-
-            yield return null;
-        }
-
-        protected IEnumerator InstantiateEmptyGameObjectAsync(PartType part, Transform parent)
-        {
-            // Instantiate empty game object as child of parent and position it.
-            GameObject obj = new GameObject(part.Name);
-            obj.transform.position = new Vector3(part.PartTransform.Position.X, part.PartTransform.Position.Y, part.PartTransform.Position.Z);
-            obj.transform.rotation = new Quaternion(part.PartTransform.Rotation.X, part.PartTransform.Rotation.Y, part.PartTransform.Rotation.Z, part.PartTransform.Rotation.W);
-            obj.transform.localScale = new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z);
-            obj.transform.SetParent((parent == null) ? projectObjectContainer.transform : parent);
-
-            // Get/Set all Mandatory Components.
-            ApplyStandardPropertiesToPart(obj, part);
-
-            // Apply telemetry transforms.
-            ApplyTelemetryTransformsToPart(obj, part);
-
-            part.transform = obj.transform;
-            part.loaded = true;
-            yield return null;
-        }
-
-        protected IEnumerator InstantiateEnclosureAsync(PartType part, Transform parent)
-        {
-            // Load asset from assetBundle.
-            Action<object> action = (object loaded) =>
-            {
-                FinishEnclosureInstantiation((GameObject)loaded, part, parent);
-            };
-            AssetBundleHelper.instance.LoadAssetAsync(Application.dataPath
-                + "/StreamingAssets/Windows/" + part.AssetBundle, part.PartName[0], typeof(GameObject), action);
-
-            yield return null;
         }
 
         private Vector3 DeserializeVector3(Vector3Type input)
@@ -1502,69 +948,6 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             }
 
             return outVec;
-        }
-
-        private void ApplyStandardPropertiesToPart(GameObject obj, PartType part)
-        {
-            // Apply default textures.
-            if (part.RandomizeTexture)
-            {
-                // Obtain the default materials from the session configuration
-                if (sessionManager.sessionConfiguration)
-                {
-                    int texToApply = UnityEngine.Random.Range(0, 8);
-                    foreach (MeshRenderer rend in obj.GetComponentsInChildren<MeshRenderer>())
-                    {
-                        rend.material = sessionManager.sessionConfiguration.defaultPartMaterials[texToApply];
-                    }
-                }
-            }
-
-            // Get/Set all Mandatory Components.
-            Rigidbody rBody = obj.GetComponent<Rigidbody>();
-            if (rBody == null)
-            {
-                rBody = obj.AddComponent<Rigidbody>();
-                rBody.mass = 1;
-                rBody.angularDrag = 0.99f;
-                rBody.drag = 0.99f;
-                rBody.useGravity = false;
-                rBody.isKinematic = false;
-            }
-
-            VRTK.GrabAttachMechanics.VRTK_ChildOfControllerGrabAttach cGrabAttach = obj.AddComponent<VRTK.GrabAttachMechanics.VRTK_ChildOfControllerGrabAttach>();
-            cGrabAttach.precisionGrab = true;
-            VRTK.SecondaryControllerGrabActions.VRTK_SwapControllerGrabAction sGrabAct
-                = obj.AddComponent<VRTK.SecondaryControllerGrabActions.VRTK_SwapControllerGrabAction>();
-            InteractablePart interactablePart = obj.AddComponent<InteractablePart>();
-            interactablePart.holdButtonToGrab = true;
-            interactablePart.stayGrabbedOnTeleport = true;
-            interactablePart.isGrabbable = true;
-            interactablePart.isUsable = true;
-            interactablePart.headsetObject = VRTK.VRTK_DeviceFinder.HeadsetTransform();
-            interactablePart.partPanelPrefab = partPanelPrefab;
-            interactablePart.highlightColor = partTouchHighlightColor;
-            //interactablePart.disableWhenIdle = false;
-            interactablePart.disableWhenIdle = true;
-            interactablePart.enabled = true;
-            interactablePart.grabAttachMechanicScript = cGrabAttach;
-            interactablePart.secondaryGrabActionScript = sGrabAct;
-
-            // Apply configurations.
-            interactablePart.isGrabbable = part.EnableInteraction[0];
-            interactablePart.isUsable = !part.NonInteractable;
-            if (part.EnableCollisions[0])
-            {
-                rBody.isKinematic = false;
-                if (part.EnableGravity[0])
-                {
-                    rBody.useGravity = true;
-                }
-            }
-            else
-            {
-                rBody.isKinematic = true;
-            }
         }
 
         private void ApplyTelemetryTransformsToPart(GameObject obj, PartType part)
@@ -1651,50 +1034,11 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             return;
         }
 
-        private void PlaceGrabCube(GameObject grabCube)
-        {
-            // Get parent and initialize grab cube at 0.
-            Transform parentTransform = grabCube.transform.parent;
-            grabCube.transform.localPosition = new Vector3(0, 0, 0);
-
-            // Continuously move out grab cube until it is not encapsulated by part of the assembly.
-            Collider[] assemblyColliders = parentTransform.GetComponentsInChildren<Collider>();
-            foreach (Collider colliderToCheck in assemblyColliders)
-            {
-                if (colliderToCheck.gameObject != grabCube)
-                {
-                    // TODO: Theoretically, if the bounds were to expand as the grab cube moved out, this loop
-                    // would never be exited. It is an unlikely scenario (and would probably be intentional),
-                    // but this should protect against that.
-                    while (colliderToCheck.bounds.Contains(grabCube.transform.position))
-                    {   // The grab cube is within an assembly object, so it will be moved further out.
-                        grabCube.transform.position = new Vector3(grabCube.transform.position.x + 0.5f,
-                            grabCube.transform.position.y + 0.5f, grabCube.transform.position.z + 0.5f);
-                    }
-                }
-            }
-        }
-
         private void UngrabAllObjects()
         {
-            GameObject lCont = VRTK.VRTK_DeviceFinder.GetControllerLeftHand();
-            if (lCont)
+            foreach (InputHand hand in Infrastructure.Framework.MRET.InputRig.hands)
             {
-                VRTK.VRTK_InteractGrab lIG = lCont.GetComponent<VRTK.VRTK_InteractGrab>();
-                if (lIG)
-                {
-                    lIG.ForceRelease();
-                }
-            }
-
-            GameObject rCont = VRTK.VRTK_DeviceFinder.GetControllerRightHand();
-            if (rCont)
-            {
-                VRTK.VRTK_InteractGrab rIG = lCont.GetComponent<VRTK.VRTK_InteractGrab>();
-                if (rIG)
-                {
-                    rIG.ForceRelease();
-                }
+                hand.GrabComplete();
             }
         }
 
@@ -1709,11 +1053,6 @@ namespace GSFC.ARVR.MRET.Common.Schemas
 
                 // TODO: Not sure what this is used for, and can it be eliminated if we are now placing the transforms into the DataManager?
                 scaleMultiplier = transform.localScale.x;
-
-                // Make sure we have a DataManager reference. Otherwise, we will skip this logic altogether
-                if (sessionManager.dataManager != null)
-                {
-                }
             }
         }
 

@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 
 namespace GSFC.ARVR.MRET.Telemetry
 {
@@ -13,9 +16,6 @@ namespace GSFC.ARVR.MRET.Telemetry
     public class Telemetry : MonoBehaviour
     {
         public static readonly string NAME = nameof(Telemetry);
-
-        [Tooltip("The DataManager to use for retrieving the telemetry. If not supplied, one will be located at Start")]
-        public DataManager dataManager;
 
         [Tooltip("DataManager key for the telemetry value")]
         public string key;
@@ -47,22 +47,6 @@ namespace GSFC.ARVR.MRET.Telemetry
         }
 
         /**
-         * Start is called before the first frame update
-         */
-        protected virtual void Start()
-        {
-            // Try to get a reference to the data manager if not explictly set
-            if (dataManager == null)
-            {
-                dataManager = SessionManager.instance.dataManager;
-                if (dataManager == null)
-                {
-                    Debug.LogError("[" + NAME + "] Unable to obtain a reference to a DataManager");
-                }
-            }
-        }
-
-        /**
          * Update is called once per frame
          */
         protected virtual void Update()
@@ -75,10 +59,11 @@ namespace GSFC.ARVR.MRET.Telemetry
                 updateCounter = 0;
 
                 // Make sure we have a valid DataManager
-                if (dataManager != null)
+                // DZB 2 Feb 2021: Now managed by MRET, reference should always exist.
+                //if (dataManager != null)
                 {
                     // Read the telemetry value and assign it to our private property
-                    SetValue(dataManager.FindPoint(key));
+                    SetValue(Infrastructure.Framework.MRET.DataManager.FindPoint(key));
                 }
             }
         }

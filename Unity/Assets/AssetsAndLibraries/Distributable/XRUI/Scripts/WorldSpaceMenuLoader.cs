@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class WorldSpaceMenuLoader : MonoBehaviour
 {
@@ -20,48 +24,21 @@ public class WorldSpaceMenuLoader : MonoBehaviour
         if (!childOfControllerMenu)
         {
             GameObject newMenu = Instantiate(worldSpaceMenuPrefab);
+            newMenu.transform.position = transform.position + new Vector3(0, 0.25f, 0.1f); // TODO: Hacky, fix.
+            newMenu.transform.rotation =
+                Quaternion.LookRotation((MRET.InputRig.head.transform.position
+                - newMenu.transform.position) * -1, Vector3.up);
 
-            if (VRDesktopSwitcher.isDesktopEnabled())
-            {
-                GameObject menuRoot = GameObject.Find("Menus");
-                newMenu.transform.parent = menuRoot.transform;
-                Vector3 newPos = new Vector3(0f, 0f, 0f);
-                newMenu.transform.position = transform.position;
-                Quaternion rot = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
-                newMenu.transform.rotation = rot;
-            }
-            else
-            {
-                newMenu.transform.position = transform.position;
-                newMenu.transform.rotation =
-                    Quaternion.LookRotation((VRTK.VRTK_DeviceFinder.HeadsetTransform().position
-                    - newMenu.transform.position) * -1, Vector3.up);
-            }
             return newMenu;
         }
 
         if (worldSpaceMenuPrefab && !instantiatedMenu)
         {
             instantiatedMenu = Instantiate(worldSpaceMenuPrefab);
-
-            if (VRDesktopSwitcher.isDesktopEnabled())
-            {
-                GameObject menuRoot = GameObject.Find("Menus");
-
-                instantiatedMenu.transform.parent = menuRoot.transform;
-                Vector3 newPos = new Vector3(0f, 0f, 0f);
-                instantiatedMenu.transform.position = transform.position;
-                Quaternion rot = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
-                instantiatedMenu.transform.rotation = rot;
-
-            }
-            else
-            {
-                instantiatedMenu.transform.position = transform.position;
-                instantiatedMenu.transform.rotation =
-                    Quaternion.LookRotation((VRTK.VRTK_DeviceFinder.HeadsetTransform().position
-                    - instantiatedMenu.transform.position) * -1, Vector3.up);
-            }
+            instantiatedMenu.transform.position = transform.position + new Vector3(0, 0.25f, 0.1f); // TODO: Hacky, fix.
+            instantiatedMenu.transform.rotation =
+                Quaternion.LookRotation((MRET.InputRig.head.transform.position
+                - instantiatedMenu.transform.position) * -1, Vector3.up);
         }
         else if (instantiatedMenu && !instantiatedMenu.activeSelf)
         {

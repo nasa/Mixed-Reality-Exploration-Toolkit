@@ -1,4 +1,7 @@
-﻿using GSFC.ARVR.UTILITIES;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using GSFC.ARVR.UTILITIES;
 
 namespace GSFC.ARVR.XRC
 {
@@ -15,6 +18,8 @@ namespace GSFC.ARVR.XRC
         public string uuid;
         public string parentUUID;
         public InteractablePart.InteractablePartSettings settings;
+        public string title;
+        public string text;
         public Vector3d pos;
         public Quaterniond rot;
         public Vector3d scale;
@@ -51,6 +56,7 @@ namespace GSFC.ARVR.XRC
             string _category, string _subcategory, string _bundle,
             string _uuid, string _parentUUID,
             InteractablePart.InteractablePartSettings _settings,
+            string _title, string _text,
             double _xPos, double _yPos, double _zPos, double _xRot, double _yRot,
             double _zRot, double _wRot, double _xScl, double _yScl, double _zScl,
             UnitType _posU = UnitType.meter, UnitType _rotU = UnitType.degrees,
@@ -65,6 +71,8 @@ namespace GSFC.ARVR.XRC
             uuid = _uuid;
             parentUUID = _parentUUID;
             settings = _settings;
+            title = _title;
+            text = _text;
             pos = new Vector3d(_xPos, _yPos, _zPos);
             rot = new Quaterniond(_xRot, _yRot, _zRot, _wRot);
             scale = new Vector3d(_xScl, _yScl, _zScl);

@@ -1,13 +1,21 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using VRTK;
+using UnityEngine.UI;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 
 
 // NOTE: Belongs in interface/scripts once completed
 
-public class GripMeasure : MonoBehaviour {
+public class GripMeasure : MonoBehaviour
+{
+    public Text distanceLabel;
+    public GameObject leftController;
+    public GameObject rightController;
 
     public enum ActivationButton
     {
@@ -17,19 +25,11 @@ public class GripMeasure : MonoBehaviour {
 
     // if ray casts are active when gripping (trigger + grip) then set z positions to the same plane and measure from rays if no object is hit
 
-    GameObject leftController;
-    GameObject rightController;
     private static bool leftControllerPressed;
     private static bool rightControllerPressed;
     private static float controllerDist = -1;
 
     private static Vector3 InitialDist;
-
-
-
-    private VRTK_ObjectTooltip distanceLabel;
-    private ControllerInteractionEventHandler controllerPressedEventHandler;
-    private ControllerInteractionEventHandler controllerReleasedEventHandler;
 
     [Tooltip("Enables measurement between two controllers or their rays")]
     public bool measureEnabled = true;
@@ -39,52 +39,17 @@ public class GripMeasure : MonoBehaviour {
     public GameObject targetGameObject = null;
     [Tooltip("Game object to show as an indicator of the distance.")]
     public GameObject relativePositionIndicator = null;
-    
-    protected virtual void Awake()
-    {
-        VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
-    }
 
     protected virtual void OnEnable()
     {
         ResetConfiguration();
     }
 
-    protected virtual void OnDestroy()
-    {
-        VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
-    }
-
     public virtual void ResetConfiguration()
     {
-        if (controllerPressedEventHandler == null)
-        {
-            controllerPressedEventHandler = new VRTK.ControllerInteractionEventHandler(handleControllerPressed);
-            if (activationButton == ActivationButton.TriggerPress)
-            {
-                GetComponent<VRTK.VRTK_ControllerEvents>().TriggerPressed += controllerPressedEventHandler;
-            }
-            if (activationButton == ActivationButton.GripPress)
-            {
-                GetComponent<VRTK.VRTK_ControllerEvents>().GripPressed += controllerPressedEventHandler;
-            }
-        }
 
-        if (controllerReleasedEventHandler == null)
-        {
-            controllerReleasedEventHandler = new VRTK.ControllerInteractionEventHandler(handleControllerReleased);
-            if (activationButton == ActivationButton.TriggerPress)
-            {
-                GetComponent<VRTK.VRTK_ControllerEvents>().TriggerReleased += controllerReleasedEventHandler;
-            }
-            if (activationButton == ActivationButton.GripPress)
-            {
-                GetComponent<VRTK.VRTK_ControllerEvents>().GripReleased += controllerReleasedEventHandler;
-            }
-        }
-
-        leftController = VRTK_DeviceFinder.GetControllerLeftHand();
-        rightController = VRTK_DeviceFinder.GetControllerRightHand();
+        //leftController = VRTK_DeviceFinder.GetControllerLeftHand();
+        //rightController = VRTK_DeviceFinder.GetControllerRightHand();
     }
 
     void Start()
@@ -94,17 +59,16 @@ public class GripMeasure : MonoBehaviour {
             // TODO use a prefab instead and instatiate it?
             //relativePositionIndicator = Instantiate (relativePositionIndicator);
             relativePositionIndicator.SetActive(false);
-            distanceLabel = relativePositionIndicator.GetComponentInChildren<VRTK_ObjectTooltip>();
         }
     }
 
-    private void handleControllerReleased(object sender, VRTK.ControllerInteractionEventArgs e)
+    private void handleControllerReleased(InputHand hand)
     {
-        if (VRTK_DeviceFinder.GetControllerIndex(leftController) == e.controllerReference.index)
+        if (hand.handedness == InputHand.Handedness.left)
         {
             leftControllerPressed = false;
         }
-        else if (VRTK_DeviceFinder.GetControllerIndex(rightController) == e.controllerReference.index)
+        else if (hand.handedness == InputHand.Handedness.right)
         {
             rightControllerPressed = false;
         }
@@ -115,9 +79,9 @@ public class GripMeasure : MonoBehaviour {
         }
     }
 
-    private void handleControllerPressed(object sender, VRTK.ControllerInteractionEventArgs e)
+    private void OnControllerPressed(InputHand hand)
     {
-        if (VRTK_DeviceFinder.GetControllerIndex(leftController) == e.controllerReference.index)
+        if (hand.handedness == InputHand.Handedness.left)
         {
             leftControllerPressed = true;
             if (rightControllerPressed)
@@ -132,7 +96,7 @@ public class GripMeasure : MonoBehaviour {
                 }
             }
         }
-        else if (VRTK_DeviceFinder.GetControllerIndex(rightController) == e.controllerReference.index)
+        else if (hand.handedness == InputHand.Handedness.right)
         {
             rightControllerPressed = true;
             if (leftControllerPressed)
@@ -165,7 +129,7 @@ public class GripMeasure : MonoBehaviour {
 
                 if(distanceLabel != null)
                 {
-                    distanceLabel.UpdateText(Math.Round((decimal)deltaDistance, 3).ToString());
+                    distanceLabel.text = Math.Round((decimal)deltaDistance, 3).ToString();
                 }
             }
 

@@ -1,8 +1,10 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 namespace GSFC.ARVR.MRET.Common
@@ -71,7 +73,7 @@ namespace GSFC.ARVR.MRET.Common
             physics.isOn = false;
             gravity.isOn = false;
             //place minimap icon to mark user's location
-            MinimapDrawnObject userMdo = ModeNavigator.instance.headsetFollower.AddComponent<MinimapDrawnObject>();
+            MinimapDrawnObject userMdo = Infrastructure.Framework.MRET.InputRig.head.gameObject.AddComponent<MinimapDrawnObject>();
             userMdo.minimapSprite = mmsUser;
         }
 
@@ -115,7 +117,7 @@ namespace GSFC.ARVR.MRET.Common
                 }
                 float scaleY = displayedList[currentSelection].transform.lossyScale.y;
                 //get current position of camera rig
-                Transform transformToSet = ModeNavigator.instance.headsetFollower.transform.parent.parent;
+                Transform transformToSet = Infrastructure.Framework.MRET.InputRig.transform;
                 float currYPos = transformToSet.position.y;
                 //get current position of selected part
                 float newXPos = displayedList[currentSelection].transform.position.x;
@@ -134,7 +136,7 @@ namespace GSFC.ARVR.MRET.Common
                 float origZ = transformToSet.eulerAngles.z;
                 //rotate camera rig and camera to face selected part
                 transformToSet.LookAt(displayedList[currentSelection].transform);
-                transformToSet.Rotate(new Vector3(0, -1 * ModeNavigator.instance.headsetFollower.transform.parent.localEulerAngles.y, 0));
+                transformToSet.Rotate(new Vector3(0, -1 * Infrastructure.Framework.MRET.InputRig.head.transform.parent.localEulerAngles.y, 0));
                 transformToSet.eulerAngles = new Vector3(origX, transformToSet.eulerAngles.y, origZ);
             }
         }
@@ -150,7 +152,7 @@ namespace GSFC.ARVR.MRET.Common
             }
             float scaleY = obj.transform.lossyScale.y;
             //get current position of camera rig
-            Transform transformToSet = ModeNavigator.instance.headsetFollower.transform.parent.parent;
+            Transform transformToSet = Infrastructure.Framework.MRET.InputRig.transform;
             float currYPos = transformToSet.position.y;
             //get current position of selected part
             float newXPos = obj.transform.position.x;
@@ -169,7 +171,7 @@ namespace GSFC.ARVR.MRET.Common
             float origZ = transformToSet.eulerAngles.z;
             //rotate camera rig and camera to face selected part
             transformToSet.LookAt(obj.transform);
-            transformToSet.Rotate(new Vector3(0, -1 * ModeNavigator.instance.headsetFollower.transform.parent.localEulerAngles.y, 0));
+            transformToSet.Rotate(new Vector3(0, -1 * Infrastructure.Framework.MRET.InputRig.transform.localEulerAngles.y, 0));
             transformToSet.eulerAngles = new Vector3(origX, transformToSet.eulerAngles.y, origZ);
 
 
@@ -200,10 +202,10 @@ namespace GSFC.ARVR.MRET.Common
 
                 InteractablePart iPart = displayedList[currentSelection].GetComponent<InteractablePart>();
                 UndoManager.instance.AddAction(ProjectAction.UpdateObjectSettingsAction(iPart.name,
-                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    new InteractablePart.InteractablePartSettings(iPart.grabbable,
                     !rBody.isKinematic, rBody.useGravity), iPart.guid.ToString()),
                     ProjectAction.UpdateObjectSettingsAction(iPart.name,
-                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    new InteractablePart.InteractablePartSettings(iPart.grabbable,
                     !rBody.isKinematic, !rBody.useGravity), iPart.guid.ToString()));
 
                 //get selected part's object panel controller and display its gravity toggle state as "on" or "off"
@@ -241,10 +243,10 @@ namespace GSFC.ARVR.MRET.Common
 
                 InteractablePart iPart = displayedList[currentSelection].GetComponent<InteractablePart>();
                 UndoManager.instance.AddAction(ProjectAction.UpdateObjectSettingsAction(iPart.name,
-                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    new InteractablePart.InteractablePartSettings(iPart.grabbable,
                     !rBody.isKinematic, rBody.useGravity), iPart.guid.ToString()),
                     ProjectAction.UpdateObjectSettingsAction(iPart.name,
-                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    new InteractablePart.InteractablePartSettings(iPart.grabbable,
                     rBody.isKinematic, rBody.useGravity), iPart.guid.ToString()));
 
                 //get selected part's object panel controller and display its physics toggle state as "on" or "off"

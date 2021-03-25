@@ -51,6 +51,12 @@ public partial class ConfigurationType
 
     private ConfigurationTypeColliderMode colliderModeField;
 
+    private bool snapPlacementField;
+
+    private bool avatarField;
+
+    private bool voiceControlField;
+
     private string versionField;
 
     /// <remarks/>
@@ -206,6 +212,45 @@ public partial class ConfigurationType
         set
         {
             this.timeSimulationPathField = value;
+        }
+    }
+
+    /// <remarks/>
+    public bool PlacementMode
+    {
+        get
+        {
+            return this.snapPlacementField;
+        }
+        set
+        {
+            this.snapPlacementField = value;
+        }
+    }
+
+    /// <remarks/>
+    public bool Avatars
+    {
+        get
+        {
+            return this.avatarField;
+        }
+        set
+        {
+            this.avatarField = value;
+        }
+    }
+
+    /// <remarks/>
+    public bool VoiceControl
+    {
+        get
+        {
+            return this.voiceControlField;
+        }
+        set
+        {
+            this.voiceControlField = value;
         }
     }
 

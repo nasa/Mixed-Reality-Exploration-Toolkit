@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using UnityEngine;
 using GSFC.ARVR.MRET.Common.Schemas;
 using GSFC.ARVR.MRET.Common.Schemas.TimeSimulationTypes;
@@ -112,7 +115,7 @@ namespace GSFC.ARVR.MRET.Common
             }
             else
             {
-                Debug.LogWarning("[SchemaHandler] Unknown file extension.");
+                Debug.LogWarning("[SchemaHandler] Unknown file extension " + extension + ".");
                 return null;
             }
         }

@@ -3,7 +3,7 @@
 <MRETKioskMode>
 
   <SceneToLoad>
-    <SceneName>Standard-Cleanroom</SceneName>
+    <SceneName>Content\Standard_MRET_Content\Projects\CubeSats.mret</SceneName>
   </SceneToLoad>
 
   <MenuControls>

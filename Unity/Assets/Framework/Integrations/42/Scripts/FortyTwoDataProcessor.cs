@@ -1,8 +1,11 @@
-﻿using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
 using GSFC.ARVR.UTILITIES;
-using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class FortyTwoDataProcessor : MonoBehaviour
 {
@@ -33,22 +36,11 @@ public class FortyTwoDataProcessor : MonoBehaviour
 
     private List<FortyTwoRawObjectInfo> tracked42Objects = new List<FortyTwoRawObjectInfo>();
     private List<FortyTwoRawObjectInfo> lastTracked42Objects = new List<FortyTwoRawObjectInfo>();
-    private DataManager dataManager;
     private bool reading = false;
     private int ticksSinceLastUpdate = 0;
 
     void Start()
     {
-        GameObject loadedProjectObject = GameObject.Find("LoadedProject");
-        if (loadedProjectObject)
-        {
-            UnityProject loadedProject = loadedProjectObject.GetComponent<UnityProject>();
-            if (loadedProject)
-            {
-                dataManager = loadedProject.dataManager;
-            }
-        }
-
         foreach (string obj in objectsToTrack)
         {
             tracked42Objects.Add(new FortyTwoRawObjectInfo(obj));
@@ -211,32 +203,32 @@ public class FortyTwoDataProcessor : MonoBehaviour
 #region HELPERS
     private void SavePointsFromVector3d(string prefix, Vector3d points)
     {
-        dataManager.SaveValue(prefix + ".X", points.x);
-        dataManager.SaveValue(prefix + ".Y", points.y);
-        dataManager.SaveValue(prefix + ".Z", points.z);
+        MRET.DataManager.SaveValue(prefix + ".X", points.x);
+        MRET.DataManager.SaveValue(prefix + ".Y", points.y);
+        MRET.DataManager.SaveValue(prefix + ".Z", points.z);
     }
 
     private void SavePointsFromVector3dAsFloats(string prefix, Vector3d points)
     {
-        dataManager.SaveValue(prefix + ".X", (float) points.x);
-        dataManager.SaveValue(prefix + ".Y", (float) points.y);
-        dataManager.SaveValue(prefix + ".Z", (float) points.z);
+        MRET.DataManager.SaveValue(prefix + ".X", (float) points.x);
+        MRET.DataManager.SaveValue(prefix + ".Y", (float) points.y);
+        MRET.DataManager.SaveValue(prefix + ".Z", (float) points.z);
     }
 
     private void SavePointsFromQuaterniond(string prefix, Quaterniond points)
     {
-        dataManager.SaveValue(prefix + ".X", points.x);
-        dataManager.SaveValue(prefix + ".Y", points.y);
-        dataManager.SaveValue(prefix + ".Z", points.z);
-        dataManager.SaveValue(prefix + ".W", points.w);
+        MRET.DataManager.SaveValue(prefix + ".X", points.x);
+        MRET.DataManager.SaveValue(prefix + ".Y", points.y);
+        MRET.DataManager.SaveValue(prefix + ".Z", points.z);
+        MRET.DataManager.SaveValue(prefix + ".W", points.w);
     }
 
     private void SavePointsFromQuaterniondAsFloats(string prefix, Quaterniond points)
     {
-        dataManager.SaveValue(prefix + ".X", (float) points.x);
-        dataManager.SaveValue(prefix + ".Y", (float) points.y);
-        dataManager.SaveValue(prefix + ".Z", (float) points.z);
-        dataManager.SaveValue(prefix + ".W", (float) points.w);
+        MRET.DataManager.SaveValue(prefix + ".X", (float) points.x);
+        MRET.DataManager.SaveValue(prefix + ".Y", (float) points.y);
+        MRET.DataManager.SaveValue(prefix + ".Z", (float) points.z);
+        MRET.DataManager.SaveValue(prefix + ".W", (float) points.w);
     }
 
     private Vector3d FindPointsAsVector3d(string prefix)
@@ -267,13 +259,13 @@ public class FortyTwoDataProcessor : MonoBehaviour
 
     private float FindPointAsFloat(string nameToFind)
     {
-        object rawVal = dataManager.FindPoint(nameToFind);
+        object rawVal = MRET.DataManager.FindPoint(nameToFind);
         return (float) ((rawVal == null) ? 0f : rawVal);
     }
 
     private double FindPointAsDouble(string nameToFind)
     {
-        object rawVal = dataManager.FindPoint(nameToFind);
+        object rawVal = MRET.DataManager.FindPoint(nameToFind);
         return (double) ((rawVal == null) ? 0f : rawVal);
     }
 

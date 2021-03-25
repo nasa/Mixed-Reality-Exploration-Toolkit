@@ -1,9 +1,11 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using PointCloud;
 // PointCloudViewer and unitycodercom_PointCloudBinaryViewer namespace will be erased since I will be merging PointCloudManager into Pointcloud namespace
 using PointCloudViewer;
-using unitycodercom_PointCloudBinaryViewer;
-using VRTK;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class LaserDrawingRaycastManager : MonoBehaviour
 {
@@ -34,7 +36,7 @@ public class LaserDrawingRaycastManager : MonoBehaviour
             PointCloudManager.PointWasSelected += PointSelected;
         }
 
-        raycastLayerMask = LayerMask.GetMask(LayerMask.LayerToName(SessionConfiguration.raycastLayer));
+        raycastLayerMask = LayerMask.GetMask(LayerMask.LayerToName(MRET.raycastLayer));
     }
 
     void Update()
@@ -103,7 +105,7 @@ public class LaserDrawingRaycastManager : MonoBehaviour
                 }
                 else if (hitObj.tag != "pointcloud") //&& hitObj.layer == SessionConfiguration.raycastLayer)
                 {
-                    if (hitObj.layer == SessionConfiguration.raycastLayer || hitObj.GetComponent<InteractablePart>() == null)
+                    if (hitObj.layer == MRET.raycastLayer || hitObj.GetComponent<InteractablePart>() == null)
                     {
                         intersectingObject = hitObj;
                         isIntersecting = true;

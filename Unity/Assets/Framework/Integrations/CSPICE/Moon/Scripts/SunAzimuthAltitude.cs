@@ -1,7 +1,11 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using System.IO;
 using UnityEngine;
 using GSFC.ARVR.UTILITIES;
+using GSFC.ARVR.MRET;
 
 namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
 {
@@ -36,17 +40,14 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
      * 
      * TODO: This should be generalized for any celestial body source and target
      */
-    public class SunAzimuthAltitude : MonoBehaviour
+    public class SunAzimuthAltitude : MRETUpdateBehaviour
     {
-        // Performance Management
-        private int updateCounter = 0;
-        [Tooltip("Modulates the frequency of model updates published to the DataManager. The value represents a counter modulo to determine how many calls to Update will be skipped before publishing.")]
-        public int updateRateModulo = 1;
+        public override string ClassName => nameof(SunAzimuthAltitude);
 
-        //    static string XRCSPICE_ROOT = System.Environment.GetEnvironmentVariable("XRCSPICE");
-        //    static string XRCSPICE_ROOT = Directory.GetCurrentDirectory();
-        //        static string XRCSPICE_ROOT = Application.dataPath;
-        //        static string XRCSPICE_KERNELS = XRCSPICE_ROOT + "\\Assets\\CSPICE\\data";
+//      static string XRCSPICE_ROOT = System.Environment.GetEnvironmentVariable("XRCSPICE");
+//      static string XRCSPICE_ROOT = Directory.GetCurrentDirectory();
+//      static string XRCSPICE_ROOT = Application.dataPath;
+//      static string XRCSPICE_KERNELS = XRCSPICE_ROOT + "\\Assets\\CSPICE\\data";
         static string XRCSPICE_PACKAGE_NAME = "CSPICE";
 #if UNITY_EDITOR
         static string XRCSPICE_KERNEL_DIR = "Content\\SolarSystem_MRET_Content\\Projects";
@@ -99,7 +100,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
             double[] sunvec = new double[3];
 
             // Set the time to the format that SPICE requires
-            string timeStr = String.Format("{0:s}", atTime);
+            string timeStr = String.Format("{0:s}", atTime.ToUniversalTime());
 //            string timeStr = "2020-02-23T12:00:00";
 
             // Get the ephemeris time
@@ -141,65 +142,89 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
 
         }
 
-        // Start is called before the first frame update
-        void Start()
+        /// <seealso cref="MRETUpdateBehaviour.IntegrityCheck"/>
+        protected override IntegrityState IntegrityCheck()
         {
-            string cspicePath;
-            
-            // Get the CSPICE package path
-            cspicePath = PackageLoader.GetPackagePath(Application.dataPath, XRCSPICE_PACKAGE_NAME);
+            // Take the inherited behavior
+            IntegrityState state = base.IntegrityCheck();
+
+            // Custom integrity checks here
+            return (
+                (state == IntegrityState.Failure) ||
+                (dataManager == null) ||
+                (!f_kernelsLoaded)
+                    ? IntegrityState.Failure   // Fail if base class fails, OR data manager is null
+                    : IntegrityState.Success); // Otherwise, our integrity is valid
+        }
+
+        /// <seealso cref="MRETUpdateBehaviour.MRETStart"/>
+        protected override void MRETStart()
+        {
+            // Take the inherited behavior
+            base.MRETStart();
 
             // Initialize the CSPICE DLL
-            PackageLoader.InitializePackagePlugin(cspicePath);
-
-            // Load the XRCSPICE Kernels for the Moon
-            if (!f_kernelsLoaded)
+            try
             {
+                // Get the CSPICE package path
+                string cspicePath = PackageLoader.GetPackagePath(Application.dataPath, XRCSPICE_PACKAGE_NAME);
+
+                // Initialize the CSPICE plugin
+                PackageLoader.InitializePackagePlugin(cspicePath);
+
+                // Load the CSPICE Kernels for the Moon
                 string kernelPath = Application.dataPath + Path.DirectorySeparatorChar + XRCSPICE_KERNEL_DIR;
-                UnityEngine.Debug.Log("Loading CSPICE kernels: " + XRCSPICE_KERNEL_FILE + "' from path: " + kernelPath);
+                Debug.Log("Loading CSPICE kernels: " + XRCSPICE_KERNEL_FILE + "' from path: " + kernelPath);
                 LunarModel.LoadMetaKernel(kernelPath, XRCSPICE_KERNEL_FILE);
+
+                // Mark as loaded
                 f_kernelsLoaded = true;
+            }
+            catch (Exception e)
+            {
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; " + e.Message);
             }
 
             // Located the DataManager if one wasn't assigned to the script in the editor
             if (dataManager == null)
             {
-                dataManager = SessionManager.instance.dataManager;
+                dataManager = MRET.Infrastructure.Framework.MRET.DataManager;
             }
         }
 
-        // Update is called once per frame
-        void Update()
+        /// <seealso cref="MRETUpdateBehaviour.MRETUpdate"/>
+        protected override void MRETUpdate()
         {
-            // Performance management
-            updateCounter++;
-            if (updateCounter >= updateRateModulo)
+            // Take the inherited behavior
+            base.MRETUpdate();
+
+            // Check assertions
+            if (f_kernelsLoaded && dataManager)
             {
-                // Reset the update counter
-                updateCounter = 0;
+                // Get the data driving the calculations.
+                // TODO: Use the terrain center for now because the scale makes the sun fly across the screen
+                // as the user moves, and that isn't the effect we want
+                var userTimeVar = dataManager.FindPoint(SurfaceLocation.KEY_DATETIME);
+//              var userLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_LATITUDE_DEG);
+                var userLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_CENTER_LATITUDE_DEG);
+//              var userLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_LONGITUDE_DEG);
+                var userLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_CENTER_LONGITUDE_DEG);
+//              var userElevationVar = dataManager.FindPoint(SurfaceLocation.KEY_ELEVATION_M);
+                var userElevationVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_CENTER_ELEVATION_M);
 
-                if (dataManager != null)
+                if ((userTimeVar is DateTime) &&
+                    (userLatitudeVar is double) &&
+                    (userLongitudeVar is double) &&
+                    (userElevationVar is double))
                 {
-                    // Get the data driving the calculations
-                    var userTimeVar = dataManager.FindPoint(SurfaceLocation.KEY_DATETIME);
-                    var userLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_LATITUDE_DEG);
-                    var userLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_LONGITUDE_DEG);
-                    var userElevationVar = dataManager.FindPoint(SurfaceLocation.KEY_ELEVATION_M);
+                    // Get the current time/lat/lon/el
+                    DateTime userTime = (DateTime)userTimeVar;
+                    double userLatitude = LunarModel.ToRadians((double)userLatitudeVar); // Radians
+                    double userLongitude = LunarModel.ToRadians((double)userLongitudeVar); // Radians
+                    double userElevation = (double)userElevationVar / 1000.0; // Kilometers
 
-                    if ((userTimeVar is DateTime) &&
-                        (userLatitudeVar is double) &&
-                        (userLongitudeVar is double) &&
-                        (userElevationVar is double))
-                    {
-                        // Get the current time/lat/lon/el
-                        DateTime userTime = (DateTime)userTimeVar;
-                        double userLatitude = LunarModel.ToRadians((double)userLatitudeVar); // Radians
-                        double userLongitude = LunarModel.ToRadians((double)userLongitudeVar); // Radians
-                        double userElevation = (double)userElevationVar / 1000.0; // Kilometers
-
-                        // Set the position of the Sun light
-                        CalculateSunPosition(userTime, userLongitude, userLatitude, userElevation);
-                    }
+                    // Set the position of the Sun light
+                    CalculateSunPosition(userTime, userLongitude, userLatitude, userElevation);
                 }
             }
         }

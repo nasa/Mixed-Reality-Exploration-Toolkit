@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using UnityEngine.UI;
 
 public class ObjectPanelController : MonoBehaviour
@@ -64,10 +67,10 @@ public class ObjectPanelController : MonoBehaviour
 
                 InteractablePart iPart = selectedObject.GetComponent<InteractablePart>();
                 UndoManager.instance.AddAction(ProjectAction.UpdateObjectSettingsAction(iPart.name,
-                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    new InteractablePart.InteractablePartSettings(iPart.grabbable,
                     !rBody.isKinematic, rBody.useGravity), iPart.guid.ToString()),
                     ProjectAction.UpdateObjectSettingsAction(iPart.name,
-                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    new InteractablePart.InteractablePartSettings(iPart.grabbable,
                     !rBody.isKinematic, !rBody.useGravity), iPart.guid.ToString()));
             }
         }
@@ -94,10 +97,10 @@ public class ObjectPanelController : MonoBehaviour
 
                 InteractablePart iPart = selectedObject.GetComponent<InteractablePart>();
                 UndoManager.instance.AddAction(ProjectAction.UpdateObjectSettingsAction(iPart.name,
-                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    new InteractablePart.InteractablePartSettings(iPart.grabbable,
                     !rBody.isKinematic, rBody.useGravity), iPart.guid.ToString()),
                     ProjectAction.UpdateObjectSettingsAction(iPart.name,
-                    new InteractablePart.InteractablePartSettings(iPart.isGrabbable,
+                    new InteractablePart.InteractablePartSettings(iPart.grabbable,
                     rBody.isKinematic, rBody.useGravity), iPart.guid.ToString()));
             }
         }

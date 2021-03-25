@@ -1,11 +1,6 @@
-﻿//******************************************************************
-// THIS FILE IS A WRAPPER OVER THE FILE FROM ODDITY PCE VERSION 5.2
-//copyright 2018
-//Author: David Gallagher
-//Publisher: Oddity Interactive
-//http://oddityinteractive.com
-//v.8.0.0.1
-//******************************************************************
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -17,7 +12,6 @@ using System.IO;
 using System.IO.MemoryMappedFiles;
 using UnityEngine;
 using System.Diagnostics;
-using Valve.VR.InteractionSystem;
 using Octree;
 //**********************************************************
 //

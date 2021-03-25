@@ -1,9 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
 using UnityEngine;
-using UnityEngine.UI;
-using VRTK;
-using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class FrameHUD : MonoBehaviour
 {
@@ -13,22 +12,6 @@ public class FrameHUD : MonoBehaviour
     public float threshold = 25;
     public Vector3 Offset = new Vector3(0, 0, 0.5f);
     private bool zeroed = false;
-
-    private DataManager dataManager;
-
-    void Start()
-    {
-        Offset = new Vector3(0, 0, 0.5f);
-        GameObject loadedProjectObject = GameObject.Find("LoadedProject");
-        if (loadedProjectObject)
-        {
-            UnityProject loadedProject = loadedProjectObject.GetComponent<UnityProject>();
-            if (loadedProject)
-            {
-                dataManager = loadedProject.dataManager;
-            }
-        }
-    }
 
     void LateUpdate()
     {
@@ -40,10 +23,7 @@ public class FrameHUD : MonoBehaviour
         float step = speed * Time.deltaTime;
         float Angle = Mathf.Abs(Quaternion.Angle(trackHeadset.rotation, transform.rotation));
 
-        if (dataManager)
-        {
-            dataManager.SaveValue("MRET.Internal.Angle", Angle);
-        }
+        MRET.DataManager.SaveValue("MRET.Internal.Angle", Angle);
 
         if (Angle > threshold || !zeroed)
         {

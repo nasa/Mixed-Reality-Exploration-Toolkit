@@ -1898,7 +1898,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.example.org/MRET")]
     public partial class LocomotionSettingsType
     {
-
+        // TODO: These names need to be changed to match the names used for locomotion
         private float teleportDistanceField;
 
         private float flySpeedField;

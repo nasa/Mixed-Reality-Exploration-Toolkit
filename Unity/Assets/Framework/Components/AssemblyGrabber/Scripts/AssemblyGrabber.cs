@@ -1,14 +1,16 @@
-﻿using UnityEngine;
-using VRTK;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using System.Collections.Generic;
 using GSFC.ARVR.MRET.Selection;
 using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Infrastructure.Framework.Interactable;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 
-public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
+public class AssemblyGrabber : Interactable, ISelectable
 {
-    [Tooltip("Material to highlight assembly with.")]
-    public Material highlightMaterial;
-
     [Tooltip("Root of assembly.")]
     public GameObject assemblyRoot;
 
@@ -16,9 +18,6 @@ public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
     
     private MeshRenderer[] objectRenderers;
     private Material[] objectMaterials;
-    private Transform originalParent;
-    private SessionConfiguration sessionConfig;
-    private Material selectMaterial;
 
     // Part information.
     public string assetBundle = "";
@@ -36,6 +35,8 @@ public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
     public string vendor = "";
     public string version = "";
     public Vector3 dimensions = Vector3.zero;
+
+    public bool grabbed { get; private set; }
 
     // TODO: Don't look at me! This is extremely ugly code.
     public PartType Serialize()
@@ -64,7 +65,7 @@ public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
             serializedPart.EnableCollisions = new bool[] { rBody.isKinematic };
             serializedPart.EnableGravity = new bool[] { rBody.useGravity };
         }
-        serializedPart.EnableInteraction = new bool[] { isGrabbable };
+        serializedPart.EnableInteraction = new bool[] { grabbable };
         //serializedPart.NonInteractable = ;
         serializedPart.ID = id;
         serializedPart.MaxMass = new float[] { maxMass };
@@ -116,36 +117,6 @@ public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
         }
     }
 
-    public void ResetAllTextures()
-    {
-        if (selected)
-        {
-            return;
-        }
-
-        foreach (InteractablePart part in assemblyRoot.GetComponentsInChildren<InteractablePart>())
-        {
-            part.ResetTextures();
-            VRTK_InteractObjectHighlighter highlighter = part.GetComponent<VRTK_InteractObjectHighlighter>();
-            if (highlighter)
-            {
-                highlighter.Unhighlight();
-            }
-        }
-
-        ResetMyTextures();
-
-        foreach (AssemblyGrabber grabber in otherGrabbers)
-        {
-            grabber.ResetMyTextures();
-            VRTK_InteractObjectHighlighter highlighter = grabber.GetComponent<VRTK_InteractObjectHighlighter>();
-            if (highlighter)
-            {
-                highlighter.Unhighlight();
-            }
-        }
-    }
-
     public void Start()
     {
         // Preserve information about original materials.
@@ -161,67 +132,17 @@ public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
         }
         objectMaterials = objMatList.ToArray();
 
-        /////////////////////////// Get Session Configuration. ///////////////////////////
-        GameObject sessionManager = GameObject.Find("SessionManager");
-        if (sessionManager)
-        {
-            sessionConfig = sessionManager.GetComponent<SessionConfiguration>();
-            if (sessionConfig)
-            {
-                highlightMaterial = sessionConfig.highlightMaterial;
-                selectMaterial = sessionConfig.selectMaterial;
-            }
-            else
-            {
-                Debug.LogError("[CollisionHandler->Start] Unable to get Session Configuration.");
-            }
-        }
-        else
-        {
-            Debug.LogError("[CollisionHandler->Start] Unable to get Session Manager.");
-        }
-        //////////////////////////////////////////////////////////////////////////////////
+        highlightMaterial = MRET.HighlightMaterial;
     }
 
-    public override void OnInteractableObjectTouched(InteractableObjectEventArgs e)
-    {
-        base.OnInteractableObjectTouched(e);
-
-        if (!selected)
-        {
-            // Highlight the entire assembly.
-            foreach (MeshRenderer rend in assemblyRoot.GetComponentsInChildren<MeshRenderer>())
-            {
-                int rendMatCount = rend.materials.Length;
-                Material[] rendMats = new Material[rendMatCount];
-                for (int j = 0; j < rendMatCount; j++)
-                {
-                    rendMats[j] = highlightMaterial;
-                }
-                rend.materials = rendMats;
-            }
-        }
-    }
-
-    public override void OnInteractableObjectUntouched(InteractableObjectEventArgs e)
-    {
-        base.OnInteractableObjectUntouched(e);
-
-        if (!selected)
-        {
-            // Return the entire assembly back to its original materials.
-            ResetAllTextures();
-        }
-    }
-
-    public override void OnInteractableObjectGrabbed(InteractableObjectEventArgs e)
+    public override void BeginGrab(InputHand hand)
     {
         // Check to see if any other grabbers are grabbing.
         foreach (AssemblyGrabber otherGrabber in otherGrabbers)
         {
-            if (otherGrabber.IsGrabbed())
+            if (otherGrabber.grabbed)
             {
-                OnInteractableObjectUngrabbed(e);
+                EndGrab(hand);
                 return;
             }
         }
@@ -230,13 +151,15 @@ public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
         originalParent = assemblyRoot.transform.parent;
 
         // Set assembly to be child of controller.
-        assemblyRoot.transform.SetParent(e.interactingObject.transform);
+        assemblyRoot.transform.SetParent(hand.transform);
+
+        grabbed = true;
 
         DisableAllEnvironmentScaling();
         DisableAllFlying();
     }
 
-    public override void OnInteractableObjectUngrabbed(InteractableObjectEventArgs e)
+    public override void EndGrab(InputHand hand)
     {
         // Set parent back to original.
         if (originalParent)
@@ -244,66 +167,31 @@ public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
             assemblyRoot.transform.SetParent(originalParent);
         }
 
+        grabbed = false;
+
         EnableAnyEnvironmentScaling();
         EnableAnyFlying();
     }
 
 #region CONTEXTAWARECONTROL
-    private bool previousScalingState = false, previousFlyingState = false;
     private void DisableAllEnvironmentScaling()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
-        {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                ScaleObjectTransform sot = cEvent.GetComponentInChildren<ScaleObjectTransform>(true);
-                previousScalingState = sot.enabled; // Inefficient, but it doesn't matter.
-                sot.enabled = false;
-            }
-        }
+        // TODO Check with Jeff.
     }
 
     private void EnableAnyEnvironmentScaling()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
-        {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                ScaleObjectTransform sot = cEvent.GetComponentInChildren<ScaleObjectTransform>(true);
-                sot.enabled = previousScalingState;
-            }
-            previousScalingState = false;
-        }
+        // TODO Check with Jeff.
     }
 
     private void DisableAllFlying()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
-        {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                SimpleMotionController smc = cEvent.GetComponentInChildren<SimpleMotionController>(true);
-                previousFlyingState = smc.motionEnabled; // Inefficient, but it doesn't matter.
-                smc.motionEnabled = false;
-            }
-        }
+        // TODO Check with Jeff.
     }
 
     private void EnableAnyFlying()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
-        {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                SimpleMotionController smc = cEvent.GetComponentInChildren<SimpleMotionController>(true);
-                smc.motionEnabled = previousFlyingState;
-            }
-            previousFlyingState = false;
-        }
+        // TODO Check with Jeff.
     }
 #endregion
 
@@ -319,14 +207,6 @@ public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
 
         selected = true;
        if (hierarchical) GetInteractablePartRoot(this).Select();
-        /*if (GetComponentsInParent<ISelectable>().Length == 0)
-        {
-            foreach (InteractablePart selChild in GetInteractablePartRoot(this).GetComponentsInChildren<InteractablePart>(true))
-            {
-                Debug.Log("selecting");
-                selChild.Select();
-            }
-        }*/
 
         // Highlight the entire part.
         foreach (MeshRenderer rend in transform.GetComponentsInChildren<MeshRenderer>())
@@ -335,7 +215,7 @@ public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
             Material[] rendMats = new Material[rendMatCount];
             for (int j = 0; j < rendMatCount; j++)
             {
-                rendMats[j] = selectMaterial;
+                rendMats[j] = MRET.SelectMaterial;
             }
             rend.materials = rendMats;
         }
@@ -350,13 +230,6 @@ public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
 
         selected = false;
         if (hierarchical) GetInteractablePartRoot(this).Deselect();
-        /*if (GetComponentsInParent<ISelectable>().Length == 0)
-        {
-            foreach (InteractablePart selChild in GetInteractablePartRoot(this).GetComponentsInChildren<InteractablePart>(true))
-            {
-                selChild.Deselect();
-            }
-        }*/
 
         ResetMyTextures();
         foreach (InteractablePart iPart in transform.GetComponentsInChildren<InteractablePart>())
@@ -372,7 +245,7 @@ public class AssemblyGrabber : VRTK_InteractableObject, ISelectable
 
     private InteractablePart GetInteractablePartRoot(AssemblyGrabber assemblyGrabber)
     {
-        VRTK_InteractableObject aGrabToReturn = assemblyGrabber;
+        Interactable aGrabToReturn = assemblyGrabber;
 
         InteractablePart[] newIPart = { null };
         while ((newIPart = aGrabToReturn.gameObject.transform.GetComponentsInParent<InteractablePart>(true)) != null &&

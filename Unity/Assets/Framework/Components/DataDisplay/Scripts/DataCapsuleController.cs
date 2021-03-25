@@ -1,8 +1,11 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using VRTK;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class DataCapsuleController : VRTK_InteractableObject
+using UnityEngine;
+using UnityEngine.UI;
+using GSFC.ARVR.MRET.Infrastructure.Framework.Interactable;
+
+public class DataCapsuleController : MonoBehaviour
 {
     private enum PointState { redHigh, yellowHigh, green, yellowLow, redLow, unknown };
 
@@ -19,15 +22,11 @@ public class DataCapsuleController : VRTK_InteractableObject
     {
         dataManager = FindObjectOfType<DataManager>();
         meshRenderer = GetComponent<MeshRenderer>();
-
-        GetComponentInParent<VRTK_ControllerEvents>().TouchpadPressed += new ControllerInteractionEventHandler(HandleTouchpadPress);
 	}
 
     int frameCounter = 0;
-    protected override void Update()
+    private void Update()
     {
-        base.Update();
-
         if (frameCounter >= framesBetweenUpdates)
         {
             if (pointKeyName != "" && dataManager)
@@ -97,7 +96,7 @@ public class DataCapsuleController : VRTK_InteractableObject
     }
 
     public InteractablePart currentlyTouchingPart = null;
-    private void HandleTouchpadPress(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void HandleTouchpadPress()
     {
         if (currentlyTouchingPart)
         {
@@ -121,7 +120,7 @@ public class DataCapsuleController : VRTK_InteractableObject
             }
             if (gameObject)
             {
-                GetComponentInParent<VRTK_ControllerEvents>().UnsubscribeToButtonAliasEvent(VRTK_ControllerEvents.ButtonAlias.TouchpadPress, true, HandleTouchpadPress);
+                //GetComponentInParent<VRTK_ControllerEvents>().UnsubscribeToButtonAliasEvent(VRTK_ControllerEvents.ButtonAlias.TouchpadPress, true, HandleTouchpadPress);
                 Destroy(gameObject);
             }
         }

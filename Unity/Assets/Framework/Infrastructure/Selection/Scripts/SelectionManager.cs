@@ -1,5 +1,9 @@
-﻿using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections.Generic;
 using UnityEngine;
+using GSFC.ARVR.MRET.Components.Notes;
 
 namespace GSFC.ARVR.MRET.Selection
 {
@@ -31,7 +35,7 @@ namespace GSFC.ARVR.MRET.Selection
 
         private List<object> selectedObjects = new List<object>();
 
-        void Start()
+        public void Initialize()
         {
             selectedObjects = new List<object>();
         }

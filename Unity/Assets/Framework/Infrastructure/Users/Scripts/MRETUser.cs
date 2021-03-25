@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
+using GSFC.ARVR.MRET;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 /**
  * Represents a MRET user. For the local user, this class monitors volatile information about the
@@ -22,9 +27,9 @@
  * 
  * @see DataManager
  */
-public class MRETUser : MonoBehaviour
+public class MRETUser : MRETUpdateBehaviour
 {
-    public static readonly string NAME = nameof(MRETUser);
+    public override string ClassName => nameof(MRETUser);
 
     // Prefix of all keys
     public const string KEY_PREFIX = "GSFC.ARVR.MRET.MRETUser";
@@ -46,18 +51,10 @@ public class MRETUser : MonoBehaviour
     [Tooltip("The DataManager to use for storing the user telemetry. If not supplied, one will be located at Start")]
     public DataManager dataManager;
 
-    // Performance Management
-    private int updateCounter = 0;
-    [Tooltip("Modulates the frequency of model updates published to the DataManager. The value represents a counter modulo to determine how many calls to Update will be skipped before publishing.")]
-    public int updateRateModulo = 1;
-
     [Tooltip("Indicated whether or not this MRET User is local or remote.")]
     public bool isLocal = true;
     [Tooltip("The user's name.")]
     public string userName = "default";
-
-    // Internal SessionManager reference
-    private SessionManager sessionManager;
 
     private bool initialized = false;
 
@@ -341,151 +338,98 @@ public class MRETUser : MonoBehaviour
      */
     protected void LoadColliders()
     {
-        // Obtaining the collider is different in VR vs Desktop mode
-        if (VRDesktopSwitcher.isVREnabled())
-        {
-            // The user collider is generated automatically in VRTK and can be obtained through the body physics script
-            if (sessionManager.BodyPhysics != null)
-            {
-                // Head offset from the body collider
-                headOffset = sessionManager.BodyPhysics.headsetYOffset;
+        // TODO: Head offset from the body collider?
+        headOffset = 0; // headOffset = sessionManager.BodyPhysics.headsetYOffset;
 
-                // Body collider
-                GameObject bodyPhysicsContainer = sessionManager.BodyPhysics.GetBodyColliderContainer();
-                if (bodyPhysicsContainer != null)
-                {
-                    // Assign the body collider
-                    bodyCollider = bodyPhysicsContainer.GetComponent<CapsuleCollider>();
-                }
+        // Body collider
+        bodyCollider = MRET.InputRig.bodyCollider;
 
-                // Foot collider
-                GameObject footPhysicsContainer = sessionManager.BodyPhysics.GetFootColliderContainer();
-                if (footPhysicsContainer != null)
-                {
-                    // Assign the foot collider
-                    footCollider = footPhysicsContainer.GetComponent<CapsuleCollider>();
-                }
-            }
-        }
-        else
-        {
-            // Make sure we have a valid headset follower
-            if (sessionManager.headsetFollower != null)
-            {
-                // The user collider is contained within the character controller
-                GameObject colliderContainer = sessionManager.headsetFollower.transform.parent.gameObject;
-                if (colliderContainer != null)
-                {
-                    // Assign the body collider
-                    bodyCollider = colliderContainer.GetComponent<CharacterController>();
-
-                    // Assign the foot collider
-                    footCollider = null;
-                }
-            }
-        }
+        // TODO: Foot collider?
+        footCollider = null;
     }
 
-    /**
-     * Called by Unity as part of the MonoBehavior instantiation process.
-     * Guaranteed to be called after the Awake methods are called and before the first
-     * frame update.
-     */
-    protected virtual void Start()
+    /// <seealso cref="MRETUpdateBehaviour.MRETStart"/>
+    protected override void MRETStart()
     {
-        // Obtain a reference to the session manager which should have references to everything we need
-        sessionManager = SessionManager.instance;
+        // Take the inherited behavior
+        base.MRETStart();
 
-        // Try to get a reference to the data manager if not explictly set
+        // Make sure we have a data manager
         if (dataManager == null)
         {
-            dataManager = sessionManager.dataManager;
-            if (dataManager == null)
-            {
-                Debug.LogError("[" + NAME + "] Unable to obtain a reference to a DataManager");
-            }
+            dataManager = MRET.DataManager;
         }
     }
 
-    /**
-     * Called by Unity once each frame
-     */
-    protected virtual void Update()
+    /// <seealso cref="MRETUpdateBehaviour.MRETUpdate"/>
+    protected override void MRETUpdate()
     {
-        // Performance management
-        updateCounter++;
-        if (updateCounter >= updateRateModulo)
+        // Take the inherited behavior
+        base.MRETUpdate();
+
+        // Make sure we are only updating the local user. We don't want to report local
+        // telemetry if this is a remote user. 
+        if (isLocal)
         {
-            // Reset the update counter
-            updateCounter = 0;
-
-            // Make sure we are only updating the local user. We don't want to report local
-            // telemetry if this is a remote user. 
-            if (isLocal)
+            // Make sure the user is initialized
+            if (!initialized)
             {
-                // Make sure the user is initialized
-                if (!initialized)
+                // Place the local user into the play area
+                // NOTE: This cannot be done in Start because the transform isn't available during initialization
+                if (MRET.InputRig != null)
                 {
-                    // Place the local user into the play area
-                    // NOTE: This cannot be done in Start because the transform isn't available during initialization
-                    if (VRTK.VRTK_DeviceFinder.PlayAreaTransform() != null)
-                    {
-                        transform.SetParent(VRTK.VRTK_DeviceFinder.PlayAreaTransform());
-                        initialized = true;
-                        // TODO: Can MRETUserManager be rewritten to just have an instance variable? The
-                        // Get method does a Find on itself?
-                        MRETUserManager.Get().UpdateUserList();
-                    }
+                    transform.SetParent(MRET.InputRig.transform);
+                    initialized = true;
+                    // TODO: Can MRETUserManager be rewritten to just have an instance variable? The
+                    // Get method does a Find on itself?
+                    MRETUserManager.Get().UpdateUserList();
                 }
+            }
 
-                // Make sure we have a DataManager reference. Otherwise, we will skip this logic altogether
-                if (dataManager != null)
+            // Make sure we have a DataManager reference. Otherwise, we will skip this logic altogether
+            if (dataManager != null)
+            {
+                // Load the user colliders. We need to continually check here because:
+                //   1) VRTK doesn't initialize colliders in Awake, so it can't be guaranteed
+                //      to be set in Start.
+                //   2) If the user enables flying, the colliders are destroyed in MRET. They are recreated
+                //      if flying is disabled. There are other locomotion states that can invalidate colliders,
+                //      as well
+                if (!CollidersInitialized) LoadColliders();
+
+                // Store the user dimensions
+                dataManager.SaveValue(KEY_USER_HEIGHT_M, WorldHeight);
+                dataManager.SaveValue(KEY_USER_WIDTH_M, WorldWidth);
+
+                // Get the user transform
+                Transform userTransform = MRET.InputRig.transform;
+                if (userTransform != null)
                 {
-                    // Load the user colliders. We need to continually check here because:
-                    //   1) VRTK doesn't initialize colliders in Awake, so it can't be guaranteed
-                    //      to be set in Start.
-                    //   2) If the user enables flying, the colliders are destroyed in MRET. They are recreated
-                    //      if flying is disabled. There are other locomotion states that can invalidate colliders,
-                    //      as well
-                    if (!CollidersInitialized) LoadColliders();
+                    // Store the user transforms into the DataManager
 
-                    // Store the user dimensions
-                    dataManager.SaveValue(KEY_USER_HEIGHT_M, WorldHeight);
-                    dataManager.SaveValue(KEY_USER_WIDTH_M, WorldWidth);
+                    // World transforms
+                    dataManager.SaveValue(KEY_USER_POSITION, userTransform.position);
+                    dataManager.SaveValue(KEY_USER_ROTATION, userTransform.rotation);
+                    dataManager.SaveValue(KEY_USER_EULERANGLES, userTransform.eulerAngles);
 
-                    // Make sure the headset follower reference is valid because this is how we will get the user transforms
-                    if (sessionManager.headsetFollower != null)
+                    // Local transforms
+                    dataManager.SaveValue(KEY_USER_LOCALPOSITION, userTransform.localPosition);
+                    dataManager.SaveValue(KEY_USER_LOCALSCALE, userTransform.localScale);
+                    dataManager.SaveValue(KEY_USER_LOCALROTATION, userTransform.localRotation);
+                    dataManager.SaveValue(KEY_USER_LOCALEULERANGLES, userTransform.localEulerAngles);
+
+                    // Get the orientation transform
+                    Transform orientationTransform = MRET.InputRig.head.transform;
+                    if (orientationTransform != null)
                     {
-                        // Get the orientation transform
-                        Transform orientationTransform = sessionManager.headsetFollower.transform.parent;
-                        if (orientationTransform != null)
-                        {
-                            // Store the orientation transform into the DataManager
-                            dataManager.SaveValue(KEY_USER_ORIENTATION, orientationTransform.forward);
-                            dataManager.SaveValue(KEY_USER_EYE_POSITION, orientationTransform.position);
-                            dataManager.SaveValue(KEY_USER_EYE_LOCALPOSITION, orientationTransform.localPosition);
-
-                            // Get the user transform. TODO: Different if desktop mode
-                            Transform userTransform = VRDesktopSwitcher.isVREnabled() ? orientationTransform.parent : orientationTransform;
-
-                            // Store the user transforms into the DataManager
-                            if (userTransform != null)
-                            {
-                                // World transforms
-                                dataManager.SaveValue(KEY_USER_POSITION, userTransform.position);
-                                dataManager.SaveValue(KEY_USER_ROTATION, userTransform.rotation);
-                                dataManager.SaveValue(KEY_USER_EULERANGLES, userTransform.eulerAngles);
-
-                                // Local transforms
-                                dataManager.SaveValue(KEY_USER_LOCALPOSITION, userTransform.localPosition);
-                                dataManager.SaveValue(KEY_USER_LOCALSCALE, userTransform.localScale);
-                                dataManager.SaveValue(KEY_USER_LOCALROTATION, userTransform.localRotation);
-                                dataManager.SaveValue(KEY_USER_LOCALEULERANGLES, userTransform.localEulerAngles);
-                            }
-                        }
+                        // Store the orientation transform into the DataManager
+                        dataManager.SaveValue(KEY_USER_ORIENTATION, orientationTransform.forward);
+                        dataManager.SaveValue(KEY_USER_EYE_POSITION, orientationTransform.position);
+                        dataManager.SaveValue(KEY_USER_EYE_LOCALPOSITION, orientationTransform.localPosition);
                     }
                 }
             }
         }
     }
+
 }

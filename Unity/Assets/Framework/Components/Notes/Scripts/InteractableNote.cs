@@ -1,7 +1,12 @@
-﻿using UnityEngine;
-using VRTK;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class InteractableNote : VRTK_InteractableObject
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+using GSFC.ARVR.MRET.Components.Notes;
+
+public class InteractableNote : SceneObject
 {
     private UndoManager undoManager;
     private Vector3 lastSavedPosition;
@@ -18,23 +23,21 @@ public class InteractableNote : VRTK_InteractableObject
         note = GetComponent<Note>();
 
         // If in desktop mode, remove VRTK UI Canvases and add Graphic Raycaster.
-        if (VRDesktopSwitcher.isDesktopEnabled())
+        /*if (VRDesktopSwitcher.isDesktopEnabled())
         {
             foreach (VRTK_UICanvas canvas in GetComponentsInChildren<VRTK.VRTK_UICanvas>(true))
             {
                 canvas.gameObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
                 Destroy(canvas);
             }
-        }
+        }*/
     }
 
 
     private bool needToDisable = false, needToEnable = false;
     private int enableDelay = 0;
-    protected override void Update()
+    private void Update()
     {
-        base.Update();
-
         if (needToDisable)
         {
             gameObject.SetActive(false);
@@ -57,21 +60,16 @@ public class InteractableNote : VRTK_InteractableObject
         }
     }
 
-    public override void OnInteractableObjectGrabbed(InteractableObjectEventArgs e)
+    public override void BeginGrab(InputHand hand)
     {
-        base.OnInteractableObjectGrabbed(e);
+        base.BeginGrab(hand);
 
         note.DisableDrawing();
-
-        foreach (KeyboardManager keyboard in GetComponentsInChildren<KeyboardManager>())
-        {
-            keyboard.Close();
-        }
     }
 
-    public override void OnInteractableObjectUngrabbed(InteractableObjectEventArgs e)
+    public override void EndGrab(InputHand hand)
     {
-        base.OnInteractableObjectUngrabbed(e);
+        base.EndGrab(hand);
 
         note.EnableDrawing();
 

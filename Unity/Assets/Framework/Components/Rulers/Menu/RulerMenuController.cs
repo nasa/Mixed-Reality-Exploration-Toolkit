@@ -1,129 +1,83 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class RulerMenuController : MonoBehaviour
+using UnityEngine;
+using GSFC.ARVR.MRET.Integrations.XRUI;
+
+namespace GSFC.ARVR.MRET.Components.Ruler
 {
-    public GameObject siRuler, imperialRuler;
-    public Toggle siRulerToggle, imperialRulerToggle, noRulerToggle;
-    public ControlMode controlMode;
-    public RulerMenuController otherRulers;
-    public GameObject menuPanel;
-    public bool mostRecent = false;
-
-    private int toggleCountDown = 0;
-    private bool needToReinitializeToggles = false;
-
-	public void Start()
+    public class RulerMenuController : MenuController
     {
-        ExitMode();
-	}
+        public static readonly string siRulerKey = "MRET.INTERNAL.TOOLS.RULER.SI";
+        public static readonly string imperialUnitsKey = "MRET.INTERNAL.TOOLS.RULER.WRONG";
 
-    public void Update()
-    {
-        if (toggleCountDown > 0)
+        public GameObject siRuler, imperialRuler;
+        public RulerMenuController otherRulers;
+        public bool mostRecent = false;
+
+        public override void Initialize()
         {
-            toggleCountDown--;
-            if (toggleCountDown == 0 )
+            mostRecent = true;
+            if (otherRulers != null)
             {
-                if (needToReinitializeToggles)
-                {
-                    if (otherRulers.siRulerToggle.isOn)
-                    {
-                        siRulerToggle.isOn = true;
-                    }
-                    else if (otherRulers.imperialRulerToggle.isOn)
-                    {
-                        imperialRulerToggle.isOn = true;
-                    }
-                    else
-                    {
-                        noRulerToggle.isOn = true;
-                    }
-                    needToReinitializeToggles = false;
-                }
-                else
-                {
-                    if (siRuler.activeSelf)
-                    {
-                        siRulerToggle.isOn = true;
-                    }
-                    else if (imperialRuler.activeSelf)
-                    {
-                        imperialRulerToggle.isOn = true;
-                    }
-                    else
-                    {
-                        noRulerToggle.isOn = true;
-                    }
-                }
+                otherRulers.mostRecent = false;
             }
+            ExitMode();
         }
-    }
 
-    public void OnEnable()
-    {
-        toggleCountDown = 3;
-        if (otherRulers.mostRecent)
+        public void DisableAllRulers()
         {
-            needToReinitializeToggles = true;
-        }
-        else
-        {
-            needToReinitializeToggles = false;
-        }
-        mostRecent = true;
-        otherRulers.mostRecent = false;
-    }
-
-    public void OnDisable()
-    {
-        toggleCountDown = -1;
-    }
-
-    public void DisableAllRulers()
-    {
-        if (!menuPanel.activeInHierarchy || toggleCountDown > 0)
-        {
-            return;
-        }
-        if (siRuler.activeSelf || imperialRuler.activeSelf)
-        {
-            if (noRulerToggle.isOn)
+            if (siRuler.activeSelf || imperialRuler.activeSelf)
             {
                 siRuler.SetActive(false);
                 imperialRuler.SetActive(false);
-                controlMode.DisableAllControlTypes();
+                Infrastructure.Framework.MRET.ControlMode.DisableAllControlTypes();
             }
+
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(siRulerKey, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(imperialUnitsKey, false));
         }
-    }
 
-    // Exit ruler without setting the global control mode.
-    public void ExitMode()
-    {
-        siRuler.SetActive(false);
-        imperialRuler.SetActive(false);
-        noRulerToggle.isOn = true;
-    }
-
-    public void EnableSIRuler()
-    {
-        if (siRulerToggle.isOn && toggleCountDown == 0)
+        // Exit ruler without setting the global control mode.
+        public void ExitMode()
         {
-            otherRulers.ExitMode();
+            siRuler.SetActive(false);
+            imperialRuler.SetActive(false);
+
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(siRulerKey, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(imperialUnitsKey, false));
+        }
+
+        public void EnableSIRuler()
+        {
+            if (otherRulers != null)
+            {
+                otherRulers.ExitMode();
+            }
             siRuler.SetActive(true);
             imperialRuler.SetActive(false);
-            controlMode.EnterRulerMode();
-        }
-    }
+            Infrastructure.Framework.MRET.ControlMode.EnterRulerMode();
 
-    public void EnableImperialRuler()
-    {
-        if (imperialRulerToggle.isOn && toggleCountDown == 0)
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(siRulerKey, true));
+            DataManager.instance.SaveValue(new DataManager.DataValue(imperialUnitsKey, false));
+        }
+
+        public void EnableImperialRuler()
         {
-            otherRulers.ExitMode();
+            if (otherRulers != null)
+            {
+                otherRulers.ExitMode();
+            }
             siRuler.SetActive(false);
             imperialRuler.SetActive(true);
-            controlMode.EnterRulerMode();
+            Infrastructure.Framework.MRET.ControlMode.EnterRulerMode();
+
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(siRulerKey, false));
+            DataManager.instance.SaveValue(new DataManager.DataValue(imperialUnitsKey, true));
         }
     }
 }

@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections.Generic;
 using UnityEngine;
 using GSFC.ARVR.XRC;
 using GSFC.ARVR.UTILITIES;
@@ -13,8 +16,8 @@ namespace GSFC.ARVR.MRET.XRC
         public List<SynchronizedUser> synchedUsers = new List<SynchronizedUser>();
 
         public static readonly string OBJECTCATEGORY = "OBJECT",
-            DRAWINGCATEGORY = "DRAWING", NOTECATEGORY = "NOTE", USERCATEGORY = "USER",
-            LCONTROLLERCATEGORY = "USER.L", RCONTROLLERCATEGORY = "USER.R",
+            DRAWINGCATEGORY = "DRAWING", NOTECATEGORY = "NOTE", NOTEDRAWINGCATEGORY = "NOTEDRAWING",
+            USERCATEGORY = "USER", LCONTROLLERCATEGORY = "USER.L", RCONTROLLERCATEGORY = "USER.R",
             LPOINTERCATEGORY = "USER.POINTER.L", RPOINTERCATEGORY = "USER.POINTER.R";
         
         private string currentServer;
@@ -24,7 +27,7 @@ namespace GSFC.ARVR.MRET.XRC
         public CollaborationManager collaborationManager;
         public static XRCManager instance;
 
-        void Awake()
+        public void Initialize()
         {
             instance = this;
 
@@ -35,10 +38,7 @@ namespace GSFC.ARVR.MRET.XRC
 
             // Initialize the XRC DLL
             PackageLoader.InitializePackagePlugin(xrcPath);
-        }
 
-        void Start()
-        {
             if (collaborationManager == null)
             {
                 collaborationManager = FindObjectOfType<CollaborationManager>();
@@ -108,7 +108,7 @@ namespace GSFC.ARVR.MRET.XRC
                     }*/
 
                     XRCUnity.AddSessionEntity(sAction.Drawing.Name, DRAWINGCATEGORY, sAction.Drawing.RenderType,
-                        null, sAction.Drawing.GUID, null, null, pointsBytes,
+                        null, sAction.Drawing.GUID, null, null, pointsBytes, null, null,
                         Vector3.zero, Quaternion.identity, new Vector3(sAction.Drawing.Width, 0, 0),
                         TypeConversion.LDToXRCUnits(sAction.Drawing.DesiredUnits),
                         UnitType.unitless, UnitType.meter);
@@ -120,12 +120,14 @@ namespace GSFC.ARVR.MRET.XRC
                         return;
                     }
 
-                    XRCUnity.AddSessionEntity(sAction.NoteName, NOTECATEGORY, null, null, null, null, null, null,
+                    XRCUnity.AddSessionEntity(sAction.NoteName, NOTECATEGORY, null, null, sAction.Note.GUID, null, null, null,
+                        sAction.Note.Title, sAction.Note.Details,
                         DeserializeVector3(sAction.Position), DeserializeQuaternion(sAction.Rotation),
                         new Vector3(1, 1, 1), UnitType.meter, UnitType.degrees, UnitType.meter);
                     break;
 
                 case ActionTypeType.AddNoteDrawing:
+
                     break;
 
                 case ActionTypeType.AddObject:
@@ -137,7 +139,7 @@ namespace GSFC.ARVR.MRET.XRC
 
                     XRCUnity.AddSessionEntity(sAction.Part.PartName[0], OBJECTCATEGORY, null, sAction.Part.AssetBundle, sAction.UUID,
                         null, new InteractablePart.InteractablePartSettings(sAction.Part.EnableInteraction[0],
-                        sAction.Part.EnableCollisions[0], sAction.Part.EnableGravity[0]), null,
+                        sAction.Part.EnableCollisions[0], sAction.Part.EnableGravity[0]), null, null, null,
                         DeserializeVector3(sAction.Position), DeserializeQuaternion(sAction.Rotation),
                         DeserializeVector3(sAction.Scale), UnitType.meter, UnitType.degrees, UnitType.meter);
                     break;
@@ -190,8 +192,8 @@ namespace GSFC.ARVR.MRET.XRC
                         return;
                     }
 
-                    XRCUnity.UpdateEntityPosition(sAction.NoteName, NOTECATEGORY, DeserializeVector3(sAction.Position), "", null, UnitType.meter);
-                    XRCUnity.UpdateEntityRotation(sAction.NoteName, NOTECATEGORY, DeserializeQuaternion(sAction.Rotation), "", null, UnitType.degrees);
+                    XRCUnity.UpdateEntityPosition(sAction.NoteName, NOTECATEGORY, DeserializeVector3(sAction.Position), sAction.UUID, null, UnitType.meter);
+                    XRCUnity.UpdateEntityRotation(sAction.NoteName, NOTECATEGORY, DeserializeQuaternion(sAction.Rotation), sAction.UUID, null, UnitType.degrees);
                     break;
 
                 case ActionTypeType.MoveObject:
@@ -249,7 +251,16 @@ namespace GSFC.ARVR.MRET.XRC
                 else if (evParams.category == NOTECATEGORY)
                 {
                     ProjectAction actionToPerform = ProjectAction.AddNoteAction(new NoteType(),
-                        evParams.tag, evParams.pos.ToVector3(), evParams.rot.ToQuaternion());
+                        evParams.tag, evParams.pos.ToVector3(), evParams.rot.ToQuaternion(), evParams.uuid);
+                    actionToPerform.PerformAction();
+                    actionToPerform = ProjectAction.ChangeNoteTextAction(
+                        evParams.tag, evParams.title, evParams.text);
+                    actionToPerform.PerformAction();
+                }
+                else if (evParams.category == NOTEDRAWINGCATEGORY)
+                {
+                    ProjectAction actionToPerform = ProjectAction.AddNoteDrawingAction(evParams.tag, evParams.tag,
+                        TypeConversion.CSVToVector3Type(System.Text.Encoding.UTF8.GetString(evParams.resource)));
                     actionToPerform.PerformAction();
                 }
                 else if (evParams.category == LCONTROLLERCATEGORY)
@@ -325,7 +336,7 @@ namespace GSFC.ARVR.MRET.XRC
                 }
                 else if (evParams.category == NOTECATEGORY)
                 {
-                    ProjectAction actionToPerform = ProjectAction.DeleteNoteAction(evParams.tag);
+                    ProjectAction actionToPerform = ProjectAction.DeleteNoteAction(evParams.tag, evParams.uuid);
                     actionToPerform.PerformAction();
                 }
                 else
@@ -356,12 +367,14 @@ namespace GSFC.ARVR.MRET.XRC
                     actionToPerform.PerformAction();
                     actionToPerform = ProjectAction.SetParentAction(evParams.tag, evParams.parentUUID, evParams.uuid);
                     actionToPerform.PerformAction();
-
                 }
                 else if (evParams.category == NOTECATEGORY)
                 {
                     ProjectAction actionToPerform = ProjectAction.MoveNoteAction(
                         evParams.tag, evParams.pos.ToVector3(), evParams.rot.ToQuaternion());
+                    actionToPerform.PerformAction();
+                    actionToPerform = ProjectAction.ChangeNoteTextAction(
+                        evParams.tag, evParams.title, evParams.text);
                     actionToPerform.PerformAction();
                 }
                 else if (evParams.category == USERCATEGORY)
@@ -398,33 +411,30 @@ namespace GSFC.ARVR.MRET.XRC
                 }
                 else if (evParams.category == RCONTROLLERCATEGORY)
                 {
-                    //if (VRDesktopSwitcher.isVREnabled())
+                    // TODO: Should I make these actions?
+                    if (!string.IsNullOrEmpty(evParams.uuid)
+                        && evParams.pos != null && evParams.rot != null && evParams.scale != null)
                     {
-                        // TODO: Should I make these actions?
-                        if (!string.IsNullOrEmpty(evParams.uuid)
-                            && evParams.pos != null && evParams.rot != null && evParams.scale != null)
+                        // Needed for right controller
+                        // since not all users have a right controller.
+                        SynchronizedUser userToMove = null;
+                        foreach (SynchronizedUser user in synchedUsers)
                         {
-                            // Needed for right controller
-                            // since not all users have a right controller.
-                            SynchronizedUser userToMove = null;
-                            foreach (SynchronizedUser user in synchedUsers)
+                            if (user.rightController)
                             {
-                                if (user.rightController)
+                                if (user.rightController.uuid
+                                    == System.Guid.Parse(evParams.uuid))
                                 {
-                                    if (user.rightController.uuid
-                                        == System.Guid.Parse(evParams.uuid))
-                                    {
-                                        userToMove = user;
-                                    }
+                                    userToMove = user;
                                 }
                             }
+                        }
                             
-                            if (userToMove)
-                            {
-                                userToMove.rightController.transform.position = evParams.pos.ToVector3();
-                                userToMove.rightController.transform.rotation = evParams.rot.ToQuaternion();
-                                userToMove.rightController.transform.localScale = evParams.scale.ToVector3();
-                            }
+                        if (userToMove)
+                        {
+                            userToMove.rightController.transform.position = evParams.pos.ToVector3();
+                            userToMove.rightController.transform.rotation = evParams.rot.ToQuaternion();
+                            userToMove.rightController.transform.localScale = evParams.scale.ToVector3();
                         }
                     }
                 }
@@ -444,31 +454,28 @@ namespace GSFC.ARVR.MRET.XRC
                 }
                 else if (evParams.category == RPOINTERCATEGORY)
                 {
-                    //if (VRDesktopSwitcher.isVREnabled())
+                    // TODO: Should I make these actions?
+                    if (!string.IsNullOrEmpty(evParams.uuid)
+                        && evParams.pos != null && evParams.rot != null && evParams.scale != null)
                     {
-                        // TODO: Should I make these actions?
-                        if (!string.IsNullOrEmpty(evParams.uuid)
-                            && evParams.pos != null && evParams.rot != null && evParams.scale != null)
+                        // Needed for right controller
+                        // since not all users have a right controller.
+                        SynchronizedUser userToMove = null;
+                        foreach (SynchronizedUser user in synchedUsers)
                         {
-                            // Needed for right controller
-                            // since not all users have a right controller.
-                            SynchronizedUser userToMove = null;
-                            foreach (SynchronizedUser user in synchedUsers)
+                            if (user.rightController)
                             {
-                                if (user.rightController)
+                                if (user.rightController.pointer.uuid
+                                    == System.Guid.Parse(evParams.uuid))
                                 {
-                                    if (user.rightController.pointer.uuid
-                                        == System.Guid.Parse(evParams.uuid))
-                                    {
-                                        userToMove = user;
-                                    }
+                                    userToMove = user;
                                 }
                             }
+                        }
                             
-                            if (userToMove)
-                            {
-                                userToMove.rightController.pointer.SetPosition(evParams.pos.ToVector3());
-                            }
+                        if (userToMove)
+                        {
+                            userToMove.rightController.pointer.SetPosition(evParams.pos.ToVector3());
                         }
                     }
                 }
@@ -686,16 +693,20 @@ namespace GSFC.ARVR.MRET.XRC
             string lcUUID, string rcUUID, string lpUUID, string rpUUID)
         {
             XRCUnity.AddSessionEntity(userTag + ".L.CONTROLLER", LCONTROLLERCATEGORY, null, null,
-                lcUUID, userUUID, null, null, Vector3.zero, Quaternion.identity, Vector3.one,
+                lcUUID, userUUID, null, null, null, null,
+                Vector3.zero, Quaternion.identity, Vector3.one,
                 UnitType.meter, UnitType.degrees, UnitType.meter);
             XRCUnity.AddSessionEntity(userTag + ".R.CONTROLLER", RCONTROLLERCATEGORY, null, null,
-                rcUUID, userUUID, null, null, Vector3.zero, Quaternion.identity, Vector3.one,
+                rcUUID, userUUID, null, null, null, null,
+                Vector3.zero, Quaternion.identity, Vector3.one,
                 UnitType.meter, UnitType.degrees, UnitType.meter);
             XRCUnity.AddSessionEntity(userTag + ".L.POINTER", LPOINTERCATEGORY, null, null,
-                lpUUID, userUUID, null, null, Vector3.zero, Quaternion.identity, Vector3.one,
+                lpUUID, userUUID, null, null, null, null,
+                Vector3.zero, Quaternion.identity, Vector3.one,
                 UnitType.meter, UnitType.degrees, UnitType.meter);
             XRCUnity.AddSessionEntity(userTag + ".R.POINTER", RPOINTERCATEGORY, null, null,
-                rpUUID, userUUID, null, null, Vector3.zero, Quaternion.identity, Vector3.one,
+                rpUUID, userUUID, null, null, null, null,
+                Vector3.zero, Quaternion.identity, Vector3.one,
                 UnitType.meter, UnitType.degrees, UnitType.meter);
         }
 
@@ -723,25 +734,24 @@ namespace GSFC.ARVR.MRET.XRC
             if (sU)
             {
                 XRCUnity.AddSessionEntity(sU.tag + ".L.CONTROLLER", LCONTROLLERCATEGORY, null, null,
-                    sU.leftController.uuid.ToString(), sU.uuid.ToString(), null, null, sU.leftController.transform.position,
-                    sU.leftController.transform.rotation, sU.leftController.transform.localScale,
+                    sU.leftController.uuid.ToString(), sU.uuid.ToString(), null, null, null, null,
+                    sU.leftController.transform.position, sU.leftController.transform.rotation,
+                    sU.leftController.transform.localScale,
                     UnitType.meter, UnitType.degrees, UnitType.meter);
                 XRCUnity.AddSessionEntity(sU.tag + ".L.POINTER", LPOINTERCATEGORY, null, null,
-                    sU.leftController.pointer.uuid.ToString(), sU.uuid.ToString(), null, null,
+                    sU.leftController.pointer.uuid.ToString(), sU.uuid.ToString(), null, null, null, null,
                     sU.leftController.pointer.transform.position, sU.leftController.pointer.transform.rotation,
                     sU.leftController.pointer.transform.localScale, UnitType.meter, UnitType.degrees, UnitType.meter);
 
-                if (VRDesktopSwitcher.isVREnabled())
-                {
-                    XRCUnity.AddSessionEntity(sU.tag + ".R.CONTROLLER", RCONTROLLERCATEGORY, null, null,
-                        sU.rightController.uuid.ToString(), sU.uuid.ToString(), null, null, sU.rightController.transform.position,
-                        sU.rightController.transform.rotation, sU.rightController.transform.localScale,
-                        UnitType.meter, UnitType.degrees, UnitType.meter);
-                    XRCUnity.AddSessionEntity(sU.tag + ".R.POINTER", RPOINTERCATEGORY, null, null,
-                        sU.rightController.pointer.uuid.ToString(), sU.uuid.ToString(), null, null,
-                        sU.rightController.pointer.transform.position, sU.rightController.pointer.transform.rotation,
-                        sU.rightController.pointer.transform.localScale, UnitType.meter, UnitType.degrees, UnitType.meter);
-                }
+                XRCUnity.AddSessionEntity(sU.tag + ".R.CONTROLLER", RCONTROLLERCATEGORY, null, null,
+                    sU.rightController.uuid.ToString(), sU.uuid.ToString(), null, null, null, null,
+                    sU.rightController.transform.position, sU.rightController.transform.rotation,
+                    sU.rightController.transform.localScale,
+                    UnitType.meter, UnitType.degrees, UnitType.meter);
+                XRCUnity.AddSessionEntity(sU.tag + ".R.POINTER", RPOINTERCATEGORY, null, null,
+                    sU.rightController.pointer.uuid.ToString(), sU.uuid.ToString(), null, null, null, null,
+                    sU.rightController.pointer.transform.position, sU.rightController.pointer.transform.rotation,
+                    sU.rightController.pointer.transform.localScale, UnitType.meter, UnitType.degrees, UnitType.meter);
             }
         }
 

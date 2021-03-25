@@ -1,8 +1,16 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 
 public class MatlabIKInteractionManager : MonoBehaviour
 {
-    public VRTK.VRTK_ControllerEvents controllerEvents;
+    /// <summary>
+    /// The hand to aim to follow.
+    /// </summary>
+    [Tooltip("The hand to aim to follow.")]
+    public Transform handRoot;
+
     public int ikDivisor = 3;
 
     private MatlabIKScript matlabIKScript, touchingScript;
@@ -10,12 +18,6 @@ public class MatlabIKInteractionManager : MonoBehaviour
     private bool controllingArm = false, controllingElbow = false;
     private int sequenceNumber = 0;
     private int ticksSinceLastIK = 0;
-
-    void Start()
-    {
-        controllerEvents.TouchpadPressed += new VRTK.ControllerInteractionEventHandler(ProcessTouchpadPress);
-        controllerEvents.TouchpadReleased += new VRTK.ControllerInteractionEventHandler(ProcessTouchpadRelease);
-    }
 	
 	void Update()
     {
@@ -27,11 +29,11 @@ public class MatlabIKInteractionManager : MonoBehaviour
         ikDivisor = 0;
         if (controllingArm && matlabIKScript != null)
         {
-            matlabIKScript.SetIKPosition(transform.parent.position, transform.parent.rotation, sequenceNumber++);
+            matlabIKScript.SetIKPosition(handRoot.position, handRoot.rotation, sequenceNumber++);
         }
         else if (controllingElbow && matlabElbowScript != null)
         {
-            matlabElbowScript.SetElbowPosition(transform.parent.position, sequenceNumber++);
+            matlabElbowScript.SetElbowPosition(handRoot.position, sequenceNumber++);
         }
     }
 
@@ -40,7 +42,7 @@ public class MatlabIKInteractionManager : MonoBehaviour
         controllingArm = controllingElbow = false;
     }
 
-    public void ProcessTouchpadPress(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void ProcessTouchpadPress()
     {
         if (touchingScript != null)
         {
@@ -64,7 +66,7 @@ public class MatlabIKInteractionManager : MonoBehaviour
         }
     }
 
-    public void ProcessTouchpadRelease(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void ProcessTouchpadRelease()
     {
         if (matlabIKScript)
         {

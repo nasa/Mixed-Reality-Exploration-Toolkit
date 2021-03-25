@@ -1,4 +1,7 @@
-﻿using GSFC.ARVR.UTILITIES;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using GSFC.ARVR.UTILITIES;
 
 namespace GSFC.ARVR.XRC
 {
@@ -15,6 +18,8 @@ namespace GSFC.ARVR.XRC
         public int userType;
         public string parentUUID;
         public InteractablePart.InteractablePartSettings settings;
+        public string title;
+        public string text;
         public string lcUUID;
         public string rcUUID;
         public string lpUUID;
@@ -32,7 +37,8 @@ namespace GSFC.ARVR.XRC
         public SessionEntity(string _tag, EntityEventParameters.EntityType _type, byte[] _resource,
             string _category, string _subcategory, string _color, int _userType,
             string _bundle, string _uuid, string _parentUUID,
-            InteractablePart.InteractablePartSettings _settings, string _lcUUID, string _rcUUID,
+            InteractablePart.InteractablePartSettings _settings,
+            string _title, string _text, string _lcUUID, string _rcUUID,
             string _lpUUID, string _rpUUID, Vector3d _pos, Quaterniond _rot, Vector3d _scl,
             UnitType _posUnits = UnitType.meter, ReferenceSpaceType _posRef = ReferenceSpaceType.global,
             UnitType _rotUnits = UnitType.meter, ReferenceSpaceType _rotRef = ReferenceSpaceType.global,
@@ -49,6 +55,8 @@ namespace GSFC.ARVR.XRC
             uuid = _uuid;
             parentUUID = _parentUUID;
             settings = _settings;
+            title = _title;
+            text = _text;
             lcUUID = _lcUUID;
             rcUUID = _rcUUID;
             lpUUID = _lpUUID;

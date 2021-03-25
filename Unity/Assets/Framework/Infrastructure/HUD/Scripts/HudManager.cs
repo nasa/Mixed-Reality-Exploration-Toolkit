@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections.Generic;
 using UnityEngine;
 using System;
 using System.Xml;
-using System.Collections;
 using System.Xml.Serialization;
 using GSFC.ARVR.MRET.Common.Schemas;
 
@@ -64,7 +66,7 @@ public class HudManager : MonoBehaviour
     public void Load(HUDType hud)
     {
         hudDisplays.Clear();
-        StartCoroutine(Deserialize(hud));
+        Deserialize(hud);
     }
 
     public void SaveToXML(string filePath)
@@ -108,10 +110,8 @@ public class HudManager : MonoBehaviour
         return serializedHud;
     }
 
-    public IEnumerator Deserialize(HUDType hud)
+    public void Deserialize(HUDType hud)
     {
-        yield return StartCoroutine(InitializeAssetBundleManager());
-
         try
         {
             foreach(DisplayType display in hud.Display)
@@ -128,25 +128,4 @@ public class HudManager : MonoBehaviour
         }
 
     }
-
-    protected IEnumerator InitializeAssetBundleManager()
-    {
-        Debug.Log("[HudManager->InitializeAssetBundleManager] Initializing Asset Bundles...");
-
-        // Don't destroy this gameObject as we depend on it to run the loading script.
-        //DontDestroyOnLoad(gameObject);
-
-        //AssetBundleManager.SetSourceAssetBundleURL("file://" + Application.dataPath + "/StreamingAssets/");
-
-        // Initialize AssetBundleManifest which loads the AssetBundleManifest object.
-        //var request = AssetBundleManager.Initialize();
-        //if (request != null)
-        //{
-        //    yield return StartCoroutine(request);
-        //}
-
-        yield return null;
-    }
-
-
 }

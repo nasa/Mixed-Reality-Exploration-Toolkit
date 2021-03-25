@@ -1,7 +1,11 @@
-﻿using System.Collections;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.XRUI.WorldSpaceMenu;
 
 public class DropdownMenuManager : MonoBehaviour {
 
@@ -41,14 +45,14 @@ public class DropdownMenuManager : MonoBehaviour {
         ConfigurationManager configManager = FindObjectOfType<ConfigurationManager>();
         if (configManager)
         {
-            projects = configManager.projects;
+            /*projects = configManager.projects;
             for (int i = 0; i < projects.Count; i++)
             {
                 int indexToSelect = i;
                 UnityEngine.Events.UnityEvent clickEvent = new UnityEngine.Events.UnityEvent();
                 clickEvent.AddListener(new UnityEngine.Events.UnityAction(() => { SetActiveSelection(indexToSelect); }));
                 projectListDisplay.AddScrollListItem(projects[i].name, clickEvent);
-            }
+            }*/
         }
     }
 

@@ -1,25 +1,21 @@
-﻿using System;
-using System.Collections;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using GSFC.ARVR.MRET.Infrastructure;
+using UnityEngine.Events;
 using GSFC.ARVR.MRET.Common.Schemas;
-using GSFC.ARVR.MRET.Common;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class ModeNavigator : MonoBehaviour
 {
-    public static readonly string kioskModeFile = "kiosk.xml";
     public static ModeNavigator instance;
-
-    public enum SessionMode { Lobby, Assembly, IandT, Robot, Custom };
     
     public UnityProject projectManager;
-    public ConfigurationManager configManager;
-    public SessionMode mode = SessionMode.Lobby;
-    public KioskLoader kioskLoader;
-    public ControlMode controlMode;
-    public GameObject headsetFollower;
-    public Button [] newProj, openProj, saveProj, home,
+    public List<Button> newProj, openProj, saveProj, home,
+        joinSess, shareSess, config, about,
         undo, redo,
         cut, copy, paste,
         preferences, menuSettings, help, more, clippingPlanes,
@@ -27,42 +23,21 @@ public class ModeNavigator : MonoBehaviour
         drawing, annotations, objects, outlineView,
         ik, remoteControl, minimap, dataDoc, animations,
         timeSimulation;
-    public Toggle [] teleport, fly, touchpad, armswing,
+    public List<Toggle> teleport, fly, touchpad, armswing,
         rotX, rotY, rotZ, scale,
         notes, eraser, selection,
         cameras, rulers, screens;
-    public VRTK.VRTK_BodyPhysics bodyPhysics;
 
-    IEnumerator Start()
+    public UnityEvent lobbyModeInitializationEvents;
+
+    public void Initialize()
     {
-        // Temporary, locomotion will need a bit of an overhaul.
-        if (bodyPhysics)
-        {
-            bodyPhysics.enableBodyCollisions = false;
-        }
-
         instance = this;
-
-        SchemaHandler.instance.InitializeSchemas();
-
-        string kioskFilePath = System.IO.Path.Combine(Application.dataPath, kioskModeFile);
-        if (System.IO.File.Exists(kioskFilePath))
-        {
-            Debug.Log("[ModeNavigator] Kiosk Mode File Detected at " + kioskFilePath + ". Loading Kiosk Mode.");
-            kioskLoader.LoadKioskMode(kioskFilePath);
-        }
-        else
-        {
-            Debug.Log("[ModeNavigator] No Kiosk Mode File Detected. Loading Lobby.");
-            EnterLobbyMode();
-            yield return new WaitForSeconds(0.1f);  // Need to let VRTK initialize.
-            ResetLobbyPosition();
-        }
 	}
 
     public void LoadLobby()
     {
-        controlMode.DisableAllControlTypes();
+        MRET.ControlMode.DisableAllControlTypes();
         EnterLobbyMode();
         projectManager.Unload();
         ResetLobbyPosition();
@@ -73,9 +48,9 @@ public class ModeNavigator : MonoBehaviour
     {
         try
         {
-            configManager.AddRecentTemplate(templateFile);
+            MRET.ConfigurationManager.AddRecentTemplate(templateFile);
             projectManager.collaborationEnabled = collaborationEnabled;
-            controlMode.DisableAllControlTypes();
+            MRET.ControlMode.DisableAllControlTypes();
             projectManager.Unload();
             projectManager.LoadFromXML(templateFile);
             EnterProjectMode();
@@ -90,9 +65,9 @@ public class ModeNavigator : MonoBehaviour
     {
         try
         {
-            configManager.AddRecentTemplate(templateToOpen);
+            MRET.ConfigurationManager.AddRecentTemplate(templateToOpen);
             projectManager.collaborationEnabled = collaborationEnabled;
-            controlMode.DisableAllControlTypes();
+            MRET.ControlMode.DisableAllControlTypes();
             projectManager.Unload();
             projectManager.LoadFromXML(templateToOpen.projFile);
             EnterProjectMode();
@@ -107,11 +82,11 @@ public class ModeNavigator : MonoBehaviour
     {
         try
         {
-            configManager.AddRecentProject(projectFile);
+            MRET.ConfigurationManager.AddRecentProject(projectFile);
             projectManager.collaborationEnabled = collaborationEnabled;
-            controlMode.DisableAllControlTypes();
+            MRET.ControlMode.DisableAllControlTypes();
             projectManager.Unload();
-            StartCoroutine(projectManager.Deserialize(project));
+            projectManager.Deserialize(project);
             EnterProjectMode();
         }
         catch (Exception e)
@@ -124,9 +99,9 @@ public class ModeNavigator : MonoBehaviour
     {
         try
         {
-            configManager.AddRecentProject(projectFile);
+            MRET.ConfigurationManager.AddRecentProject(projectFile);
             projectManager.collaborationEnabled = collaborationEnabled;
-            controlMode.DisableAllControlTypes();
+            MRET.ControlMode.DisableAllControlTypes();
             projectManager.Unload();
             projectManager.LoadFromXML(projectFile);
             EnterProjectMode();
@@ -141,9 +116,9 @@ public class ModeNavigator : MonoBehaviour
     {
         try
         {
-            configManager.AddRecentProject(projectToOpen);
+            MRET.ConfigurationManager.AddRecentProject(projectToOpen);
             projectManager.collaborationEnabled = collaborationEnabled;
-            controlMode.DisableAllControlTypes();
+            MRET.ControlMode.DisableAllControlTypes();
             projectManager.Unload();
             projectManager.LoadFromXML(projectToOpen.projFile);
             EnterProjectMode();
@@ -156,24 +131,10 @@ public class ModeNavigator : MonoBehaviour
 
     private void ResetLobbyPosition()
     {
-        if (headsetFollower == null)
-        {
-            Debug.LogError("[ModeNavigator] No Headset Detected. MRET will not function as expected.");
-        }
-
-        Transform cameraRig = headsetFollower.transform.parent.parent;
-        if (VRDesktopSwitcher.isVREnabled())
-        {
-            cameraRig.position = new Vector3(3.5f, 0.17f, -3.25f);
-            cameraRig.rotation = Quaternion.identity;
-            cameraRig.localScale = Vector3.one;
-        }
-        else
-        {
-            cameraRig.position = new Vector3(3.5f, 1.65f, -3.5f);
-            cameraRig.rotation = Quaternion.identity;
-            cameraRig.localScale = Vector3.one;
-        }
+        Transform cameraRig = MRET.InputRig.transform;
+        cameraRig.position = new Vector3(3.5f, 0.17f, -3.25f);
+        cameraRig.rotation = Quaternion.identity;
+        cameraRig.localScale = Vector3.one;
     }
 
     private void HideLoadingIndicator()
@@ -204,6 +165,26 @@ public class ModeNavigator : MonoBehaviour
         }
 
         foreach (Button btn in home)
+        {
+            btn.interactable = true;
+        }
+
+        foreach (Button btn in joinSess)
+        {
+            btn.interactable = true;
+        }
+
+        foreach (Button btn in shareSess)
+        {
+            btn.interactable = true;
+        }
+
+        foreach (Button btn in config)
+        {
+            btn.interactable = true;
+        }
+
+        foreach (Button btn in about)
         {
             btn.interactable = true;
         }
@@ -416,6 +397,34 @@ public class ModeNavigator : MonoBehaviour
                 
             case "Home":
                 foreach (Button btn in home)
+                {
+                    btn.interactable = enabled;
+                }
+                break;
+
+            case "JoinSession":
+                foreach (Button btn in joinSess)
+                {
+                    btn.interactable = enabled;
+                }
+                break;
+
+            case "ShareSession":
+                foreach (Button btn in shareSess)
+                {
+                    btn.interactable = enabled;
+                }
+                break;
+
+            case "Configuration":
+                foreach (Button btn in config)
+                {
+                    btn.interactable = enabled;
+                }
+                break;
+
+            case "About":
+                foreach (Button btn in about)
                 {
                     btn.interactable = enabled;
                 }
@@ -682,6 +691,11 @@ public class ModeNavigator : MonoBehaviour
 #region ModeInitializers
     private void EnterLobbyMode()
     {
+        if (lobbyModeInitializationEvents != null)
+        {
+            lobbyModeInitializationEvents.Invoke();
+        }
+
         // Disable all menu options except for project loading and settings.
         foreach (Button btn in newProj)
         {
@@ -701,6 +715,26 @@ public class ModeNavigator : MonoBehaviour
         foreach (Button btn in home)
         {
             btn.interactable = false;
+        }
+
+        foreach (Button btn in joinSess)
+        {
+            btn.interactable = true;
+        }
+
+        foreach (Button btn in shareSess)
+        {
+            btn.interactable = true;
+        }
+
+        foreach (Button btn in config)
+        {
+            btn.interactable = true;
+        }
+
+        foreach (Button btn in about)
+        {
+            btn.interactable = true;
         }
 
         foreach (Button btn in undo)

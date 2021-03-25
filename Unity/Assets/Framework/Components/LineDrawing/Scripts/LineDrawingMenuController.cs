@@ -1,5 +1,10 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using UnityEngine.UI;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
+using GSFC.ARVR.MRET.Components.UI;
 
 public class LineDrawingMenuController : MonoBehaviour
 {
@@ -7,13 +12,11 @@ public class LineDrawingMenuController : MonoBehaviour
     public Dropdown drawingModeDropdown, drawingTypeDropdown, drawingUnitsDropdown;
 
     private DrawLineManager drawLineManager;
-    private ControlMode controlMode;
     private DrawLineManager.CaptureTypes lineCaptureType = DrawLineManager.CaptureTypes.None;
     private LineDrawing.RenderTypes lineRenderType = LineDrawing.RenderTypes.Drawing;
 
     public void Start()
     {
-        controlMode = FindObjectOfType<ControlMode>();
         drawLineManager = FindObjectOfType<DrawLineManager>();
         lineCaptureType = drawLineManager.captureType;
         lineRenderType = drawLineManager.renderType;
@@ -145,39 +148,39 @@ public class LineDrawingMenuController : MonoBehaviour
             case 0:
                 lineCaptureType = DrawLineManager.CaptureTypes.None;
                 drawLineManager.ExitDrawings();
-                controlMode.DisableAllControlTypes();
+                MRET.ControlMode.DisableAllControlTypes();
                 break;
 
             // Freeform.
             case 1:
                 lineCaptureType = DrawLineManager.CaptureTypes.Free;
-                controlMode.EnterDrawingMode();
+                MRET.ControlMode.EnterDrawingMode();
                 break;
 
             // Straight.
             case 2:
                 lineCaptureType = DrawLineManager.CaptureTypes.Lines;
-                controlMode.EnterDrawingMode();
+                MRET.ControlMode.EnterDrawingMode();
                 break;
 
             // Laser.
             case 3:
                 lineCaptureType = DrawLineManager.CaptureTypes.Laser;
-                controlMode.EnterDrawingMode();
+                MRET.ControlMode.EnterDrawingMode();
                 break;
 
             // Spline.
             case 4:
                 lineCaptureType = DrawLineManager.CaptureTypes.None;
                 drawLineManager.ExitDrawings();
-                controlMode.DisableAllControlTypes();
+                MRET.ControlMode.DisableAllControlTypes();
                 Debug.LogWarning("[ModeNavigator->HandleDrawingModeChange] This option is currently unavailable.");
                 break;
 
             // Unknown.
             default:
                 lineCaptureType = DrawLineManager.CaptureTypes.None;
-                controlMode.DisableAllControlTypes();
+                MRET.ControlMode.DisableAllControlTypes();
                 Debug.LogWarning("[ModeNavigator->HandleDrawingModeChange] Unknown State");
                 break;
         }

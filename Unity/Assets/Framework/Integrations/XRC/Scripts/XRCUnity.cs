@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections.Generic;
 using System.Collections.Concurrent;
 using UnityEngine;
 using UnityEngine.Events;
@@ -26,7 +29,9 @@ namespace GSFC.ARVR.MRET.XRC
             LEFTCONTROLLERSTRING = "LCONTROLLER",
             RIGHTCONTROLLERSTRING = "RCONTROLLER",
             LEFTPOINTERSTRING = "LPOINTER",
-            RIGHTPOINTERSTRING = "RPOINTER";
+            RIGHTPOINTERSTRING = "RPOINTER",
+            TITLESTRING = "TITLE",
+            TEXTSTRING = "TEXT";
 
         public LogLevel logLevel;
 
@@ -68,7 +73,7 @@ namespace GSFC.ARVR.MRET.XRC
             UnitType posUnits, rotUnits, sclUnits;
             ReferenceSpaceType posRef, rotRef, sclRef;
             int type;
-            string category, subcategory, bundle, tag, parUUID;
+            string category, subcategory, bundle, tag, parUUID, title, text;
             bool interaction, collision, gravity;
             byte[] resource = new byte[RESOURCEBUFSIZE];
 
@@ -97,9 +102,14 @@ namespace GSFC.ARVR.MRET.XRC
 
             XRCInterface.GetEventEntityBooleanAttribute(GRAVITYSTRING, out gravity);
 
+            XRCInterface.GetEventEntityStringAttribute(TITLESTRING, out title);
+
+            XRCInterface.GetEventEntityStringAttribute(TEXTSTRING, out text);
+
             entityCreatedEventQueue.Enqueue(new EntityEventParameters(tag, type, resource,
                 category, subcategory, bundle, entityId, parUUID,
                 new InteractablePart.InteractablePartSettings(interaction, collision, gravity),
+                title, text,
                 xPos, yPos, zPos, xRot, yRot, zRot, wRot, xScl, yScl, zScl));
             
             xrcUnity.invocationQueue.Enqueue(xrcUnity.entityCreatedUnityEvent);
@@ -127,7 +137,7 @@ namespace GSFC.ARVR.MRET.XRC
             UnitType posUnits, rotUnits, sclUnits;
             ReferenceSpaceType posRef, rotRef, sclRef;
             int type;
-            string category, subcategory, bundle, tag, parUUID;
+            string category, subcategory, bundle, tag, parUUID, title, text;
             bool interaction, collision, gravity;
             byte[] resource = new byte[RESOURCEBUFSIZE];
 
@@ -145,10 +155,13 @@ namespace GSFC.ARVR.MRET.XRC
             XRCInterface.GetEventEntityBooleanAttribute(INTERACTIONSTRING, out interaction);
             XRCInterface.GetEventEntityBooleanAttribute(COLLISIONSTRING, out collision);
             XRCInterface.GetEventEntityBooleanAttribute(GRAVITYSTRING, out gravity);
+            XRCInterface.GetEventEntityStringAttribute(TITLESTRING, out title);
+            XRCInterface.GetEventEntityStringAttribute(TEXTSTRING, out text);
 
             entityReinitializedEventQueue.Enqueue(new EntityEventParameters(tag, type, resource,
                 category, subcategory, bundle, entityId, parUUID,
                 new InteractablePart.InteractablePartSettings(interaction, collision, gravity),
+                title, text,
                 xPos, yPos, zPos, xRot, yRot, zRot, wRot, xScl, yScl, zScl,
                 posUnits, rotUnits, sclUnits));
             xrcUnity.invocationQueue.Enqueue(xrcUnity.entityReinitializedUnityEvent);
@@ -161,7 +174,7 @@ namespace GSFC.ARVR.MRET.XRC
             UnitType posUnits, rotUnits, sclUnits;
             ReferenceSpaceType posRef, rotRef, sclRef;
             int type;
-            string category, subcategory, tag, parUUID;
+            string category, subcategory, tag, parUUID, title, text;
             bool interaction, collision, gravity;
             byte[] resource = new byte[RESOURCEBUFSIZE];
 
@@ -178,10 +191,13 @@ namespace GSFC.ARVR.MRET.XRC
             XRCInterface.GetEventEntityBooleanAttribute(INTERACTIONSTRING, out interaction);
             XRCInterface.GetEventEntityBooleanAttribute(COLLISIONSTRING, out collision);
             XRCInterface.GetEventEntityBooleanAttribute(GRAVITYSTRING, out gravity);
+            XRCInterface.GetEventEntityStringAttribute(TITLESTRING, out title);
+            XRCInterface.GetEventEntityStringAttribute(TEXTSTRING, out text);
 
             entityUpdatedEventQueue.Enqueue(new EntityEventParameters(tag, type, resource,
                 category, subcategory, null, entityId, parUUID,
                 new InteractablePart.InteractablePartSettings(interaction, collision, gravity),
+                title, text,
                 xPos, yPos, zPos, xRot, yRot, zRot, wRot, xScl, yScl, zScl,
                 posUnits, rotUnits, sclUnits));
             xrcUnity.invocationQueue.Enqueue(xrcUnity.entityUpdatedUnityEvent);
@@ -194,7 +210,7 @@ namespace GSFC.ARVR.MRET.XRC
             UnitType posUnits, rotUnits, sclUnits;
             ReferenceSpaceType posRef, rotRef, sclRef;
             int type;
-            string category, subcategory, tag, parUUID;
+            string category, subcategory, tag, parUUID, title, text;
             bool interaction, collision, gravity;
             byte[] resource = new byte[RESOURCEBUFSIZE];
 
@@ -211,10 +227,13 @@ namespace GSFC.ARVR.MRET.XRC
             XRCInterface.GetEventEntityBooleanAttribute(INTERACTIONSTRING, out interaction);
             XRCInterface.GetEventEntityBooleanAttribute(COLLISIONSTRING, out collision);
             XRCInterface.GetEventEntityBooleanAttribute(GRAVITYSTRING, out gravity);
+            XRCInterface.GetEventEntityStringAttribute(TITLESTRING, out title);
+            XRCInterface.GetEventEntityStringAttribute(TEXTSTRING, out text);
 
             entityEditedEventQueue.Enqueue(new EntityEventParameters(tag, type, resource,
                 category, subcategory, null, entityId, parUUID,
                 new InteractablePart.InteractablePartSettings(interaction, collision, gravity),
+                title, text,
                 xPos, yPos, zPos, xRot, yRot, zRot, wRot, xScl, yScl, zScl,
                 posUnits, rotUnits, sclUnits));
             xrcUnity.invocationQueue.Enqueue(xrcUnity.entityEditedUnityEvent);
@@ -594,11 +613,11 @@ namespace GSFC.ARVR.MRET.XRC
 
         public static bool AddSessionEntity(string tag, string category, string subcategory,
             string bundle, string objectID, string parentID,
-            InteractablePart.InteractablePartSettings settings, byte[] resource,
+            InteractablePart.InteractablePartSettings settings, byte[] resource, string title, string text,
             Vector3 pos, Quaternion rot, Vector3 scl,
             UnitType posUnits = UnitType.unitless, UnitType rotUnits = UnitType.unitless, UnitType sclUnits = UnitType.unitless)
         {
-            return AddSessionEntity(tag, category, subcategory, bundle, objectID, parentID, settings, resource,
+            return AddSessionEntity(tag, category, subcategory, bundle, objectID, parentID, settings, resource, title, text,
                 new Vector3d(pos.x, pos.y, pos.z),
                 new Quaterniond(rot.x, rot.y, rot.z, rot.w),
                 new Vector3d(scl.x, scl.y, scl.z),
@@ -607,6 +626,7 @@ namespace GSFC.ARVR.MRET.XRC
 
         public static bool AddSessionEntity(string tag, string category, string subcategory,
             string bundle, string objectID, string parentID, InteractablePart.InteractablePartSettings settings, byte[] resource,
+            string title, string text,
             Vector3d pos, Quaterniond rot, Vector3d scl,
             UnitType posUnits = UnitType.unitless, UnitType rotUnits = UnitType.unitless, UnitType sclUnits = UnitType.unitless)
         {
@@ -649,6 +669,10 @@ namespace GSFC.ARVR.MRET.XRC
                     byte[] temp = new byte[1] { 1 };
                     if (!XRCInterface.SetEntityBlobAttribute(objectID, RESOURCESTRING, temp, temp.Length)) return false;
                 }
+
+                if (!XRCInterface.SetEntityStringAttribute(objectID, TITLESTRING, title)) return false;
+
+                if (!XRCInterface.SetEntityStringAttribute(objectID, TEXTSTRING, text)) return false;
 
                 if (!XRCInterface.SetEntityQTransform(objectID, pos.x, pos.y, pos.z, posUnits, ReferenceSpaceType.global,
                     scl.x, scl.y, scl.z, sclUnits, ReferenceSpaceType.global,
@@ -721,6 +745,12 @@ namespace GSFC.ARVR.MRET.XRC
                 bool gravity = false;
                 XRCInterface.GetEntityBooleanAttribute(entityId, GRAVITYSTRING, out gravity);
 
+                string title = "";
+                XRCInterface.GetEntityStringAttribute(entityId, TITLESTRING, out title);
+
+                string text = "";
+                XRCInterface.GetEntityStringAttribute(entityId, TEXTSTRING, out text);
+
                 string lc = "";
                 XRCInterface.GetEntityStringAttribute(entityId, LEFTCONTROLLERSTRING, out lc);
 
@@ -743,7 +773,7 @@ namespace GSFC.ARVR.MRET.XRC
                 return new SessionEntity(tag, EntityEventParameters.EntityTypeFromXRCEntityType(eType),
                     res, cat, scat, color, uType, bdl, entityId, parUUID,
                     new InteractablePart.InteractablePartSettings(interaction, collision, gravity),
-                    lc, rc, lp, rp, new Vector3d(xPos, yPos, zPos),
+                    title, text, lc, rc, lp, rp, new Vector3d(xPos, yPos, zPos),
                     new Quaterniond(xRot, yRot, zRot, wRot), new Vector3d(xScl, yScl, zScl),
                     posUnits, posRef, rotUnits, rotRef, sclUnits, sclRef);
             }
@@ -924,6 +954,25 @@ namespace GSFC.ARVR.MRET.XRC
             else
             {
                 WarnNoSession("XRCUnity->UpdateEntityResource()");
+                return false;
+            }
+        }
+
+        public static bool UpdateEntityTitleandText(string id, string title, string text)
+        {
+            if (XRCInterface.IsSessionActive)
+            {
+                if (!XRCInterface.GetSessionEntity(id)) return false;
+
+                if (!XRCInterface.SetEntityStringAttribute(id, TITLESTRING, title)) return false;
+
+                if (!XRCInterface.SetEntityStringAttribute(id, TEXTSTRING, text)) return false;
+
+                return XRCInterface.UpdateSessionEntity(id);
+            }
+            else
+            {
+                WarnNoSession("XRCUnity->UpdateEntityTitleandText()");
                 return false;
             }
         }

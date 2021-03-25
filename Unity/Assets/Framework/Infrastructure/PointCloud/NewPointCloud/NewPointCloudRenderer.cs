@@ -1,8 +1,11 @@
-﻿using System.Collections;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using unitycodercom_PointCloudBinaryViewer;
-using VRTK;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 
 public class NewPointCloudRenderer : MonoBehaviour
 {
@@ -94,7 +97,7 @@ public class NewPointCloudRenderer : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         //Debug.Log("OntriggerEnter called. Object collided with: " + other.gameObject);
-        VRTK_ControllerEvents controllerScript = other.gameObject.GetComponent<VRTK_ControllerEvents>();
+        InputHand controllerScript = other.gameObject.GetComponent<InputHand>();
         if (controllerScript != null)
         {
             Debug.Log("onTriggerEnter called (and it's the controller)");
@@ -122,7 +125,7 @@ public class NewPointCloudRenderer : MonoBehaviour
     {
         if(!triggerStayCalled)
         {
-            VRTK_ControllerEvents controllerScript = other.gameObject.GetComponent<VRTK_ControllerEvents>();
+            InputHand controllerScript = other.gameObject.GetComponent<InputHand>();
             if(controllerScript != null)
             {
                 // means we (controller) is inside point cloud
@@ -140,8 +143,7 @@ public class NewPointCloudRenderer : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-
-        VRTK_ControllerEvents controllerScript = other.gameObject.GetComponent<VRTK_ControllerEvents>();
+        InputHand controllerScript = other.gameObject.GetComponent<InputHand>();
         if (controllerScript != null)
         {
             Debug.Log("onTriggerExit called (and it's the controller)");
