@@ -1,6 +1,10 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using UnityEngine;
-using VRTK;
+using UnityEngine.UI;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 
 /// <summary>
 /// Provides simple scaling of a target object based on controller motion when the specified buttons are pressed on both 
@@ -14,14 +18,14 @@ public class ScaleObjectTransform : MonoBehaviour
 		GripPress,
 	}
 
-	GameObject leftController;
-    GameObject rightController;
+	public Text scaleLabel;
+
+    public InputHand hand;
+	public GameObject leftController;
+    public GameObject rightController;
     private static bool leftControllerPressed;
     private static bool rightControllerPressed;
     private static float controllerDist = -1;
-	private VRTK_ObjectTooltip scaleLabel;
-	private ControllerInteractionEventHandler controllerPressedEventHandler;
-	private ControllerInteractionEventHandler controllerReleasedEventHandler;
 
 	[Tooltip("Enables two controller scaling of target object")]
 	public bool scalingEnabled = true;
@@ -36,54 +40,6 @@ public class ScaleObjectTransform : MonoBehaviour
 	[Tooltip("The maximum resulting scale magnitude allowed")]
 	public float maxScaleLimit = 1.0f;
 
-	protected virtual void Awake()
-	{
-		VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
-	}
-
-	protected virtual void OnEnable()
-	{
-		ResetConfiguration();
-	}
-
-	protected virtual void OnDestroy()
-	{
-		VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
-	}
-
-	public virtual void ResetConfiguration()
-	{
-		// TODO do we have to reregister for these events?
-		if (controllerPressedEventHandler == null)
-		{
-			controllerPressedEventHandler = new VRTK.ControllerInteractionEventHandler(handleControllerPressed);
-			if (activationButton == ActivationButton.TriggerPress) 
-			{
-				GetComponent<VRTK.VRTK_ControllerEvents>().TriggerPressed += controllerPressedEventHandler;
-			} 
-			if (activationButton == ActivationButton.GripPress) 
-			{
-				GetComponent<VRTK.VRTK_ControllerEvents>().GripPressed += controllerPressedEventHandler;
-			}
-		}
-
-		if (controllerReleasedEventHandler  == null)
-		{
-			controllerReleasedEventHandler = new VRTK.ControllerInteractionEventHandler(handleControllerReleased);
-			if (activationButton == ActivationButton.TriggerPress) 
-			{
-				GetComponent<VRTK.VRTK_ControllerEvents>().TriggerReleased += controllerReleasedEventHandler;
-			} 
-			if (activationButton == ActivationButton.GripPress) 
-			{
-				GetComponent<VRTK.VRTK_ControllerEvents> ().GripReleased += controllerReleasedEventHandler;
-			}
-		}
-
-		leftController = VRTK_DeviceFinder.GetControllerLeftHand();
-		rightController = VRTK_DeviceFinder.GetControllerRightHand();
-	}
-
     // Use this for initialization
     void Start()
     {
@@ -92,17 +48,16 @@ public class ScaleObjectTransform : MonoBehaviour
 			// TODO use a prefab instead and instatiate it?
 			//relativePositionIndicator = Instantiate (relativePositionIndicator);
 			relativePositionIndicator.SetActive (false);
-			scaleLabel = relativePositionIndicator.GetComponentInChildren<VRTK_ObjectTooltip> ();
 		}
     }
 
-	private void handleControllerReleased(object sender, VRTK.ControllerInteractionEventArgs e)
+	public void HandleControllerReleased()
 	{
-		if (VRTK_DeviceFinder.GetControllerIndex(leftController) == e.controllerReference.index)
+		if (hand.handedness == InputHand.Handedness.left)
 		{
 			leftControllerPressed = false;
 		}
-		else if (VRTK_DeviceFinder.GetControllerIndex(rightController) == e.controllerReference.index)
+		else if (hand.handedness == InputHand.Handedness.right)
 		{
 			rightControllerPressed = false;
 		}
@@ -113,9 +68,9 @@ public class ScaleObjectTransform : MonoBehaviour
 		}
 	}
 
-    private void handleControllerPressed(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void HandleControllerPressed()
     {
-		if (VRTK_DeviceFinder.GetControllerIndex(leftController) == e.controllerReference.index)
+		if (hand.handedness == InputHand.Handedness.left)
 		{
             leftControllerPressed = true;
 			if (rightControllerPressed) 
@@ -130,7 +85,7 @@ public class ScaleObjectTransform : MonoBehaviour
 				}
 			}
         }
-		else if (VRTK_DeviceFinder.GetControllerIndex(rightController) == e.controllerReference.index)
+		else if (hand.handedness == InputHand.Handedness.right)
         {
             rightControllerPressed = true;
 			if (leftControllerPressed) 
@@ -158,29 +113,28 @@ public class ScaleObjectTransform : MonoBehaviour
                 && leftController.GetComponentInChildren<InteractableTool>() == null
                 && rightController.GetComponentInChildren<InteractableTool>() == null)
             {
+			    Vector3 scaleRefPoint = Vector3.Lerp (leftController.transform.position, rightController.transform.position, 0.5f);
+			    float newDistance = Vector3.Distance(leftController.transform.position, rightController.transform.position);
+			    float scaleFactor = (newDistance / controllerDist) - 1.0f;
+			    scaleFactor = 1.0f + (scaleFactor * stepMultiplier);
+			    float scale = targetGameObject.transform.localScale.x * scaleFactor;
 
-			Vector3 scaleRefPoint = Vector3.Lerp (leftController.transform.position, rightController.transform.position, 0.5f);
-			float newDistance = Vector3.Distance(leftController.transform.position, rightController.transform.position);
-			float scaleFactor = (newDistance / controllerDist) - 1.0f;
-			scaleFactor = 1.0f + (scaleFactor * stepMultiplier);
-			float scale = targetGameObject.transform.localScale.x * scaleFactor;
-
-			// Update text and location of scale point indicator
-			if (relativePositionIndicator != null)
-			{
-				relativePositionIndicator.transform.position = scaleRefPoint;
-				if (scaleLabel != null)
-				{
-					if (scale > maxScaleLimit)
-					{
-						scaleLabel.UpdateText(Math.Round ((decimal)maxScaleLimit, 3).ToString ());
-					} 
-					else
-					{
-						scaleLabel.UpdateText(Math.Round ((decimal)scale, 3).ToString ());
-					}
-				}
-			}
+			    // Update text and location of scale point indicator
+			    if (relativePositionIndicator != null)
+			    {
+				    relativePositionIndicator.transform.position = scaleRefPoint;
+				    if (scaleLabel != null)
+				    {
+					    if (scale > maxScaleLimit)
+					    {
+						    scaleLabel.text = Math.Round ((decimal)maxScaleLimit, 3).ToString ();
+					    } 
+					    else
+					    {
+						    scaleLabel.text = Math.Round ((decimal)scale, 3).ToString ();
+					    }
+				    }
+			    }
 
                 if (scale > 0 && scale <= maxScaleLimit)
                 {

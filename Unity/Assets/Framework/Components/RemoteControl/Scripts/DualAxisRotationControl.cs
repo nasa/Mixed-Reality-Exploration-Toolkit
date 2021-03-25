@@ -1,48 +1,18 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class DualAxisRotationControl : MonoBehaviour
 {
-    public VRTK.VRTK_ControllerEvents cEvents;
     public DualAxisRotatableObject rotatingObject;
-    public ControlMode controlMode;
     public DualAxisRotationControl otherControl;
-
-    bool desktop;
 
     private float currentX, currentY;
     private float xObjRotation;
     private bool isTouching = false;
-
-    void Start()
-    {
-        foreach (ControllerMenuManager man in FindObjectsOfType<ControllerMenuManager>())
-        {
-            if (man.IsDimmed())
-            {
-                cEvents = man.GetComponentInParent<VRTK.VRTK_ControllerEvents>();
-            }
-        }
-
-        controlMode = FindObjectOfType<ControlMode>();
-        desktop = VRDesktopSwitcher.isDesktopEnabled();
-
-        if (VRDesktopSwitcher.isDesktopEnabled())
-        {
-            EventManager.OnLeftClick += DoTouchpadTouchStart;
-            EventManager.OnLeftClickUp += DoTouchpadTouchEnd;
-            EventManager.TKeyPressed += DoTouchpadAxisChangedN;
-            EventManager.GKeyPressed += DoTouchpadAxisChangedS;
-            EventManager.FKeyPressed += DoTouchpadAxisChangedE;
-            EventManager.HKeyPressed += DoTouchpadAxisChangedW;
-        }
-        else
-        {
-            cEvents.TouchpadAxisChanged += new VRTK.ControllerInteractionEventHandler(DoTouchpadAxisChanged);
-            cEvents.TouchpadTouchStart += new VRTK.ControllerInteractionEventHandler(DoTouchpadTouchStart);
-            cEvents.TouchpadTouchEnd += new VRTK.ControllerInteractionEventHandler(DoTouchpadTouchEnd);
-        }
-    }
 
     void FixedUpdate()
     {
@@ -168,7 +138,7 @@ public class DualAxisRotationControl : MonoBehaviour
         if (darObj == null)
         {
             SetRotatingObject(null);
-            controlMode.DisableAllControlTypes();
+            MRET.ControlMode.DisableAllControlTypes();
         }
         else
         {
@@ -179,7 +149,7 @@ public class DualAxisRotationControl : MonoBehaviour
 
             SetRotatingObject(darObj);
             xObjRotation = Mathf.Clamp(0, rotatingObject.minX, rotatingObject.maxX);
-            controlMode.EnterDualAxisRotationMode();
+            MRET.ControlMode.EnterDualAxisRotationMode();
         }
     }
 
@@ -188,10 +158,10 @@ public class DualAxisRotationControl : MonoBehaviour
         rotatingObject = darObj;
     }
 
-    private void DoTouchpadAxisChanged(object sender, VRTK.ControllerInteractionEventArgs e)
+    private void DoTouchpadAxisChanged(Vector2 touchpadAxis)
     {
-        currentX = e.touchpadAxis.x;
-        currentY = e.touchpadAxis.y;
+        currentX = touchpadAxis.x;
+        currentY = touchpadAxis.y;
     }
 
     private void DoTouchpadAxisChangedN()
@@ -224,16 +194,6 @@ public class DualAxisRotationControl : MonoBehaviour
     }
 
     private void DoTouchpadTouchEnd()
-    {
-        isTouching = false;
-    }
-
-    private void DoTouchpadTouchStart(object sender, VRTK.ControllerInteractionEventArgs e)
-    {
-        isTouching = true;
-    }
-
-    private void DoTouchpadTouchEnd(object sender, VRTK.ControllerInteractionEventArgs e)
     {
         isTouching = false;
     }

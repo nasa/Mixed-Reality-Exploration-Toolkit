@@ -1,10 +1,20 @@
-﻿using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections.Generic;
 using System;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DataManager : MonoBehaviour
 {
+    [System.Serializable]
+    public class DataValueEvent : UnityEvent<DataValue>
+    {
+
+    }
+
     public class DataValue
     {
         public string key;
@@ -251,11 +261,15 @@ public class DataManager : MonoBehaviour
         }
     }
 
+    public static DataManager instance;
+
     public bool archiveData = false;
 
     // These are the saved data points.
-    Dictionary<string, DataValue> dataPoints;
-    //List<DataValue> dataPoints;
+    private Dictionary<string, DataValue> dataPoints;
+
+    // These are events that correspond to each data point.
+    private Dictionary<string, List<DataValueEvent>> dataPointEvents = new Dictionary<string, List<DataValueEvent>>();
 
     private static DateTime epochStart = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -269,31 +283,47 @@ public class DataManager : MonoBehaviour
         return SearchPoint(pointName);
     }
 
-    private void Awake()
+    public void SubscribeToPoint(string pointKey, DataValueEvent eventToInvoke)
     {
-        Debug.Log("[DataManager] Initializing empty Data Manager...");
-        dataPoints = new Dictionary<string, DataValue>();
-        //dataPoints = new List<DataValue>();
-        Debug.Log("[DataManager] Empty Data Manager Initialized.");
+        if (!dataPointEvents.ContainsKey(pointKey))
+        {
+            dataPointEvents[pointKey] = new List<DataValueEvent>();
+        }
+
+        if (dataPointEvents[pointKey] == null)
+        {
+            dataPointEvents[pointKey] = new List<DataValueEvent>();
+        }
+
+        dataPointEvents[pointKey].Add(eventToInvoke);
     }
 
-    public void Start ()
+    public void UnsubscribeFromPoint(string pointKey, DataValueEvent eventToInvoke)
     {
-        //archiveData = true;
-        //SaveValue("value1", 1.25f);
-        //SaveValue("value2", "qwerty");
-        //SaveValue("value3", 12345);
-        //SaveValue("value4", true, "none", new DateTime(1971, 2, 3, 12, 0, 1, 500));
-        //SaveValue("value1", 1.26f);
-        //SaveValue("value1", 1.27f);
-        //SaveValue("value1", 1.28f);
-        //SaveValue("value1", 1.29f);
-        //SaveValue("value1", 1.3f);
-        //SaveValue("value1", "changed type");
-        //SaveToCSV("example.csv");
-        //LoadFromCSV("example.csv");
-        //SaveToCSV("result.csv");
-        //Debug.Log("value " + SearchValueAtTime("value1", new DateTime(2018, 1, 9, 11, 49, 55, 250)));
+        if (dataPointEvents.ContainsKey(pointKey))
+        {
+            dataPointEvents[pointKey].RemoveAll(x => x == eventToInvoke);
+
+            if (dataPointEvents.ContainsKey(pointKey))
+            {
+                if (dataPointEvents[pointKey].Count == 0)
+                {
+                    dataPointEvents.Remove(pointKey);
+                    return;
+                }
+            }
+        }
+
+        Debug.LogWarning("[UnsubscribeFromPoint] Subscription not found.");
+    }
+
+    public void Initialize()
+    {
+        instance = this;
+        Debug.Log("[DataManager] Initializing empty Data Manager...");
+        dataPoints = new Dictionary<string, DataValue>();
+        dataPointEvents = new Dictionary<string, List<DataValueEvent>>();
+        Debug.Log("[DataManager] Empty Data Manager Initialized.");
     }
 
     public void LoadFromCSV(string fileName)
@@ -384,17 +414,13 @@ public class DataManager : MonoBehaviour
     public void SaveValue(DataValue valueToSave)
     {
         dataPoints[valueToSave.key] = valueToSave;
-        /*int keyLocation = dataPoints.FindIndex(x => x.key == valueToSave.key);
-        if (keyLocation < 0)
+        if (dataPointEvents.ContainsKey(valueToSave.key))
         {
-            // Point does not already exist.
-            dataPoints.Add(valueToSave);
+            foreach (DataValueEvent dve in dataPointEvents[valueToSave.key])
+            {
+                dve.Invoke(dataPoints[valueToSave.key]);
+            }
         }
-        else
-        {
-            // Point exists.
-            dataPoints[keyLocation] = valueToSave;
-        }*/
     }
 
     public void SaveValue(string key, object value, string category = "none", DateTime? time = null,
@@ -421,26 +447,13 @@ public class DataManager : MonoBehaviour
             dataPoints[key] = new DataValue(key, value, category, time, redLow, yellowLow, yellowHigh, redHigh);
         }
 
-        /*int keyLocation = dataPoints.FindIndex(x => x.key == key);
-        if (keyLocation < 0)
+        if (dataPointEvents.ContainsKey(key))
         {
-            // Point does not already exist.
-            dataPoints.Add(new DataValue(key, value, category, time, redLow, yellowLow, yellowHigh, redHigh));
+            foreach (DataValueEvent dve in dataPointEvents[key])
+            {
+                dve.Invoke(dataPoints[key]);
+            }
         }
-        else
-        {
-            // Point exists.
-            if (archiveData)
-            {   // Add current value to point.
-                dataPoints[keyLocation].UpdateValue(key, value, category, time, redLow, yellowLow, yellowHigh, redHigh);
-            }
-            else
-            {   // Overwrite point value;
-                object oldMin = dataPoints[keyLocation].minimum;
-                object oldMax = dataPoints[keyLocation].maximum;
-                dataPoints[keyLocation] = new DataValue(key, value, category, time, redLow, yellowLow, yellowHigh, redHigh, oldMin, oldMax);
-            }
-        }*/
     }
 
     private object SearchValue(string key)
@@ -448,15 +461,6 @@ public class DataManager : MonoBehaviour
         DataValue val = null;
         dataPoints.TryGetValue(key, out val);
         return (val == null) ? null : val.value;
-        /*DataValue value = dataPoints.Find(x => x.key == key);
-        if (value == null)
-        {
-            return null;
-        }
-        else
-        {
-            return value.value;
-        }*/
     }
 
     private DataValue SearchPoint(string key)
@@ -464,21 +468,11 @@ public class DataManager : MonoBehaviour
         DataValue val = null;
         dataPoints.TryGetValue(key, out val);
         return (val == null) ? null : val;
-        /*DataValue value = dataPoints.Find(x => x.key == key);
-        if (value == null)
-        {
-            return null;
-        }
-        else
-        {
-            return value;
-        }*/
     }
 
     private object SearchValueAtTime(string key, DateTime time)
     {
         int i = 0;
-        //DataValue pointOfInterest = dataPoints.Find(x => x.key == key);
         DataValue pointOfInterest = dataPoints[key];
         foreach (DataValue val in pointOfInterest.previousValues)
         {
@@ -523,7 +517,6 @@ public class DataManager : MonoBehaviour
         DataValue[] dVs = new DataValue[dataPoints.Count];
         dataPoints.Values.CopyTo(dVs, 0);
         return dVs;
-        //return dataPoints.ToArray();
     }
 
 #region HELPERS

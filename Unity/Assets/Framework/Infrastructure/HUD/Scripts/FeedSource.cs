@@ -1,8 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
 using UnityEngine;
 using UnityEngine.UI;
 using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class FeedSource : MonoBehaviour
 {
@@ -36,7 +38,7 @@ public class FeedSource : MonoBehaviour
     public bool isAlert = false;
     public bool upToDate;
     private bool isChanged;
-    private DataManager dataManager;
+
     public RenderTexture renderTexture
     {
         get
@@ -49,15 +51,6 @@ public class FeedSource : MonoBehaviour
 
     void Start()
     {
-        GameObject loadedProjectObject = GameObject.Find("LoadedProject");
-        if (loadedProjectObject)
-        {
-            UnityProject loadedProject = loadedProjectObject.GetComponent<UnityProject>();
-            if (loadedProject)
-            {
-                dataManager = loadedProject.dataManager;
-            }
-        }
         switch (type)
         {
             case Type.dataFeed:
@@ -103,45 +96,40 @@ public class FeedSource : MonoBehaviour
         switch (type)
         {
             case Type.dataFeed:
-
                 break;
 
             case Type.spriteFeed:
+                object val = MRET.DataManager.FindPoint(spriteData);
 
-                if (dataManager)
+                switch (spriteType)
                 {
-                    object val = dataManager.FindPoint(spriteData);
-
-                    switch (spriteType)
-                    {
-                        case SpriteType.toggle:
-                            if (val != null)
+                    case SpriteType.toggle:
+                        if (val != null)
+                        {
+                            isAlert = (bool)val;
+                            if (isAlert)
                             {
-                                isAlert = (bool)val;
-                                if (isAlert)
-                                {
-                                    AlertMode();
-                                }
-                                else if (!isAlert)
-                                {
-                                    StandbyMode();
-                                }
-                                upToDate = false;
-                                isChanged = isAlert;
+                                AlertMode();
                             }
-                            break;
-
-
-                        case SpriteType.number:
-                            if (val != null)
+                            else if (!isAlert)
                             {
-                                float number = (float)val;
-                                string content = number.ToString();
-                                value.text = content;
+                                StandbyMode();
                             }
+                            upToDate = false;
+                            isChanged = isAlert;
+                        }
+                        break;
 
-                            break;
-                    }
+
+                    case SpriteType.number:
+                        if (val != null)
+                        {
+                            float number = (float)val;
+                            string content = number.ToString();
+                            value.text = content;
+                        }
+
+                        break;
                 }
                 break;
         }

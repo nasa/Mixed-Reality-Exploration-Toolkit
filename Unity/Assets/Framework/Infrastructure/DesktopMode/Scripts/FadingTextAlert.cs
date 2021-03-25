@@ -1,4 +1,7 @@
-﻿/*
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+/*
  * 
  * This a simple file that enables text alerts to inform the user that certain features
  * are only availible in VR. It uses the same textbox used to display text

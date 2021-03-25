@@ -1,6 +1,11 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
+using UnityEngine;
 using System.Collections.Generic;
 
+[Obsolete("See 'MRET' class.")]
 public class SessionConfiguration : MonoBehaviour
 {
     public static readonly int raycastLayer = 15;

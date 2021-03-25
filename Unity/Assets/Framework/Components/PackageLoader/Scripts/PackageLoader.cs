@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
@@ -110,9 +113,9 @@ namespace GSFC.ARVR
          */
         public static void InitializePackagePlugin(string packagePath)
         {
-            if (packagePath == null)
+            if (string.IsNullOrEmpty(packagePath))
             {
-                Debug.LogError("[PackageLoader] NULL package path supplied");
+                Debug.LogError("[PackageLoader] Invalid package path supplied");
                 return;
             }
 

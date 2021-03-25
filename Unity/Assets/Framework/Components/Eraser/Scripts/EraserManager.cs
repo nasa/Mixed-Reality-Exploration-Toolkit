@@ -1,21 +1,17 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
+using GSFC.ARVR.MRET.Components.Notes;
 
 public class EraserManager : MonoBehaviour
 {
-    public VRTK.VRTK_ControllerEvents leftController, rightController;
-    public VRTK.VRTK_InteractTouch leftTouch, rightTouch;
     public GameObject leftEraserObject, rightEraserObject;
-    public bool canErase
-    {
-        get
-        {
-            return eraserActive;
-        }
-    }
+    public bool canErase { get; private set; } = false;
 
-    private bool eraserActive = false;
-    private VRTK.VRTK_InteractableObject leftTouching, rightTouching;
+    private SceneObject leftTouching, rightTouching;
     private UndoManager undoManager;
     private ProjectAction leftUndo, rightUndo, leftRedo, rightRedo;
 
@@ -23,34 +19,24 @@ public class EraserManager : MonoBehaviour
     {
         leftEraserObject.SetActive(true);
         if (rightEraserObject) rightEraserObject.SetActive(true);
-        eraserActive = true;
+        canErase = true;
     }
 
     public void Disable()
     {
         leftEraserObject.SetActive(false);
         if (rightEraserObject) rightEraserObject.SetActive(false);
-        eraserActive = false;
+        canErase = false;
     }
 
 	void Start()
     {
-        if (VRDesktopSwitcher.isVREnabled())
-        {
-            leftController.TouchpadPressed += new VRTK.ControllerInteractionEventHandler(LTouchpadPressed);
-            rightController.TouchpadPressed += new VRTK.ControllerInteractionEventHandler(RTouchpadPressed);
-            leftTouch.ControllerStartTouchInteractableObject += new VRTK.ObjectInteractEventHandler(LControllerTouched);
-            rightTouch.ControllerStartTouchInteractableObject += new VRTK.ObjectInteractEventHandler(RControllerTouched);
-            leftTouch.ControllerUntouchInteractableObject += new VRTK.ObjectInteractEventHandler(LControllerUnTouched);
-            rightTouch.ControllerUntouchInteractableObject += new VRTK.ObjectInteractEventHandler(RControllerUnTouched);
-        }
-
         undoManager = FindObjectOfType<UndoManager>();
     }
 
-    void LTouchpadPressed(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void LTouchpadPressed()
     {
-        if (eraserActive)
+        if (canErase)
         {
             if (leftTouching)
             {
@@ -60,9 +46,9 @@ public class EraserManager : MonoBehaviour
         }
     }
 
-    void RTouchpadPressed(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void RTouchpadPressed()
     {
-        if (eraserActive)
+        if (canErase)
         {
             if (rightTouching)
             {
@@ -72,13 +58,13 @@ public class EraserManager : MonoBehaviour
         }
     }
 
-    void LControllerTouched(object sender, VRTK.ObjectInteractEventArgs e)
+    public void LControllerTouched(GameObject go)
     {
-        if (eraserActive)
+        if (canErase)
         {
-            if (e.target != null)
+            if (go != null)
             {
-                InteractablePart iPart = e.target.GetComponentInParent<InteractablePart>();
+                InteractablePart iPart = go.GetComponentInParent<InteractablePart>();
                 if (iPart != null)
                 {
                     PartType serializedPart = iPart.Serialize();
@@ -93,35 +79,35 @@ public class EraserManager : MonoBehaviour
                     leftTouching = iPart;
                 }
 
-                MeshLineRenderer mRend = e.target.GetComponentInParent<MeshLineRenderer>();
+                MeshLineRenderer mRend = go.GetComponentInParent<MeshLineRenderer>();
                 if (mRend != null)
                 {
                     leftUndo = ProjectAction.AddDrawingAction(mRend.drawingScript.Serialize());
                     leftRedo = ProjectAction.DeleteDrawingAction(mRend.gameObject.name, mRend.drawingScript.guid.ToString());
 
-                    leftTouching = e.target.GetComponent<VRTK.VRTK_InteractableObject>();
+                    leftTouching = go.GetComponent<SceneObject>();
                 }
 
-                Note note = e.target.GetComponentInParent<Note>();
+                Note note = go.GetComponentInParent<Note>();
                 if (note != null)
                 {
                     leftUndo = ProjectAction.AddNoteAction(note.ToNoteType(),
                         note.name, note.transform.position, note.transform.rotation);
                     leftRedo = ProjectAction.DeleteNoteAction(note.name);
 
-                    leftTouching = e.target.GetComponent<VRTK.VRTK_InteractableObject>();
+                    leftTouching = go.GetComponent<SceneObject>();
                 }
             }
         }
     }
 
-    void RControllerTouched(object sender, VRTK.ObjectInteractEventArgs e)
+    public void RControllerTouched(GameObject go)
     {
-        if (eraserActive)
+        if (canErase)
         {
-            if (e.target != null)
+            if (go != null)
             {
-                InteractablePart iPart = e.target.GetComponentInParent<InteractablePart>();
+                InteractablePart iPart = go.GetComponentInParent<InteractablePart>();
                 if (iPart != null)
                 {
                     PartType serializedPart = iPart.Serialize();
@@ -136,40 +122,40 @@ public class EraserManager : MonoBehaviour
                     rightTouching = iPart;
                 }
 
-                MeshLineRenderer mRend = e.target.GetComponentInParent<MeshLineRenderer>();
+                MeshLineRenderer mRend = go.GetComponentInParent<MeshLineRenderer>();
                 if (mRend != null)
                 {
                     rightUndo = ProjectAction.AddDrawingAction(mRend.drawingScript.Serialize());
                     rightRedo = ProjectAction.DeleteDrawingAction(mRend.name, mRend.drawingScript.guid.ToString());
 
-                    rightTouching = e.target.GetComponent<VRTK.VRTK_InteractableObject>();
+                    rightTouching = go.GetComponent<SceneObject>();
                 }
 
-                Note note = e.target.GetComponentInParent<Note>();
+                Note note = go.GetComponentInParent<Note>();
                 if (note != null)
                 {
                     rightUndo = ProjectAction.AddNoteAction(note.ToNoteType(),
                         note.name, note.transform.position, note.transform.rotation);
                     rightRedo = ProjectAction.DeleteNoteAction(note.name);
 
-                    rightTouching = e.target.GetComponent<VRTK.VRTK_InteractableObject>();
+                    rightTouching = go.GetComponentInParent<SceneObject>();
                 }
             }
         }
     }
 
-    void LControllerUnTouched(object sender, VRTK.ObjectInteractEventArgs e)
+    public void LControllerUnTouched()
     {
-        if (eraserActive)
+        if (canErase)
         {
             leftUndo = leftRedo = null;
             leftTouching = null;
         }
     }
 
-    void RControllerUnTouched(object sender, VRTK.ObjectInteractEventArgs e)
+    public void RControllerUnTouched()
     {
-        if (eraserActive)
+        if (canErase)
         {
             rightUndo = rightRedo = null;
             rightTouching = null;

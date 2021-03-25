@@ -1,274 +1,119 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
-using EasyBuildSystem.Runtimes;
-using EasyBuildSystem.Runtimes.Events;
-using EasyBuildSystem.Runtimes.Extensions;
-using EasyBuildSystem.Runtimes.Internal.Area;
-using EasyBuildSystem.Runtimes.Internal.Managers;
-using EasyBuildSystem.Runtimes.Internal.Part;
-using EasyBuildSystem.Runtimes.Internal.Socket;
-using EasyBuildSystem.Runtimes.Internal.Socket.Data;
-using EasyBuildSystem.Runtimes.Internal.Builder;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using EasyBuildSystem.Features.Scripts.Core.Base.Builder.Enums;
+using EasyBuildSystem.Features.Scripts.Core.Base.Event;
+using EasyBuildSystem.Features.Scripts.Core.Base.Group;
+using EasyBuildSystem.Features.Scripts.Core.Base.Manager;
+using EasyBuildSystem.Features.Scripts.Core.Base.Piece;
+using EasyBuildSystem.Features.Scripts.Core.Base.Piece.Enums;
+using EasyBuildSystem.Features.Scripts.Core.Base.Socket;
+using EasyBuildSystem.Features.Scripts.Core.Base.Socket.Data;
+using EasyBuildSystem.Features.Scripts.Extensions;
+using System;
+using UnityEngine;
+using EasyBuildSystem.Features.Scripts.Core;
 
 namespace GSFC.ARVR.MRET.Alignment
 {
-    
+    [DefaultExecutionOrder(999)]
+    [AddComponentMenu("Easy Build System/Features/Builders Behaviour/Builder Behaviour")]
     public class VRBuilderBehaviour : MonoBehaviour
     {
-        #region Public Fields
+        #region Fields
 
         public static VRBuilderBehaviour Instance;
 
-        #region Base Settings
-
         public float ActionDistance = 6f;
-
         public float SnapThreshold = 5f;
-
         public float OutOfRangeDistance = 0f;
 
         public float OverlapAngles = 35f;
-
         public bool LockRotation;
-
-        public DetectionType RayDetection = DetectionType.Overlap;
-
+        public DetectionType RayDetection = DetectionType.OverlapSphere;
         public RayType CameraType;
-
-        public float RaycastOffset = 1f;
-
+        public Vector3 RaycastOffset = new Vector3(0, 0, 1);
         public Transform RaycastOriginTransform;
-
         public Transform RaycastAnchorTransform;
-
         public float raySteps = 0.1f;
 
-        public GameObject placingObject;
-
-        #endregion Base Settings
-
-        #region Modes Settings
+        public MovementType PreviewMovementType;
+        public bool PreviewMovementOnlyAllowed;
+        public float PreviewGridSize = 1.0f;
+        public float PreviewGridOffset;
+        public float PreviewSmoothTime = 5.0f;
 
         public bool UsePlacementMode = true;
         public bool ResetModeAfterPlacement = false;
         public bool UseDestructionMode = true;
         public bool ResetModeAfterDestruction = false;
         public bool UseEditionMode = true;
-
-        #endregion Modes Settings
-
-        #region Preview Settings
-
-        public bool UsePreviewCamera;
-        public Camera PreviewCamera;
-        public LayerMask PreviewLayer;
-
-        public MovementType PreviewMovementType;
-
-        public bool PreviewMovementOnlyAllowed;
-
-        public float PreviewGridSize = 1.0f;
-        public float PreviewGridOffset;
-        public float PreviewSmoothTime = 5.0f;
-
-        #endregion Preview Settings
-
-        #region Audio Settings
+        public bool ResetModeAfterEdition = false;
 
         public AudioSource Source;
-
         public AudioClip[] PlacementClips;
-
         public AudioClip[] DestructionClips;
+        public AudioClip[] EditionClips;
 
-        #endregion Audio Settings
-
-        [HideInInspector]
-        public BuildMode CurrentMode;
-
-        [HideInInspector]
-        public PartBehaviour SelectedPrefab;
-
-        [HideInInspector]
-        public int SelectedIndex;
-
-        [HideInInspector]
-        public PartBehaviour CurrentPreview;
-
-        [HideInInspector]
-        public PartBehaviour CurrentEditionPreview;
-
-        [HideInInspector]
-        public PartBehaviour CurrentRemovePreview;
-
-        [HideInInspector]
-        public Vector3 CurrentRotationOffset;
-
-        [HideInInspector]
-        public bool AllowPlacement = true;
-
-        [HideInInspector]
-        public bool AllowDestruction = true;
-
-        [HideInInspector]
-        public bool AllowEdition = true;
-
-        [HideInInspector]
-        public bool HasSocket;
-
-        [HideInInspector]
-        public bool UseForNetwork;
-
-        [HideInInspector]
-        public SocketBehaviour CurrentSocket;
-
-        [HideInInspector]
-        public SocketBehaviour LastSocket;
-
-        private Transform _Caster;
-        public Transform GetCaster
-        {
-            get
-            {
-                if (_Caster == null)
-                {
-                    _Caster = CameraType != RayType.TopDown ? transform.parent != null ? transform.parent
-                    : transform : RaycastAnchorTransform != null ? RaycastAnchorTransform : transform;
-                }
-
-                return _Caster;
-            }
-        }
-
-        #endregion Public Fields
-
-        #region Private Fields
-
-        private Camera BuilderCamera;
-
-        private RaycastHit TopDownHit;
-        private Vector3 LastAllowedPosition;
-
-        #endregion Private Fields
-
-        #region Private Methods
-
-        public virtual void Start()
-        {
-            if (!Application.isPlaying)
-                return;
-
-            Instance = this;
-
-            if (PreviewCamera != null)
-                PreviewCamera.enabled = UsePreviewCamera;
-
-            BuilderCamera = GetComponent<Camera>();
-
-            //if (BuilderCamera == null)
-            //    Debug.Log("<b><color=cyan>[Easy Build System]</color></b> : No camera for the Builder Behaviour component.");
-        }
-
-        public virtual void Update()
-        {
-            if (!Application.isPlaying)
-                return;
-
-            UpdateModes();
-        }
 
         private Vector3 lastPos = Vector3.zero;
         private Quaternion lastRot = Quaternion.identity;
         private Ray? lastRay = null;
-        private Ray Ray = new Ray();
         private int rayUpdateCounter = 0;
-        private Ray? GetRay()
+        public virtual Ray? GetRay
         {
-            float shortestDistance = OutOfRangeDistance <= 0 ? Mathf.Infinity : OutOfRangeDistance;
-            Ray shortestRay = new Ray();
-            GameObject hitObj = null;
-
-            if (placingObject == null)
+            get
             {
-                return new Ray();
-            }
+                float shortestDistance = OutOfRangeDistance <= 0 ? Mathf.Infinity : OutOfRangeDistance;
+                Ray shortestRay = new Ray();
+                GameObject hitObj = null;
 
-            if (Mathf.Abs(Vector3.Distance(lastPos, transform.position)) < 0.1 ||
-                Mathf.Abs(Quaternion.Angle(lastRot, transform.rotation)) < 5 || rayUpdateCounter++ < 8)
-            {
-                return lastRay;
-            }
-
-            rayUpdateCounter = 0;
-
-            for (float x = -1; x <= 1; x += raySteps)
-            {
-                for (float y = -1; y <= 1; y += raySteps)
+                if (placingObject == null)
                 {
-                    for (float z = -1; z <= 1; z += raySteps)
+                    return new Ray();
+                }
+
+                if (Mathf.Abs(Vector3.Distance(lastPos, transform.position)) < 0.1 ||
+                    Mathf.Abs(Quaternion.Angle(lastRot, transform.rotation)) < 5 || rayUpdateCounter++ < 8)
+                {
+                    return lastRay;
+                }
+
+                rayUpdateCounter = 0;
+
+                for (float x = -1; x <= 1; x += raySteps)
+                {
+                    for (float y = -1; y <= 1; y += raySteps)
                     {
-                        Ray currentRay = new Ray(placingObject.transform.position, new Vector3(x, y, z));
-                        RaycastHit hit;
-                        Physics.Raycast(currentRay, out hit, OutOfRangeDistance, BuildManager.Instance.FreeLayers);
-                        if (!HitPlacingObject(hit) && hit.distance > 0.001 && hit.distance < shortestDistance)
+                        for (float z = -1; z <= 1; z += raySteps)
                         {
-                            shortestRay = currentRay;
-                            shortestDistance = hit.distance;
-                            hitObj = hit.collider.gameObject;
+                            Ray currentRay = new Ray(placingObject.transform.position, new Vector3(x, y, z));
+                            RaycastHit hit;
+                            Physics.Raycast(currentRay, out hit, OutOfRangeDistance, BuildManager.Instance.FreeLayers);
+                            if (!HitPlacingObject(hit) && hit.distance > 0.001 && hit.distance < shortestDistance)
+                            {
+                                shortestRay = currentRay;
+                                shortestDistance = hit.distance;
+                                hitObj = hit.collider.gameObject;
+                            }
                         }
                     }
                 }
-            }
 
-            // Set origin to negative infinity to indicate no hits.
-            if (shortestDistance == (OutOfRangeDistance <= 0 ? Mathf.Infinity : OutOfRangeDistance))
-            {
-                lastRay = null;
-                return null;
-            }
-            else
-            {
-                lastRay = shortestRay;
-                return shortestRay;
-            }
-
-            //List<Ray> rays = new List<Ray>();
-            /*foreach (Collider coll in CurrentPreview.gameObject.GetComponentsInChildren<Collider>())
-            {
-                if (coll.gameObject.layer != SessionConfiguration.raycastLayer)
+                // Set origin to negative infinity to indicate no hits.
+                if (shortestDistance == (OutOfRangeDistance <= 0 ? Mathf.Infinity : OutOfRangeDistance))
                 {
-                    if (coll is BoxCollider)
-                    {
-                        rays.Add(GetRayBoxCollider((BoxCollider) coll));
-                    }
-                    else if (coll is MeshCollider)
-                    {
-                        rays.Add(GetRayMeshCollider((MeshCollider) coll));
-                    }
-                    else if (coll is SphereCollider)
-                    {
-                        rays.Add(GetRaySphereCollider((SphereCollider) coll));
-                    }
-                    else if (coll is CapsuleCollider)
-                    {
-                        rays.Add(GetRayCapsuleCollider((CapsuleCollider) coll));
-                    }
+                    lastRay = null;
+                    return null;
                 }
-            }*/
-
-            //return rays.ToArray();
-
-            /*if (CameraType == RayType.TopDown)
-                return BuilderCamera.ScreenPointToRay(Input.mousePosition + new Vector3(0, 0, RaycastOffset));
-            else if (CameraType == RayType.FirstPerson)
-                return new Ray(BuilderCamera.ViewportToWorldPoint(new Vector3(0.5f, 0.5f, RaycastOffset)), BuilderCamera.transform.forward);
-            else if (CameraType == RayType.ThirdPerson)
-                if (RaycastOriginTransform != null)
-                    return new Ray(RaycastOriginTransform.position, BuilderCamera.transform.forward);
-
-            return new Ray();*/
+                else
+                {
+                    lastRay = shortestRay;
+                    return shortestRay;
+                }
+            }
         }
-        
+
         private bool HitPlacingObject(RaycastHit hit)
         {
             if (hit.collider == null) return false;
@@ -294,90 +139,75 @@ namespace GSFC.ARVR.MRET.Alignment
             return false;
         }
 
-        /*private Ray[] GetRaysBoxCollider(BoxCollider coll)
+        private Transform _Caster;
+        public virtual Transform GetCaster
         {
-
-        }
-
-        private Ray[] GetRaysMeshCollider(MeshCollider coll)
-        {
-
-        }
-
-        private Ray[] GetRaysSphereCollider(SphereCollider coll)
-        {
-
-        }
-
-        private Ray GetRayCapsuleCollider(CapsuleCollider coll)
-        {
-
-        }*/
-
-        #endregion Private Methods
-
-        #region Public Methods
-
-        /// <summary>
-        /// This method allows to update all the builder (Placement, Destruction, Edition).
-        /// </summary>
-        public virtual void UpdateModes()
-        {
-            if (BuildManager.Instance == null)
-                return;
-
-            if (BuildManager.Instance.PartsCollection == null)
-                return;
-
-            //if (!placingObject || !placingObject.transform.IsChildOf(transform))
-            //    return;
-
-            if (CurrentMode != BuildMode.None)
+            get
             {
-                Ray? result = GetRay();
-                if (result.HasValue) //&& !(result.Value.direction == Vector3.zero && result.Value.origin == Vector3.zero))
+                if (_Caster == null)
                 {
-                    Ray = result.Value;
+                    _Caster = CameraType != RayType.TopDown ? transform.parent != null ? transform.parent :
+                        transform : RaycastAnchorTransform != null ? RaycastAnchorTransform : transform;
                 }
-                else
-                {
-                    if (CurrentPreview)
-                    {
-                        Destroy(CurrentPreview.gameObject);
-                        CurrentPreview = null;
-                    }
-                    return;
-                }
+
+                return _Caster;
+            }
+        }
+
+        public BuildMode CurrentMode { get; set; }
+        public BuildMode LastMode { get; set; }
+
+        public PieceBehaviour SelectedPrefab { get; set; }
+
+        public PieceBehaviour CurrentPreview { get; set; }
+        public PieceBehaviour CurrentEditionPreview { get; set; }
+        public PieceBehaviour CurrentRemovePreview { get; set; }
+
+        public Vector3 CurrentRotationOffset { get; set; }
+
+        public Vector3 InitialScale { get; set; }
+
+        public bool AllowPlacement { get; set; }
+        public bool AllowDestruction { get; set; }
+        public bool AllowEdition { get; set; }
+
+        public bool HasSocket { get; set; }
+
+        public SocketBehaviour CurrentSocket { get; set; }
+        public SocketBehaviour LastSocket { get; set; }
+
+        public GameObject placingObject { get; set; }
+
+        private RaycastHit TopDownHit;
+        private Vector3 LastAllowedPosition;
+
+        private readonly RaycastHit[] Hits = new RaycastHit[PhysicExtension.MAX_ALLOC_COUNT];
+
+        #endregion Fields
+
+        #region Methods
+
+        public virtual void Awake()
+        {
+            Instance = this;
+        }
+
+        public virtual void Start()
+        {
+            if (!Application.isPlaying)
+            {
+                return;
+            }
+        }
+
+        public virtual void Update()
+        {
+            if (!Application.isPlaying)
+            {
+                return;
             }
 
-            if (SelectedPrefab == null)
-                SelectedPrefab = placingObject.GetComponent<PartBehaviour>();
-            SelectedPrefab.RotateAccordingSlope = true;
-
-            if (CurrentPreview == null)
-                CreatePreview(SelectedPrefab.gameObject);
-
-            if (CurrentMode == BuildMode.Placement)
-            {
-                if (SelectedPrefab == null)
-                    return;
-
-                if (!PreviewExists())
-                {
-                    CreatePreview(SelectedPrefab.gameObject);
-                    return;
-                }
-                else
-                {
-                    UpdatePreview();
-                }
-            }
-            else if (CurrentMode == BuildMode.Destruction)
-                UpdateRemovePreview();
-            else if (CurrentMode == BuildMode.Edition)
-                UpdateEditionPreview();
-            else if (CurrentMode == BuildMode.None)
-                ClearPreview();
+            UpdateModes();
         }
 
         #region Placement
@@ -385,29 +215,36 @@ namespace GSFC.ARVR.MRET.Alignment
         /// <summary>
         /// This method allows to update the placement preview.
         /// </summary>
-        private readonly RaycastHit[] Hits = new RaycastHit[PhysicExtension.MAX_ALLOC_COUNT];
         public void UpdatePreview()
         {
             HasSocket = false;
 
             if (CameraType == RayType.TopDown)
-                Physics.Raycast(Ray, out TopDownHit, Mathf.Infinity, LayerMask.NameToLayer(Constants.LAYER_SOCKET.ToLower()), QueryTriggerInteraction.Ignore);
-
-            if (RayDetection == DetectionType.Overlap)
             {
-                PartBehaviour[] NeighboursParts =
-                    PhysicExtension.GetNeighborsTypesBySphere<PartBehaviour>(GetCaster.position, ActionDistance, LayerMask.NameToLayer(Constants.LAYER_SOCKET.ToLower()));
+                if (GetRay.HasValue)
+                {
+                    Ray ray = GetRay.Value;
+                    Physics.Raycast(ray, out TopDownHit, Mathf.Infinity, LayerMask.GetMask(Constants.LAYER_SOCKET), QueryTriggerInteraction.Ignore);
+                }
+            }
 
-                PartBehaviour[] ApplicableParts = new PartBehaviour[NeighboursParts.Length];
+            if (RayDetection == DetectionType.Vector)
+            {
+                PieceBehaviour[] NeighboursParts =
+                    BuildManager.Instance.GetAllNearestPiece(transform.TransformPoint(Vector3.forward * ActionDistance), ActionDistance);
+
+                PieceBehaviour[] ApplicableParts = new PieceBehaviour[NeighboursParts.Length];
 
                 for (int i = 0; i < NeighboursParts.Length; i++)
                 {
                     if (NeighboursParts[i].Sockets == null)
+                    {
                         continue;
+                    }
 
                     foreach (SocketBehaviour Socket in NeighboursParts[i].Sockets)
                     {
-                        if (!Socket.IsDisabled && Socket.AllowPart(SelectedPrefab))
+                        if (NeighboursParts[i].gameObject.activeInHierarchy && !Socket.IsDisabled && Socket.AllowPiece(CurrentPreview))
                         {
                             ApplicableParts[i] = NeighboursParts[i];
                             break;
@@ -415,37 +252,111 @@ namespace GSFC.ARVR.MRET.Alignment
                     }
                 }
 
-                /*if (ApplicableParts.Length > 0)
-                    UpdateSnapsMovementOverlap(ApplicableParts);
-                else*/
+                if (ApplicableParts.Length > 0)
+                {
+                    UpdateMultipleSocket(ApplicableParts);
+                }
+                else
+                {
                     UpdateFreeMovement();
+                }
             }
-            else
+            else if (RayDetection == DetectionType.Raycast)
             {
                 SocketBehaviour Socket = null;
 
-                int ColliderCount = Physics.RaycastNonAlloc(Ray, Hits, ActionDistance, LayerMask.NameToLayer(Constants.LAYER_SOCKET.ToLower()));
+                if (GetRay.HasValue)
+                {
+                    Ray ray = GetRay.Value;
+                    int ColliderCount = Physics.RaycastNonAlloc(ray, Hits, ActionDistance, LayerMask.GetMask(Constants.LAYER_SOCKET));
 
-                for (int i = 0; i < ColliderCount; i++)
-                    if (Hits[i].collider.GetComponent<SocketBehaviour>() != null)
-                        Socket = Hits[i].collider.GetComponent<SocketBehaviour>();
+                    for (int i = 0; i < ColliderCount; i++)
+                    {
+                        if (Hits[i].collider.GetComponent<SocketBehaviour>() != null)
+                        {
+                            Socket = Hits[i].collider.GetComponent<SocketBehaviour>();
+                        }
+                    }
 
-                if (Socket != null)
-                    UpdateSnapsMovementLine(Socket);
+                    if (Socket != null)
+                    {
+                        UpdateSingleSocket(Socket);
+                    }
+                    else
+                    {
+                        UpdateFreeMovement();
+                    }
+                }
+            }
+            else if (RayDetection == DetectionType.OverlapSphere)
+            {
+                PieceBehaviour[] NeighboursParts =
+                    PhysicExtension.GetNeighborsTypeBySphere<PieceBehaviour>(GetCaster.position, ActionDistance, LayerMask.GetMask(Constants.LAYER_SOCKET));
+
+                PieceBehaviour[] ApplicableParts = new PieceBehaviour[NeighboursParts.Length];
+
+                for (int i = 0; i < NeighboursParts.Length; i++)
+                {
+                    if (NeighboursParts[i].Sockets == null)
+                    {
+                        continue;
+                    }
+
+                    foreach (SocketBehaviour Socket in NeighboursParts[i].Sockets)
+                    {
+                        if (NeighboursParts[i].gameObject.activeInHierarchy && !Socket.IsDisabled && Socket.AllowPiece(CurrentPreview))
+                        {
+                            ApplicableParts[i] = NeighboursParts[i];
+                            break;
+                        }
+                    }
+                }
+
+                if (ApplicableParts.Length > 0)
+                {
+                    UpdateMultipleSocket(ApplicableParts);
+                }
                 else
+                {
                     UpdateFreeMovement();
+                }
             }
 
-            AllowPlacement = !HasCollision();
-
-            if (AllowPlacement && CurrentPreview.RequireSockets && !HasSocket)
-                AllowPlacement = false;
-
-            if (AllowPlacement && OutOfRangeDistance != 0)
-                AllowPlacement = Vector3.Distance(GetCaster.position, CurrentPreview.transform.position) < ActionDistance;
+            AllowPlacement = CurrentPreview.CheckPlacementConditions() && CheckInternalConditions();
 
             CurrentPreview.gameObject.ChangeAllMaterialsColorInChildren(CurrentPreview.Renderers.ToArray(),
                 AllowPlacement ? CurrentPreview.PreviewAllowedColor : CurrentPreview.PreviewDeniedColor, SelectedPrefab.PreviewColorLerpTime, SelectedPrefab.PreviewUseColorLerpTime);
+        }
+
+        /// <summary>
+        /// This method allows to check the preview condition (build surface, require socket, build distance).
+        /// </summary>
+        public bool CheckInternalConditions()
+        {
+            if (CurrentPreview.RequireSocket && !HasSocket)
+            {
+                return false;
+            }
+
+            if (OutOfRangeDistance != 0)
+            {
+                return Vector3.Distance(GetCaster.position, CurrentPreview.transform.position) < ActionDistance;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// This method allows to rotate the current preview.
+        /// </summary>
+        public void RotatePreview(Vector3 rotateAxis)
+        {
+            if (CurrentPreview == null)
+            {
+                return;
+            }
+
+            CurrentRotationOffset += rotateAxis;
         }
 
         /// <summary>
@@ -454,78 +365,102 @@ namespace GSFC.ARVR.MRET.Alignment
         public void UpdateFreeMovement()
         {
             if (CurrentPreview == null)
-                return;
-
-            float Distance = OutOfRangeDistance == 0 ? ActionDistance : OutOfRangeDistance;
-            Debug.DrawRay(Ray.origin, Ray.direction, Color.green);
-            if (Physics.Raycast(Ray, out RaycastHit Hit, Distance, BuildManager.Instance.FreeLayers))
             {
-                Bounds bou = new Bounds(CurrentPreview.transform.position, Vector3.zero);
-                foreach (Renderer ren in CurrentPreview.GetComponentsInChildren<Renderer>())
-                {
-                    bou.Encapsulate(ren.bounds);
-                }
-
-                //if (Hit.point != bou.min && Hit.point != bou.max)
-                {
-                    CurrentPreview.PreviewOffset = GetPreviewOffset(bou, Hit.point, CurrentPreview.transform.position);
-                }
-
-                if (PreviewMovementType == MovementType.Normal)
-                {
-                    if (PreviewMovementOnlyAllowed)
-                    {
-                        CurrentPreview.transform.position = Hit.point + CurrentPreview.PreviewOffset;
-
-                        if (!HasCollision())
-                            LastAllowedPosition = Hit.point + CurrentPreview.PreviewOffset;
-                        else
-                            CurrentPreview.transform.position = LastAllowedPosition;
-                    }
-                    else
-                        CurrentPreview.transform.position = Hit.point + CurrentPreview.PreviewOffset;
-                }
-                else if (PreviewMovementType == MovementType.Grid)
-                    CurrentPreview.transform.position = MathExtension.PositionToGridPosition(PreviewGridSize, PreviewGridOffset, Hit.point + CurrentPreview.PreviewOffset);
-                else if (PreviewMovementType == MovementType.Smooth)
-                    CurrentPreview.transform.position = Vector3.Lerp(CurrentPreview.transform.position, Hit.point + CurrentPreview.PreviewOffset, PreviewSmoothTime * UnityEngine.Time.deltaTime);
-
-                if (!CurrentPreview.RotateAccordingSlope)
-                {
-                    if (LockRotation)
-                        CurrentPreview.transform.rotation = GetCaster.rotation * SelectedPrefab.transform.localRotation * Quaternion.Euler(CurrentRotationOffset);
-                    else
-                        CurrentPreview.transform.rotation = Quaternion.Euler(CurrentRotationOffset);
-                }
-                else
-                {
-                    if (Hit.collider is TerrainCollider)
-                    {
-                        float SampleHeight = Hit.collider.GetComponent<UnityEngine.Terrain>().SampleHeight(Hit.point);
-
-                        if (Hit.point.y - .1f < SampleHeight)
-                        {
-                            CurrentPreview.transform.rotation = Quaternion.FromToRotation(GetCaster.up, Hit.normal) * Quaternion.Euler(CurrentRotationOffset)
-                                * GetCaster.rotation * SelectedPrefab.transform.localRotation * Quaternion.Euler(CurrentRotationOffset);
-                        }
-                        else
-                            CurrentPreview.transform.rotation = GetCaster.rotation * SelectedPrefab.transform.localRotation * Quaternion.Euler(CurrentRotationOffset);
-                    }
-                    else
-                    {
-                        CurrentPreview.transform.rotation = GetCaster.rotation * SelectedPrefab.transform.localRotation * Quaternion.Euler(CurrentRotationOffset);
-                        
-                        //CurrentPreview.transform.rotation = Quaternion.FromToRotation(Ray.direction, Hit.normal) * CurrentPreview.transform.rotation;
-                    }
-                }
-
                 return;
             }
 
+            float Distance = OutOfRangeDistance == 0 ? ActionDistance : OutOfRangeDistance;
+
+            if (GetRay.HasValue)
+            {
+                Ray ray = GetRay.Value;
+                if (Physics.Raycast(ray, out RaycastHit Hit, Distance, BuildManager.Instance.FreeLayers))
+                {
+                    Bounds bou = new Bounds(CurrentPreview.transform.position, Vector3.zero);
+                    foreach (Renderer ren in CurrentPreview.GetComponentsInChildren<Renderer>())
+                    {
+                        bou.Encapsulate(ren.bounds);
+                    }
+
+                    //if (Hit.point != bou.min && Hit.point != bou.max)
+                    {
+                        CurrentPreview.PreviewOffset = GetPreviewOffset(bou, Hit.point, CurrentPreview.transform.position);
+                    }
+
+                    if (PreviewMovementType == MovementType.Normal)
+                    {
+                        if (PreviewMovementOnlyAllowed)
+                        {
+                            CurrentPreview.transform.position = Hit.point + CurrentPreview.PreviewOffset;
+
+                            if (CurrentPreview.CheckPlacementConditions())
+                            {
+                                LastAllowedPosition = Hit.point + CurrentPreview.PreviewOffset;
+                            }
+                            else
+                            {
+                                CurrentPreview.transform.position = LastAllowedPosition;
+                            }
+                        }
+                        else
+                        {
+                            CurrentPreview.transform.position = Hit.point + CurrentPreview.PreviewOffset;
+                        }
+                    }
+                    else if (PreviewMovementType == MovementType.Grid)
+                    {
+                        CurrentPreview.transform.position = MathExtension.PositionToGridPosition(PreviewGridSize, PreviewGridOffset, Hit.point + CurrentPreview.PreviewOffset);
+                    }
+                    else if (PreviewMovementType == MovementType.Smooth)
+                    {
+                        CurrentPreview.transform.position = Vector3.Lerp(CurrentPreview.transform.position, Hit.point + CurrentPreview.PreviewOffset, PreviewSmoothTime * UnityEngine.Time.deltaTime);
+                    }
+
+                    if (!CurrentPreview.RotateAccordingSlope)
+                    {
+                        if (LockRotation)
+                        {
+                            CurrentPreview.transform.rotation = GetCaster.rotation * SelectedPrefab.transform.localRotation * Quaternion.Euler(CurrentRotationOffset);
+                        }
+                        else
+                        {
+                            CurrentPreview.transform.rotation = Quaternion.Euler(CurrentRotationOffset);
+                        }
+                    }
+                    else
+                    {
+                        if (Hit.collider is TerrainCollider)
+                        {
+                            float SampleHeight = Hit.collider.GetComponent<UnityEngine.Terrain>().SampleHeight(Hit.point);
+
+                            if (Hit.point.y - .1f < SampleHeight)
+                            {
+                                CurrentPreview.transform.rotation = Quaternion.FromToRotation(GetCaster.up, Hit.normal) * Quaternion.Euler(CurrentRotationOffset) *
+                                    GetCaster.rotation * SelectedPrefab.transform.localRotation * Quaternion.Euler(CurrentRotationOffset);
+                            }
+                            else
+                            {
+                                CurrentPreview.transform.rotation = GetCaster.rotation * SelectedPrefab.transform.localRotation * Quaternion.Euler(CurrentRotationOffset);
+                            }
+                        }
+                        else
+                        {
+                            CurrentPreview.transform.rotation = GetCaster.rotation * SelectedPrefab.transform.localRotation * Quaternion.Euler(CurrentRotationOffset);
+                        }
+                    }
+
+                    return;
+                }
+            }
+
             if (LockRotation)
+            {
                 CurrentPreview.transform.rotation = GetCaster.rotation * SelectedPrefab.transform.localRotation * Quaternion.Euler(CurrentRotationOffset);
+            }
             else
+            {
                 CurrentPreview.transform.rotation = Quaternion.Euler(CurrentRotationOffset);
+            }
 
             Transform StartTransform = (CurrentPreview.GroundUpperHeight == 0) ? GetCaster : transform;
 
@@ -541,20 +476,30 @@ namespace GSFC.ARVR.MRET.Alignment
                 if (!CurrentPreview.FreePlacement)
                 {
                     if (Physics.Raycast(CurrentPreview.transform.position + new Vector3(0, 0.3f, 0),
-                        Vector3.down, out RaycastHit HitLook, Mathf.Infinity, BuildManager.Instance.FreeLayers, QueryTriggerInteraction.Ignore))
+                            Vector3.down, out RaycastHit HitLook, Mathf.Infinity, BuildManager.Instance.FreeLayers, QueryTriggerInteraction.Ignore))
+                    {
                         LookDistance.y = HitLook.point.y;
+                    }
                 }
                 else
+                {
                     LookDistance.y = Mathf.Clamp(LookDistance.y, GetCaster.position.y,
                         GetCaster.position.y);
+                }
             }
 
             if (PreviewMovementType == MovementType.Normal)
+            {
                 CurrentPreview.transform.position = LookDistance;
+            }
             else if (PreviewMovementType == MovementType.Grid)
+            {
                 CurrentPreview.transform.position = MathExtension.PositionToGridPosition(PreviewGridSize, PreviewGridOffset, LookDistance + CurrentPreview.PreviewOffset);
+            }
             else if (PreviewMovementType == MovementType.Smooth)
+            {
                 CurrentPreview.transform.position = Vector3.Lerp(CurrentPreview.transform.position, LookDistance, PreviewSmoothTime * UnityEngine.Time.deltaTime);
+            }
 
             CurrentSocket = null;
 
@@ -609,43 +554,54 @@ namespace GSFC.ARVR.MRET.Alignment
         /// <summary>
         /// This method allows to move the preview only on available socket(s).
         /// </summary>
-        public void UpdateSnapsMovementOverlap(PartBehaviour[] parts)
+        public void UpdateMultipleSocket(PieceBehaviour[] pieces)
         {
-            if (CurrentPreview == null || parts == null)
+            if (CurrentPreview == null || pieces == null)
+            {
                 return;
+            }
 
             float ClosestAngle = Mathf.Infinity;
 
             CurrentSocket = null;
 
-            foreach (PartBehaviour Part in parts)
+            foreach (PieceBehaviour Piece in pieces)
             {
-                if (Part == null || Part.Sockets.Length == 0)
-                    continue;
-
-                for (int x = 0; x < Part.Sockets.Length; x++)
+                if (Piece == null || Piece.Sockets.Length == 0)
                 {
-                    SocketBehaviour Socket = Part.Sockets[x];
+                    continue;
+                }
 
+                for (int x = 0; x < Piece.Sockets.Length; x++)
+                {
+                    SocketBehaviour Socket = Piece.Sockets[x];
                     if (Socket != null)
                     {
                         if (Socket.gameObject.activeSelf && !Socket.IsDisabled)
                         {
-                            if (Socket.AllowPart(SelectedPrefab) && !Part.AvoidAnchoredOnSocket)
+                            if (!Socket.CheckOccupancy(SelectedPrefab) && Socket.AllowPiece(CurrentPreview) && !Piece.IgnoreSocket)
                             {
                                 if ((Socket.transform.position - (CameraType != RayType.TopDown ? GetCaster.position : TopDownHit.point)).sqrMagnitude <
                                     Mathf.Pow(CameraType != RayType.TopDown ? ActionDistance : SnapThreshold, 2))
                                 {
-                                    float Angle = Vector3.Angle(Ray.direction, Socket.transform.position - Ray.origin);
-
-                                    if (Angle < ClosestAngle && Angle < OverlapAngles)
+                                    if (GetRay.HasValue)
                                     {
-                                        ClosestAngle = Angle;
+                                        Ray ray = GetRay.Value;
+                                        float Angle = Vector3.Angle(GetRay.Value.direction, Socket.transform.position - GetRay.Value.origin);
 
-                                        if (CameraType != RayType.TopDown && CurrentSocket == null)
-                                            CurrentSocket = Socket;
-                                        else
-                                            CurrentSocket = Socket;
+                                        if (Angle < ClosestAngle && Angle < OverlapAngles)
+                                        {
+                                            ClosestAngle = Angle;
+
+                                            if (CameraType != RayType.TopDown && CurrentSocket == null)
+                                            {
+                                                CurrentSocket = Socket;
+                                            }
+                                            else
+                                            {
+                                                CurrentSocket = Socket;
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -656,19 +612,28 @@ namespace GSFC.ARVR.MRET.Alignment
 
             if (CurrentSocket != null)
             {
-                PartOffset Offset = CurrentSocket.GetOffsetPart(SelectedPrefab.Id);
+                Offset OffsetPiece = CurrentSocket.GetOffset(CurrentPreview);
 
-                if (CurrentSocket.CheckOccupancy(SelectedPrefab))
-                    return;
-
-                if (Offset != null)
+                if (CurrentSocket.CheckOccupancy(CurrentPreview))
                 {
-                    CurrentPreview.transform.position = CurrentSocket.transform.position + CurrentSocket.transform.TransformVector(Offset.Position);
+                    return;
+                }
 
-                    CurrentPreview.transform.rotation = CurrentSocket.transform.rotation * (CurrentPreview.RotateOnSockets ? Quaternion.Euler(Offset.Rotation + CurrentRotationOffset) : Quaternion.Euler(Offset.Rotation));
+                if (OffsetPiece != null)
+                {
+                    CurrentPreview.transform.position = CurrentSocket.transform.position + CurrentSocket.transform.TransformVector(OffsetPiece.Position);
 
-                    if (Offset.UseCustomScale)
-                        CurrentPreview.transform.localScale = Offset.Scale;
+                    CurrentPreview.transform.rotation = CurrentSocket.transform.rotation *
+                        (CurrentPreview.RotateOnSockets ? Quaternion.Euler(OffsetPiece.Rotation + CurrentRotationOffset) : Quaternion.Euler(OffsetPiece.Rotation));
+
+                    if (OffsetPiece.Scale != Vector3.one)
+                    {
+                        CurrentPreview.transform.localScale = OffsetPiece.Scale;
+                    }
+                    else
+                    {
+                        CurrentPreview.transform.localScale = CurrentSocket.transform.parent.localScale;
+                    }
 
                     LastSocket = CurrentSocket;
 
@@ -677,17 +642,21 @@ namespace GSFC.ARVR.MRET.Alignment
                     return;
                 }
             }
+            else
+                CurrentPreview.transform.localScale = InitialScale;
 
             UpdateFreeMovement();
         }
 
         /// <summary>
-        /// This method allows to move the preview only on available socket(s).
+        /// This method allows to move the preview only on available socket.
         /// </summary>
-        public void UpdateSnapsMovementLine(SocketBehaviour socket)
+        public void UpdateSingleSocket(SocketBehaviour socket)
         {
             if (CurrentPreview == null || socket == null)
+            {
                 return;
+            }
 
             CurrentSocket = null;
 
@@ -695,7 +664,7 @@ namespace GSFC.ARVR.MRET.Alignment
             {
                 if (socket.gameObject.activeSelf && !socket.IsDisabled)
                 {
-                    if (socket.AllowPart(SelectedPrefab) && !CurrentPreview.AvoidAnchoredOnSocket)
+                    if (socket.AllowPiece(CurrentPreview) && !CurrentPreview.IgnoreSocket)
                     {
                         CurrentSocket = socket;
                     }
@@ -704,20 +673,24 @@ namespace GSFC.ARVR.MRET.Alignment
 
             if (CurrentSocket != null)
             {
-                PartOffset Offset = CurrentSocket.GetOffsetPart(SelectedPrefab.Id);
+                Offset Offset = CurrentSocket.GetOffset(CurrentPreview);
 
-                if (CurrentSocket.CheckOccupancy(SelectedPrefab))
+                if (CurrentSocket.CheckOccupancy(CurrentPreview))
+                {
                     return;
+                }
 
                 if (Offset != null)
                 {
                     CurrentPreview.transform.position = CurrentSocket.transform.position + CurrentSocket.transform.TransformVector(Offset.Position);
 
-                    CurrentPreview.transform.rotation = CurrentSocket.transform.rotation
-                        * (CurrentPreview.RotateOnSockets ? Quaternion.Euler(Offset.Rotation + CurrentRotationOffset) : Quaternion.Euler(Offset.Rotation));
+                    CurrentPreview.transform.rotation = CurrentSocket.transform.rotation *
+                        (CurrentPreview.RotateOnSockets ? Quaternion.Euler(Offset.Rotation + CurrentRotationOffset) : Quaternion.Euler(Offset.Rotation));
 
-                    if (Offset.UseCustomScale)
+                    if (Offset.Scale != Vector3.one)
+                    {
                         CurrentPreview.transform.localScale = Offset.Scale;
+                    }
 
                     LastSocket = CurrentSocket;
 
@@ -731,115 +704,92 @@ namespace GSFC.ARVR.MRET.Alignment
         }
 
         /// <summary>
-        /// This method allows to check if the preview has collision(s).
-        /// </summary>
-        public bool HasCollision()
-        {
-            if (CurrentPreview.CheckTerrainClipping())
-                return true;
-
-            if (!HasSocket)
-            {
-                if (CurrentPreview.CheckBuildSurface())
-                    return true;
-            }
-
-            if (CurrentPreview.AvoidClipping && !HasSocket)
-            {
-                if (CurrentPreview.CheckElementsClipping())
-                    return true;
-            }
-            else if (CurrentPreview.AvoidClippingOnSocket && HasSocket)
-            {
-                if (CurrentPreview.CheckElementsClippingOnSocket())
-                    return true;
-            }
-
-            if (CurrentPreview.CheckAreas())
-                return true;
-
-            if (CurrentPreview.UseConditionalPhysics && CurrentPreview.PhysicsOnlyStablePlacement)
-                if (!CurrentPreview.CheckStability())
-                    return true;
-
-            return false;
-        }
-
-        /// <summary>
         /// This method allows to place the current preview.
         /// </summary>
-        public virtual void PlacePrefab()
+        public virtual void PlacePrefab(GroupBehaviour group = null)
         {
             if (!AllowPlacement)
+            {
                 return;
+            }
 
             if (CurrentPreview == null)
+            {
                 return;
+            }
 
             if (CurrentEditionPreview != null)
+            {
                 Destroy(CurrentEditionPreview.gameObject);
+            }
 
-            if (UseForNetwork)
-            {
-                BuildManager.Instance.PlacePrefabForNetwork(SelectedPrefab,
-                    CurrentPreview.transform.position,
-                    CurrentPreview.transform.eulerAngles,
-                    CurrentPreview.transform.localScale);
-            }
-            else
-            {
-                BuildManager.Instance.PlacePrefab(SelectedPrefab,
-                    CurrentPreview.transform.position,
-                    CurrentPreview.transform.eulerAngles,
-                    CurrentPreview.transform.localScale,
-                    null,
-                    CurrentSocket);
-            }
+            BuildManager.Instance.PlacePrefab(SelectedPrefab,
+                CurrentPreview.transform.position,
+                CurrentPreview.transform.eulerAngles,
+                CurrentPreview.transform.localScale,
+                group,
+                CurrentSocket);
 
             if (Source != null)
+            {
                 if (PlacementClips.Length != 0)
-                    Source.PlayOneShot(PlacementClips[Random.Range(0, PlacementClips.Length)]);
+                {
+                    Source.PlayOneShot(PlacementClips[UnityEngine.Random.Range(0, PlacementClips.Length)]);
+                }
+            }
 
             CurrentRotationOffset = Vector3.zero;
-
             CurrentSocket = null;
-
             LastSocket = null;
-
             AllowPlacement = false;
-
             HasSocket = false;
 
-            if (CurrentMode == BuildMode.Placement && ResetModeAfterPlacement)
+            if (LastMode == BuildMode.Edition && ResetModeAfterEdition)
+            {
                 ChangeMode(BuildMode.None);
+            }
+
+            if (CurrentMode == BuildMode.Placement && ResetModeAfterPlacement)
+            {
+                ChangeMode(BuildMode.None);
+            }
 
             if (CurrentPreview != null)
+            {
                 Destroy(CurrentPreview.gameObject);
+            }
         }
 
         /// <summary>
         /// This method allows to create a preview.
         /// </summary>
-        public virtual PartBehaviour CreatePreview(GameObject prefab)
+        public virtual PieceBehaviour CreatePreview(GameObject prefab)
         {
             if (prefab == null)
+            {
                 return null;
+            }
 
-            CurrentPreview = Instantiate(prefab).GetComponent<PartBehaviour>();
+            CurrentPreview = Instantiate(prefab).GetComponent<PieceBehaviour>();
             CurrentPreview.transform.eulerAngles = Vector3.zero;
             CurrentRotationOffset = Vector3.zero;
 
-            if (Physics.Raycast(Ray, out RaycastHit Hit, Mathf.Infinity, BuildManager.Instance.FreeLayers, QueryTriggerInteraction.Ignore))
-                CurrentPreview.transform.position = Hit.point;
+            InitialScale = CurrentPreview.transform.localScale;
+
+            if (GetRay.HasValue)
+            {
+                Ray ray = GetRay.Value;
+                if (Physics.Raycast(ray, out RaycastHit Hit, Mathf.Infinity, BuildManager.Instance.FreeLayers, QueryTriggerInteraction.Ignore))
+                {
+                    CurrentPreview.transform.position = Hit.point;
+                }
+            }
 
             CurrentPreview.ChangeState(StateType.Preview);
 
-            SelectedPrefab = prefab.GetComponent<PartBehaviour>();
+            SelectedPrefab = prefab.GetComponent<PieceBehaviour>();
 
-            if (UsePreviewCamera == true)
-                CurrentPreview.gameObject.SetLayerRecursively(PreviewLayer);
-
-            EventHandlers.PreviewCreated(CurrentPreview);
+            BuildEvent.Instance.OnPieceInstantiated.Invoke(CurrentPreview, null);
 
             CurrentSocket = null;
 
@@ -848,11 +798,6 @@ namespace GSFC.ARVR.MRET.Alignment
             AllowPlacement = false;
 
             HasSocket = false;
-
-            foreach (Collider coll in CurrentPreview.GetComponentsInChildren<Collider>())
-            {
-                Destroy(coll);
-            }
 
             return CurrentPreview;
         }
@@ -863,9 +808,11 @@ namespace GSFC.ARVR.MRET.Alignment
         public virtual void ClearPreview()
         {
             if (CurrentPreview == null)
+            {
                 return;
+            }
 
-            EventHandlers.PreviewCanceled(CurrentPreview);
+            BuildEvent.Instance.OnPieceDestroyed.Invoke(CurrentPreview);
 
             Destroy(CurrentPreview.gameObject);
 
@@ -875,11 +822,21 @@ namespace GSFC.ARVR.MRET.Alignment
         }
 
         /// <summary>
-        /// This method allows to check if the current preview exists.
+        /// This method allows to get the piece that the camera is currently looking at.
         /// </summary>
-        public bool PreviewExists()
+        public PieceBehaviour GetTargetedPart()
         {
-            return CurrentPreview;
+            Ray ray = GetRay.Value;
+            if (Physics.SphereCast(CameraType == RayType.FirstPerson ? new Ray(transform.position, transform.forward) : ray,
+                    .1f, out RaycastHit Hit, ActionDistance, Physics.AllLayers))
+            {
+                PieceBehaviour Part = Hit.collider.GetComponentInParent<PieceBehaviour>();
+
+                if (Part != null)
+                    return Part;
+            }
+
+            return null;
         }
 
         #endregion Placement
@@ -895,21 +852,15 @@ namespace GSFC.ARVR.MRET.Alignment
 
             if (CurrentRemovePreview != null)
             {
-                AreaBehaviour NearestArea = BuildManager.Instance.GetNearestArea(CurrentRemovePreview.transform.position);
-
-                if (NearestArea != null)
-                    AllowDestruction = NearestArea.AllowDestruction;
-                else
-                    AllowDestruction = true;
-
                 CurrentRemovePreview.ChangeState(StateType.Remove);
 
                 AllowPlacement = false;
             }
 
-            if (Physics.Raycast(Ray, out RaycastHit Hit, Distance, BuildManager.Instance.FreeLayers))
+            Ray ray = GetRay.Value;
+            if (Physics.Raycast(ray, out RaycastHit Hit, Distance, BuildManager.Instance.FreeLayers))
             {
-                PartBehaviour Part = Hit.collider.GetComponentInParent<PartBehaviour>();
+                PieceBehaviour Part = Hit.collider.GetComponentInParent<PieceBehaviour>();
 
                 if (Part != null)
                 {
@@ -923,34 +874,52 @@ namespace GSFC.ARVR.MRET.Alignment
                         }
                     }
                     else
+                    {
                         CurrentRemovePreview = Part;
+                    }
                 }
                 else
+                {
                     ClearRemovePreview();
+                }
             }
             else
+            {
                 ClearRemovePreview();
+            }
         }
 
         /// <summary>
         /// This method allows to remove the current preview.
         /// </summary>
-        public virtual void RemovePrefab()
+        public virtual void DestroyPrefab()
         {
             if (CurrentRemovePreview == null)
+            {
                 return;
+            }
 
-            if (CurrentRemovePreview.AvoidDestruction)
+            if (!CurrentRemovePreview.IsDestructible)
+            {
                 return;
+            }
+
+            AllowDestruction = CurrentRemovePreview.CheckDestructionConditions();
 
             if (!AllowDestruction)
+            {
                 return;
+            }
 
             Destroy(CurrentRemovePreview.gameObject);
 
             if (Source != null)
+            {
                 if (DestructionClips.Length != 0)
-                    Source.PlayOneShot(DestructionClips[Random.Range(0, DestructionClips.Length)]);
+                {
+                    Source.PlayOneShot(DestructionClips[UnityEngine.Random.Range(0, DestructionClips.Length)]);
+                }
+            }
 
             CurrentSocket = null;
 
@@ -961,7 +930,9 @@ namespace GSFC.ARVR.MRET.Alignment
             HasSocket = false;
 
             if (ResetModeAfterDestruction)
+            {
                 ChangeMode(BuildMode.None);
+            }
         }
 
         /// <summary>
@@ -970,7 +941,9 @@ namespace GSFC.ARVR.MRET.Alignment
         public virtual void ClearRemovePreview()
         {
             if (CurrentRemovePreview == null)
+            {
                 return;
+            }
 
             CurrentRemovePreview.ChangeState(CurrentRemovePreview.LastState);
 
@@ -991,13 +964,16 @@ namespace GSFC.ARVR.MRET.Alignment
             AllowEdition = CurrentEditionPreview;
 
             if (CurrentEditionPreview != null && AllowEdition)
+            {
                 CurrentEditionPreview.ChangeState(StateType.Edit);
+            }
 
             float Distance = OutOfRangeDistance == 0 ? ActionDistance : OutOfRangeDistance;
 
-            if (Physics.Raycast(Ray, out RaycastHit Hit, Distance, BuildManager.Instance.FreeLayers))
+            Ray ray = GetRay.Value;
+            if (Physics.Raycast(ray, out RaycastHit Hit, Distance, BuildManager.Instance.FreeLayers))
             {
-                PartBehaviour Part = Hit.collider.GetComponentInParent<PartBehaviour>();
+                PieceBehaviour Part = Hit.collider.GetComponentInParent<PieceBehaviour>();
 
                 if (Part != null)
                 {
@@ -1011,7 +987,9 @@ namespace GSFC.ARVR.MRET.Alignment
                         }
                     }
                     else
+                    {
                         CurrentEditionPreview = Part;
+                    }
                 }
                 else
                 {
@@ -1019,7 +997,9 @@ namespace GSFC.ARVR.MRET.Alignment
                 }
             }
             else
+            {
                 ClearEditionPreview();
+            }
         }
 
         /// <summary>
@@ -1027,14 +1007,23 @@ namespace GSFC.ARVR.MRET.Alignment
         /// </summary>
         public virtual void EditPrefab()
         {
-            if (!AllowEdition)
-                return;
+            if (CurrentEditionPreview == null) return;
 
-            PartBehaviour Part = CurrentEditionPreview;
+            if (!CurrentEditionPreview.IsEditable)
+            {
+                return;
+            }
+
+            AllowEdition = CurrentEditionPreview.CheckEditionConditions();
+
+            if (!AllowEdition)
+            {
+                return;
+            }
+
+            PieceBehaviour Part = CurrentEditionPreview;
 
             Part.ChangeState(StateType.Edit);
-
-            EventHandlers.EditedPart(CurrentEditionPreview, CurrentSocket);
 
             SelectPrefab(Part);
 
@@ -1049,7 +1038,9 @@ namespace GSFC.ARVR.MRET.Alignment
         public void ClearEditionPreview()
         {
             if (CurrentEditionPreview == null)
+            {
                 return;
+            }
 
             CurrentEditionPreview.ChangeState(CurrentEditionPreview.LastState);
 
@@ -1060,7 +1051,57 @@ namespace GSFC.ARVR.MRET.Alignment
 
         #endregion Edition
 
-        #region Miscs
+        /// <summary>
+        /// This method allows to update all the builder (Placement, Destruction, Edition).
+        /// </summary>
+        public virtual void UpdateModes()
+        {
+            if (BuildManager.Instance == null)
+            {
+                return;
+            }
+
+            if (BuildManager.Instance.Pieces == null)
+            {
+                return;
+            }
+
+            if (SelectedPrefab == null && placingObject != null)
+            {
+                SelectedPrefab = placingObject.GetComponent<PieceBehaviour>();
+                SelectedPrefab.RotateAccordingSlope = true;
+            }
+
+            if (CurrentMode == BuildMode.Placement)
+            {
+                if (SelectedPrefab == null)
+                {
+                    return;
+                }
+
+                if (CurrentPreview == null)
+                {
+                    CreatePreview(SelectedPrefab.gameObject);
+                    return;
+                }
+                else
+                {
+                    UpdatePreview();
+                }
+            }
+            else if (CurrentMode == BuildMode.Destruction)
+            {
+                UpdateRemovePreview();
+            }
+            else if (CurrentMode == BuildMode.Edition)
+            {
+                UpdateEditionPreview();
+            }
+            else if (CurrentMode == BuildMode.None)
+            {
+                ClearPreview();
+            }
+        }
 
         /// <summary>
         /// This method allows to change mode.
@@ -1068,22 +1109,34 @@ namespace GSFC.ARVR.MRET.Alignment
         public void ChangeMode(BuildMode mode)
         {
             if (CurrentMode == mode)
+            {
                 return;
+            }
 
             if (mode == BuildMode.Placement && !UsePlacementMode)
+            {
                 return;
+            }
 
             if (mode == BuildMode.Destruction && !UseDestructionMode)
+            {
                 return;
+            }
 
             if (mode == BuildMode.Edition && !UseEditionMode)
+            {
                 return;
+            }
 
             if (CurrentMode == BuildMode.Placement)
+            {
                 ClearPreview();
+            }
 
             if (CurrentMode == BuildMode.Destruction)
+            {
                 ClearRemovePreview();
+            }
 
             if (mode == BuildMode.None)
             {
@@ -1092,52 +1145,86 @@ namespace GSFC.ARVR.MRET.Alignment
                 ClearEditionPreview();
             }
 
+            LastMode = CurrentMode;
+
             CurrentMode = mode;
 
-            EventHandlers.BuildModeChanged(CurrentMode);
+            BuildEvent.Instance.OnChangedBuildMode.Invoke(CurrentMode);
+        }
+
+        /// <summary>
+        /// This method allows to change mode.
+        /// </summary>
+        public void ChangeMode(string modeName)
+        {
+            if (CurrentMode.ToString() == modeName)
+            {
+                return;
+            }
+
+            if (modeName == BuildMode.Placement.ToString() && !UsePlacementMode)
+            {
+                return;
+            }
+
+            if (modeName == BuildMode.Destruction.ToString() && !UseDestructionMode)
+            {
+                return;
+            }
+
+            if (modeName == BuildMode.Edition.ToString() && !UseEditionMode)
+            {
+                return;
+            }
+
+            if (CurrentMode == BuildMode.Placement)
+            {
+                ClearPreview();
+            }
+
+            if (CurrentMode == BuildMode.Destruction)
+            {
+                ClearRemovePreview();
+            }
+
+            if (modeName == BuildMode.None.ToString())
+            {
+                ClearPreview();
+                ClearRemovePreview();
+                ClearEditionPreview();
+            }
+
+            LastMode = CurrentMode;
+
+            CurrentMode = (BuildMode)Enum.Parse(typeof(BuildMode), modeName);
+
+            BuildEvent.Instance.OnChangedBuildMode.Invoke(CurrentMode);
         }
 
         /// <summary>
         /// This method allows to select a prefab.
         /// </summary>
-        public void SelectPrefab(PartBehaviour prefab)
+        public void SelectPrefab(PieceBehaviour prefab)
         {
             if (prefab == null)
-                return;
-
-            SelectedPrefab = BuildManager.Instance.GetPart(prefab.Id);
-        }
-
-        /// <summary>
-        /// This method allows to rotate the current preview.
-        /// </summary>
-        public void RotatePreview(Vector3 rotateAxis)
-        {
-            if (CurrentPreview == null)
-                return;
-
-            CurrentRotationOffset += rotateAxis;
-        }
-
-        /// <summary>
-        /// This method allows to get the object that the camera is currently looking at.
-        /// </summary>
-        public PartBehaviour GetTargetedPart()
-        {
-            if (Physics.SphereCast(CameraType == RayType.FirstPerson ? new Ray(BuilderCamera.transform.position, BuilderCamera.transform.forward) : Ray,
-                .1f, out RaycastHit Hit, ActionDistance, LayerMask.NameToLayer(Constants.LAYER_DEFAULT.ToLower())))
             {
-                PartBehaviour Part = Hit.collider.GetComponentInParent<PartBehaviour>();
-
-                if (Part != null)
-                    return Part;
+                return;
             }
 
-            return null;
+            SelectedPrefab = BuildManager.Instance.GetPieceById(prefab.Id);
         }
 
-        #endregion Miscs
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.magenta;
 
-        #endregion Public Methods
+            if (GetRay.HasValue)
+            {
+                Ray ray = GetRay.Value;
+                Gizmos.DrawLine(ray.origin, ray.direction * ActionDistance);
+            }
+        }
+
+        #endregion Methods
     }
 }

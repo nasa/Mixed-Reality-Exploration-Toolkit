@@ -1,62 +1,60 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class VideoCameraCaptureManager : MonoBehaviour
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+
+namespace GSFC.ARVR.MRET.Components.Camera
 {
-    public VRTK.VRTK_ControllerEvents leftControllerEvents, rightControllerEvents;
-    public GameObject recordIcon;
-    public bool capturingLeft = false, capturingRight = false;
-    public RockVR.Video.VideoCaptureCtrl vidCaptureCtrl;
-
-    private bool isRecording = false;
-
-    public void Start()
+    public class VideoCameraCaptureManager : MonoBehaviour
     {
-        if (VRDesktopSwitcher.isDesktopEnabled())
-        {
-            EventManager.OnLeftClick += ToggleVideoCapture;
-        }
-        else
-        {
-            leftControllerEvents.TouchpadPressed += new VRTK.ControllerInteractionEventHandler(ToggleVideoCapture);
-            rightControllerEvents.TouchpadPressed += new VRTK.ControllerInteractionEventHandler(ToggleVideoCapture);
-        }
-    }
+        public GameObject recordIcon;
+        public bool capturingLeft = false, capturingRight = false;
+        public RockVR.Video.VideoCaptureCtrl vidCaptureCtrl;
 
-    public void ToggleVideoCapture(object sender, VRTK.ControllerInteractionEventArgs e)
-    {
-        if (vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.STARTED)
+        public void ToggleVideoCapture(InputHand hand)
         {
-            // Stop capturing.
-            vidCaptureCtrl.StopCapture();
-            recordIcon.SetActive(false);
-        }
-        else if (((e.controllerReference.hand == VRTK.SDK_BaseController.ControllerHand.Left && capturingLeft)
-            || (e.controllerReference.hand == VRTK.SDK_BaseController.ControllerHand.Right && capturingRight))
-            && (vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.STOPPED
-            || vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.NOT_START
-            || vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.FINISH))
-        {
-            // Start capturing.
-            vidCaptureCtrl.StartCapture();
-            recordIcon.SetActive(true);
-        }
-    }
+            // TODO: Better way.
+            if (gameObject.activeSelf == false)
+            {
+                return;
+            }
 
-    private void ToggleVideoCapture()
-    {
-        if (vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.STARTED)
-        {
-            // Stop capturing.
-            vidCaptureCtrl.StopCapture();
-            recordIcon.SetActive(false);
+            if (vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.STARTED)
+            {
+                // Stop capturing.
+                vidCaptureCtrl.StopCapture();
+                recordIcon.SetActive(false);
+            }
+            else if (((hand.handedness == InputHand.Handedness.left && capturingLeft)
+                || (hand.handedness == InputHand.Handedness.right && capturingRight)
+                || hand.handedness == InputHand.Handedness.neutral)
+                && (vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.STOPPED
+                || vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.NOT_START
+                || vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.FINISH))
+            {
+                // Start capturing.
+                vidCaptureCtrl.StartCapture();
+                recordIcon.SetActive(true);
+            }
         }
-        else if (vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.STOPPED
-            || vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.NOT_START
-            || vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.FINISH)
+
+        private void ToggleVideoCapture()
         {
-            // Start capturing.
-            vidCaptureCtrl.StartCapture();
-            recordIcon.SetActive(true);
+            if (vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.STARTED)
+            {
+                // Stop capturing.
+                vidCaptureCtrl.StopCapture();
+                recordIcon.SetActive(false);
+            }
+            else if (vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.STOPPED
+                || vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.NOT_START
+                || vidCaptureCtrl.status == RockVR.Video.VideoCaptureCtrlBase.StatusType.FINISH)
+            {
+                // Start capturing.
+                vidCaptureCtrl.StartCapture();
+                recordIcon.SetActive(true);
+            }
         }
     }
 }

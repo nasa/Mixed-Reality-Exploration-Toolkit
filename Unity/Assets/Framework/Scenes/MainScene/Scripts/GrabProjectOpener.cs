@@ -1,8 +1,11 @@
-﻿using UnityEngine;
-using VRTK;
-using GSFC.ARVR.MRET.Common.Schemas;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class GrabProjectOpener : VRTK_InteractableObject
+using UnityEngine;
+using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Infrastructure.Framework.Interactable;
+
+public class GrabProjectOpener : Interactable
 {
     [Tooltip("Tooltip item to show when user is interacting with object.")]
     public GameObject tooltipItem;
@@ -16,17 +19,17 @@ public class GrabProjectOpener : VRTK_InteractableObject
     [Tooltip("Name of the XML project file.")]
     public string projectToOpen;
 
-    public override void StartTouching(VRTK_InteractTouch currentTouchingObject)
+    public void StartTouching()
     {
         tooltipItem.SetActive(true);
     }
 
-    public override void StopTouching(VRTK_InteractTouch currentTouchingObject)
+    public void StopTouching()
     {
         tooltipItem.SetActive(false);
     }
 
-    public override void StartUsing(VRTK_InteractUse currentUsingObject)
+    public void StartUsing()
     {
         modeNavigator.OpenProject(Application.dataPath + "/" + projectToOpen, false);
     }

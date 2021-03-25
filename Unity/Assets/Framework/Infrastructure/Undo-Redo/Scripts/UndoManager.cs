@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections.Generic;
 using UnityEngine;
 using GSFC.ARVR.MRET.XRC;
+using GSFC.ARVR.MRET.Infrastructure.Framework.Animation;
 
 public class UndoManager : MonoBehaviour
 {
@@ -41,17 +45,13 @@ public class UndoManager : MonoBehaviour
     public int undoActionCount = 10;
 
     private Stack<ProjectDelta> undoStack, redoStack;
-    private AnimationManager animationManager;
+    private MRETAnimationManager animationManager;
     private XRCManager xrcManager;
 
     public void AddAction(ProjectAction actionPerformed, ProjectAction inverseAction)
     {
-        System.DateTime now = System.DateTime.Now;
-        TimeStampUtility.LogTime("AddAction 1");
         animationManager.RecordAction(actionPerformed, inverseAction);
-        TimeStampUtility.LogTime("AddAction 2");
         xrcManager.RecordAction(actionPerformed);
-        TimeStampUtility.LogTime("AddAction 3 ");
 
         undoStack.Push(new ProjectDelta(actionPerformed, inverseAction));
 
@@ -81,7 +81,7 @@ public class UndoManager : MonoBehaviour
 
 	void Start()
     {
-        animationManager = FindObjectOfType<AnimationManager>();
+        animationManager = FindObjectOfType<MRETAnimationManager>();
         xrcManager = FindObjectOfType<XRCManager>();
         InitializeStack();
         instance = this;

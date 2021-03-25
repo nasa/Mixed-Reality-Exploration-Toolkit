@@ -1,5 +1,10 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using UnityEngine.UI;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class DataDisplayPointPanelController : MonoBehaviour
 {
@@ -101,10 +106,17 @@ public class DataDisplayPointPanelController : MonoBehaviour
     public void StartPinningDataPoint()
     {
         GameObject dataCapsule = Instantiate(dataCapsulePrefab);
-        dataCapsule.transform.SetParent(VRTK.VRTK_DeviceFinder.GetControllerRightHand().transform);
-        dataCapsule.transform.localPosition = new Vector3(0, 0.008f, 0.061f);
-        dataCapsule.transform.localRotation = Quaternion.Euler(60, 0, 90);
-        dataCapsule.GetComponent<DataCapsuleController>().pointKeyName = pointKeyName;
+        foreach (InputHand hand in MRET.InputRig.hands)
+        {
+            if (hand.handedness == InputHand.Handedness.right)
+            {
+                dataCapsule.transform.SetParent(hand.transform);
+                dataCapsule.transform.localPosition = new Vector3(0, 0.008f, 0.061f);
+                dataCapsule.transform.localRotation = Quaternion.Euler(60, 0, 90);
+                dataCapsule.GetComponent<DataCapsuleController>().pointKeyName = pointKeyName;
+                return;
+            }
+        }
     }
 
 #region Plot

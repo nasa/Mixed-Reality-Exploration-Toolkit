@@ -1,80 +1,74 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using UnityEngine.UI;
 
-public class IKMenuController : MonoBehaviour
+namespace GSFC.ARVR.MRET.Components.IK
 {
-    public Dropdown ikModeDropdown;
-    public IKInteractionManager leftInteractionManager, rightInteractionManager;
-    public MatlabIKInteractionManager leftMatlabInteractionManager, rightMatlabInteractionManager;
-
-    private ControlMode controlMode;
-    private bool initializingDropdown = true;
-
-	void Start()
+    public class IKMenuController : MonoBehaviour
     {
-        leftInteractionManager = VRTK.VRTK_DeviceFinder.GetControllerLeftHand().GetComponentInChildren<IKInteractionManager>();
-        rightInteractionManager = VRTK.VRTK_DeviceFinder.GetControllerRightHand().GetComponentInChildren<IKInteractionManager>();
-        leftMatlabInteractionManager = VRTK.VRTK_DeviceFinder.GetControllerLeftHand().GetComponentInChildren<MatlabIKInteractionManager>();
-        rightMatlabInteractionManager = VRTK.VRTK_DeviceFinder.GetControllerRightHand().GetComponentInChildren<MatlabIKInteractionManager>();
-        controlMode = FindObjectOfType<ControlMode>();
+        public Dropdown ikModeDropdown;
 
-        if (leftInteractionManager.enabled == true && rightInteractionManager.enabled == true)
-        {
-            initializingDropdown = true;
-            ikModeDropdown.value = 1;
-        }
-        else if (leftMatlabInteractionManager.enabled == true && rightMatlabInteractionManager.enabled == true)
-        {
-            initializingDropdown = true;
-            ikModeDropdown.value = 2;
-        }
-        else
-        {
-            initializingDropdown = true;
-            ikModeDropdown.value = 0;
-        }
+        private bool initializingDropdown = true;
 
-        // Handle IK Mode Updates.
-        ikModeDropdown.onValueChanged.AddListener(delegate
+        void Start()
         {
-            if (!initializingDropdown)
+            if (Infrastructure.Framework.MRET.IKManager.currentMode == IKManager.IKMode.Basic)
             {
-                HandleIKModeChange();
+                initializingDropdown = true;
+                ikModeDropdown.value = 1;
             }
-            initializingDropdown = false;
-        });
-    }
+            else if (Infrastructure.Framework.MRET.IKManager.currentMode == IKManager.IKMode.Matlab)
+            {
+                initializingDropdown = true;
+                ikModeDropdown.value = 2;
+            }
+            else
+            {
+                initializingDropdown = true;
+                ikModeDropdown.value = 0;
+            }
 
-    public void HandleIKModeChange()
-    {
-        switch (ikModeDropdown.value)
+            // Handle IK Mode Updates.
+            ikModeDropdown.onValueChanged.AddListener(delegate
+            {
+                if (!initializingDropdown)
+                {
+                    HandleIKModeChange();
+                }
+                initializingDropdown = false;
+            });
+        }
+
+        public void HandleIKModeChange()
         {
-            // Off.
-            case 0:
-                leftInteractionManager.enabled = rightInteractionManager.enabled = false;
-                    controlMode.DisableAllControlTypes();
-                break;
-            
-            // Low-Quality.
-            case 1:
-                leftInteractionManager.enabled = rightInteractionManager.enabled = true;
-                leftMatlabInteractionManager.enabled = rightMatlabInteractionManager.enabled = false;
-                controlMode.EnterInverseKinematicsMode();
-                break;
-            
-            // Matlab.
-            case 2:
-                leftInteractionManager.enabled = rightInteractionManager.enabled = false;
-                leftMatlabInteractionManager.enabled = rightMatlabInteractionManager.enabled = true;
-                controlMode.EnterInverseKinematicsMode();
-                break;
-            
-            // Unknown.
-            default:
-                leftInteractionManager.enabled = rightInteractionManager.enabled = false;
-                leftMatlabInteractionManager.enabled = rightMatlabInteractionManager.enabled = false;
-                controlMode.DisableAllControlTypes();
-                break;
+            switch (ikModeDropdown.value)
+            {
+                // Off.
+                case 0:
+                    Infrastructure.Framework.MRET.IKManager.SetIKMode(IKManager.IKMode.None);
+                    Infrastructure.Framework.MRET.ControlMode.DisableAllControlTypes();
+                    break;
+
+                // Low-Quality.
+                case 1:
+                    Infrastructure.Framework.MRET.IKManager.SetIKMode(IKManager.IKMode.Basic);
+                    Infrastructure.Framework.MRET.ControlMode.EnterInverseKinematicsMode();
+                    break;
+
+                // Matlab.
+                case 2:
+                    Infrastructure.Framework.MRET.IKManager.SetIKMode(IKManager.IKMode.Matlab);
+                    Infrastructure.Framework.MRET.ControlMode.EnterInverseKinematicsMode();
+                    break;
+
+                // Unknown.
+                default:
+                    Infrastructure.Framework.MRET.IKManager.SetIKMode(IKManager.IKMode.None);
+                    Infrastructure.Framework.MRET.ControlMode.DisableAllControlTypes();
+                    break;
+            }
         }
     }
 }

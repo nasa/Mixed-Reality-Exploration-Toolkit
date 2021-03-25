@@ -1,0 +1,64 @@
+using UnityEngine;
+using GSFC.ARVR.MRET;
+
+namespace GSFC.ARVR.MRET.TODO
+{
+    /// <remarks>
+    /// History:
+    /// 1 January 9999: Created
+    /// </remarks>
+	///
+	/// <summary>
+	/// #SCRIPTNAME#
+	///
+	/// TODO: Describe this class here...
+	///
+    /// Author: TODO
+	/// </summary>
+	/// 
+	public class #SCRIPTNAME# : MRETBehaviour
+	{
+		/// <seealso cref="MRETBehaviour.ClassName"/>
+		public override string ClassName
+		{
+			get
+			{
+				return nameof(#SCRIPTNAME#);
+			}
+		}
+
+		/// <seealso cref="MRETBehaviour.IntegrityCheck"/>
+		protected override IntegrityState IntegrityCheck()
+		{
+            // Take the inherited behavior
+            IntegrityState state = base.IntegrityCheck();
+
+            // Custom integrity checks here
+            return (
+                (state == IntegrityState.Failure) // TODO: || (MyRequiredRef == null)
+				#NOTRIM#
+                    ? IntegrityState.Failure   // Fail is base class fails or anything is null
+                    : IntegrityState.Success); // Otherwise, our integrity is valid
+		}
+
+		/// <seealso cref="MRETBehaviour.MRETAwake"/>
+		protected override void MRETAwake()
+		{
+			// Take the inherited behavior
+			base.MRETAwake();
+
+			// TODO: Custom initialization (before deserialization)
+			#NOTRIM#
+		}
+		
+		/// <seealso cref="MRETBehaviour.MRETStart"/>
+		protected override void MRETStart()
+		{
+			// Take the inherited behavior
+			base.MRETStart();
+
+			// TODO: Custom initialization (after deserialization)
+			#NOTRIM#
+		}
+	}
+}

@@ -1,8 +1,13 @@
-﻿using UnityEngine;
-using VRTK;
-using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class InteractableTool : VRTK_InteractableObject
+using UnityEngine;
+using System.Collections.Generic;
+using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
+
+public class InteractableTool : SceneObject
 {
     public GameObject headsetFollower;
 
@@ -12,9 +17,12 @@ public class InteractableTool : VRTK_InteractableObject
     private MeshRenderer[] objectRenderers;
     private Material[] objectMaterials;
     private bool initialized = false;
+    private bool originalGravityState = false, originalKinematicState = false;
 
     public void Start()
     {
+        useable = true;
+
         if (initialized)
         {
             // Preserve information about original materials.
@@ -31,26 +39,16 @@ public class InteractableTool : VRTK_InteractableObject
                 }
             }
             objectMaterials = objMatList.ToArray();
-
-            // Add touch highlighter scripts.
-            VRTK_InteractObjectHighlighter highlighter = gameObject.AddComponent<VRTK_InteractObjectHighlighter>();
-            highlighter.touchHighlight = touchHighlightColor;
-            highlighter.objectToMonitor = this;
-            highlighter.objectToHighlight = gameObject;
-            VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter outline =
-                gameObject.AddComponent<VRTK.Highlighters.VRTK_OutlineObjectCopyHighlighter>();
-            outline.active = true;
-            outline.unhighlightOnDisable = true;
-            outline.thickness = 0.4f;
-            outline.customOutlineModels = meshObjList.ToArray();
         }
         
         initialized = true;
     }
 
-    public override void OnInteractableObjectGrabbed(InteractableObjectEventArgs e)
+    public override void BeginGrab(InputHand hand)
     {
-        base.OnInteractableObjectGrabbed(e);
+        base.BeginGrab(hand);
+
+        hand.ToggleHandModel(false);
 
         foreach (Collider coll in GetComponentsInChildren<Collider>())
         {
@@ -58,16 +56,28 @@ public class InteractableTool : VRTK_InteractableObject
         }
         collisionHandler = gameObject.AddComponent<ToolPassCollisionHandler>();
         collisionHandler.enabled = false;
-        collisionHandler.grabbingObj = e.interactingObject;
+        collisionHandler.grabbingObj = hand.gameObject;
         collisionHandler.enabled = true;
 
+        Rigidbody rBody = gameObject.GetComponent<Rigidbody>();
+        if (rBody != null)
+        {
+            originalKinematicState = rBody.isKinematic;
+            rBody.isKinematic = false;
+
+            originalGravityState = rBody.useGravity;
+            rBody.useGravity = false;
+        }
+
         DisableAllEnvironmentScaling();
-        DisableAllFlying();
+        DisableAllLocomotion();
     }
 
-    public override void OnInteractableObjectUngrabbed(InteractableObjectEventArgs e)
+    public override void EndGrab(InputHand hand)
     {
-        base.OnInteractableObjectUngrabbed(e);
+        base.EndGrab(hand);
+
+        hand.ToggleHandModel(true);
 
         foreach (Collider coll in GetComponentsInChildren<Collider>())
         {
@@ -76,66 +86,50 @@ public class InteractableTool : VRTK_InteractableObject
         collisionHandler.ResetTextures();
         Destroy(collisionHandler);
 
+        Rigidbody rBody = gameObject.GetComponent<Rigidbody>();
+        if (rBody != null)
+        {
+            rBody.isKinematic = originalKinematicState;
+            rBody.useGravity = originalGravityState;
+        }
+
         EnableAnyEnvironmentScaling();
-        EnableAnyFlying();
+        EnableAnyLocomotion();
     }
 
 #region CONTEXTAWARECONTROL
-    private bool previousScalingState = false, previousFlyingState = false;
+    private bool previousScalingState = false, previousLocomotionPauseState = false;
     private void DisableAllEnvironmentScaling()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
+        foreach (InputHand hand in MRET.InputRig.hands)
         {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                ScaleObjectTransform sot = cEvent.GetComponentInChildren<ScaleObjectTransform>(true);
-                previousScalingState = sot.enabled; // Inefficient, but it doesn't matter.
-                sot.enabled = false;
-            }
+            ScaleObjectTransform sot = hand.GetComponentInChildren<ScaleObjectTransform>(true);
+            previousScalingState = sot.enabled; // Inefficient, but it doesn't matter.
+            sot.enabled = false;
         }
     }
 
     private void EnableAnyEnvironmentScaling()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
+        foreach (InputHand hand in MRET.InputRig.hands)
         {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                ScaleObjectTransform sot = cEvent.GetComponentInChildren<ScaleObjectTransform>(true);
-                sot.enabled = previousScalingState;
-            }
-            previousScalingState = false;
+            ScaleObjectTransform sot = hand.GetComponentInChildren<ScaleObjectTransform>(true);
+            previousScalingState = sot.enabled; // Inefficient, but it doesn't matter.
+            sot.enabled = previousScalingState;
         }
+        previousScalingState = false;
     }
 
-    private void DisableAllFlying()
+    private void DisableAllLocomotion()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
-        {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                SimpleMotionController smc = cEvent.GetComponentInChildren<SimpleMotionController>(true);
-                previousFlyingState = smc.motionEnabled; // Inefficient, but it doesn't matter.
-                smc.motionEnabled = false;
-            }
-        }
+        previousLocomotionPauseState = MRET.LocomotionManager.Paused;
+        MRET.LocomotionManager.Paused = true;
     }
 
-    private void EnableAnyFlying()
+    private void EnableAnyLocomotion()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
-        {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                SimpleMotionController smc = cEvent.GetComponentInChildren<SimpleMotionController>(true);
-                smc.motionEnabled = previousFlyingState;
-            }
-            previousFlyingState = false;
-        }
+        MRET.LocomotionManager.Paused = previousLocomotionPauseState;
+        previousLocomotionPauseState = false;
     }
 #endregion
 }

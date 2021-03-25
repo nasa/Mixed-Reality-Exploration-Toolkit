@@ -1,8 +1,12 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using UnityEngine;
 using GSFC.ARVR.MRET.Time;
 using GSFC.ARVR.UTILITIES;
 using GSFC.ARVR.Utilities.Terrain;
+using GSFC.ARVR.MRET;
 
 namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
 {
@@ -27,33 +31,33 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
      *  KEY_TERRAIN_AZIMUTH_DEG:                The terrain azimuth (offset from due North) in degrees [-180,180] (double)
      *  KEY_TERRAIN_UPPERLEFT_LONGITUDE_DEG:    Upper left longitude of the Terrain in degrees [-180,180] (double)
      *  KEY_TERRAIN_UPPERLEFT_LATITUDE_DEG:     Upper left latitude of the Terrain in degrees [-90,90] (double)
+     *  KEY_TERRAIN_UPPERLEFT_ELEVATION_M:      Upper left elevation of the Terrain in meters (double)
      *  KEY_TERRAIN_UPPERLEFT_CARTESIAN:        Upper left cartesian coordinates of the Terrain as defined by SPICE (double[3])
      *  KEY_TERRAIN_LOWERLEFT_LONGITUDE_DEG:    Lower left longitude of the Terrain in degrees [-180,180] (double)
      *  KEY_TERRAIN_LOWERLEFT_LATITUDE_DEG:     Lower left latitude of the Terrain in degrees [-90,90] (double)
+     *  KEY_TERRAIN_LOWERLEFT_ELEVATION_M:      Lower left elevation of the Terrain in meters (double)
      *  KEY_TERRAIN_LOWERLEFT_CARTESIAN:        Lower left cartesian coordinates of the Terrain as defined by SPICE (double[3])
      *  KEY_TERRAIN_UPPERRIGHT_LONGITUDE_DEG:   Upper right longitude of the Terrain in degrees [-180,180] (double)
      *  KEY_TERRAIN_UPPERRIGHT_LATITUDE_DEG:    Upper right latitude of the Terrain in degrees [-90,90] (double)
+     *  KEY_TERRAIN_UPPERRIGHT_ELEVATION_M:     Upper right elevation of the Terrain in meters (double)
      *  KEY_TERRAIN_UPPERRIGHT_CARTESIAN:       Upper right cartesian coordinates of the Terrain as defined by SPICE (double[3])
      *  KEY_TERRAIN_LOWERRIGHT_LONGITUDE_DEG:   Lower right longitude of the Terrain in degrees [-180,180] (double)
      *  KEY_TERRAIN_LOWERRIGHT_LATITUDE_DEG:    Lower right latitude of the Terrain in degrees [-90,90] (double)
+     *  KEY_TERRAIN_LOWERRIGHT_ELEVATION_M:     Lower right elevation of the Terrain in meters (double)
      *  KEY_TERRAIN_LOWERRIGHT_CARTESIAN:       Lower right cartesian coordinates of the Terrain as defined by SPICE (double[3])
      *  KEY_TERRAIN_CENTER_LONGITUDE_DEG:       Center longitude of the Terrain in degrees [-180,180] (double)
      *  KEY_TERRAIN_CENTER_LATITUDE_DEG:        Center latitude of the Terrain in degrees [-90,90] (double)
+     *  KEY_TERRAIN_CENTER_ELEVATION_M:         Center elevation of the Terrain in meters (double)
      *  KEY_TERRAIN_CENTER_CARTESIAN:           Center cartesian coordinates of the Terrain as defined by SPICE (double[3])
      *                         
      * @author Jeffrey Hosler
      */
-    public class SurfaceLocation : MonoBehaviour
+    public class SurfaceLocation : MRETUpdateBehaviour
     {
-        public static readonly string NAME = nameof(SurfaceLocation);
+        public override string ClassName => nameof(SurfaceLocation);
 
         // Prefix of all keys
         public const string KEY_PREFIX = "GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL.SURFACELOCATION";
-
-        // Performance Management
-        private int updateCounter = 0;
-        [Tooltip("Modulates the frequency of model updates published to the DataManager. The value represents a counter modulo to determine how many calls to Update will be skipped before publishing.")]
-        public int updateRateModulo = 1;
 
         [Tooltip("The DataManager to use for storing retrieving and storing telemetry. If not supplied, one will be located at Start")]
         public DataManager dataManager;
@@ -70,18 +74,23 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
         public const string KEY_TERRAIN_AZIMUTH_DEG =               KEY_PREFIX + ".TERRAIN.AZIMUTH.DEGREES";
         public const string KEY_TERRAIN_UPPERLEFT_LONGITUDE_DEG =   KEY_PREFIX + ".TERRAIN.UPPERLEFT.LONGITUDE.DEGREES";
         public const string KEY_TERRAIN_UPPERLEFT_LATITUDE_DEG =    KEY_PREFIX + ".TERRAIN.UPPERLEFT.LATITUDE.DEGREES";
+        public const string KEY_TERRAIN_UPPERLEFT_ELEVATION_M =     KEY_PREFIX + ".TERRAIN.UPPERLEFT.ELEVATION.METERS";
         public const string KEY_TERRAIN_UPPERLEFT_CARTESIAN =       KEY_PREFIX + ".TERRAIN.UPPERLEFT.CARTESIAN";
         public const string KEY_TERRAIN_LOWERLEFT_LONGITUDE_DEG =   KEY_PREFIX + ".TERRAIN.LOWERLEFT.LONGITUDE.DEGREES";
         public const string KEY_TERRAIN_LOWERLEFT_LATITUDE_DEG =    KEY_PREFIX + ".TERRAIN.LOWERLEFT.LATITUDE.DEGREES";
+        public const string KEY_TERRAIN_LOWERLEFT_ELEVATION_M =     KEY_PREFIX + ".TERRAIN.LOWERLEFT.ELEVATION.METERS";
         public const string KEY_TERRAIN_LOWERLEFT_CARTESIAN =       KEY_PREFIX + ".TERRAIN.LOWERLEFT.CARTESIAN";
         public const string KEY_TERRAIN_UPPERRIGHT_LONGITUDE_DEG =  KEY_PREFIX + ".TERRAIN.UPPERRIGHT.LONGITUDE.DEGREES";
         public const string KEY_TERRAIN_UPPERRIGHT_LATITUDE_DEG =   KEY_PREFIX + ".TERRAIN.UPPERRIGHT.LATITUDE.DEGREES";
+        public const string KEY_TERRAIN_UPPERRIGHT_ELEVATION_M =    KEY_PREFIX + ".TERRAIN.UPPERRIGHT.ELEVATION.METERS";
         public const string KEY_TERRAIN_UPPERRIGHT_CARTESIAN =      KEY_PREFIX + ".TERRAIN.UPPERRIGHT.CARTESIAN";
         public const string KEY_TERRAIN_LOWERRIGHT_LONGITUDE_DEG =  KEY_PREFIX + ".TERRAIN.LOWERRIGHT.LONGITUDE.DEGREES";
         public const string KEY_TERRAIN_LOWERRIGHT_LATITUDE_DEG =   KEY_PREFIX + ".TERRAIN.LOWERRIGHT.LATITUDE.DEGREES";
+        public const string KEY_TERRAIN_LOWERRIGHT_ELEVATION_M =    KEY_PREFIX + ".TERRAIN.LOWERRIGHT.ELEVATION.METERS";
         public const string KEY_TERRAIN_LOWERRIGHT_CARTESIAN =      KEY_PREFIX + ".TERRAIN.LOWERRIGHT.CARTESIAN";
         public const string KEY_TERRAIN_CENTER_LONGITUDE_DEG =      KEY_PREFIX + ".TERRAIN.CENTER.LONGITUDE.DEGREES";
         public const string KEY_TERRAIN_CENTER_LATITUDE_DEG =       KEY_PREFIX + ".TERRAIN.CENTER.LATITUDE.DEGREES";
+        public const string KEY_TERRAIN_CENTER_ELEVATION_M =        KEY_PREFIX + ".TERRAIN.CENTER.ELEVATION.METERS";
         public const string KEY_TERRAIN_CENTER_CARTESIAN =          KEY_PREFIX + ".TERRAIN.CENTER.CARTESIAN";
 
         // Terrain Metadata
@@ -116,14 +125,19 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
         // Used to store the actual degree values
         protected double terrainUpperLeftLongitude = -180.00;
         protected double terrainUpperLeftLatitude = 90.00;
+        protected double terrainUpperLeftElevation = 0.00;
         protected double terrainLowerLeftLongitude = -180.00;
         protected double terrainLowerLeftLatitude = -90.00;
+        protected double terrainLowerLeftElevation = 0.00;
         protected double terrainUpperRightLongitude = 180.00;
         protected double terrainUpperRightLatitude = 90.00;
+        protected double terrainUpperRightElevation = 0.00;
         protected double terrainLowerRightLongitude = 180.00;
         protected double terrainLowerRightLatitude = -90.00;
+        protected double terrainLowerRightElevation = 0.00;
         protected double terrainCenterLongitude = 0.00;
         protected double terrainCenterLatitude = 0.00;
+        protected double terrainCenterElevation = 0.00;
 
         // Used to store the cartesian coordinates
         protected double[] terrainUpperLeft = new double[3];
@@ -346,87 +360,140 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
             // this once for static data
             if (initialized && !terrainInitialized)
             {
-                // Get the cartesian coordinates of the terrain bounds
-                LunarModel.Latitudinal2RectangularCoordinates(
-                    LunarModel.MOON_RADIUS,
-                    LunarModel.ToRadians(terrainUpperLeftLongitude),
-                    LunarModel.ToRadians(terrainUpperLeftLatitude),
-                    terrainUpperLeft);
-                LunarModel.Latitudinal2RectangularCoordinates(
-                    LunarModel.MOON_RADIUS,
-                    LunarModel.ToRadians(terrainLowerLeftLongitude),
-                    LunarModel.ToRadians(terrainLowerLeftLatitude),
-                    terrainLowerLeft);
-                LunarModel.Latitudinal2RectangularCoordinates(
-                    LunarModel.MOON_RADIUS,
-                    LunarModel.ToRadians(terrainUpperRightLongitude),
-                    LunarModel.ToRadians(terrainUpperRightLatitude),
-                    terrainUpperRight);
-                LunarModel.Latitudinal2RectangularCoordinates(
-                    LunarModel.MOON_RADIUS,
-                    LunarModel.ToRadians(terrainLowerRightLongitude),
-                    LunarModel.ToRadians(terrainLowerRightLatitude),
-                    terrainLowerRight);
-                LunarModel.Latitudinal2RectangularCoordinates(
-                    LunarModel.MOON_RADIUS,
-                    LunarModel.ToRadians(terrainCenterLongitude),
-                    LunarModel.ToRadians(terrainCenterLatitude),
-                    terrainLowerRight);
+                Terrain activeTerrain;
 
-                // Reverse the calculations for sanity
-                double radius, longitude, latitude;
-                LunarModel.Rectangular2LatitudinalCoordinates(
-                    terrainUpperLeft,
-                    out radius,
-                    out longitude,
-                    out latitude);
-                Vector3d upperLeftCoord = new Vector3d(radius * 1000d, LunarModel.ToDegrees(longitude), LunarModel.ToDegrees(latitude));
-                LunarModel.Rectangular2LatitudinalCoordinates(
-                    terrainLowerLeft,
-                    out radius,
-                    out longitude,
-                    out latitude);
-                Vector3d lowerLeftCoord = new Vector3d(radius * 1000d, LunarModel.ToDegrees(longitude), LunarModel.ToDegrees(latitude));
-                LunarModel.Rectangular2LatitudinalCoordinates(
-                    terrainUpperRight,
-                    out radius,
-                    out longitude,
-                    out latitude);
-                Vector3d upperRightCoord = new Vector3d(radius * 1000d, LunarModel.ToDegrees(longitude), LunarModel.ToDegrees(latitude));
-                LunarModel.Rectangular2LatitudinalCoordinates(
-                    terrainLowerRight,
-                    out radius,
-                    out longitude,
-                    out latitude);
-                Vector3d lowerRightCoord = new Vector3d(radius * 1000d, LunarModel.ToDegrees(longitude), LunarModel.ToDegrees(latitude));
-                LunarModel.Rectangular2LatitudinalCoordinates(
-                    terrainCenter,
-                    out radius,
-                    out longitude,
-                    out latitude);
-                Vector3d centerCoord = new Vector3d(radius * 1000d, LunarModel.ToDegrees(longitude), LunarModel.ToDegrees(latitude));
+                activeTerrain = TerrainUtil.FindActiveTerrain(Vector3.zero);
+                if (activeTerrain != null)
+                {
+                    // Get the terrain bounds to be used in the calculations
+                    Terrain[] terrainGroup = TerrainUtil.GetTerrainGroup(activeTerrain.groupingID);
+                    Bounds terrainGroupBounds = TerrainUtil.GetTerrainGroupBounds(terrainGroup);
 
-                // Store the telemetry into the DataManager
-                dataManager.SaveValue(KEY_TERRAIN_SCALE_M, terrainScaleM);
-                dataManager.SaveValue(KEY_TERRAIN_AZIMUTH_DEG, terrainAzimuth);
-                dataManager.SaveValue(KEY_TERRAIN_UPPERLEFT_LONGITUDE_DEG, terrainUpperLeftLongitude);
-                dataManager.SaveValue(KEY_TERRAIN_UPPERLEFT_LATITUDE_DEG, terrainUpperLeftLatitude);
-                dataManager.SaveValue(KEY_TERRAIN_UPPERLEFT_CARTESIAN, terrainUpperLeft);
-                dataManager.SaveValue(KEY_TERRAIN_LOWERLEFT_LONGITUDE_DEG, terrainLowerLeftLongitude);
-                dataManager.SaveValue(KEY_TERRAIN_LOWERLEFT_LATITUDE_DEG, terrainLowerLeftLatitude);
-                dataManager.SaveValue(KEY_TERRAIN_LOWERLEFT_CARTESIAN, terrainLowerLeft);
-                dataManager.SaveValue(KEY_TERRAIN_UPPERRIGHT_LONGITUDE_DEG, terrainUpperRightLongitude);
-                dataManager.SaveValue(KEY_TERRAIN_UPPERRIGHT_LATITUDE_DEG, terrainUpperRightLatitude);
-                dataManager.SaveValue(KEY_TERRAIN_UPPERRIGHT_CARTESIAN, terrainUpperRight);
-                dataManager.SaveValue(KEY_TERRAIN_LOWERRIGHT_LONGITUDE_DEG, terrainLowerRightLongitude);
-                dataManager.SaveValue(KEY_TERRAIN_LOWERRIGHT_LATITUDE_DEG, terrainLowerRightLatitude);
-                dataManager.SaveValue(KEY_TERRAIN_LOWERRIGHT_CARTESIAN, terrainLowerRight);
-                dataManager.SaveValue(KEY_TERRAIN_CENTER_LONGITUDE_DEG, terrainCenterLongitude);
-                dataManager.SaveValue(KEY_TERRAIN_CENTER_LATITUDE_DEG, terrainCenterLatitude);
-                dataManager.SaveValue(KEY_TERRAIN_CENTER_CARTESIAN, terrainCenter);
+                    // Get the elevations for the terrain points
+                    Vector3 position = Vector3.zero;
 
-                // Mark as initialized
-                terrainInitialized = true;
+                    // Center elevation
+                    terrainCenterElevation = activeTerrain.SampleHeight(position);
+
+                    // Upper left elevation
+                    position = new Vector3(terrainGroupBounds.min.x, 0, terrainGroupBounds.max.z);
+                    activeTerrain = TerrainUtil.FindActiveTerrain(position);
+                    if (activeTerrain != null)
+                    {
+                        terrainUpperLeftElevation = activeTerrain.SampleHeight(position);
+                    }
+
+                    // Lower left elevation
+                    position = new Vector3(terrainGroupBounds.min.x, 0, terrainGroupBounds.min.z);
+                    activeTerrain = TerrainUtil.FindActiveTerrain(position);
+                    if (activeTerrain != null)
+                    {
+                        terrainLowerLeftElevation = activeTerrain.SampleHeight(position);
+                    }
+
+                    // Upper right elevation
+                    position = new Vector3(terrainGroupBounds.max.x, 0, terrainGroupBounds.max.z);
+                    activeTerrain = TerrainUtil.FindActiveTerrain(position);
+                    if (activeTerrain != null)
+                    {
+                        terrainUpperRightElevation = activeTerrain.SampleHeight(position);
+                    }
+
+                    // Lower right elevation
+                    position = new Vector3(terrainGroupBounds.max.x, 0, terrainGroupBounds.min.z);
+                    activeTerrain = TerrainUtil.FindActiveTerrain(position);
+                    if (activeTerrain != null)
+                    {
+                        terrainLowerRightElevation = activeTerrain.SampleHeight(position);
+                    }
+
+                    // Get the cartesian coordinates of the terrain bounds
+                    LunarModel.Latitudinal2RectangularCoordinates(
+                        LunarModel.MOON_RADIUS + (terrainUpperLeftElevation / 1000d),
+                        LunarModel.ToRadians(terrainUpperLeftLongitude),
+                        LunarModel.ToRadians(terrainUpperLeftLatitude),
+                        terrainUpperLeft);
+                    LunarModel.Latitudinal2RectangularCoordinates(
+                        LunarModel.MOON_RADIUS + (terrainLowerLeftElevation / 1000d),
+                        LunarModel.ToRadians(terrainLowerLeftLongitude),
+                        LunarModel.ToRadians(terrainLowerLeftLatitude),
+                        terrainLowerLeft);
+                    LunarModel.Latitudinal2RectangularCoordinates(
+                        LunarModel.MOON_RADIUS + (terrainUpperRightElevation / 1000d),
+                        LunarModel.ToRadians(terrainUpperRightLongitude),
+                        LunarModel.ToRadians(terrainUpperRightLatitude),
+                        terrainUpperRight);
+                    LunarModel.Latitudinal2RectangularCoordinates(
+                        LunarModel.MOON_RADIUS + (terrainLowerRightElevation / 1000d),
+                        LunarModel.ToRadians(terrainLowerRightLongitude),
+                        LunarModel.ToRadians(terrainLowerRightLatitude),
+                        terrainLowerRight);
+                    LunarModel.Latitudinal2RectangularCoordinates(
+                        LunarModel.MOON_RADIUS + (terrainCenterElevation / 1000d),
+                        LunarModel.ToRadians(terrainCenterLongitude),
+                        LunarModel.ToRadians(terrainCenterLatitude),
+                        terrainLowerRight);
+
+                    // Reverse the calculations for sanity
+                    double radius, longitude, latitude;
+                    LunarModel.Rectangular2LatitudinalCoordinates(
+                        terrainUpperLeft,
+                        out radius,
+                        out longitude,
+                        out latitude);
+                    Vector3d upperLeftCoord = new Vector3d(radius * 1000d, LunarModel.ToDegrees(longitude), LunarModel.ToDegrees(latitude));
+                    LunarModel.Rectangular2LatitudinalCoordinates(
+                        terrainLowerLeft,
+                        out radius,
+                        out longitude,
+                        out latitude);
+                    Vector3d lowerLeftCoord = new Vector3d(radius * 1000d, LunarModel.ToDegrees(longitude), LunarModel.ToDegrees(latitude));
+                    LunarModel.Rectangular2LatitudinalCoordinates(
+                        terrainUpperRight,
+                        out radius,
+                        out longitude,
+                        out latitude);
+                    Vector3d upperRightCoord = new Vector3d(radius * 1000d, LunarModel.ToDegrees(longitude), LunarModel.ToDegrees(latitude));
+                    LunarModel.Rectangular2LatitudinalCoordinates(
+                        terrainLowerRight,
+                        out radius,
+                        out longitude,
+                        out latitude);
+                    Vector3d lowerRightCoord = new Vector3d(radius * 1000d, LunarModel.ToDegrees(longitude), LunarModel.ToDegrees(latitude));
+                    LunarModel.Rectangular2LatitudinalCoordinates(
+                        terrainCenter,
+                        out radius,
+                        out longitude,
+                        out latitude);
+                    Vector3d centerCoord = new Vector3d(radius * 1000d, LunarModel.ToDegrees(longitude), LunarModel.ToDegrees(latitude));
+
+                    // Store the telemetry into the DataManager
+                    dataManager.SaveValue(KEY_TERRAIN_SCALE_M, terrainScaleM);
+                    dataManager.SaveValue(KEY_TERRAIN_AZIMUTH_DEG, terrainAzimuth);
+                    dataManager.SaveValue(KEY_TERRAIN_UPPERLEFT_LONGITUDE_DEG, terrainUpperLeftLongitude);
+                    dataManager.SaveValue(KEY_TERRAIN_UPPERLEFT_LATITUDE_DEG, terrainUpperLeftLatitude);
+                    dataManager.SaveValue(KEY_TERRAIN_UPPERLEFT_ELEVATION_M, terrainUpperLeftElevation);
+                    dataManager.SaveValue(KEY_TERRAIN_UPPERLEFT_CARTESIAN, terrainUpperLeft);
+                    dataManager.SaveValue(KEY_TERRAIN_LOWERLEFT_LONGITUDE_DEG, terrainLowerLeftLongitude);
+                    dataManager.SaveValue(KEY_TERRAIN_LOWERLEFT_LATITUDE_DEG, terrainLowerLeftLatitude);
+                    dataManager.SaveValue(KEY_TERRAIN_LOWERLEFT_ELEVATION_M, terrainLowerLeftElevation);
+                    dataManager.SaveValue(KEY_TERRAIN_LOWERLEFT_CARTESIAN, terrainLowerLeft);
+                    dataManager.SaveValue(KEY_TERRAIN_UPPERRIGHT_LONGITUDE_DEG, terrainUpperRightLongitude);
+                    dataManager.SaveValue(KEY_TERRAIN_UPPERRIGHT_LATITUDE_DEG, terrainUpperRightLatitude);
+                    dataManager.SaveValue(KEY_TERRAIN_UPPERRIGHT_ELEVATION_M, terrainUpperRightElevation);
+                    dataManager.SaveValue(KEY_TERRAIN_UPPERRIGHT_CARTESIAN, terrainUpperRight);
+                    dataManager.SaveValue(KEY_TERRAIN_LOWERRIGHT_LONGITUDE_DEG, terrainLowerRightLongitude);
+                    dataManager.SaveValue(KEY_TERRAIN_LOWERRIGHT_LATITUDE_DEG, terrainLowerRightLatitude);
+                    dataManager.SaveValue(KEY_TERRAIN_LOWERRIGHT_ELEVATION_M, terrainLowerRightElevation);
+                    dataManager.SaveValue(KEY_TERRAIN_LOWERRIGHT_CARTESIAN, terrainLowerRight);
+                    dataManager.SaveValue(KEY_TERRAIN_CENTER_LONGITUDE_DEG, terrainCenterLongitude);
+                    dataManager.SaveValue(KEY_TERRAIN_CENTER_LATITUDE_DEG, terrainCenterLatitude);
+                    dataManager.SaveValue(KEY_TERRAIN_CENTER_ELEVATION_M, terrainCenterElevation);
+                    dataManager.SaveValue(KEY_TERRAIN_CENTER_CARTESIAN, terrainCenter);
+
+                    // Mark as initialized
+                    terrainInitialized = true;
+                }
             }
         }
 
@@ -478,9 +545,27 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
 
         }
 
-        // Start is called before the first frame update
-        void Start()
+        /// <seealso cref="MRETUpdateBehaviour.IntegrityCheck"/>
+        protected override IntegrityState IntegrityCheck()
         {
+            // Take the inherited behavior
+            IntegrityState state = base.IntegrityCheck();
+
+            // Custom integrity checks here
+            return (
+                (state == IntegrityState.Failure) ||
+                (dataManager == null) ||
+                (!initialized)
+                    ? IntegrityState.Failure   // Fail if base class fails, OR data manager is null
+                    : IntegrityState.Success); // Otherwise, our integrity is valid
+        }
+
+        /// <seealso cref="MRETUpdateBehaviour.MRETStart"/>
+        protected override void MRETStart()
+        {
+            // Take the inherited behavior
+            base.MRETStart();
+
             //Debug.Log("Upper Left:  [" + Coordinates.ToDegrees("3d22'43.43E") + ", " + Coordinates.ToDegrees("26d 9'35.54N") + "]");
             //Debug.Log("Lower Right: [" + Coordinates.ToDegrees("3d45'16.02E") + ", " + Coordinates.ToDegrees("25d49'19.85N") + "]");
             //Debug.Log("Center: [" + Coordinates.ToDegrees("3d33'59.72E") + ", " + Coordinates.ToDegrees("25d59'27.69N") + "]");
@@ -493,114 +578,104 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
             terrainUpperLeftLongitude = Coordinates.ToDegrees(terrainUpperLeftLongitudeDms);
             if (double.IsNaN(terrainUpperLeftLongitude))
             {
-                Debug.LogError("[" + NAME + "] Upper left terrain longitude could not be parsed: " + terrainUpperLeftLongitudeDms);
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; Upper left terrain longitude could not be parsed: " + terrainUpperLeftLongitudeDms);
                 errorEncountered = true;
             }
             terrainUpperLeftLatitude = Coordinates.ToDegrees(terrainUpperLeftLatitudeDms);
             if (double.IsNaN(terrainUpperLeftLatitude))
             {
-                Debug.LogError("[" + NAME + "] Upper left terrain latitude could not be parsed: " + terrainUpperLeftLatitudeDms);
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; Upper left terrain latitude could not be parsed: " + terrainUpperLeftLatitudeDms);
                 errorEncountered = true;
             }
             // Lower left
             terrainLowerLeftLongitude = Coordinates.ToDegrees(terrainLowerLeftLongitudeDms);
             if (double.IsNaN(terrainLowerLeftLongitude))
             {
-                Debug.LogError("[" + NAME + "] Lower left terrain longitude could not be parsed: " + terrainLowerLeftLongitudeDms);
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; Lower left terrain longitude could not be parsed: " + terrainLowerLeftLongitudeDms);
                 errorEncountered = true;
             }
             terrainLowerLeftLatitude = Coordinates.ToDegrees(terrainLowerLeftLatitudeDms);
             if (double.IsNaN(terrainLowerLeftLatitude))
             {
-                Debug.LogError("[" + NAME + "] Lower left terrain latitude could not be parsed: " + terrainLowerLeftLatitudeDms);
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; Lower left terrain latitude could not be parsed: " + terrainLowerLeftLatitudeDms);
                 errorEncountered = true;
             }
             // Upper right
             terrainUpperRightLongitude = Coordinates.ToDegrees(terrainUpperRightLongitudeDms);
             if (double.IsNaN(terrainUpperRightLongitude))
             {
-                Debug.LogError("[" + NAME + "] Upper right terrain longitude could not be parsed: " + terrainUpperRightLongitudeDms);
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; Upper right terrain longitude could not be parsed: " + terrainUpperRightLongitudeDms);
                 errorEncountered = true;
             }
             terrainUpperRightLatitude = Coordinates.ToDegrees(terrainUpperRightLatitudeDms);
             if (double.IsNaN(terrainUpperRightLatitude))
             {
-                Debug.LogError("[" + NAME + "] Upper right terrain latitude could not be parsed: " + terrainUpperRightLatitudeDms);
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; Upper right terrain latitude could not be parsed: " + terrainUpperRightLatitudeDms);
                 errorEncountered = true;
             }
             // Lower right
             terrainLowerRightLongitude = Coordinates.ToDegrees(terrainLowerRightLongitudeDms);
             if (double.IsNaN(terrainLowerRightLongitude))
             {
-                Debug.LogError("[" + NAME + "] Lower right terrain longitude could not be parsed: " + terrainLowerRightLongitudeDms);
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; Lower right terrain longitude could not be parsed: " + terrainLowerRightLongitudeDms);
                 errorEncountered = true;
             }
             terrainLowerRightLatitude = Coordinates.ToDegrees(terrainLowerRightLatitudeDms);
             if (double.IsNaN(terrainLowerRightLatitude))
             {
-                Debug.LogError("[" + NAME + "] Lower right terrain latitude could not be parsed: " + terrainLowerRightLatitudeDms);
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; Lower right terrain latitude could not be parsed: " + terrainLowerRightLatitudeDms);
                 errorEncountered = true;
             }
             // Center
-            terrainCenterLongitude = Coordinates.ToDegrees(terrainLowerRightLongitudeDms);
+            terrainCenterLongitude = Coordinates.ToDegrees(terrainCenterLongitudeDms);
             if (double.IsNaN(terrainCenterLongitude))
             {
-                Debug.LogError("[" + NAME + "] Lower right terrain longitude could not be parsed: " + terrainLowerRightLongitudeDms);
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; Center terrain longitude could not be parsed: " + terrainCenterLongitudeDms);
                 errorEncountered = true;
             }
-            terrainLowerRightLatitude = Coordinates.ToDegrees(terrainLowerRightLatitudeDms);
-            if (double.IsNaN(terrainLowerRightLatitude))
+            terrainCenterLatitude = Coordinates.ToDegrees(terrainCenterLatitudeDms);
+            if (double.IsNaN(terrainCenterLatitude))
             {
-                Debug.LogError("[" + NAME + "] Lower right terrain latitude could not be parsed: " + terrainLowerRightLatitudeDms);
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; Center terrain latitude could not be parsed: " + terrainCenterLatitudeDms);
                 errorEncountered = true;
             }
 
             // Check for any errors
             if (errorEncountered)
             {
-                Debug.LogError("[" + NAME + "] Errors encountered during startup. Processing will not occur.");
+                Debug.LogError("[" + ClassName + "->" + nameof(MRETStart) + "; Errors encountered during startup. Processing will not occur.");
             }
 
             // Try to get a reference to the data manager if not explictly set
             if (dataManager == null)
             {
-                dataManager = SessionManager.instance.dataManager;
-                if (dataManager == null)
-                {
-                    Debug.LogError("[" + NAME + "] Unable to obtain a reference to a DataManager");
-                }
+                dataManager = MRET.Infrastructure.Framework.MRET.DataManager;
             }
 
             // Indicate if we are initialized properly
             initialized = !errorEncountered && (dataManager != null);
         }
 
-        // Update is called once per frame
-        void Update()
+        /// <seealso cref="MRETUpdateBehaviour.MRETUpdate"/>
+        protected override void MRETUpdate()
         {
-            // Performance management
-            updateCounter++;
-            if (updateCounter >= updateRateModulo)
+            // Take the inherited behavior
+            base.MRETUpdate();
+
+            // Make sure we are initialized properly
+            if (initialized)
             {
-                // Reset the update counter
-                updateCounter = 0;
+                // Get the project time
+                var projectTime = dataManager.FindPoint(TimeManager.TIME_KEY_NOW);
 
-                // Make sure we are initialized properly
-                if (initialized)
-                {
-                    // Get the project time
-                    var projectTime = dataManager.FindPoint(TimeManager.TIME_KEY_NOW);
+                // Store the time stamp in the DataManager
+                dataManager.SaveValue(KEY_DATETIME, projectTime);
 
-                    // Store the time stamp in the DataManager
-                    dataManager.SaveValue(KEY_DATETIME, projectTime);
+                // Update the terrain telemetry
+                UpdateTerrainTelemetry();
 
-                    // Update the terrain telemetry
-                    UpdateTerrainTelemetry();
-
-                    // Update user telemetry
-                    UpdateUserTelemetry();
-                }
-
+                // Update user telemetry
+                UpdateUserTelemetry();
             }
 
         }

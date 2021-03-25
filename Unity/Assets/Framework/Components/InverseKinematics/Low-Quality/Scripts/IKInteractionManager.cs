@@ -1,9 +1,16 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using GSFC.ARVR.MRET.Common.Schemas;
 
 public class IKInteractionManager : MonoBehaviour
 {
-    public VRTK.VRTK_ControllerEvents controllerEvents;
+    /// <summary>
+    /// The hand to aim to follow.
+    /// </summary>
+    [Tooltip("The hand to aim to follow.")]
+    public Transform handRoot;
 
     private RootMotion.FinalIK.CCDIK finalIKScript, touchingScript;
     private bool controllingArm = false;
@@ -13,14 +20,11 @@ public class IKInteractionManager : MonoBehaviour
 
     public void Start()
     {
-        controllerEvents.TouchpadPressed += new VRTK.ControllerInteractionEventHandler(ProcessTouchpadPress);
-        controllerEvents.TouchpadReleased += new VRTK.ControllerInteractionEventHandler(ProcessTouchpadRelease);
-
         partContainer = FindObjectOfType<UnityProject>().projectObjectContainer;
         undoManager = FindObjectOfType<UndoManager>();
     }
 
-    public void ProcessTouchpadPress(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void ProcessTouchpadPress()
     {
         if (touchingScript != null)
         {
@@ -35,7 +39,7 @@ public class IKInteractionManager : MonoBehaviour
         }
     }
 
-    public void ProcessTouchpadRelease(object sender, VRTK.ControllerInteractionEventArgs e)
+    public void ProcessTouchpadRelease()
     {
         if (finalIKScript)
         {
@@ -88,7 +92,7 @@ public class IKInteractionManager : MonoBehaviour
     {
         if (controllingArm && finalIKScript != null)
         {
-            finalIKScript.solver.SetIKPosition(transform.parent.position);
+            finalIKScript.solver.SetIKPosition(handRoot.position);
         }
         CheckToggling();
     }

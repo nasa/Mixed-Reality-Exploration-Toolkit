@@ -1,5 +1,9 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using System.Collections.Generic;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 // This script handles collision behavior. It should be attached to game
 //  objects when they are being picked up, and removed when being put down.
@@ -7,11 +11,8 @@ public class ToolPassCollisionHandler : MonoBehaviour
 {
     public GameObject grabbingObj;
 
-    private SessionConfiguration sessionConfig;
     private MeshRenderer[] objectRenderers;
     private Material[] objectMaterials;
-    private Material collisionMaterial;
-    private AudioClip collisionClip;
     private AudioSource collisionSound;
     private bool isColliding = false, first = true;
     private int collisionTimer = 0;
@@ -47,27 +48,6 @@ public class ToolPassCollisionHandler : MonoBehaviour
         }
         objectMaterials = objMatList.ToArray();
 
-        /////////////////////////// Get Session Configuration. ///////////////////////////
-        GameObject sessionManager = GameObject.Find("SessionManager");
-        if (sessionManager)
-        {
-            sessionConfig = sessionManager.GetComponent<SessionConfiguration>();
-            if (sessionConfig)
-            {
-                collisionMaterial = sessionConfig.collisionMaterial;
-                collisionClip = sessionConfig.collisionSound;
-            }
-            else
-            {
-                Debug.LogError("[CollisionHandler->Start] Unable to get Session Configuration.");
-            }
-        }
-        else
-        {
-            Debug.LogError("[CollisionHandler->Start] Unable to get Session Manager.");
-        }
-        //////////////////////////////////////////////////////////////////////////////////
-
         LoadCollisionSound();
     }
 
@@ -76,7 +56,8 @@ public class ToolPassCollisionHandler : MonoBehaviour
         if (isColliding && collisionTimer < 20)
         {
             int strength = Mathf.RoundToInt(Mathf.Lerp(0, 3999, 500));
-            VRTK.VRTK_ControllerHaptics.TriggerHapticPulse(VRTK.VRTK_ControllerReference.GetControllerReference(grabbingObj), strength);
+            // TODO.
+            //VRTK.VRTK_ControllerHaptics.TriggerHapticPulse(VRTK.VRTK_ControllerReference.GetControllerReference(grabbingObj), strength);
 
             if (!collisionSound.isPlaying && (collisionSound.clip.loadState == AudioDataLoadState.Loaded))
             {
@@ -89,7 +70,7 @@ public class ToolPassCollisionHandler : MonoBehaviour
     private void LoadCollisionSound()
     {
         collisionSound = gameObject.AddComponent<AudioSource>();
-        collisionSound.clip = collisionClip;
+        collisionSound.clip = MRET.CollisionSound;
     }
 
     private void OnTriggerEnter(Collider collision)
@@ -103,7 +84,7 @@ public class ToolPassCollisionHandler : MonoBehaviour
             Material[] rendMats = new Material[rendMatCount];
             for (int j = 0; j < rendMatCount; j++)
             {
-                rendMats[j] = collisionMaterial;
+                rendMats[j] = MRET.CollisionMaterial;
             }
             rend.materials = rendMats;
         }

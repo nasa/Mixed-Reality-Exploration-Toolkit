@@ -1,11 +1,14 @@
-﻿using System.Collections;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using VRTK;
+using GSFC.ARVR.MRET.Infrastructure.Framework.Interactable;
 
-public class DisplayController : MonoBehaviour {
-
+public class DisplayController : MonoBehaviour
+{
     /// <summary>
     /// Handles the menu and the configuring of the display itself. 
     /// Responsible for transforming the display into the different types of displays (World, Mini, HUD)
@@ -81,17 +84,10 @@ public class DisplayController : MonoBehaviour {
                 htmlBrowser.gameObject.GetComponent<MeshRenderer>().material = renderHTMLAbove;
                 htmlBrowser.gameObject.GetComponent<MeshCollider>().enabled = false;
 
-                Destroy(gameObject.GetComponent<VRTK_InteractableObject>());
+                Destroy(gameObject.GetComponent<Interactable>());
                 Destroy(gameObject.GetComponent<Rigidbody>());
-                Destroy(canvasObject.GetComponent<VRTK_UICanvas>());
                 Destroy(canvasObject.GetComponent<GraphicRaycaster>());
                 Destroy(canvasObject.GetComponent<BoxCollider>());
-
-                VRTK_UICanvas[] canvases = gameObject.GetComponentsInChildren<VRTK_UICanvas>();
-                foreach (VRTK_UICanvas canvas in canvases)
-                {
-                    Destroy(canvas);
-                }
 
                 BoxCollider[] colliders = gameObject.GetComponentsInChildren<BoxCollider>();
                 foreach (BoxCollider box in colliders)
@@ -233,13 +229,9 @@ public class DisplayController : MonoBehaviour {
     {
         GameObject rController = GameObject.Find("RightController");
         GameObject lController = GameObject.Find("LeftController");
-        VRTK_Pointer rPoint = rController.GetComponent<VRTK_Pointer>();
-        VRTK_Pointer lPoint = lController.GetComponent<VRTK_Pointer>();
 
-        VRTK_UIPointer rUI = rController.GetComponent<VRTK_UIPointer>();
-        VRTK_UIPointer lUI = lController.GetComponent<VRTK_UIPointer>();
-
-        if (on)
+        // TODO.
+        /*if (on)
         {
             rPoint.selectionButton = VRTK_ControllerEvents.ButtonAlias.GripPress;
             lPoint.selectionButton = VRTK_ControllerEvents.ButtonAlias.GripPress;
@@ -262,7 +254,7 @@ public class DisplayController : MonoBehaviour {
             lPoint.grabToPointerTip = false;
             rUI.enabled = true;
             lUI.enabled = true;
-        }
+        }*/
         
     }
 

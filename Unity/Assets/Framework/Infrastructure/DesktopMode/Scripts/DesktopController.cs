@@ -1,4 +1,7 @@
-﻿/*
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+/*
  * 
  * This file inherits from the FirstPersonController class which is
  * apart of the FPSController prefab which (included with standard assets)
@@ -37,7 +40,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         public void enableTeleport()
         {
 
-            if (VRDesktopSwitcher.isDesktopEnabled())
+            /*if (VRDesktopSwitcher.isDesktopEnabled())
             {
                 if (teleport)
                 {
@@ -47,7 +50,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
                 {
                     teleport = true;
                 }
-            }
+            }*/
 
         }
 

@@ -1,8 +1,12 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class DisplayMenu : MonoBehaviour {
 
@@ -38,7 +42,7 @@ public class DisplayMenu : MonoBehaviour {
 
         GameObject hudManagerObject = GameObject.Find("HudManager");
         hudManager = hudManagerObject.GetComponent<HudManager>();
-        trackHeadset = VRTK.VRTK_DeviceFinder.HeadsetTransform();
+        trackHeadset = MRET.InputRig.head.transform;
 
 
         foreach (GameObject display in hudManager.worldDisplays)

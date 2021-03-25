@@ -1,13 +1,13 @@
-﻿using System.Collections;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
 using System.Collections.Generic;
 using UnityEngine;
-using EasyBuildSystem.Runtimes.Internal.Managers;
-using EasyBuildSystem.Runtimes.Internal.Managers.Data;
-using EasyBuildSystem.Runtimes.Internal.Part;
-using EasyBuildSystem.Runtimes.Internal.Socket;
-using EasyBuildSystem.Runtimes.Extensions;
-using EasyBuildSystem.Runtimes.Internal.Socket.Data;
-using EasyBuildSystem.Runtimes.Internal.Builder;
+using EasyBuildSystem.Features.Scripts.Core.Base.Piece;
+using EasyBuildSystem.Features.Scripts.Core.Base.Piece.Enums;
+using EasyBuildSystem.Features.Scripts.Core.Base.Builder;
+using EasyBuildSystem.Features.Scripts.Core.Base.Builder.Enums;
+using EasyBuildSystem.Features.Scripts.Core.Base.Manager;
 
 namespace GSFC.ARVR.MRET.Infrastructure.Integrations.Snapping
 {
@@ -24,7 +24,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Integrations.Snapping
             InitializeEBSPartCollection();
         }
         
-        public void InitiatePreview(PartBehaviour pb)
+        public void InitiatePreview(PieceBehaviour pb)
         {
             // If not already previewing, enter preview state.
             if (pb.CurrentState != StateType.Preview)
@@ -38,14 +38,14 @@ namespace GSFC.ARVR.MRET.Infrastructure.Integrations.Snapping
             }
         }
 
-        public void StopPreview(PartBehaviour pb)
+        public void StopPreview(PieceBehaviour pb)
         {
             // If not already placed, place object.
             if (pb.CurrentState != StateType.Placed)
             {
                 if (BuilderBehaviour.Instance.AllowPlacement)
                 {
-                    PartBehaviour preview = BuilderBehaviour.Instance.CurrentPreview;
+                    PieceBehaviour preview = BuilderBehaviour.Instance.CurrentPreview;
                     if (preview)
                     {
                         pb.transform.position = preview.transform.position;
@@ -73,8 +73,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Integrations.Snapping
 
         private void InitializeEBSPartCollection()
         {
-            BuildManager.Instance.PartsCollection = ScriptableObject.CreateInstance<PartsCollection>();
-            BuildManager.Instance.PartsCollection.Parts = new List<PartBehaviour>();
+            BuildManager.Instance.Pieces = new List<PieceBehaviour>();
         }
     }
 }

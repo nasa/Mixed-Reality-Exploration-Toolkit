@@ -1,5 +1,8 @@
-﻿using UnityEngine;
-using GSFC.ARVR.MRET.Common.Schemas;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 // TODO: Consider updating to descend from the Telemetry class which would mean that
 // the DataManager keys would have to be combined into a single "transform" key that produces a
@@ -80,37 +83,23 @@ public class TelemetryTransform : MonoBehaviour
     public int updateFrequency = 5;
 
     private int updateCounter = 0;
-    public DataManager dataManager;
-
-    void Start()
-    {
-        GameObject loadedProjectObject = GameObject.Find("LoadedProject");
-        if (loadedProjectObject)
-        {
-            UnityProject loadedProject = loadedProjectObject.GetComponent<UnityProject>();
-            if (loadedProject)
-            {
-                dataManager = loadedProject.dataManager;
-            }
-        }
-    }
 
     void Update()
     {
         updateCounter++;
-        if (updateCounter >= updateFrequency && dataManager)
+        if (updateCounter >= updateFrequency)
         {
             updateCounter = 0;
-            object rawXPointVal = dataManager.FindPoint(xPointName);
-            object rawYPointVal = dataManager.FindPoint(yPointName);
-            object rawZPointVal = dataManager.FindPoint(zPointName);
-            object rawWPointVal = dataManager.FindPoint(wPointName);
+            object rawXPointVal = MRET.DataManager.FindPoint(xPointName);
+            object rawYPointVal = MRET.DataManager.FindPoint(yPointName);
+            object rawZPointVal = MRET.DataManager.FindPoint(zPointName);
+            object rawWPointVal = MRET.DataManager.FindPoint(wPointName);
             Debug.Log("datamanager points: " + rawWPointVal + rawYPointVal+ rawZPointVal + rawWPointVal);
 
             float xPointVal = (float) ((rawXPointVal == null) ? 0f : rawXPointVal) * (invertXPointValue ? -1 : 1);
             float yPointVal = (float) ((rawYPointVal == null) ? 0f : rawYPointVal) * (invertYPointValue ? -1 : 1);
             float zPointVal = (float) ((rawZPointVal == null) ? 0f : rawZPointVal) * (invertZPointValue ? -1 : 1);
-            float wPointVal = (float)((rawWPointVal == null) ? 0f : rawWPointVal) * (invertWPointValue ? -1 : 1);
+            float wPointVal = (float) ((rawWPointVal == null) ? 0f : rawWPointVal) * (invertWPointValue ? -1 : 1);
 
             float finalXPointValue = xPointOffset;
             float finalYPointValue = yPointOffset;

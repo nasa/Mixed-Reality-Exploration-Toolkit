@@ -1,45 +1,28 @@
-﻿using System.Collections;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using VRTK;
+using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 
-public class InteractableLabel : VRTK_InteractableObject
+public class InteractableLabel : SceneObject
 {
-    private UndoManager undoManager;
-    private Vector3 lastSavedPosition;
-    private Quaternion lastSavedRotation;
-    private Note note;
-
-    void Start()
+    public override void BeginGrab(InputHand hand)
     {
-     
-    }
-
-    protected override void Update()
-    {
-        base.Update();
-
-       
-    }
-
-    public override void OnInteractableObjectGrabbed(InteractableObjectEventArgs e)
-    {
-        base.OnInteractableObjectGrabbed(e);
-        if(gameObject.GetComponent<Rigidbody>())
+        base.BeginGrab(hand);
+        if (gameObject.GetComponent<Rigidbody>())
         {
             gameObject.GetComponent<Rigidbody>().isKinematic = false;
             gameObject.GetComponent<Rigidbody>().useGravity = false;
         }
-        
-
     }
 
-    public override void OnInteractableObjectUngrabbed(InteractableObjectEventArgs e)
+    public override void EndGrab(InputHand hand)
     {
-        base.OnInteractableObjectUngrabbed(e);
-
+        base.EndGrab(hand);
         gameObject.GetComponent<Rigidbody>().isKinematic = true;
         gameObject.GetComponent<Rigidbody>().useGravity = false;
-
     }
 }

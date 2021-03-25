@@ -1,285 +1,318 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Components.Keyboard;
+using GSFC.ARVR.MRET.Components.UI;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.UI;
 
-public class AnimationMenuController : MonoBehaviour
+namespace GSFC.ARVR.MRET.Infrastructure.Framework.Animation
 {
-    public MRETAnimation activeAnimation
+    public class AnimationMenuController : MonoBehaviour
     {
-        get
+        public MRETAnimationPlayer ActivePlayer
         {
-            return currentAnimation;
-        }
-    }
-
-    public Text titleText;
-    public Toggle loopToggle, autoplayToggle;
-    public Slider playbackSlider;
-    
-    private MRETAnimation currentAnimation;
-    private AnimationManager animationManager;
-    private bool isRecording, isPlayingBack, isBeingDragged = false, animationSet = false, autoplayInitialized = false;
-    private int sliderDelayTimer = 0;
-    private System.DateTime pauseStart, pauseEnd;
-
-	void Start()
-    {
-        animationManager = FindObjectOfType<AnimationManager>();
-
-        if (!animationSet)
-        {
-            SetAnimation(new MRETAnimation("default_animation"));
-        }
-
-        if (autoplayToggle.isOn)
-        {
-            StartPlayingAt(0);
-        }
-    }
-
-    void Update()
-    {
-        HandlePlayback();
-
-        if (!isPlayingBack)
-        {
-            if (autoplayToggle.isOn && !autoplayInitialized)
+            get => activePlayer;
+            private set
             {
-                isPlayingBack = true;
-                StartPlayingAt(0);
-                autoplayInitialized = true;
+                activePlayer = value;
+                if (activePlayer != null)
+                {
+                    UpdateDropdownSelection(activePlayer.Name);
+                    UpdateNameEditor(activePlayer.Name);
+                    wrapmode.value = wrapmode.options.FindIndex(option => option.text == activePlayer.WrapMode.ToString());
+                    direction.value = direction.options.FindIndex(option => option.text == activePlayer.Direction.ToString());
+                    Debug.Log("[AnimationMenuController] ActivePlayer:"+ activePlayer.Name);
+                }
             }
         }
-    }
-	
-    public void SetAnimation(MRETAnimation animationToSet)
-    {
-        animationSet = true;
-        currentAnimation = animationToSet;
-        isRecording = isPlayingBack = false;
-        titleText.text = animationToSet.animationName;
-    }
 
-	public void ToggleRecording()
-    {
-        if (isRecording)
-        {
-            StopRecording();
-        }
-        else
-        {
-            StartRecording();
-        }
-    }
+        public Image recordImage;
+        public Sprite recordActive, recordInactive;
+        public Image playPauseImage;
+        public Sprite playSprite, pauseSprite;
+        public Slider playbackSlider;
+        public Dropdown dropdown;
+        public Dropdown wrapmode;
+        public Dropdown direction;
+        public Text durationLabel;
+        public GameObject animationNameEditor;
+        public GameObject keyboardEditor;
+        public bool testAnimation = false;
+        public GameObject testTarget;
 
-    public void TogglePlayback()
-    {
-        if (isPlayingBack)
-        {
-            pauseStart = System.DateTime.Now;
-            StopPlaying();
-        }
-        else
-        {
-            isBeingDragged = false;
-            pauseEnd = System.DateTime.Now;
-            StartPlayingAt(currentPlaybackIndex);
-        }
-    }
+        private MRETAnimationPlayer activePlayer;
+        private MRETAnimationManager animationManager;
+        private bool isBeingDragged = false;
+        private int sliderDelayTimer = 0;
+        private VR_InputField nameEditorScript;
+        private KeyboardManager keyboardEditorScript;
 
-    public void StartRecording()
-    {
-        StopPlaying();
-
-        animationManager.RecordTo(currentAnimation);
-        isRecording = true;
-    }
-
-    public void StopRecording()
-    {
-        animationManager.StopRecordingTo(currentAnimation);
-        isRecording = false;
-    }
-
-    public void StartPlayingAt(int index)
-    {
-        StopRecording();
-
-        if (pauseStart != null && pauseEnd != null)
+        private void OnEnable()
         {
-            playbackIterationStart += pauseEnd - pauseStart;
-        }
-        
-        if (playbackSequence == null || playbackSequence.Length == 0)
-        {
-            playbackSequence
-            = currentAnimation.GetSequenceStartingAtIndex(index);
-            currentPlaybackIndex = 0;
-        }
-        else
-        {
-            currentPlaybackIndex = index;
+            animationManager = FindObjectOfType<MRETAnimationManager>();
+            MRETAnimationManager.ActivePlayerChangeEvent += UpdateSelectedPlayer;
+            MRETAnimationManager.PlayerListChangeEvent += UpdateDropdownOptions;
+            ActivePlayer = animationManager.ActivePlayer;
+            UpdateDropdownOptions();
         }
 
-        isPlayingBack = true;
-    }
-
-    public void StartPlayingAt(System.DateTime timeToStart)
-    {
-        StopRecording();
-
-        if (pauseStart != null && pauseEnd != null)
+        void Start()
         {
-            playbackIterationStart += pauseEnd - pauseStart;
-        }
-
-        if (playbackSequence == null || playbackSequence.Length == 0)
-        {
-            playbackSequence
-            = currentAnimation.GetSequenceStartingAtIndex(currentAnimation.GetIndexOfStartTime(timeToStart));
-            currentPlaybackIndex = 0;
-        }
-        else
-        {
-            int oldPlaybackIndex = (currentPlaybackIndex > playbackSequence.Length)
-                ? playbackSequence.Length - 1 : currentPlaybackIndex;
-            currentPlaybackIndex = currentAnimation.GetIndexOfStartTime(timeToStart);
-            playbackIterationStart = System.DateTime.Now -
-                (timeToStart - playbackSequence[0].startTime);
-
-            // Update states.
-            if (oldPlaybackIndex > currentPlaybackIndex)
+            ActivePlayer = animationManager.ActivePlayer;
+            if (activePlayer == null)
             {
-                UndoAnimation();
-                for (int i = 0; i <= currentPlaybackIndex; i++)
-                {
-                    PerformAction(playbackSequence[i].action);
-                }
+                ActivePlayer = animationManager.NewAnimation();
+            }
+
+            UpdateDropdownOptions();
+        }
+
+        void Update()
+        {
+            UpdateViewElements();
+        }
+
+        // Unsubscribe to events
+        void OnDisable()
+        {
+            //Debug.Log("[AnimationMenuController] OnDisable");
+            MRETAnimationManager.ActivePlayerChangeEvent -= UpdateSelectedPlayer;
+            MRETAnimationManager.PlayerListChangeEvent -= UpdateDropdownOptions;
+        }
+
+        private void UpdateViewElements()
+        {
+            if (activePlayer == null) return;
+
+            // Update slider position
+            if (activePlayer.Duration == 0)
+            {
+                playbackSlider.value = 0;
+            }
+            else if (!isBeingDragged && activePlayer.Duration > 0)
+            {
+                playbackSlider.value = (float)(activePlayer.CurrentTime
+                            / (float)activePlayer.Duration);
+            }
+            //else if (animationManager.IsRecording)
+            //{
+            //    playbackSlider.value = 1;
+            //}
+
+            // Update Play/Pause icon
+            if (activePlayer.State == State.Running)
+            {
+                playPauseImage.GetComponent<Image>().sprite = pauseSprite;
             }
             else
             {
-                for (int i = oldPlaybackIndex; i <= currentPlaybackIndex; i++)
+                playPauseImage.GetComponent<Image>().sprite = playSprite;
+            }
+
+            // Update Record icon
+            if (animationManager.IsRecording)
+            {
+                recordImage.GetComponent<Image>().sprite = recordActive;
+            }
+            else
+            {
+                recordImage.GetComponent<Image>().sprite = recordInactive;
+            }
+
+            if (durationLabel != null)
+            {
+                durationLabel.text = TimeSpan.FromSeconds(activePlayer.Duration).ToString();
+            }
+        }
+
+        public void ToggleTest()
+        {
+            if (testAnimation)
+            {
+                //animationManager.TestAnimation(testTarget);
+                Debug.Log("[AnimationMenuController] ToggleTest:" + testAnimation);
+            }
+        }
+
+        public void SetAnimation(MRETAnimationGroup animationToSet)
+        {
+            //Debug.Log("[AnimationMenuController] SetAnimation:" + animationToSet.Name);
+            animationManager.AddSelectAnimation(animationToSet);
+        }
+
+        public void ToggleRecording()
+        {
+            if (animationManager.IsRecording)
+            {
+                animationManager.StopRecord();
+            }
+            else
+            {
+                animationManager.Record();
+            }
+        }
+
+        public void TogglePlayback()
+        {
+            if (activePlayer.State == State.Running)
+            {
+                activePlayer.PauseAnimation();
+                playPauseImage.GetComponent<Image>().sprite = playSprite;
+            }
+            else if (activePlayer.State == State.Paused)
+            {
+                activePlayer.ResumeAnimation();
+                playPauseImage.GetComponent<Image>().sprite = pauseSprite;
+            }
+            else // Stopped state
+            {
+                activePlayer.StartAnimation();
+                playPauseImage.GetComponent<Image>().sprite = pauseSprite;
+            }
+        }
+
+        public void StepBack()
+        {
+            activePlayer.StepBack();
+        }
+
+        public void StepForward()
+        {
+            activePlayer.StepForward();
+        }
+
+        public void JumpToEnd()
+        {
+            activePlayer.JumpToEnd();
+        }
+
+        public void Rewind()
+        {
+            activePlayer.Rewind();
+        }
+
+        public void StartDragging()
+        {
+            isBeingDragged = true;
+            Debug.Log("[AnimationMenuController] StartDragging:" + isBeingDragged);
+        }
+
+        public void StopDragging()
+        {
+            isBeingDragged = false;
+            Debug.Log("[AnimationMenuController] StopDragging:" + isBeingDragged);
+        }
+
+        public void NewAnimation()
+        {
+            animationManager.NewAnimation();
+        }
+
+        public void AnimationNameChange(String name)
+        {
+            Debug.Log("[AnimationMenuController] AnimationNameChange: " + name);
+            if (ActivePlayer != null)
+            {
+                ActivePlayer.Name = name;
+                UpdateDropdownOptions();
+            }
+        }
+
+        public void SliderValueChanged()
+        {
+            if (isBeingDragged)
+            {
+                float offsetRatio = playbackSlider.value;
+
+                // Reduce the overhead of dragging the slider by throwing out some of the events
+                // except when the slider is near the lower and upper limits.
+                if (sliderDelayTimer++ < 2 && offsetRatio > 0.1 && offsetRatio < 0.9)
                 {
-                    PerformAction(playbackSequence[i].action);
+                    return;
                 }
+                sliderDelayTimer = 0;
+
+                Debug.Log("[AnimationMenuController] SliderValueChanged: " + offsetRatio);
+                activePlayer.JumpToTime((int)(offsetRatio * (float)activePlayer.Duration));
             }
         }
-        
-        isPlayingBack = true;
-    }
 
-    public void StopPlaying()
-    {
-        isPlayingBack = false;
-    }
-
-    public void StartDragging()
-    {
-        isBeingDragged = true;
-    }
-
-    public void StopDragging()
-    {
-        isBeingDragged = false;
-    }
-
-    public void SliderValueChanged()
-    {
-        if (isBeingDragged)
+        void DropdownValueChanged(Dropdown dropdown)
         {
-            if (sliderDelayTimer++ < 16)
+            Debug.Log("[AnimationMenuController] DropdownValueChanged Event " + dropdown.options[dropdown.value]);
+            MRETAnimationPlayer selected = animationManager.SelectPlayer(dropdown.options[dropdown.value].text);
+        }
+
+        public void AnimationListValueChanged()
+        {
+            Debug.Log("[AnimationMenuController] DropdownValueChanged Event " + dropdown.options[dropdown.value]);
+            MRETAnimationPlayer selected = animationManager.SelectPlayer(dropdown.options[dropdown.value].text);
+            if (selected != null) ActivePlayer = selected;
+        }
+
+        public void WrapmodeValueChanged()
+        {
+            Debug.Log("[AnimationMenuController] WrapmodeValueChanged Event " + wrapmode.options[wrapmode.value]);
+            ActivePlayer.WrapMode = (WrapMode)Enum.Parse(typeof(WrapMode), wrapmode.options[wrapmode.value].text);
+        }
+
+        public void DirectionValueChanged()
+        {
+            Debug.Log("[AnimationMenuController] DirectionValueChanged Event " + direction.options[direction.value]);
+            ActivePlayer.Direction = (Direction)Enum.Parse(typeof(Direction), direction.options[direction.value].text);
+        }
+
+        void UpdateSelectedPlayer()
+        {
+            Debug.Log("[AnimationMenuController] [AnimationMenuController] UpdateSelectedAnimation:");
+            ActivePlayer = animationManager.ActivePlayer;
+        }
+
+        private void UpdateNameEditor(string name)
+        {
+            if (nameEditorScript == null)
             {
-                return;
+                nameEditorScript = animationNameEditor.GetComponent<VR_InputField>();
             }
 
-            if (playbackSequence != null && playbackSequence.Length > 0)
+            nameEditorScript.SetTextWithoutNotify(name);
+            nameEditorScript.SetTextWithoutNotify(name);
+
+            if (keyboardEditorScript == null)
             {
-                System.DateTime startofEpoch = new System.DateTime(1970, 1, 1, 0, 0, 0);
-                System.TimeSpan diffTime = playbackSequence[playbackSequence.Length - 1].startTime
-                    - playbackSequence[0].startTime;
-                System.TimeSpan startTimeEpoch = playbackSequence[0].startTime - startofEpoch;
-                System.DateTime timeToStart = startofEpoch.AddMilliseconds(
-                    playbackSlider.value * diffTime.TotalMilliseconds) + startTimeEpoch;
-                StopPlaying();
-                StartPlayingAt(timeToStart);
+                //keyboardEditorScript = keyboardEditor.GetComponent<KeyboardManager>();
             }
 
-            sliderDelayTimer = 0;
-        }
-    }
-
-#region Playback
-    private int currentPlaybackIndex = 0;
-    private MRETAnimation.MRETAnimationClip[] playbackSequence;
-    private System.DateTime playbackIterationStart;
-    void HandlePlayback()
-    {
-        if (isPlayingBack && currentPlaybackIndex == 0)
-        {
-            UndoAnimation();
-            playbackIterationStart = System.DateTime.Now;
+            //keyboardEditorScript.enteredText = "";
         }
 
-        if (isPlayingBack && playbackSequence != null)
+        private void UpdateDropdownSelection(String selection)
         {
-            if (!isBeingDragged && playbackSequence.Length > 0)
+            int index = dropdown.options.FindIndex(0, (e => e.text.Equals(selection)));
+            dropdown.SetValueWithoutNotify(index);
+        }
+
+        private void UpdateDropdownOptions()
+        {
+            List<string> dropOptions = new List<string>();
+            foreach (MRETAnimationPlayer anim in animationManager.Players)
             {
-                if (currentPlaybackIndex >= playbackSequence.Length)
-                {
-                    if (loopToggle.isOn)
-                    {
-                        currentPlaybackIndex = 0;
-                    }
-                    else
-                    {
-                        isPlayingBack = false;
-                    }
-                }
-                else
-                {
-                    if (System.DateTime.Now - playbackIterationStart >=
-                        playbackSequence[currentPlaybackIndex].startTime - playbackSequence[0].startTime)
-                    {
-                        PerformAction(playbackSequence[currentPlaybackIndex++].action);
-                    }
-                }
+                dropOptions.Add(anim.Name);
             }
 
-            if (!isBeingDragged && playbackSequence.Length > 0)
+            //Clear the old options of the Dropdown menu
+            dropdown.ClearOptions();
+            //Add the current List of animations
+            dropdown.AddOptions(dropOptions);
+            // Reset selection
+            if (activePlayer != null)
             {
-                //Debug.Log("setting slider");
-                playbackSlider.value = (float) ((System.DateTime.Now - playbackIterationStart).TotalMilliseconds /
-                    (playbackSequence[playbackSequence.Length - 1].startTime - playbackSequence[0].startTime).TotalMilliseconds);
+                UpdateDropdownSelection(activePlayer.Name);
             }
         }
     }
-
-    void UndoAnimation()
-    {
-        MRETAnimation.MRETAnimationClip[] clips = currentAnimation.GetSequenceStartingAtIndex(0);
-        for (int i = clips.Length - 1; i >= 0; i--)
-        {
-            PerformAction(clips[i].inverse);
-        }
-    }
-
-    void PerformAction(BaseAction actionToPerform)
-    {
-        if (actionToPerform is ProjectAction)
-        {
-            ((ProjectAction) actionToPerform).PerformAction();
-        }
-        else if (actionToPerform is RigidbodyAction)
-        {
-            ((RigidbodyAction) actionToPerform).PerformAction();
-        }
-        else if (actionToPerform is ViewAction)
-        {
-            ((ViewAction) actionToPerform).PerformAction();
-        }
-        else if (actionToPerform is AnnotationAction)
-        {
-            ((AnnotationAction) actionToPerform).PerformAction();
-        }
-    }
-#endregion
 }

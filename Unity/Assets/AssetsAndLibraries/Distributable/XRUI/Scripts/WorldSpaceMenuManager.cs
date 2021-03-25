@@ -1,49 +1,29 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class WorldSpaceMenuManager : MonoBehaviour
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+
+namespace GSFC.ARVR.XRUI.WorldSpaceMenu
 {
-    public void DimMenu()
+    public class WorldSpaceMenuManager : MonoBehaviour
     {
-        gameObject.SetActive(false);
-        if (VRDesktopSwitcher.isDesktopEnabled())
+        public void DimMenu()
         {
-            ControllerMenuManager cmm = FindObjectOfType<ControllerMenuManager>();
-            if (cmm)
+            gameObject.SetActive(false);
+            foreach (InputHand hand in MRET.Infrastructure.Framework.MRET.InputRig.hands)
             {
-                cmm.UnDimMenu();
+                ControllerMenu.ControllerMenu men = hand.GetComponentInChildren<ControllerMenu.ControllerMenu>();
+                if (men)
+                {
+                    men.UnDimMenu();
+                }
             }
         }
-        else
+
+        public void UnDimMenu()
         {
-            ControllerMenuManager leftMan = VRTK.VRTK_DeviceFinder.GetControllerLeftHand().GetComponentInChildren<ControllerMenuManager>();
-            if (leftMan)
-            {
-                leftMan.UnDimMenu();
-            }
-
-            ControllerMenuManager rightMan = VRTK.VRTK_DeviceFinder.GetControllerRightHand().GetComponentInChildren<ControllerMenuManager>();
-            if (rightMan)
-            {
-                rightMan.UnDimMenu();
-            }
-        }
-    }
-
-    public void UnDimMenu()
-    {
-        gameObject.SetActive(true);
-    }
-
-    private void Awake()
-    {
-        // If in desktop mode, remove VRTK UI Canvases and add Graphic Raycaster.
-        if (VRDesktopSwitcher.isDesktopEnabled())
-        {
-            foreach (VRTK.VRTK_UICanvas canvas in GetComponentsInChildren<VRTK.VRTK_UICanvas>())
-            {
-                canvas.gameObject.AddComponent<UnityEngine.UI.GraphicRaycaster>();
-                Destroy(canvas);
-            }
+            gameObject.SetActive(true);
         }
     }
 }

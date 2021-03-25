@@ -1,5 +1,8 @@
-﻿using UnityEngine;
-using VRTK;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 
 /// <summary>
 /// Provides simple rotation around a point of a target object based on controller motion when the specified buttons are pressed on both 
@@ -12,15 +15,14 @@ public class RotateObjectTransform : MonoBehaviour
 		TriggerPress,
 		GripPress,
 	}
-		
-	GameObject leftController;
-	GameObject rightController;
+
+    public InputHand hand;
+	public GameObject leftController;
+	public GameObject rightController;
 	private static bool leftControllerPressed;
 	private static bool rightControllerPressed;
 	private static Vector3 referenceDirection;
 	private static Vector3 rotationRefPoint;
-	private ControllerInteractionEventHandler controllerPressedEventHandler;
-	private ControllerInteractionEventHandler controllerReleasedEventHandler;
 
 	[Tooltip("Enables two controller rotation of target object")]
 	public bool rotationEnabled = true;
@@ -39,61 +41,13 @@ public class RotateObjectTransform : MonoBehaviour
 	[Tooltip("Translation step multiplier to exagerate or limit rotation")]
 	public float stepMultiplier = 1.0f;
 
-	protected virtual void Awake()
+	public void HandleControllerReleased()
 	{
-		VRTK_SDKManager.instance.AddBehaviourToToggleOnLoadedSetupChange(this);
-	}
-
-	protected virtual void OnEnable()
-	{
-		ResetConfiguration();
-	}
-
-	protected virtual void OnDestroy()
-	{
-		VRTK_SDKManager.instance.RemoveBehaviourToToggleOnLoadedSetupChange(this);
-	}
-
-	public virtual void ResetConfiguration()
-	{
-		// TODO do we have to reregister for these events?
-		if (controllerPressedEventHandler == null)
-		{
-			controllerPressedEventHandler = new VRTK.ControllerInteractionEventHandler(handleControllerPressed);
-			if (activationButton == ActivationButton.TriggerPress) 
-			{
-				GetComponent<VRTK.VRTK_ControllerEvents>().TriggerPressed += controllerPressedEventHandler;
-			} 
-			if (activationButton == ActivationButton.GripPress) 
-			{
-				GetComponent<VRTK.VRTK_ControllerEvents>().GripPressed += controllerPressedEventHandler;
-			}
-		}
-
-		if (controllerReleasedEventHandler == null)
-		{
-			controllerReleasedEventHandler = new VRTK.ControllerInteractionEventHandler(handleControllerReleased);
-			if (activationButton == ActivationButton.TriggerPress) 
-			{
-				GetComponent<VRTK.VRTK_ControllerEvents>().TriggerReleased += controllerReleasedEventHandler;
-			} 
-			if (activationButton == ActivationButton.GripPress) 
-			{
-				GetComponent<VRTK.VRTK_ControllerEvents> ().GripReleased += controllerReleasedEventHandler;
-			}
-		}
-
-		leftController = VRTK_DeviceFinder.GetControllerLeftHand();
-		rightController = VRTK_DeviceFinder.GetControllerRightHand();
-	}
-
-	private void handleControllerReleased(object sender, VRTK.ControllerInteractionEventArgs e)
-	{
-		if (VRTK_DeviceFinder.GetControllerIndex(leftController) == e.controllerReference.index)
+		if (hand.handedness == InputHand.Handedness.left)
 		{
 			leftControllerPressed = false;
 		}
-		else if (VRTK_DeviceFinder.GetControllerIndex(rightController) == e.controllerReference.index)
+		else if (hand.handedness == InputHand.Handedness.right)
 		{
 			rightControllerPressed = false;
 		}
@@ -104,9 +58,9 @@ public class RotateObjectTransform : MonoBehaviour
 		}
 	}
 
-	private void handleControllerPressed(object sender, VRTK.ControllerInteractionEventArgs e)
+	public void HandleControllerPressed()
 	{
-		if (VRTK_DeviceFinder.GetControllerIndex(leftController) == e.controllerReference.index)
+		if (hand.handedness == InputHand.Handedness.left)
 		{
 			leftControllerPressed = true;
 			if (rightControllerPressed) 
@@ -121,7 +75,7 @@ public class RotateObjectTransform : MonoBehaviour
 				}
 			}
 		}
-		else if (VRTK_DeviceFinder.GetControllerIndex(rightController) == e.controllerReference.index)
+		else if (hand.handedness == InputHand.Handedness.right)
 		{
 			rightControllerPressed = true;
 			if (leftControllerPressed) 

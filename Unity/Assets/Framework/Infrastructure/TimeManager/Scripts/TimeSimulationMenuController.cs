@@ -1,8 +1,12 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 using GSFC.ARVR.MRET.Telemetry.UI;
 using GSFC.ARVR.MRET.Common.Schemas.TimeSimulationTypes;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 namespace GSFC.ARVR.MRET.Time.Simulation
 {
@@ -17,11 +21,6 @@ namespace GSFC.ARVR.MRET.Time.Simulation
      */
     public class TimeSimulationMenuController : MonoBehaviour
     {
-        public static readonly string NAME = nameof(TimeSimulationMenuController);
-
-        [Tooltip("The TimeManager being used to supply the simulated date/time. If not supplied, one will be located at Start")]
-        public TimeManager timeManager;
-
         // Start time slider
         public InputField startTimeInputField;
         public Slider startTimeSlider;
@@ -56,18 +55,6 @@ namespace GSFC.ARVR.MRET.Time.Simulation
          */
         void Start()
         {
-            // Located the TimeManager if one wasn't assigned to the script in the editor
-            if (timeManager == null)
-            {
-                timeManager = SessionManager.instance.timeManager;
-            }
-
-            // Set the transform
-            if (!timeManager)
-            {
-                Debug.LogError("[" + NAME + "]: TimeManager reference unavailable.");
-            }
-
             // Initializer the validation functions
             if (updateRateInputField)
             {
@@ -94,9 +81,9 @@ namespace GSFC.ARVR.MRET.Time.Simulation
         protected virtual void UpdateTimeSimulation()
         {
             // Assign the current TimeManager settings to our internal TimeSimulation
-            timeSimulation.startTime = timeManager.startTime;
-            timeSimulation.updateRate = timeManager.updateRate;
-            timeSimulation.paused = timeManager.pause;
+            timeSimulation.startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
+            timeSimulation.updateRate = Infrastructure.Framework.MRET.TimeManager.updateRate;
+            timeSimulation.paused = Infrastructure.Framework.MRET.TimeManager.pause;
         }
 
         /**
@@ -109,12 +96,12 @@ namespace GSFC.ARVR.MRET.Time.Simulation
          */
         protected virtual void ConfigureTimeManager(TimeSimulation timeSimulation, bool reset)
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
-                timeManager.startTime = timeSimulation.startTime;
-                timeManager.updateRate = timeSimulation.updateRate;
-                timeManager.pause = timeSimulation.paused;
-                if (reset) timeManager.ResetTime();
+                Infrastructure.Framework.MRET.TimeManager.startTime = timeSimulation.startTime;
+                Infrastructure.Framework.MRET.TimeManager.updateRate = timeSimulation.updateRate;
+                Infrastructure.Framework.MRET.TimeManager.pause = timeSimulation.paused;
+                if (reset) Infrastructure.Framework.MRET.TimeManager.ResetTime();
             }
         }
 
@@ -180,12 +167,12 @@ namespace GSFC.ARVR.MRET.Time.Simulation
          */
         public void UpdateRateInputFieldChanged()
         {
-            if (updateRateInputField && timeManager)
+            if (updateRateInputField && Infrastructure.Framework.MRET.TimeManager)
             {
                 if (float.TryParse(updateRateInputField.text, out float updateRate))
                 {
                     // Update the time manager
-                    timeManager.updateRate = updateRate;
+                    Infrastructure.Framework.MRET.TimeManager.updateRate = updateRate;
                 }
                 else
                 {
@@ -215,12 +202,12 @@ namespace GSFC.ARVR.MRET.Time.Simulation
          */
         public void UpdateRateSliderValueChanged()
         {
-            if (updateRateSlider && timeManager)
+            if (updateRateSlider && Infrastructure.Framework.MRET.TimeManager)
             {
                 if (updateRateSliderIsBeingDragged)
                 {
                     // Update the TimeManager
-                    timeManager.updateRate = updateRateSlider.value;
+                    Infrastructure.Framework.MRET.TimeManager.updateRate = updateRateSlider.value;
                 }
             }
         }
@@ -230,12 +217,12 @@ namespace GSFC.ARVR.MRET.Time.Simulation
          */
         public void StartTimeInputFieldChanged()
         {
-            if (startTimeInputField && timeManager)
+            if (startTimeInputField && Infrastructure.Framework.MRET.TimeManager)
             {
                 if (DateTime.TryParse(startTimeInputField.text, out DateTime startTime))
                 {
                     // Update the TimeManager
-                    timeManager.startTime = DateTime.SpecifyKind(startTime, DateTimeKind.Utc);
+                    Infrastructure.Framework.MRET.TimeManager.startTime = DateTime.SpecifyKind(startTime, DateTimeKind.Utc);
                 }
                 else
                 {
@@ -265,12 +252,12 @@ namespace GSFC.ARVR.MRET.Time.Simulation
          */
         public void StartTimeSliderValueChanged()
         {
-            if (startTimeSlider && timeManager)
+            if (startTimeSlider && Infrastructure.Framework.MRET.TimeManager)
             {
                 if (startTimeSliderIsBeingDragged)
                 {
                     // Update the TimeManager
-                    timeManager.startTime = startTimeDateTimeSlider.GetDateTime(startTimeSlider.value);
+                    Infrastructure.Framework.MRET.TimeManager.startTime = startTimeDateTimeSlider.GetDateTime(startTimeSlider.value);
                 }
             }
         }
@@ -280,10 +267,10 @@ namespace GSFC.ARVR.MRET.Time.Simulation
          */
         public void PlayPauseToggleValueChanged()
         {
-            if (playPauseToggle && timeManager)
+            if (playPauseToggle && Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the paused state of the TimeManager
-                timeManager.pause = !playPauseToggle.isOn;
+                Infrastructure.Framework.MRET.TimeManager.pause = !playPauseToggle.isOn;
             }
         }
 
@@ -292,10 +279,10 @@ namespace GSFC.ARVR.MRET.Time.Simulation
          */
         public void ResetButtonClicked()
         {
-            if (resetButton && timeManager)
+            if (resetButton && Infrastructure.Framework.MRET.TimeManager)
             {
                 // Reset the TimeManager
-                timeManager.ResetTime();
+                Infrastructure.Framework.MRET.TimeManager.ResetTime();
             }
         }
 
@@ -304,178 +291,178 @@ namespace GSFC.ARVR.MRET.Time.Simulation
 
         public void StartTimePlusClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddDays(1d);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddDays(1d);
             }
         }
 
         public void StartTimeYearClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddYears(1);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddYears(1);
             }
         }
 
         public void StartTimeYearReverseClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddYears(-1);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddYears(-1);
             }
         }
 
         public void StartTimeMonthClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddMonths(1);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddMonths(1);
             }
         }
 
         public void StartTimeMonthReverseClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddMonths(-1);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddMonths(-1);
             }
         }
 
         public void StartTimeDayClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddDays(1d);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddDays(1d);
             }
         }
 
         public void StartTimeDayReverseClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddDays(-1d);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddDays(-1d);
             }
         }
 
         public void StartTimeMinClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddMinutes(1d);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddMinutes(1d);
             }
         }
 
         public void StartTimeMinReverseClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddMinutes(-1d);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddMinutes(-1d);
             }
         }
 
         public void StartTimeHourClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddHours(1d);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddHours(1d);
             }
         }
 
         public void StartTimeHourReverseClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddHours(-1d);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddHours(-1d);
             }
         }
 
         public void StartTimeSecClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddSeconds(1d);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddSeconds(1d);
             }
         }
 
         public void StartTimeSecReverseClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddSeconds(-1d);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddSeconds(-1d);
             }
         }
 
         public void StartTimeZeroClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.startTime = DateTime.UtcNow;
+                Infrastructure.Framework.MRET.TimeManager.startTime = DateTime.UtcNow;
             }
         }
 
         public void StartTimeMinusClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Add time to the existing start time
-                DateTime startTime = timeManager.startTime;
+                DateTime startTime = Infrastructure.Framework.MRET.TimeManager.startTime;
 
                 // Update the TimeManager
-                timeManager.startTime = startTime.AddDays(-1d);
+                Infrastructure.Framework.MRET.TimeManager.startTime = startTime.AddDays(-1d);
             }
         }
 
@@ -486,100 +473,100 @@ namespace GSFC.ARVR.MRET.Time.Simulation
 
         public void UpdateRatePlusClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.updateRate++;
+                Infrastructure.Framework.MRET.TimeManager.updateRate++;
             }
         }
 
         public void UpdateRateDayClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.updateRate += 86400f;
+                Infrastructure.Framework.MRET.TimeManager.updateRate += 86400f;
             }
         }
 
         public void UpdateRateDayReverseClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.updateRate -= 86400f;
+                Infrastructure.Framework.MRET.TimeManager.updateRate -= 86400f;
             }
         }
 
         public void UpdateRateMinClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.updateRate += 60f;
+                Infrastructure.Framework.MRET.TimeManager.updateRate += 60f;
             }
         }
 
         public void UpdateRateMinReverseClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.updateRate -= 60f;
+                Infrastructure.Framework.MRET.TimeManager.updateRate -= 60f;
             }
         }
 
         public void UpdateRateHourClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.updateRate += 3600f;
+                Infrastructure.Framework.MRET.TimeManager.updateRate += 3600f;
             }
         }
 
         public void UpdateRateHourReverseClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.updateRate -= 3600f;
+                Infrastructure.Framework.MRET.TimeManager.updateRate -= 3600f;
             }
         }
 
         public void UpdateRateSecClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.updateRate += 1f;
+                Infrastructure.Framework.MRET.TimeManager.updateRate += 1f;
             }
         }
 
         public void UpdateRateSecReverseClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.updateRate -= 1f;
+                Infrastructure.Framework.MRET.TimeManager.updateRate -= 1f;
             }
         }
 
         public void UpdateRateZeroClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.updateRate = 0f;
+                Infrastructure.Framework.MRET.TimeManager.updateRate = 0f;
             }
         }
 
         public void UpdateRateMinusClicked()
         {
-            if (timeManager)
+            if (Infrastructure.Framework.MRET.TimeManager)
             {
                 // Update the TimeManager
-                timeManager.updateRate--;
+                Infrastructure.Framework.MRET.TimeManager.updateRate--;
             }
         }
 

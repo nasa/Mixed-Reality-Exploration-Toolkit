@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 // This script handles collision behavior. It should be attached to game
 //  objects when they are being picked up, and removed when being put down.
@@ -6,11 +10,8 @@ public class CollisionHandler : MonoBehaviour
 {
     public GameObject grabbingObj;
 
-    private SessionConfiguration sessionConfig;
     private MeshRenderer[] objectRenderers;
     private Material[] objectMaterials;
-    private Material collisionMaterial;
-    private AudioClip collisionClip;
     private AudioSource collisionSound;
     private bool isColliding = false, first = true;
 
@@ -37,27 +38,6 @@ public class CollisionHandler : MonoBehaviour
             objectMaterials[i++] = rend.material;
         }
 
-        /////////////////////////// Get Session Configuration. ///////////////////////////
-        GameObject sessionManager = GameObject.Find("SessionManager");
-        if (sessionManager)
-        {
-            sessionConfig = sessionManager.GetComponent<SessionConfiguration>();
-            if (sessionConfig)
-            {
-                collisionMaterial = sessionConfig.collisionMaterial;
-                collisionClip = sessionConfig.collisionSound;
-            }
-            else
-            {
-                Debug.LogError("[CollisionHandler->Start] Unable to get Session Configuration.");
-            }
-        }
-        else
-        {
-            Debug.LogError("[CollisionHandler->Start] Unable to get Session Manager.");
-        }
-        //////////////////////////////////////////////////////////////////////////////////
-
         LoadCollisionSound();
     }
 
@@ -66,7 +46,8 @@ public class CollisionHandler : MonoBehaviour
         if (isColliding)
         {
             int strength = Mathf.RoundToInt(Mathf.Lerp(0, 3999, 500));
-            VRTK.VRTK_ControllerHaptics.TriggerHapticPulse(VRTK.VRTK_ControllerReference.GetControllerReference(grabbingObj), strength);
+            // TODO.
+            //VRTK.VRTK_ControllerHaptics.TriggerHapticPulse(VRTK.VRTK_ControllerReference.GetControllerReference(grabbingObj), strength);
 
             if (!collisionSound.isPlaying && (collisionSound.clip.loadState == AudioDataLoadState.Loaded))
             {
@@ -78,7 +59,7 @@ public class CollisionHandler : MonoBehaviour
     private void LoadCollisionSound()
     {
         collisionSound = gameObject.AddComponent<AudioSource>();
-        collisionSound.clip = collisionClip;
+        collisionSound.clip = MRET.CollisionSound;
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -88,7 +69,7 @@ public class CollisionHandler : MonoBehaviour
         // Change material to collision material.
         foreach (MeshRenderer rend in objectRenderers)
         {
-            rend.material = collisionMaterial;
+            rend.material = MRET.CollisionMaterial;
         }
     }
 

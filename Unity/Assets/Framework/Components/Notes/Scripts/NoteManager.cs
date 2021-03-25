@@ -1,180 +1,136 @@
-﻿using UnityEngine;
-using VRTK;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using System.Collections.Generic;
 using GSFC.ARVR.MRET.Common.Schemas;
 
-public class NoteManager : MonoBehaviour
+namespace GSFC.ARVR.MRET.Components.Notes
 {
-    public bool creatingNotes = false;
-	public static GameObject notePrefab;
-	public GameObject _notePrefab;
-    public GameObject leftController, rightController;
-    public int noteCount = 0;
-
-    private UndoManager undoManager;
-
-    void Start()
-	{
-		notePrefab = _notePrefab;
-
-        if (!VRDesktopSwitcher.isDesktopEnabled())
-        {
-            leftController.GetComponent<VRTK_ControllerEvents>().TouchpadPressed += new ControllerInteractionEventHandler(TouchpadPressed);
-            rightController.GetComponent<VRTK_ControllerEvents>().TouchpadPressed += new ControllerInteractionEventHandler(TouchpadPressed);
-        }
-        else
-        {
-            EventManager.OnLeftClick += TouchpadPressed;
-        }
-
-        undoManager = FindObjectOfType<UndoManager>();
-    }
-
-    private void TouchpadPressed()
+    public class NoteManager : MonoBehaviour
     {
-        if (creatingNotes)
+        public static readonly string notesKey = "MRET.INTERNAL.TOOLS.NOTES";
+
+        public bool creatingNotes
         {
-            GameObject control = GameObject.Find("FPSController");
-            Vector3 pos = new Vector3(control.transform.position.x,
-                control.transform.position.y + 1, control.transform.position.z + 1);
-            Quaternion rot = new Quaternion(0f, 0f, 0f, 0f);
-            Note n = Note.MakeNote(notePrefab, pos, rot, noteCount++);
-            n.guid = System.Guid.NewGuid();
-            n.Maximize();
-            creatingNotes = false;
-
-            NoteType nType = new NoteType()
+            set
             {
-                GUID = n.guid.ToString(),
-                Title = "",
-                Details = "",
-                Drawings = new NoteDrawingsType()
-                {
-                    ID = new int[0],
-                    NoteDrawings = new NoteDrawingType[0]
-                },
-                State = NoteTypeState.Maximized,
-                Transform = new UnityTransformType()
-                {
-                    Position = new Vector3Type()
-                    {
-                        X = pos.x,
-                        Y = pos.y,
-                        Z = pos.z
-                    },
-                    Rotation = new QuaternionType()
-                    {
-                        X = rot.x,
-                        Y = rot.y,
-                        Z = rot.z
-                    },
-                    Scale = new Vector3Type()
-                    {
-                        X = 1,
-                        Y = 1,
-                        Z = 1
-                    }
-                }
-            };
-            undoManager.AddAction(ProjectAction.AddNoteAction(nType, "Note" + (noteCount - 1), pos, rot), ProjectAction.DeleteNoteAction("Note" + (noteCount - 1)));
+                DataManager.instance.SaveValue(new DataManager.DataValue(notesKey, value));
+            }
+            get
+            {
+                return (bool) DataManager.instance.FindPoint(notesKey);
+            }
         }
-    }
+        public static GameObject notePrefab;
+        public GameObject _notePrefab;
+        public GameObject leftController, rightController;
+        public int noteCount = 0;
 
-    private void TouchpadPressed (object sender, ControllerInteractionEventArgs e)
-	{
-        if (creatingNotes)
+        private UndoManager undoManager;
+
+        public void Initialize()
         {
-            Vector3 pos = e.controllerReference.actual.transform.position;
-            Quaternion rot = Quaternion.Euler(0, e.controllerReference.actual.transform.rotation.eulerAngles.y, 0);
-            Note n = Note.MakeNote(notePrefab, pos, rot, noteCount++);
-            n.guid = System.Guid.NewGuid();
-            n.Maximize();
+            notePrefab = _notePrefab;
+            undoManager = FindObjectOfType<UndoManager>();
             creatingNotes = false;
-
-            NoteType nType = new NoteType()
-            {
-                GUID = n.guid.ToString(),
-                Title = "",
-                Details = "",
-                Drawings = new NoteDrawingsType()
-                {
-                    ID = new int[0],
-                    NoteDrawings = new NoteDrawingType[0]
-                },
-                State = NoteTypeState.Maximized,
-                Transform = new UnityTransformType()
-                {
-                    Position = new Vector3Type()
-                    {
-                        X = pos.x,
-                        Y = pos.y,
-                        Z = pos.z
-                    },
-                    Rotation = new QuaternionType()
-                    {
-                        X = rot.x,
-                        Y = rot.y,
-                        Z = rot.z
-                    },
-                    Scale = new Vector3Type()
-                    {
-                        X = 1,
-                        Y = 1,
-                        Z = 1
-                    }
-                }
-            };
-            undoManager.AddAction(ProjectAction.AddNoteAction(nType, "Note" + (noteCount - 1), pos, rot), ProjectAction.DeleteNoteAction("Note" + (noteCount - 1)));
         }
-	}
+
+        public void CreateNote(GameObject device)
+        {
+            if (creatingNotes)
+            {
+                Vector3 pos = device.transform.position;
+                Quaternion rot = device.transform.rotation;
+                Note n = Note.MakeNote(notePrefab, pos, rot, noteCount++);
+                n.guid = System.Guid.NewGuid();
+                n.Maximize();
+
+                NoteType nType = new NoteType()
+                {
+                    GUID = n.guid.ToString(),
+                    Title = "",
+                    Details = "",
+                    Drawings = new NoteDrawingsType()
+                    {
+                        ID = new int[0],
+                        NoteDrawings = new NoteDrawingType[0]
+                    },
+                    State = NoteTypeState.Maximized,
+                    Transform = new UnityTransformType()
+                    {
+                        Position = new Vector3Type()
+                        {
+                            X = pos.x,
+                            Y = pos.y,
+                            Z = pos.z
+                        },
+                        Rotation = new QuaternionType()
+                        {
+                            X = rot.x,
+                            Y = rot.y,
+                            Z = rot.z
+                        },
+                        Scale = new Vector3Type()
+                        {
+                            X = 1,
+                            Y = 1,
+                            Z = 1
+                        }
+                    }
+                };
+                undoManager.AddAction(ProjectAction.AddNoteAction(nType, "Note" + (noteCount - 1), pos, rot), ProjectAction.DeleteNoteAction("Note" + (noteCount - 1), nType.GUID));
+            }
+        }
 
 #region NoteReinitialization
-    private class NoteInitializationInfo
-    {
-        public GameObject noteObject;
-        public bool needToDisable = false;
-        public bool needToEnable = false;
-        public int enableCountDown = 0;
-    }
-
-    private List<NoteInitializationInfo> notesToReInit = new List<NoteInitializationInfo>();
-
-    public void ReinitializeNote(InteractableNote noteToReinitialize)
-    {
-        notesToReInit.Add(new NoteInitializationInfo()
+        private class NoteInitializationInfo
         {
-            noteObject = noteToReinitialize.gameObject,
-            needToDisable = true,
-            needToEnable = false,
-            enableCountDown = 0
-        });
-    }
+            public GameObject noteObject;
+            public bool needToDisable = false;
+            public bool needToEnable = false;
+            public int enableCountDown = 0;
+        }
 
-    void Update()
-    {
-        List<int> noteInfoToRemove = new List<int>();
-        foreach (NoteInitializationInfo noteToReInit in notesToReInit)
+        private List<NoteInitializationInfo> notesToReInit = new List<NoteInitializationInfo>();
+
+        public void ReinitializeNote(InteractableNote noteToReinitialize)
         {
-            if (noteToReInit.needToDisable)
+            notesToReInit.Add(new NoteInitializationInfo()
             {
-                noteToReInit.noteObject.SetActive(false);
-                noteToReInit.needToDisable = false;
-                noteToReInit.needToEnable = true;
-            }
-            else if (noteToReInit.needToEnable)
+                noteObject = noteToReinitialize.gameObject,
+                needToDisable = true,
+                needToEnable = false,
+                enableCountDown = 0
+            });
+        }
+
+        void Update()
+        {
+            List<int> noteInfoToRemove = new List<int>();
+            foreach (NoteInitializationInfo noteToReInit in notesToReInit)
             {
-                if (noteToReInit.enableCountDown-- < 0)
+                if (noteToReInit.needToDisable)
                 {
-                    noteToReInit.noteObject.SetActive(true);
-                    noteToReInit.needToEnable = false;
+                    noteToReInit.noteObject.SetActive(false);
+                    noteToReInit.needToDisable = false;
+                    noteToReInit.needToEnable = true;
+                }
+                else if (noteToReInit.needToEnable)
+                {
+                    if (noteToReInit.enableCountDown-- < 0)
+                    {
+                        noteToReInit.noteObject.SetActive(true);
+                        noteToReInit.needToEnable = false;
+                    }
                 }
             }
-        }
 
-        foreach (int noteIndex in noteInfoToRemove)
-        {
-            notesToReInit.RemoveAt(noteIndex);
+            foreach (int noteIndex in noteInfoToRemove)
+            {
+                notesToReInit.RemoveAt(noteIndex);
+            }
         }
-    }
 #endregion
+    }
 }

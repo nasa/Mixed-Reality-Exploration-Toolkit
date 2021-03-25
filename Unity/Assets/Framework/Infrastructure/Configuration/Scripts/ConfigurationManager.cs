@@ -1,10 +1,11 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using System.IO;
 using UnityEngine;
-using System.Xml;
 using System.Xml.Serialization;
 using System.Collections.Generic;
-using GSFC.ARVR.MRET.Common.Schemas;
 
 // TODO: This all needs to be refactored. It's atrocious.
 
@@ -24,37 +25,6 @@ public class ProjectInfo
     }
 }
 
-public class AnimationInfo
-{
-    public string name = "UNSET";
-    public string animationFile = "UNSET";
-    public DateTime timeStamp = new DateTime();
-
-    public AnimationInfo(string _name, string _animationFile, DateTime _timeStamp)
-    {
-        name = _name;
-        animationFile = _animationFile;
-        timeStamp = _timeStamp;
-    }
-}
-
-public class AnnotationInfo
-{
-    public string name = "UNSET";
-    public string annotationFile = "UNSET";
-    public DateTime timeStamp = new DateTime();
-    public enum AnnotationType { Text, Audio }
-    public AnnotationType type;
-
-    public AnnotationInfo(string _name, string _annotationFile, AnnotationType _type, DateTime _timeStamp)
-    {
-        name = _name;
-        annotationFile = _annotationFile;
-        type = _type;
-        timeStamp = _timeStamp;
-    }
-}
-
 public class HudInfo
 {
     public string name = "UNSET";
@@ -66,169 +36,6 @@ public class HudInfo
     {
         name = _name;
         hudFile = _hudFile;
-        timeStamp = _timeStamp;
-    }
-}
-
-public class AssetInfo
-{
-    public string name = "UNSET";
-    public string assetFile = "UNSET";
-    public string description = "";
-    public DateTime timeStamp = new DateTime();
-    public Texture2D thumbnail = null;
-    public List<string[]> filters = new List<string[]>();
-
-    public AssetInfo(string _name, string _assetFile, DateTime _timeStamp, Texture2D _thumbnail, string _description)
-    {
-        name = _name;
-        assetFile = _assetFile;
-        timeStamp = _timeStamp;
-        thumbnail = _thumbnail;
-        description = _description;
-    }
-
-    public void AddFilter(string key, string value)
-    {
-        bool filterExists = false;
-        foreach (string[] filter in filters)
-        {   // If filter key exists, update value.
-            if (filter[0] == key)
-            {
-                filterExists = true;
-                filter[1] = value;
-                break;
-            }
-        }
-
-        // If filter key does not exist, create new one.
-        if (!filterExists)
-        {
-            filters.Add(new string[] { key, value });
-        }
-    }
-
-    public bool CheckFilter(string key, string value)
-    {
-        // No filter.
-        if (key == "" || value == "")
-        {
-            return true;
-        }
-
-        // Check to see if there is a match.
-        foreach (string[] filter in filters)
-        {
-            if (filter[0] == key)
-            {
-                if (filter[1] == value)
-                {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-}
-
-public class TAssetInfo
-{
-    public string name = "UNSET";
-    public string assetFile = "UNSET";
-    public string description = "";
-    public DateTime timeStamp = new DateTime();
-    public Texture2D thumbnail = null;
-    //public List<string[]> filters = new List<string[]>();
-
-    public TAssetInfo(string _name, string _assetFile, DateTime _timeStamp, Texture2D _thumbnail, string _description)
-    {
-        name = _name;
-        assetFile = _assetFile;
-        timeStamp = _timeStamp;
-        thumbnail = _thumbnail;
-        description = _description;
-    }
-}
-
-public class AssetFilterList
-{
-    private List<string> key = new List<string>();
-    private List<string> value = new List<string>();
-
-    public void Add(string filterKey, string filterValue)
-    {
-        // Iterate through filters to see if value exists.
-        bool filterAlreadyExists = false;
-        for (int i = 0; i < key.Count; i++)
-        {
-            if (key[i] == filterKey)
-            {
-                if (value[i] == filterValue)
-                {
-                    filterAlreadyExists = true;
-                    break;
-                }
-            }
-        }
-
-        if (!filterAlreadyExists)
-        {
-            // Value does not exist yet, add to list.
-            key.Add(filterKey);
-            value.Add(filterValue);
-        }
-    }
-
-    public void Add(AssetInfo assetToAddFilters)
-    {
-        XmlSerializer ser = new XmlSerializer(typeof(PartType));
-        XmlReader reader = XmlReader.Create(assetToAddFilters.assetFile);
-        PartType prt = (PartType)ser.Deserialize(reader);
-
-        // Check if Vendor field exists for part.
-        if (prt.Vendor != null)
-        {
-            if (prt.Vendor[0] != null && prt.Vendor[0] != "")
-            {
-                Add("Vendor", prt.Vendor[0]);
-                assetToAddFilters.AddFilter("Vendor", prt.Vendor[0]);
-            }
-        }
-
-        // Check if Subsystem field exists for part.
-        if (prt.Subsystem != null)
-        {
-            if (prt.Subsystem != "")
-            {
-                Add("Subsystem", prt.Subsystem);
-                assetToAddFilters.AddFilter("Subsystem", prt.Subsystem);
-            }
-        }
-    }
-
-    public List<string[]> Get()
-    {
-        List<string[]> returnVal = new List<string[]>();
-
-        for (int i = 0; i < key.Count; i++)
-        {
-            returnVal.Add(new string[] { key[i], value[i] });
-        }
-
-        return returnVal;
-    }
-}
-
-public class PointCloudInfo
-{
-    public string name = "UNSET";
-    public string pcFile = "UNSET";
-    public DateTime timeStamp = new DateTime();
-
-    public PointCloudInfo(string _name, string _pcFile, DateTime _timeStamp)
-    {
-        name = _name;
-        pcFile = _pcFile;
         timeStamp = _timeStamp;
     }
 }
@@ -255,26 +62,14 @@ public class ConfigurationManager : MonoBehaviour
     public string defaultPointCloudDirectory;
     public string defaultTimeSimulationDirectory;
 
-    public List<ProjectInfo> projects = new List<ProjectInfo>();
-    public List<ProjectInfo> templates = new List<ProjectInfo>();
-    public List<AssetInfo> assets = new List<AssetInfo>();
-    public List<TAssetInfo> Tassets = new List<TAssetInfo>();
-    public List<AnimationInfo> animations = new List<AnimationInfo>();
-    public List<AnnotationInfo> annotations = new List<AnnotationInfo>();
-    public List<HudInfo> huds = new List<HudInfo>();
-    public List<PointCloudInfo> pcs = new List<PointCloudInfo>();
     public ColliderMode colliderMode = ColliderMode.None;
 
-    public AssetFilterList assetFilters = new AssetFilterList();
     public bool initialized = false;
 
-    private void Awake()
+    public void Initialize()
     {
         instance = this;
-    }
 
-    void Start()
-    {
         try
         {
             ReadConfig();
@@ -282,7 +77,7 @@ public class ConfigurationManager : MonoBehaviour
         }
         catch (Exception e)
         {
-            Debug.Log("[ConfigurationManager->Start] " + e.ToString());
+            Debug.Log("[ConfigurationManager->Initialize] " + e.ToString());
         }
     }
 
@@ -558,177 +353,6 @@ public class ConfigurationManager : MonoBehaviour
             {
                 defaultTimeSimulationDirectory = Application.dataPath;
             }
-
-            /*// Read all of the projects into a list.
-            string dirPath = Application.dataPath + Path.DirectorySeparatorChar + config.ProjectsPath;
-            if (Directory.Exists(dirPath))
-            {
-                foreach (string projFile in Directory.GetFiles(dirPath))
-                {
-                    if (projFile.Substring(Math.Max(0, projFile.Length - 7)).Equals(".mtproj"))
-                    {
-                        int startIndex = projFile.LastIndexOf(Path.DirectorySeparatorChar) + 1;
-                        string name = projFile.Substring(startIndex, Math.Max(0, projFile.Length - 7 - startIndex));
-                        DateTime timeStamp = File.GetLastWriteTime(projFile);
-                        Texture2D thumbnail = LoadThumbnail(projFile.Replace(".mtproj", ".png"));
-
-                        projects.Add(new ProjectInfo(name, projFile, timeStamp, thumbnail));
-                    }
-                }
-            }
-
-            // Read all of the templates into a list.
-            dirPath = Application.dataPath + Path.DirectorySeparatorChar + config.TemplatesPath;
-            if (Directory.Exists(dirPath))
-            {
-                foreach (string projFile in Directory.GetFiles(dirPath))
-                {
-                    if (projFile.Substring(Math.Max(0, projFile.Length - 7)).Equals(".mtproj"))
-                    {
-                        int startIndex = projFile.LastIndexOf(Path.DirectorySeparatorChar) + 1;
-                        string name = projFile.Substring(startIndex, Math.Max(0, projFile.Length - 7 - startIndex));
-                        DateTime timeStamp = File.GetLastWriteTime(projFile);
-
-                        templates.Add(new ProjectInfo(name, projFile, timeStamp, null));
-                    }
-                }
-            }
-
-            // Read all of the HUDs into a list
-            dirPath = Application.dataPath + Path.DirectorySeparatorChar + config.HudPath;
-            if (Directory.Exists(dirPath))
-            {
-                foreach (string hudFile in Directory.GetFiles(dirPath))
-                {
-                    if (hudFile.Substring(Math.Max(0, hudFile.Length - 4)).Equals(".xml"))
-                    {
-                        int startIndex = hudFile.LastIndexOf(Path.DirectorySeparatorChar) + 1;
-                        string name = hudFile.Substring(startIndex, Math.Max(0, hudFile.Length - 4 - startIndex));
-                        DateTime timeStamp = File.GetLastWriteTime(hudFile);
-
-                        huds.Add(new HudInfo(name, hudFile, timeStamp));
-                    }
-                }
-            }
-
-            // Read all of the animations into a list
-            dirPath = Application.dataPath + Path.DirectorySeparatorChar + config.AnimationsPath;
-            if (Directory.Exists(dirPath))
-            {
-                foreach (string animationFile in Directory.GetFiles(dirPath))
-                {
-                    if (animationFile.Substring(Math.Max(0, animationFile.Length - 7)).Equals(".mtanim"))
-                    {
-                        int startIndex = animationFile.LastIndexOf(Path.DirectorySeparatorChar) + 1;
-                        string name = animationFile.Substring(startIndex, Math.Max(0, animationFile.Length - 7 - startIndex));
-                        DateTime timeStamp = File.GetLastWriteTime(animationFile);
-
-                        animations.Add(new AnimationInfo(name, animationFile, timeStamp));
-                    }
-                }
-            }
-
-            // Read all of the text annotations into a list
-            dirPath = Application.dataPath + Path.DirectorySeparatorChar + config.TextAnnotationPath;
-            if (Directory.Exists(dirPath))
-            {
-                foreach (string annotationFile in Directory.GetFiles(dirPath))
-                {
-                    if (annotationFile.Substring(Math.Max(0, annotationFile.Length - 8)).Equals(".mtannot"))
-                    {
-                        int startIndex = annotationFile.LastIndexOf(Path.DirectorySeparatorChar) + 1;
-                        string name = annotationFile.Substring(startIndex, Math.Max(0, annotationFile.Length - 4 - startIndex));
-                        DateTime timeStamp = File.GetLastWriteTime(annotationFile);
-
-                        annotations.Add(new AnnotationInfo(name, annotationFile, AnnotationInfo.AnnotationType.Text, timeStamp));
-                    }
-                }
-            }
-
-            // Read all of the audio annotations into a list
-            dirPath = Application.dataPath + Path.DirectorySeparatorChar + config.AudioRecordingPath;
-            if (Directory.Exists(dirPath))
-            {
-                foreach (string annotationFile in Directory.GetFiles(dirPath))
-                {
-                    if (annotationFile.Substring(Math.Max(0, annotationFile.Length - 8)).Equals(".mtannot"))
-                    {
-                        int startIndex = annotationFile.LastIndexOf(Path.DirectorySeparatorChar) + 1;
-                        string name = annotationFile.Substring(startIndex, Math.Max(0, annotationFile.Length - 4 - startIndex));
-                        DateTime timeStamp = File.GetLastWriteTime(annotationFile);
-
-                        annotations.Add(new AnnotationInfo(name, annotationFile, AnnotationInfo.AnnotationType.Audio, timeStamp));
-                    }
-                }
-            }
-
-            // Read all of the parts into a list.
-            dirPath = Application.dataPath + Path.DirectorySeparatorChar + config.AssetsPath;
-            if (Directory.Exists(dirPath))
-            {
-                foreach (string assetFile in Directory.GetFiles(dirPath))
-                {
-                    if (assetFile.Substring(Math.Max(0, assetFile.Length - 4)).Equals(".xml"))
-                    {
-                        int startIndex = assetFile.LastIndexOf(Path.DirectorySeparatorChar) + 1;
-                        string name = assetFile.Substring(startIndex, Math.Max(0, assetFile.Length - 4 - startIndex));
-                        DateTime timeStamp = File.GetLastWriteTime(assetFile);
-                        Texture2D thumbnail = LoadThumbnail(assetFile.Replace(".xml", ".png"));
-
-                        // Get any information from the part file.
-                        XmlSerializer pSer = new XmlSerializer(typeof(PartType));
-                        XmlReader pReader = XmlReader.Create(assetFile);
-                        PartType prt = (PartType)pSer.Deserialize(pReader);
-
-                        string description = "";
-                        if (prt != null)
-                        {
-                            if (prt.Description != null)
-                            {
-                                description = prt.Description[0];
-                            }
-                        }
-
-                        assets.Add(new AssetInfo(name, assetFile, timeStamp, thumbnail, description));
-                        assetFilters.Add(assets[assets.Count - 1]);
-                    }
-                }
-            }
-
-            // Read all of the Terrains into a list.
-            dirPath = Application.dataPath + Path.DirectorySeparatorChar + "Terrains"; // config.TAssetsPath;
-            if (Directory.Exists(dirPath))
-            {
-                foreach (string assetFile in Directory.GetFiles(dirPath))
-                {
-                    if (assetFile.Substring(Math.Max(0, assetFile.Length - 4)).Equals(".xml"))
-                    {
-                        int startIndex = assetFile.LastIndexOf(Path.DirectorySeparatorChar) + 1;
-                        string name = assetFile.Substring(startIndex, Math.Max(0, assetFile.Length - 4 - startIndex));
-                        DateTime timeStamp = File.GetLastWriteTime(assetFile);
-                        Texture2D thumbnail = LoadThumbnail(assetFile.Replace(".xml", ".png"));
-
-                        Tassets.Add(new TAssetInfo(name, assetFile, timeStamp, thumbnail, ""));
-                    }
-                }
-            }
-
-            // Read all of the point clouds into a list
-            dirPath = Application.dataPath + Path.DirectorySeparatorChar + config.PointCloudsPath;
-            if (Directory.Exists(dirPath))
-            {
-                foreach (string pcFile in Directory.GetFiles(dirPath))
-                {
-                    if (pcFile.Substring(Math.Max(0, pcFile.Length - 8)).Equals(".mpoints"))
-                    {
-                        int startIndex = pcFile.LastIndexOf(Path.DirectorySeparatorChar) + 1;
-                        string name = pcFile.Substring(startIndex, Math.Max(0, pcFile.Length - 4 - startIndex));
-                        DateTime timeStamp = File.GetLastWriteTime(pcFile);
-
-                        pcs.Add(new PointCloudInfo(name, pcFile, timeStamp));
-                    }
-                }
-            }*/
 
             switch (config.ColliderMode)
             {

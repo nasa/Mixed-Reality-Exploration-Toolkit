@@ -1,12 +1,15 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using GSFC.ARVR.MRET.XRC;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 
 public class SynchronizedPointer : MonoBehaviour
 {
     public SynchronizationManager synchronizationManager;
     public SynchronizedController synchronizedController;
-    public VRTK.VRTK_Pointer pointer;
-    public VRTK.VRTK_StraightPointerRenderer pointerRenderer;
+    public InputHand hand;
     public LineRenderer lineRenderer;
     public Object entityLock = new Object();
     public int throttleFactor = 10;
@@ -39,40 +42,34 @@ public class SynchronizedPointer : MonoBehaviour
             // Send Transform (position) changes.
             lock (entityLock)
             {
-                if (pointer && pointer.pointerRenderer)
+                Vector3 newPos = hand.pointerEnd;
+                //Vector3 newPos = pointerRenderer.GetPointerObjects()[1].transform.localPosition;
+                if (!hand.pointerOn)
                 {
-                    Vector3 newPos = pointerRenderer.GetPointerObjects()[1].transform.position;
-                    //Vector3 newPos = pointerRenderer.GetPointerObjects()[1].transform.localPosition;
-                    if (!pointer.IsPointerActive())
-                    {
-                        newPos = Vector3.zero;
-                    }
-
-                    if (newPos != lastRecordedPosition && positionThrottleCounter >= throttleFactor)
-                    {
-                        if ((newPos - lastRecordedPosition).magnitude > positionResolution)
-                        {
-                            lastRecordedPosition = newPos;
-                            transformToUse = pointerRenderer.GetPointerObjects()[1].transform;
-                            //transformToUse.position = pointerRenderer.GetPointerObjects()[1].transform.position;
-                            transformToUse.localPosition = pointerRenderer.GetPointerObjects()[1].transform.localPosition;
-                            if (collaborationManager.engineType == CollaborationManager.EngineType.XRC)
-                            {
-                                XRCUnity.UpdateEntityPosition(synchronizedController.synchronizedUser.userAlias,
-                                    synchronizedController.controllerSide == SynchronizedController.ControllerSide.Left ?
-                                    XRCManager.LPOINTERCATEGORY : XRCManager.RPOINTERCATEGORY
-                                    , lastRecordedPosition, uuid.ToString(),
-                                    synchronizedController.synchronizedUser.uuid.ToString(), GSFC.ARVR.XRC.UnitType.meter);
-                            }
-                            else
-                            {
-                                synchronizationManager.SendPositionChange(gameObject);
-                            }
-                        }
-                        positionThrottleCounter = 0;
-                    }
-                    transform.hasChanged = false;
+                    newPos = Vector3.zero;
                 }
+
+                if (newPos != lastRecordedPosition && positionThrottleCounter >= throttleFactor)
+                {
+                    if ((newPos - lastRecordedPosition).magnitude > positionResolution)
+                    {
+                        lastRecordedPosition = newPos;
+                        if (collaborationManager.engineType == CollaborationManager.EngineType.XRC)
+                        {
+                            XRCUnity.UpdateEntityPosition(synchronizedController.synchronizedUser.userAlias,
+                                synchronizedController.controllerSide == SynchronizedController.ControllerSide.Left ?
+                                XRCManager.LPOINTERCATEGORY : XRCManager.RPOINTERCATEGORY
+                                , lastRecordedPosition, uuid.ToString(),
+                                synchronizedController.synchronizedUser.uuid.ToString(), GSFC.ARVR.XRC.UnitType.meter);
+                        }
+                        else
+                        {
+                            synchronizationManager.SendPositionChange(gameObject);
+                        }
+                    }
+                    positionThrottleCounter = 0;
+                }
+                transform.hasChanged = false;
             }
         }
     }

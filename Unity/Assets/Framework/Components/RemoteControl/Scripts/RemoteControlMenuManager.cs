@@ -1,4 +1,9 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class RemoteControlMenuManager : MonoBehaviour
 {
@@ -21,23 +26,20 @@ public class RemoteControlMenuManager : MonoBehaviour
     {
         if (currentSelection != -1)
         {
-            foreach (ControllerMenuManager menu in FindObjectsOfType<ControllerMenuManager>())
+            foreach (InputHand hand in MRET.InputRig.hands)
             {
-                if (menu.IsDimmed())
+                DualAxisRotationControl dar = hand.GetComponent<DualAxisRotationControl>();
+                if (dar)
                 {
-                    DualAxisRotationControl dar = menu.GetComponentInParent<DualAxisRotationControl>();
-                    if (dar)
+                    if (currentSelection == 0)
                     {
-                        if (currentSelection == 0)
-                        {
-                            dar.SelectRotatingObject(null);
-                        }
-                        else
-                        {
-                            dar.SelectRotatingObject(availableObjects[currentSelection - 1]);
-                        }
-                        break;
+                        dar.SelectRotatingObject(null);
                     }
+                    else
+                    {
+                        dar.SelectRotatingObject(availableObjects[currentSelection - 1]);
+                    }
+                    break;
                 }
             }
         }

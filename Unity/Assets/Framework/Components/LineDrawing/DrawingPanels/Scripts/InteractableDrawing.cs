@@ -1,23 +1,23 @@
-﻿using GSFC.ARVR.MRET.Selection;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using VRTK;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class InteractableDrawing : VRTK_InteractableObject, ISelectable
+using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+
+public class InteractableDrawing : SceneObject
 {
 
     private GameObject drawingPanel;
     private GameObject drawingPanelInfo = null;
-    private bool clicked = false;
     public Transform headsetObject;
     public GameObject drawingPanelPrefab;
 
-    public override void OnInteractableObjectUsed(InteractableObjectEventArgs e)
+    public override void Use(InputHand hand)
     {
         if (!drawingPanel)
         {
-            LoadDrawingPanel(e.interactingObject, false);
+            LoadDrawingPanel(hand.gameObject, false);
         }
         else
         {
@@ -25,11 +25,8 @@ public class InteractableDrawing : VRTK_InteractableObject, ISelectable
             drawingPanelInfo.transform.position = drawingPanel.transform.position;
             DestroyDrawingPanel();
         }
-        /*DrawingPanel wsml = gameObject.transform.parent.GetComponent<DrawingPanel>();
-        wsml.loadMenu(gameObject.transform, e.interactingObject.transform.rotation, e.interactingObject.transform.position);*/
-
     }
-
+    
     public void LoadDrawingPanel(GameObject controller, bool reinitialize)
     {
         if (!drawingPanel)
@@ -102,17 +99,5 @@ public class InteractableDrawing : VRTK_InteractableObject, ISelectable
         {
             Destroy(drawingPanel);
         }
-    }
-
-    public void Deselect(bool hierarchical = true)
-    {
-        // Don't want to throw exceptions.
-        //throw new System.NotImplementedException();
-    }
-
-    public void Select(bool hierarchical = true)
-    {
-        // Don't want to throw exceptions.
-        //throw new System.NotImplementedException();
     }
 }

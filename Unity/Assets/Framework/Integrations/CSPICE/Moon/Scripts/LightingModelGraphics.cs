@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.UI;
@@ -6,6 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.Animations;
 using GSFC.ARVR.UTILITIES;
 using GSFC.ARVR.Utilities.Terrain;
+using GSFC.ARVR.MRET;
 
 namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
 {
@@ -17,13 +21,11 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
      * 
      * @author Jeffrey Hosler
      */
-    public class LightingModelGraphics : MonoBehaviour
+    public class LightingModelGraphics : MRETUpdateBehaviour
     {
-        // Performance Management
-        private int updateCounter = 0;
-        public int updateRateModulo = 1;
+        public override string ClassName => nameof(LightingModelGraphics);
 
-        // Data Manager
+        [Tooltip("The DataManager to use for storing retrieving and storing telemetry. If not supplied, one will be located at Start")]
         public DataManager dataManager;
 
         // Labels
@@ -107,7 +109,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 // Position the sun
                 double FACTOR = sunPositionScaleFactor;
                 Vector3 scaledPosition = new Vector3((float)(rectCoord[1] / FACTOR), (float)(rectCoord[2] / FACTOR), (float)(rectCoord[0] / FACTOR));
-                theSun.transform.localPosition = scaledPosition;
+                theSun.transform.position = scaledPosition;
             }
         }
 
@@ -151,30 +153,47 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
             return (angle + 360) % 360;
         }
 
-        // Start is called before the first frame update
-        void Start()
+        /// <seealso cref="MRETUpdateBehaviour.IntegrityCheck"/>
+        protected override IntegrityState IntegrityCheck()
         {
+            // Take the inherited behavior
+            IntegrityState state = base.IntegrityCheck();
+
+            // Custom integrity checks here
+            return (
+                (state == IntegrityState.Failure) ||
+                (dataManager == null)
+                    ? IntegrityState.Failure   // Fail if base class fails, OR data manager is null
+                    : IntegrityState.Success); // Otherwise, our integrity is valid
+        }
+
+        /// <seealso cref="MRETUpdateBehaviour.MRETStart"/>
+        protected override void MRETStart()
+        {
+            // Take the inherited behavior
+            base.MRETStart();
+
             // Make a sunlight object
-            //            lightSunObject = new GameObject("Light Sun");
+//          lightSunObject = new GameObject("Light Sun");
 
             // Add the light component
-            //            Light lightSunComponent = lightSunObject.AddComponent<Light>();
-            //            lightSunComponent.type = LightType.Directional;
-            //            lightSunComponent.shadows = LightShadows.Hard;
-            //            lightSunComponent.color = Color.white;
-            //            lightSunComponent.intensity = (float) 2.5;
+//          Light lightSunComponent = lightSunObject.AddComponent<Light>();
+//          lightSunComponent.type = LightType.Directional;
+//          lightSunComponent.shadows = LightShadows.Hard;
+//          lightSunComponent.color = Color.white;
+//          lightSunComponent.intensity = (float) 2.5;
 
             // Add a lens flare effect
-            //            LensFlare lensFlare = lightSunObject.GetComponent<LensFlare>();
-            //            lensFlare.color = Color.white;
+//          LensFlare lensFlare = lightSunObject.GetComponent<LensFlare>();
+//          lensFlare.color = Color.white;
 
             if (sunlightObject != null)
             {
                 // Add the look at constraint
                 if (moonObject != null)
                 {
-                    //                    MeshFilter meshFilter = moonObject.GetComponent<MeshFilter>();
-                    //                    meshFilter.mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+//                  MeshFilter meshFilter = moonObject.GetComponent<MeshFilter>();
+//                  meshFilter.mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
 
                     LookAtConstraint lookAtConstraint = sunlightObject.AddComponent<LookAtConstraint>();
                     ConstraintSource lookAtSource = new ConstraintSource();
@@ -220,7 +239,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                     lookAtSource.weight = 1;
                     lookAtConstraint.AddSource(lookAtSource);
                     lookAtConstraint.rotationOffset = new Vector3(0, 90, 0);
-                    //                lookAtConstraint.locked = true;
+//                  lookAtConstraint.locked = true;
                     lookAtConstraint.constraintActive = true;
                 }
             }
@@ -232,13 +251,16 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
             // Located the DataManager if one wasn't assigned to the script in the editor
             if (dataManager == null)
             {
-                dataManager = FindObjectOfType<DataManager>();
+                dataManager = MRET.Infrastructure.Framework.MRET.DataManager;
             }
         }
 
-        // Update is called once per frame
-        void Update()
+        /// <seealso cref="MRETUpdateBehaviour.MRETUpdate"/>
+        protected override void MRETUpdate()
         {
+            // Take the inherited behavior
+            base.MRETUpdate();
+
             if (Input.GetKeyDown(KeyCode.P))
             {
                 string filename = SceneManager.GetActiveScene().name + "_" + String.Format("{0:s}", DateTime.Now).Replace(":","") + ".png";
@@ -246,285 +268,279 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 print("Print key was pressed");
             }
 
-            // Performance management
-            updateCounter++;
-            if (updateCounter >= updateRateModulo)
+            if (dataManager)
             {
-                // Reset the update counter
-                updateCounter = 0;
-
-                if (dataManager != null)
+                // Grab the terrain metadata if we don't already have it
+                if (!terrainMetadataInitialized)
                 {
-                    // Grab the terrain metadata if we don't already have it
-                    if (!terrainMetadataInitialized)
+                    // Extract the metadata from the data store
+                    var terrainScaleMVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_SCALE_M);
+                    var terrainAzimuthVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_AZIMUTH_DEG);
+                    var terrainUpperLeftLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_UPPERLEFT_LONGITUDE_DEG);
+                    var terrainUpperLeftLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_UPPERLEFT_LATITUDE_DEG);
+                    var terrainLowerLeftLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_LOWERLEFT_LONGITUDE_DEG);
+                    var terrainLowerLeftLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_LOWERLEFT_LATITUDE_DEG);
+                    var terrainUpperRightLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_UPPERRIGHT_LONGITUDE_DEG);
+                    var terrainUpperRightLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_UPPERRIGHT_LATITUDE_DEG);
+                    var terrainLowerRightLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_LOWERRIGHT_LONGITUDE_DEG);
+                    var terrainLowerRightLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_LOWERRIGHT_LATITUDE_DEG);
+                    var terrainCenterLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_CENTER_LONGITUDE_DEG);
+                    var terrainCenterLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_CENTER_LATITUDE_DEG);
+
+                    // Check that we have valid data
+                    if ((terrainScaleMVar is double) &&
+                        (terrainAzimuthVar is double) &&
+                        (terrainUpperLeftLongitudeVar is double) &&
+                        (terrainUpperLeftLatitudeVar is double) &&
+                        (terrainLowerLeftLongitudeVar is double) &&
+                        (terrainLowerLeftLatitudeVar is double) &&
+                        (terrainUpperRightLongitudeVar is double) &&
+                        (terrainUpperRightLatitudeVar is double) &&
+                        (terrainLowerRightLongitudeVar is double) &&
+                        (terrainLowerRightLatitudeVar is double) &&
+                        (terrainCenterLatitudeVar is double) &&
+                        (terrainCenterLatitudeVar is double))
                     {
-                        // Extract the metadata from the data store
-                        var terrainScaleMVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_SCALE_M);
-                        var terrainAzimuthVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_AZIMUTH_DEG);
-                        var terrainUpperLeftLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_UPPERLEFT_LONGITUDE_DEG);
-                        var terrainUpperLeftLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_UPPERLEFT_LATITUDE_DEG);
-                        var terrainLowerLeftLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_LOWERLEFT_LONGITUDE_DEG);
-                        var terrainLowerLeftLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_LOWERLEFT_LATITUDE_DEG);
-                        var terrainUpperRightLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_UPPERRIGHT_LONGITUDE_DEG);
-                        var terrainUpperRightLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_UPPERRIGHT_LATITUDE_DEG);
-                        var terrainLowerRightLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_LOWERRIGHT_LONGITUDE_DEG);
-                        var terrainLowerRightLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_LOWERRIGHT_LATITUDE_DEG);
-                        var terrainCenterLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_CENTER_LONGITUDE_DEG);
-                        var terrainCenterLatitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_CENTER_LATITUDE_DEG);
+                        // Store the values in our private fields. These shouldn't change, so we only need to do it once.
+                        terrainScaleM = (double)terrainScaleMVar;
+                        terrainAzimuth = (double)terrainAzimuthVar;
+                        terrainUpperLeftLongitude = (double)terrainUpperLeftLongitudeVar;
+                        terrainUpperLeftLatitude = (double)terrainUpperLeftLatitudeVar;
+                        terrainLowerLeftLongitude = (double)terrainLowerLeftLongitudeVar;
+                        terrainLowerLeftLatitude = (double)terrainLowerLeftLatitudeVar;
+                        terrainUpperRightLongitude = (double)terrainUpperRightLongitudeVar;
+                        terrainUpperRightLatitude = (double)terrainUpperRightLatitudeVar;
+                        terrainLowerRightLongitude = (double)terrainLowerRightLongitudeVar;
+                        terrainLowerRightLatitude = (double)terrainLowerRightLatitudeVar;
+                        terrainCenterLongitude = (double)terrainCenterLongitudeVar;
+                        terrainCenterLatitude = (double)terrainCenterLatitudeVar;
 
-                        // Check that we have valid data
-                        if ((terrainScaleMVar is double) &&
-                            (terrainAzimuthVar is double) &&
-                            (terrainUpperLeftLongitudeVar is double) &&
-                            (terrainUpperLeftLatitudeVar is double) &&
-                            (terrainLowerLeftLongitudeVar is double) &&
-                            (terrainLowerLeftLatitudeVar is double) &&
-                            (terrainUpperRightLongitudeVar is double) &&
-                            (terrainUpperRightLatitudeVar is double) &&
-                            (terrainLowerRightLongitudeVar is double) &&
-                            (terrainLowerRightLatitudeVar is double) &&
-                            (terrainCenterLatitudeVar is double) &&
-                            (terrainCenterLatitudeVar is double))
-                        {
-                            // Store the values in our private fields. These shouldn't change, so we only need to do it once.
-                            terrainScaleM = (double)terrainScaleMVar;
-                            terrainAzimuth = (double)terrainAzimuthVar;
-                            terrainUpperLeftLongitude = (double)terrainUpperLeftLongitudeVar;
-                            terrainUpperLeftLatitude = (double)terrainUpperLeftLatitudeVar;
-                            terrainLowerLeftLongitude = (double)terrainLowerLeftLongitudeVar;
-                            terrainLowerLeftLatitude = (double)terrainLowerLeftLatitudeVar;
-                            terrainUpperRightLongitude = (double)terrainUpperRightLongitudeVar;
-                            terrainUpperRightLatitude = (double)terrainUpperRightLatitudeVar;
-                            terrainLowerRightLongitude = (double)terrainLowerRightLongitudeVar;
-                            terrainLowerRightLatitude = (double)terrainLowerRightLatitudeVar;
-                            terrainCenterLongitude = (double)terrainCenterLongitudeVar;
-                            terrainCenterLatitude = (double)terrainCenterLatitudeVar;
+                        double terrainZ = Coordinates.GetDistance(terrainUpperLeftLongitude, terrainUpperLeftLatitude, terrainLowerLeftLongitude, terrainLowerLeftLatitude);
+                        Debug.Log("Terrain Hight (m): " + terrainZ.ToString("F3"));
 
-                            double terrainZ = Coordinates.GetDistance(terrainUpperLeftLongitude, terrainUpperLeftLatitude, terrainLowerLeftLongitude, terrainLowerLeftLatitude);
-                            Debug.Log("Terrain Hight (m): " + terrainZ.ToString("F3"));
+                        double terrainX = Coordinates.GetDistance(terrainUpperLeftLongitude, terrainUpperLeftLatitude, terrainUpperRightLongitude, terrainUpperRightLatitude);
+                        Debug.Log("Terrain Width (m): " + terrainX.ToString("F3"));
 
-                            double terrainX = Coordinates.GetDistance(terrainUpperLeftLongitude, terrainUpperLeftLatitude, terrainUpperRightLongitude, terrainUpperRightLatitude);
-                            Debug.Log("Terrain Width (m): " + terrainX.ToString("F3"));
+                        string terrainBoundsStr = "Terrain Bounds:\n";
+                        terrainBoundsStr += "\tUpper Left Longitude:   " + terrainUpperLeftLongitude.ToString("F3") + "; " +
+                            Coordinates.ToDms(terrainUpperLeftLongitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + "\n";
+                        terrainBoundsStr += "\tUpper Left Latitude:    " + terrainUpperLeftLatitude.ToString("F3") + "; " +
+                            Coordinates.ToDms(terrainUpperLeftLatitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2) + "\n";
+                        terrainBoundsStr += "\tLower Left Longitude:   " + terrainLowerLeftLongitude.ToString("F3") + "; " +
+                            Coordinates.ToDms(terrainLowerLeftLongitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + "\n";
+                        terrainBoundsStr += "\tLower Left Latitude:    " + terrainLowerLeftLatitude.ToString("F3") + "; " +
+                            Coordinates.ToDms(terrainLowerLeftLatitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2) + "\n";
+                        terrainBoundsStr += "\tUpper Right Longitude:   " + terrainUpperRightLongitude.ToString("F3") + "; " +
+                            Coordinates.ToDms(terrainUpperRightLongitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + "\n";
+                        terrainBoundsStr += "\tUpper Right Latitude:    " + terrainUpperRightLatitude.ToString("F3") + "; " +
+                            Coordinates.ToDms(terrainUpperRightLatitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2) + "\n";
+                        terrainBoundsStr += "\tLower Right Longitude:   " + terrainLowerRightLongitude.ToString("F3") + "; " +
+                            Coordinates.ToDms(terrainLowerRightLongitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + "\n";
+                        terrainBoundsStr += "\tLower Right Latitude:    " + terrainLowerRightLatitude.ToString("F3") + "; " +
+                            Coordinates.ToDms(terrainLowerRightLatitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2) + "\n";
+                        terrainBoundsStr += "\tCenter Longitude:   " + terrainCenterLongitude.ToString("F3") + "; " +
+                            Coordinates.ToDms(terrainCenterLongitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + "\n";
+                        terrainBoundsStr += "\tCenter Latitude:  " + terrainCenterLatitude.ToString("F3") + "; " +
+                            Coordinates.ToDms(terrainCenterLatitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2);
+                        Debug.Log(terrainBoundsStr);
 
-                            string terrainBoundsStr = "Terrain Bounds:\n";
-                            terrainBoundsStr += "\tUpper Left Longitude:   " + terrainUpperLeftLongitude.ToString("F3") + "; " +
-                                Coordinates.ToDms(terrainUpperLeftLongitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + "\n";
-                            terrainBoundsStr += "\tUpper Left Latitude:    " + terrainUpperLeftLatitude.ToString("F3") + "; " +
-                                Coordinates.ToDms(terrainUpperLeftLatitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2) + "\n";
-                            terrainBoundsStr += "\tLower Left Longitude:   " + terrainLowerLeftLongitude.ToString("F3") + "; " +
-                                Coordinates.ToDms(terrainLowerLeftLongitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + "\n";
-                            terrainBoundsStr += "\tLower Left Latitude:    " + terrainLowerLeftLatitude.ToString("F3") + "; " +
-                                Coordinates.ToDms(terrainLowerLeftLatitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2) + "\n";
-                            terrainBoundsStr += "\tUpper Right Longitude:   " + terrainUpperRightLongitude.ToString("F3") + "; " +
-                                Coordinates.ToDms(terrainUpperRightLongitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + "\n";
-                            terrainBoundsStr += "\tUpper Right Latitude:    " + terrainUpperRightLatitude.ToString("F3") + "; " +
-                                Coordinates.ToDms(terrainUpperRightLatitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2) + "\n";
-                            terrainBoundsStr += "\tLower Right Longitude:   " + terrainLowerRightLongitude.ToString("F3") + "; " +
-                                Coordinates.ToDms(terrainLowerRightLongitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + "\n";
-                            terrainBoundsStr += "\tLower Right Latitude:    " + terrainLowerRightLatitude.ToString("F3") + "; " +
-                                Coordinates.ToDms(terrainLowerRightLatitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2) + "\n";
-                            terrainBoundsStr += "\tCenter Longitude:   " + terrainCenterLongitude.ToString("F3") + "; " +
-                                Coordinates.ToDms(terrainCenterLongitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + "\n";
-                            terrainBoundsStr += "\tCenter Latitude:  " + terrainCenterLatitude.ToString("F3") + "; " +
-                                Coordinates.ToDms(terrainCenterLatitude, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2);
-                            Debug.Log(terrainBoundsStr);
-
-                            // Flag as initialized
-                            terrainMetadataInitialized = true;
-                        }
-                    }
-
-                    // Get the changing model data from the data store
-                    var timeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_DATETIME);
-                    var ephemerisTimeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_EPHEMERISTIME);
-                    var moonRadiusVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_MOON_RADIUS_KM);
-                    var moonLongitudeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_MOON_LONGITUDE_RAD);
-                    var moonLatitudeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_MOON_LATITUDE_RAD);
-                    var moonElevationVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_MOON_ELEVATION_KM);
-                    var objectHeadingVar = dataManager.FindPoint(SurfaceLocation.KEY_HEADING_DEG);
-
-                    if ((timeVar is DateTime) &&
-                        (ephemerisTimeVar is double) &&
-                        (moonRadiusVar is double) &&
-                        (moonLongitudeVar is double) &&
-                        (moonLatitudeVar is double) &&
-                        (moonElevationVar is double) &&
-                        (objectHeadingVar is double))
-                    {
-                        DateTime time = (DateTime)timeVar;
-                        double et = (double)ephemerisTimeVar;
-                        double moonRadius = (double)moonRadiusVar;
-                        double moonLongitude = (double)moonLongitudeVar;
-                        double moonLongitudeDeg = LunarModel.ToDegrees((double)moonLongitudeVar);
-                        double moonLatitude = (double)moonLatitudeVar;
-                        double moonLatitudeDeg = LunarModel.ToDegrees((double)moonLatitudeVar);
-                        double moonElevation = (double)moonElevationVar;
-                        double objectHeading = (double)objectHeadingVar;
-
-                        Debug.Log("Location [Lon,Lat,El]: " + moonLongitude + ", " + moonLatitude + ", " + moonElevation + "km\n");
-                        Debug.Log("Location Deg [Lon,Lat]: [" + moonLongitudeDeg.ToString("F3") + ", " + moonLatitudeDeg.ToString("F3") + "]");
-                        Debug.Log("Location DMS [Lon, Lat]: [" +
-                            Coordinates.ToDms(moonLongitudeDeg, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + ", " +
-                            Coordinates.ToDms(moonLatitudeDeg, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2) + "]");
-                        Debug.Log("Date/Time: " + time.ToString("u") + "\n");
-
-                        if (timeText != null)
-                        {
-                            Text text = timeText.GetComponent<Text>();
-                            text.text = String.Format("{0:u}", time);
-                        }
-
-                        if (longitudeText != null)
-                        {
-                            Text text = longitudeText.GetComponent<Text>();
-                            text.text = moonLongitudeDeg.ToString("F3");
-                        }
-
-                        if (latitudeText != null)
-                        {
-                            Text text = latitudeText.GetComponent<Text>();
-                            text.text = moonLatitudeDeg.ToString("F3");
-                        }
-
-                        if (elevationText != null)
-                        {
-                            Text text = elevationText.GetComponent<Text>();
-                            text.text = (moonElevation * 1000.0).ToString("F3"); // meters
-                        }
-
-                        if (headingText != null)
-                        {
-                            Text text = headingText.GetComponent<Text>();
-                            double correctedHeading = AdjustAzimuth(terrainAzimuth, objectHeading);
-                            correctedHeading = NormalizeAngle360(correctedHeading);
-                            text.text = correctedHeading.ToString("F3");
-                        }
-
-                        if (surfaceObject != null)
-                        {
-                            // Position the surface object
-                            PositionObjectOnMoon(surfaceObject, moonRadius, moonElevation, moonLongitude, moonLatitude);
-                        }
-
-                        if (sunlightObject != null)
-                        {
-                            var sunPositionVecVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_POSITION_VEC);
-                            var sunRadiusVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_RADIUS_KM);
-                            var sunAzimuthVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_AZIMUTH_RAD);
-                            var sunAltitudeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_ALTITUDE_RAD);
-                            var sunLongitudeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_LONGITUDE_RAD);
-                            var sunLatitudeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_LATITUDE_RAD);
-
-                            if ((sunPositionVecVar is Vector3d) &&
-                                (sunRadiusVar is double) &&
-                                (sunAzimuthVar is double) &&
-                                (sunAltitudeVar is double) &&
-                                (sunLongitudeVar is double) &&
-                                (sunLatitudeVar is double))
-                            {
-                                Vector3d sunPositionVec = (Vector3d)sunPositionVecVar;
-                                double sunRadius = (double)sunRadiusVar;
-                                double sunAzimuthDeg = LunarModel.ToDegrees((double)sunAzimuthVar);
-                                double sunAltitudeDeg = LunarModel.ToDegrees((double)sunAltitudeVar);
-                                double sunLongitude = (double)sunLongitudeVar;
-                                double sunLatitude = (double)sunLatitudeVar;
-
-                                Debug.Log("Sun Vector [X,Y,Z]: " + sunPositionVec.x + ", " + sunPositionVec.y + ", " + sunPositionVec.z + ", " + "\n");
-                                Debug.Log("Sun Distance, Azimuth, Altitude: " +
-                                    sunRadius + "km, " +
-                                    sunAzimuthDeg + ", " +
-                                    sunAltitudeDeg + "\n");
-
-                                Debug.Log("Subsolar point: " +
-                                    LunarModel.ToDegrees(sunLongitude) + ", " +
-                                    LunarModel.ToDegrees(sunLatitude) + "\n\n");
-
-                                if (sunAzimuthText != null)
-                                {
-                                    Text text = sunAzimuthText.GetComponent<Text>();
-                                    double correctedAzimuth = AdjustAzimuth(terrainAzimuth, sunAzimuthDeg);
-                                    correctedAzimuth = NormalizeAngle360(correctedAzimuth);
-                                    text.text = correctedAzimuth.ToString("F3");
-                                }
-
-                                if (sunAltitudeText != null)
-                                {
-                                    Text text = sunAltitudeText.GetComponent<Text>();
-                                    text.text = sunAltitudeDeg.ToString("F3");
-                                }
-
-                                if (sunSpotObject != null)
-                                {
-                                    // Position the sun spot object on the surface
-                                    PositionObjectOnMoon(sunSpotObject, moonRadius, 0, sunLongitude, sunLatitude);
-                                }
-
-                                // Position the light source
-                                if (Terrain.activeTerrain != null)
-                                {
-                                    // Use sun azimuth/altitude
-                                    PositionSun(sunlightObject, terrainAzimuth, sunAzimuthDeg, sunAltitudeDeg, sunRadius);
-                                }
-                                else
-                                {
-                                    // Use the sun spot
-                                    PositionObjectOnMoon(sunlightObject, moonRadius, 100000, sunLongitude, sunLatitude);
-                                }
-                            }
-                        }
-
-                        if (earthObject != null)
-                        {
-                            var earthPositionVecVar = dataManager.FindPoint(EarthAzimuthAltitude.KEY_EARTH_POSITION_VEC);
-                            var earthRadiusVar = dataManager.FindPoint(EarthAzimuthAltitude.KEY_EARTH_RADIUS_KM);
-                            var earthAzimuthVar = dataManager.FindPoint(EarthAzimuthAltitude.KEY_EARTH_AZIMUTH_RAD);
-                            var earthAltitudeVar = dataManager.FindPoint(EarthAzimuthAltitude.KEY_EARTH_ALTITUDE_RAD);
-
-                            if ((earthPositionVecVar is Vector3d) &&
-                                (earthRadiusVar is double) &&
-                                (earthAzimuthVar is double) &&
-                                (earthAltitudeVar is double))
-                            {
-                                Vector3d earthPositionVec = (Vector3d)earthPositionVecVar;
-                                double earthRadius = (double)earthRadiusVar;
-                                double earthAzimuthDeg = LunarModel.ToDegrees((double)earthAzimuthVar);
-                                double earthAltitudeDeg = LunarModel.ToDegrees((double)earthAltitudeVar);
-
-                                Debug.Log("Earth Vector [X,Y,Z]: " + earthPositionVec.x + ", " + earthPositionVec.y + ", " + earthPositionVec.z + ", " + "\n");
-                                Debug.Log("Earth Distance, Azimuth, Altitude: " +
-                                    earthRadius + "km, " +
-                                    earthAzimuthDeg + ", " +
-                                    earthAltitudeDeg + "\n");
-
-                                if (earthAzimuthText != null)
-                                {
-                                    Text text = earthAzimuthText.GetComponent<Text>();
-                                    double correctedAzimuth = AdjustAzimuth(terrainAzimuth, earthAzimuthDeg);
-                                    correctedAzimuth = NormalizeAngle360(correctedAzimuth);
-                                    text.text = correctedAzimuth.ToString("F3");
-                                }
-
-                                if (earthAltitudeText != null)
-                                {
-                                    Text text = earthAltitudeText.GetComponent<Text>();
-                                    text.text = earthAltitudeDeg.ToString("F3");
-                                }
-
-                                // Position the light source
-                                if (Terrain.activeTerrain != null)
-                                {
-                                    // Use sun azimuth/altitude
-                                    PositionEarth(earthObject, terrainAzimuth, earthAzimuthDeg, earthAltitudeDeg, earthRadius);
-                                }
-                            }
-
-
-                        }
-
+                        // Flag as initialized
+                        terrainMetadataInitialized = true;
                     }
                 }
-            }
 
+                // Get the changing model data from the data store
+                var timeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_DATETIME);
+                var ephemerisTimeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_EPHEMERISTIME);
+                var moonRadiusVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_MOON_RADIUS_KM);
+                var moonLongitudeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_MOON_LONGITUDE_RAD);
+                var moonLatitudeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_MOON_LATITUDE_RAD);
+                var moonElevationVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_MOON_ELEVATION_KM);
+                var objectHeadingVar = dataManager.FindPoint(SurfaceLocation.KEY_HEADING_DEG);
+
+                if ((timeVar is DateTime) &&
+                    (ephemerisTimeVar is double) &&
+                    (moonRadiusVar is double) &&
+                    (moonLongitudeVar is double) &&
+                    (moonLatitudeVar is double) &&
+                    (moonElevationVar is double) &&
+                    (objectHeadingVar is double))
+                {
+                    DateTime time = (DateTime)timeVar;
+                    double et = (double)ephemerisTimeVar;
+                    double moonRadius = (double)moonRadiusVar;
+                    double moonLongitude = (double)moonLongitudeVar;
+                    double moonLongitudeDeg = LunarModel.ToDegrees((double)moonLongitudeVar);
+                    double moonLatitude = (double)moonLatitudeVar;
+                    double moonLatitudeDeg = LunarModel.ToDegrees((double)moonLatitudeVar);
+                    double moonElevation = (double)moonElevationVar;
+                    double objectHeading = (double)objectHeadingVar;
+
+                    Debug.Log("Location [Lon,Lat,El]: " + moonLongitude + ", " + moonLatitude + ", " + moonElevation + "km\n");
+                    Debug.Log("Location Deg [Lon,Lat]: [" + moonLongitudeDeg.ToString("F3") + ", " + moonLatitudeDeg.ToString("F3") + "]");
+                    Debug.Log("Location DMS [Lon, Lat]: [" +
+                        Coordinates.ToDms(moonLongitudeDeg, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Longitude, 2) + ", " +
+                        Coordinates.ToDms(moonLatitudeDeg, DMSFormat.DegreesMinutesSeconds, DMSOrientation.Latitude, 2) + "]");
+
+                    if (timeText != null)
+                    {
+                        Text text = timeText.GetComponent<Text>();
+                        text.text = String.Format("{0:u}", time);
+                    }
+
+                    if (longitudeText != null)
+                    {
+                        Text text = longitudeText.GetComponent<Text>();
+                        text.text = moonLongitudeDeg.ToString("F3");
+                    }
+
+                    if (latitudeText != null)
+                    {
+                        Text text = latitudeText.GetComponent<Text>();
+                        text.text = moonLatitudeDeg.ToString("F3");
+                    }
+
+                    if (elevationText != null)
+                    {
+                        Text text = elevationText.GetComponent<Text>();
+                        text.text = (moonElevation * 1000.0).ToString("F3"); // meters
+                    }
+
+                    if (headingText != null)
+                    {
+                        Text text = headingText.GetComponent<Text>();
+                        double correctedHeading = AdjustAzimuth(terrainAzimuth, objectHeading);
+                        correctedHeading = NormalizeAngle360(correctedHeading);
+                        text.text = correctedHeading.ToString("F3");
+                    }
+
+                    if (surfaceObject != null)
+                    {
+                        // Position the surface object
+                        PositionObjectOnMoon(surfaceObject, moonRadius, moonElevation, moonLongitude, moonLatitude);
+                    }
+
+                    if (sunlightObject != null)
+                    {
+                        var sunPositionVecVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_POSITION_VEC);
+                        var sunRadiusVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_RADIUS_KM);
+                        var sunAzimuthVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_AZIMUTH_RAD);
+                        var sunAltitudeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_ALTITUDE_RAD);
+                        var sunLongitudeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_LONGITUDE_RAD);
+                        var sunLatitudeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_SUN_LATITUDE_RAD);
+
+                        if ((sunPositionVecVar is Vector3d) &&
+                            (sunRadiusVar is double) &&
+                            (sunAzimuthVar is double) &&
+                            (sunAltitudeVar is double) &&
+                            (sunLongitudeVar is double) &&
+                            (sunLatitudeVar is double))
+                        {
+                            Vector3d sunPositionVec = (Vector3d)sunPositionVecVar;
+                            double sunRadius = (double)sunRadiusVar;
+                            double sunAzimuthDeg = LunarModel.ToDegrees((double)sunAzimuthVar);
+                            double sunAltitudeDeg = LunarModel.ToDegrees((double)sunAltitudeVar);
+                            double sunLongitude = (double)sunLongitudeVar;
+                            double sunLatitude = (double)sunLatitudeVar;
+
+                            Debug.Log("Sun Vector [X,Y,Z]: " + sunPositionVec.x + ", " + sunPositionVec.y + ", " + sunPositionVec.z + ", " + "\n");
+                            Debug.Log("Sun Distance, Azimuth, Altitude: " +
+                                sunRadius + "km, " +
+                                sunAzimuthDeg + ", " +
+                                sunAltitudeDeg + "\n");
+
+                            Debug.Log("Subsolar point: " +
+                                LunarModel.ToDegrees(sunLongitude) + ", " +
+                                LunarModel.ToDegrees(sunLatitude) + "\n\n");
+
+                            if (sunAzimuthText != null)
+                            {
+                                Text text = sunAzimuthText.GetComponent<Text>();
+                                double correctedAzimuth = AdjustAzimuth(terrainAzimuth, sunAzimuthDeg);
+                                correctedAzimuth = NormalizeAngle360(correctedAzimuth);
+                                text.text = correctedAzimuth.ToString("F3");
+                            }
+
+                            if (sunAltitudeText != null)
+                            {
+                                Text text = sunAltitudeText.GetComponent<Text>();
+                                text.text = sunAltitudeDeg.ToString("F3");
+                            }
+
+                            if (sunSpotObject != null)
+                            {
+                                // Position the sun spot object on the surface
+                                PositionObjectOnMoon(sunSpotObject, moonRadius, 0, sunLongitude, sunLatitude);
+                            }
+
+                            // Position the light source
+                            if (Terrain.activeTerrain != null)
+                            {
+                                // Use sun azimuth/altitude
+                                PositionSun(sunlightObject, terrainAzimuth, sunAzimuthDeg, sunAltitudeDeg, sunRadius);
+                            }
+                            else
+                            {
+                                // Use the sun spot
+                                PositionObjectOnMoon(sunlightObject, moonRadius, 100000, sunLongitude, sunLatitude);
+                            }
+                        }
+                    }
+
+                    if (earthObject != null)
+                    {
+                        var earthPositionVecVar = dataManager.FindPoint(EarthAzimuthAltitude.KEY_EARTH_POSITION_VEC);
+                        var earthRadiusVar = dataManager.FindPoint(EarthAzimuthAltitude.KEY_EARTH_RADIUS_KM);
+                        var earthAzimuthVar = dataManager.FindPoint(EarthAzimuthAltitude.KEY_EARTH_AZIMUTH_RAD);
+                        var earthAltitudeVar = dataManager.FindPoint(EarthAzimuthAltitude.KEY_EARTH_ALTITUDE_RAD);
+
+                        if ((earthPositionVecVar is Vector3d) &&
+                            (earthRadiusVar is double) &&
+                            (earthAzimuthVar is double) &&
+                            (earthAltitudeVar is double))
+                        {
+                            Vector3d earthPositionVec = (Vector3d)earthPositionVecVar;
+                            double earthRadius = (double)earthRadiusVar;
+                            double earthAzimuthDeg = LunarModel.ToDegrees((double)earthAzimuthVar);
+                            double earthAltitudeDeg = LunarModel.ToDegrees((double)earthAltitudeVar);
+
+                            Debug.Log("Earth Vector [X,Y,Z]: " + earthPositionVec.x + ", " + earthPositionVec.y + ", " + earthPositionVec.z + ", " + "\n");
+                            Debug.Log("Earth Distance, Azimuth, Altitude: " +
+                                earthRadius + "km, " +
+                                earthAzimuthDeg + ", " +
+                                earthAltitudeDeg + "\n");
+
+                            if (earthAzimuthText != null)
+                            {
+                                Text text = earthAzimuthText.GetComponent<Text>();
+                                double correctedAzimuth = AdjustAzimuth(terrainAzimuth, earthAzimuthDeg);
+                                correctedAzimuth = NormalizeAngle360(correctedAzimuth);
+                                text.text = correctedAzimuth.ToString("F3");
+                            }
+
+                            if (earthAltitudeText != null)
+                            {
+                                Text text = earthAltitudeText.GetComponent<Text>();
+                                text.text = earthAltitudeDeg.ToString("F3");
+                            }
+
+                            // Position the light source
+                            if (Terrain.activeTerrain != null)
+                            {
+                                // Use sun azimuth/altitude
+                                PositionEarth(earthObject, terrainAzimuth, earthAzimuthDeg, earthAltitudeDeg, earthRadius);
+                            }
+                        }
+
+
+                    }
+
+                    // Display the time
+                    Debug.Log("Date/Time: " + time.ToUniversalTime().ToString("u") + "\n");
+
+                }
+            }
         }
     }
+
 }

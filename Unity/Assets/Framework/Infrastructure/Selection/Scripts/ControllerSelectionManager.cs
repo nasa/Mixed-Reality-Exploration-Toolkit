@@ -1,11 +1,15 @@
-﻿using System.Diagnostics;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Diagnostics;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace GSFC.ARVR.MRET.Selection
 {
     public class ControllerSelectionManager : MonoBehaviour
     {
+        public static readonly string selectionKey = "MRET.INTERNAL.TOOLS.SELECTION";
+
         public enum SelectionMode { Selecting }; // TODO: implement per-controller selection mode system later on.
 
         // None: Not selecting, Single: Selecting Single Object, Multi: Selecting Multiple Objects
@@ -13,13 +17,12 @@ namespace GSFC.ARVR.MRET.Selection
 
         public SelectionMode selectionMode = SelectionMode.Selecting;
         public SelectionManager selectionManager;
-        public VRTK.VRTK_ControllerEvents controllerEvents;
         public long singleSelectPressDuration_ms = 10, multiSelectPressDuration_ms = 1000;
         public SelectionState currentSelectionState = SelectionState.None;
         public LineRenderer laserRenderer;
         public Material laserMat;
-        public Toggle selectionToggle;
         public ControllerSelectionManager otherControllerSelectionManager;
+        public GameObject selectionRaycastRoot;
 
         private float maxRaycast = 1000f, laserWidth = 0.01f;
         private ISelectable currentlySelected = null;
@@ -27,20 +30,14 @@ namespace GSFC.ARVR.MRET.Selection
             pointerOn = false;
         private Stopwatch pressSW = new Stopwatch();
 
-        void Start()
+        public void Initialize()
         {
+            Infrastructure.Framework.MRET.DataManager.SaveValue(selectionKey, false);
+
             laserRenderer = gameObject.AddComponent<LineRenderer>();
             laserRenderer.SetPositions(new Vector3[] { Vector3.zero, Vector3.zero });
             laserRenderer.startWidth = laserRenderer.endWidth = laserWidth;
             laserRenderer.material = laserMat;
-
-            if (controllerEvents)
-            {
-                controllerEvents.TouchpadPressed += new VRTK.ControllerInteractionEventHandler(ProcessTouchpadPress);
-                controllerEvents.TouchpadReleased += new VRTK.ControllerInteractionEventHandler(ProcessTouchpadRelease);
-                controllerEvents.TouchpadTouchStart += new VRTK.ControllerInteractionEventHandler(ProcessTouchpadTouch);
-                controllerEvents.TouchpadTouchEnd += new VRTK.ControllerInteractionEventHandler(ProcessTouchpadUntouch);
-            }
 
             if (!selectionManager)
             {
@@ -56,7 +53,11 @@ namespace GSFC.ARVR.MRET.Selection
             }
             else
             {
-                laserRenderer.SetPositions(new Vector3[] { Vector3.zero, Vector3.zero });
+                // TODO: Added check for null JCH
+                if (laserRenderer != null)
+                {
+                    laserRenderer.SetPositions(new Vector3[] { Vector3.zero, Vector3.zero });
+                }
             }
 
             long elapsedPressDuration;
@@ -157,23 +158,24 @@ namespace GSFC.ARVR.MRET.Selection
 
         public void ToggleSelection()
         {
-            if (selectionToggle)
+            ToggleSelection(!((bool) DataManager.instance.FindPoint(selectionKey)));
+        }
+
+        public void ToggleSelection(bool on)
+        {
+            if (on)
             {
-                if (selectionToggle.isOn)
-                {
-                    currentSelectionState = SelectionState.Single;
-                    pointerOn = otherControllerSelectionManager.pointerOn = true;
-                }
-                else
-                {
-                    currentSelectionState = SelectionState.None;
-                    pointerOn = otherControllerSelectionManager.pointerOn = false;
-                }
+                currentSelectionState = SelectionState.Single;
+                pointerOn = otherControllerSelectionManager.pointerOn = true;
             }
             else
             {
-                UnityEngine.Debug.LogWarning("ControllerSelectionManager->TogglePointer: selectionToggle not set.");
+                currentSelectionState = SelectionState.None;
+                pointerOn = otherControllerSelectionManager.pointerOn = false;
             }
+
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(selectionKey, on));
         }
 
         public void OnTriggerEnter(Collider touchingObject)
@@ -196,32 +198,32 @@ namespace GSFC.ARVR.MRET.Selection
             TryExit(previousTouchingObject.gameObject);
         }
 
-        public void ProcessTouchpadTouch(object sender, VRTK.ControllerInteractionEventArgs e)
+        public void OnTouchpadTouch()
         {
             isRaycasting = true;
         }
 
-        public void ProcessTouchpadUntouch(object sender, VRTK.ControllerInteractionEventArgs e)
+        public void OnTouchpadUntouch()
         {
             isRaycasting = false;
         }
 
-        public void ProcessTouchpadPress(object sender, VRTK.ControllerInteractionEventArgs e)
+        public void OnTouchpadPress()
         {
             isPressing = true;
         }
 
-        public void ProcessTouchpadRelease(object sender, VRTK.ControllerInteractionEventArgs e)
+        public void OnTouchpadRelease()
         {
             isPressing = false;
         }
 
         private void PerformRaycast()
         {
-            Ray laserRaycast = new Ray(transform.position, transform.forward);
+            Ray laserRaycast = new Ray(selectionRaycastRoot.transform.position, selectionRaycastRoot.transform.forward);
             RaycastHit hit;
 
-            laserRenderer.SetPosition(0, transform.position);
+            laserRenderer.SetPosition(0, selectionRaycastRoot.transform.position);
             if (Physics.Raycast(laserRaycast, out hit, maxRaycast))
             {
                 ISelectable raycastSelectable = hit.transform.GetComponentInParent<ISelectable>();
@@ -241,14 +243,14 @@ namespace GSFC.ARVR.MRET.Selection
                     else
                     {
                         currentlySelected = null;
-                        laserRenderer.SetPosition(1, transform.position + transform.forward * maxRaycast);
+                        laserRenderer.SetPosition(1, selectionRaycastRoot.transform.position + selectionRaycastRoot.transform.forward * maxRaycast);
                     }
                 }
             }
             else
             {
                 currentlySelected = null;
-                laserRenderer.SetPosition(1, transform.position + transform.forward * maxRaycast);
+                laserRenderer.SetPosition(1, selectionRaycastRoot.transform.position + selectionRaycastRoot.transform.forward * maxRaycast);
             }
         }
 

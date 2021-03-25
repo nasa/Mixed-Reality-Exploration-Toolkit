@@ -1,4 +1,7 @@
-﻿/*
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+/*
  * 
  * This is a simple class used to dim and undim the note panel for better use of the program
  * 

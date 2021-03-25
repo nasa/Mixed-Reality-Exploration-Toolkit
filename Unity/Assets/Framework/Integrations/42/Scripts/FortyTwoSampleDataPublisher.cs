@@ -1,8 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
 using UnityEngine;
-using GSFC.ARVR.UTILITIES;
-using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class FortyTwoSampleDataPublisher : MonoBehaviour
 {
@@ -16,59 +16,44 @@ public class FortyTwoSampleDataPublisher : MonoBehaviour
     public double sunvec_x, sunvec_y, sunvec_z;             // <PRE>.SUNVEC.<X/Y/Z>.
     public double magvec_x, magvec_y, magvec_z;             // <PRE>.MAGVEC.<X/Y/Z>.
     public double angmom_x, angmom_y, angmom_z;             // <PRE>.ANGMOM.<X/Y/Z>.
-
-    private DataManager dataManager;
-
-    void Start()
-    {
-        GameObject loadedProjectObject = GameObject.Find("LoadedProject");
-        if (loadedProjectObject)
-        {
-            UnityProject loadedProject = loadedProjectObject.GetComponent<UnityProject>();
-            if (loadedProject)
-            {
-                dataManager = loadedProject.dataManager;
-            }
-        }
-    }
 	
 	void Update()
     {
-        dataManager.SaveValue(mnemonicPrefix + ".ORBPOS_N.X", orbpos_n_x);
-        dataManager.SaveValue(mnemonicPrefix + ".ORBPOS_N.Y", orbpos_n_y);
-        dataManager.SaveValue(mnemonicPrefix + ".ORBPOS_N.Z", orbpos_n_z);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ORBPOS_N.X", orbpos_n_x);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ORBPOS_N.Y", orbpos_n_y);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ORBPOS_N.Z", orbpos_n_z);
 
-        dataManager.SaveValue(mnemonicPrefix + ".ORBVEL_N.X", orbvel_n_y);
-        dataManager.SaveValue(mnemonicPrefix + ".ORBVEL_N.Y", orbvel_n_z);
-        dataManager.SaveValue(mnemonicPrefix + ".ORBVEL_N.Z", orbvel_n_x);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ORBVEL_N.X", orbvel_n_y);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ORBVEL_N.Y", orbvel_n_z);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ORBVEL_N.Z", orbvel_n_x);
 
-        dataManager.SaveValue(mnemonicPrefix + ".POS_R.X", pos_r_x);
-        dataManager.SaveValue(mnemonicPrefix + ".POS_R.Y", pos_r_y);
-        dataManager.SaveValue(mnemonicPrefix + ".POS_R.Z", pos_r_z);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".POS_R.X", pos_r_x);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".POS_R.Y", pos_r_y);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".POS_R.Z", pos_r_z);
 
-        dataManager.SaveValue(mnemonicPrefix + ".VEL_R.X", vel_r_x);
-        dataManager.SaveValue(mnemonicPrefix + ".VEL_R.Y", vel_r_y);
-        dataManager.SaveValue(mnemonicPrefix + ".VEL_R.Z", vel_r_z);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".VEL_R.X", vel_r_x);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".VEL_R.Y", vel_r_y);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".VEL_R.Z", vel_r_z);
 
-        dataManager.SaveValue(mnemonicPrefix + ".ANGVEL.X", angvel_x);
-        dataManager.SaveValue(mnemonicPrefix + ".ANGVEL.Y", angvel_y);
-        dataManager.SaveValue(mnemonicPrefix + ".ANGVEL.Z", angvel_z);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ANGVEL.X", angvel_x);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ANGVEL.Y", angvel_y);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ANGVEL.Z", angvel_z);
 
-        dataManager.SaveValue(mnemonicPrefix + ".QBN.X", qbn_x);
-        dataManager.SaveValue(mnemonicPrefix + ".QBN.Y", qbn_y);
-        dataManager.SaveValue(mnemonicPrefix + ".QBN.Z", qbn_z);
-        dataManager.SaveValue(mnemonicPrefix + ".QBN.W", qbn_w);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".QBN.X", qbn_x);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".QBN.Y", qbn_y);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".QBN.Z", qbn_z);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".QBN.W", qbn_w);
 
-        dataManager.SaveValue(mnemonicPrefix + ".SUNVEC.X", sunvec_x);
-        dataManager.SaveValue(mnemonicPrefix + ".SUNVEC.Y", sunvec_y);
-        dataManager.SaveValue(mnemonicPrefix + ".SUNVEC.Z", sunvec_z);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".SUNVEC.X", sunvec_x);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".SUNVEC.Y", sunvec_y);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".SUNVEC.Z", sunvec_z);
 
-        dataManager.SaveValue(mnemonicPrefix + ".MAGVEC.X", magvec_x);
-        dataManager.SaveValue(mnemonicPrefix + ".MAGVEC.Y", magvec_y);
-        dataManager.SaveValue(mnemonicPrefix + ".MAGVEC.Z", magvec_z);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".MAGVEC.X", magvec_x);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".MAGVEC.Y", magvec_y);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".MAGVEC.Z", magvec_z);
 
-        dataManager.SaveValue(mnemonicPrefix + ".ANGMOM.X", angmom_x);
-        dataManager.SaveValue(mnemonicPrefix + ".ANGMOM.Y", angmom_y);
-        dataManager.SaveValue(mnemonicPrefix + ".ANGMOM.Z", angmom_z);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ANGMOM.X", angmom_x);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ANGMOM.Y", angmom_y);
+        MRET.DataManager.SaveValue(mnemonicPrefix + ".ANGMOM.Z", angmom_z);
     }
 }

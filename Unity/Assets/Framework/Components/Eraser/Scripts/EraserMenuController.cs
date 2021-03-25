@@ -1,52 +1,53 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class EraserMenuController : MonoBehaviour
+using UnityEngine;
+using GSFC.ARVR.MRET.Integrations.XRUI;
+
+namespace GSFC.ARVR.MRET.Components.Eraser
 {
-    public Toggle eraserToggle;
-    public EraserManager eraserManager;
-    public ControlMode controlMode;
-
-    private bool initializing = false;
-
-    public void OnEnable()
+    public class EraserMenuController : MenuController
     {
-        initializing = true;
-        eraserToggle.isOn = eraserManager.canErase;
-        initializing = false;
-    }
+        public static readonly string eraserKey = "MRET.INTERNAL.TOOLS.ERASER";
 
-    public void ToggleEraser()
-    {
-        if (!initializing)
+        public EraserManager eraserManager;
+
+        public override void Initialize()
         {
-            SwitchEraser(!eraserManager.canErase);
+            Infrastructure.Framework.MRET.DataManager.SaveValue(eraserKey, false);
         }
-    }
 
-    public void SwitchEraser(bool on)
-    {
-        if (on)
+        public void SwitchEraser()
         {
-            eraserManager.Enable();
-            controlMode.EnterEraserMode();
+            SwitchEraser(!((bool) DataManager.instance.FindPoint(eraserKey)));
         }
-        else
+
+        public void SwitchEraser(bool on)
         {
-            eraserManager.Disable();
-            if (controlMode.activeControlType == ControlMode.ControlType.Eraser)
+            if (on)
             {
-                controlMode.DisableAllControlTypes();
+                eraserManager.Enable();
+                Infrastructure.Framework.MRET.ControlMode.EnterEraserMode();
             }
-        }
-    }
+            else
+            {
+                eraserManager.Disable();
+                if (Infrastructure.Framework.MRET.ControlMode.activeControlType == ControlMode.ControlType.Eraser)
+                {
+                    Infrastructure.Framework.MRET.ControlMode.DisableAllControlTypes();
+                }
+            }
 
-    public void ExitMode()
-    {
-        if (eraserToggle)
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(eraserKey, on));
+        }
+
+        public void ExitMode()
         {
-            eraserToggle.isOn = false;
             eraserManager.Disable();
+
+            // Save to DataManager.
+            DataManager.instance.SaveValue(new DataManager.DataValue(eraserKey, false));
         }
     }
 }

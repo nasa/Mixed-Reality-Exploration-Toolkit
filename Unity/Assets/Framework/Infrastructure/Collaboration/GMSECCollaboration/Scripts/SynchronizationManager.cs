@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using GSFC.ARVR.GMSEC;
 using GSFC.ARVR.UTILITIES;
 
@@ -552,10 +555,10 @@ public class SynchronizationManager : MonoBehaviour
                             ? "Left/Laser" : "Right/Laser");
                         nameToUse = eStatus.gameObject.GetComponent<SynchronizedPointer>().synchronizedController.synchronizedUser.userAlias.ToUpper();
                         transformToUse = eStatus.gameObject.GetComponent<SynchronizedPointer>().transformToUse;
-                        if (!eStatus.gameObject.GetComponent<SynchronizedPointer>().pointer.IsPointerActive())
+                        /*if (!eStatus.gameObject.GetComponent<SynchronizedPointer>().pointer.IsPointerActive())
                         {
                             transformToUse.position = Vector3.zero;
-                        }
+                        }*/
                     }
                     else if (eStatus.gameObject.GetComponentInParent<SynchronizedController>())
                     {

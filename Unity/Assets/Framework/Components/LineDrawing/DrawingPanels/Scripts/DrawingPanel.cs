@@ -1,5 +1,9 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using UnityEngine.UI;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class DrawingPanel : MonoBehaviour
 {
@@ -58,7 +62,7 @@ public class DrawingPanel : MonoBehaviour
     {
         GameObject menu = Instantiate(menuPrefab, pos, rot, par);
         menu.transform.rotation =
-                Quaternion.LookRotation((VRTK.VRTK_DeviceFinder.HeadsetTransform().position
+                Quaternion.LookRotation((MRET.InputRig.head.transform.position
                 - menu.transform.position) * -1, Vector3.up);
 
     }

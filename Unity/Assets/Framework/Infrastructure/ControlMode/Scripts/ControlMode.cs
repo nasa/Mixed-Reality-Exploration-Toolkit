@@ -1,4 +1,11 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
+using GSFC.ARVR.MRET.Components.Ruler;
+using GSFC.ARVR.MRET.Components.Camera;
+using GSFC.ARVR.MRET.Components.Notes;
+using GSFC.ARVR.MRET.Components.Eraser;
 
 // This class is designed to handle context awareness for the various control modes.
 public class ControlMode : MonoBehaviour
@@ -13,6 +20,11 @@ public class ControlMode : MonoBehaviour
     public IKInteractionManager leftIKManager, rightIKManager;
     public NotesMenuController leftNotesMenuController, rightNotesMenuController;
     public EraserMenuController leftEraserMenuController, rightEraserMenuController;
+
+    public void Initialize()
+    {
+
+    }
 
     public void EnterCameraMode()
     {

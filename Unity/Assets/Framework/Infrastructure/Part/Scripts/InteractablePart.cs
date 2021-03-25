@@ -1,11 +1,16 @@
-﻿using UnityEngine;
-using VRTK;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using UnityEngine;
 using System.Collections.Generic;
 using GSFC.ARVR.MRET.Selection;
 using GSFC.ARVR.MRET.XRC;
 using GSFC.ARVR.MRET.Common.Schemas;
+using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
-public class InteractablePart : VRTK_InteractableObject, ISelectable
+public class InteractablePart : SceneObject, ISelectable
 {
     public class InteractablePartSettings
     {
@@ -35,10 +40,6 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
     public Transform headsetObject;
     public Color highlightColor;
 
-    private SessionConfiguration sessionConfig;
-    private UnityProject projectManager;
-    private Material highlightMaterial;
-    private Material selectMaterial;
     private GameObject partPanel;
     private GameObject partPanelInfo = null;
     private bool clicked = false;
@@ -101,8 +102,8 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
             serializedPart.EnableCollisions = new bool[] { !rBody.isKinematic };
             serializedPart.EnableGravity = new bool[] { rBody.useGravity };
         }
-        serializedPart.NonInteractable = !isUsable;
-        serializedPart.EnableInteraction = new bool[] { isGrabbable };
+        serializedPart.NonInteractable = !useable;
+        serializedPart.EnableInteraction = new bool[] { grabbable };
         if (enclosure)
         {
             serializedPart.Enclosure = enclosure.GetComponent<AssemblyGrabber>().Serialize();
@@ -148,30 +149,6 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
         return serializedPart;
     }
 
-    public void ResetTextures()
-    {
-        if (selected)
-        {
-            return;
-        }
-        
-        int i = 0;
-        
-        // Change material to original material.
-        foreach (MeshRenderer rend in objectRenderers)
-        {
-            int rendMatCount = rend.materials.Length;
-            Material[] rendMats = new Material[rendMatCount];
-            for (int j = 0; j < rendMatCount; j++)
-            {
-                rendMats[j] = objectMaterials[i];
-            }
-            rend.materials = rendMats;
-        }
-
-        //GetComponent<VRTK_InteractObjectHighlighter>().Unhighlight();
-    }
-
     public void Start()
     {
         // Preserve information about original materials.
@@ -194,38 +171,11 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
         lastSavedPosition = transform.position;
         lastSavedRotation = transform.rotation;
 
-        /////////////////////////// Get Session Configuration. ///////////////////////////
-        GameObject sessionManager = GameObject.Find("SessionManager");
-        if (sessionManager)
-        {
-            sessionConfig = sessionManager.GetComponent<SessionConfiguration>();
-            if (sessionConfig)
-            {
-                highlightMaterial = sessionConfig.highlightMaterial;
-                selectMaterial = sessionConfig.selectMaterial;
-            }
-            else
-            {
-                Debug.LogError("[CollisionHandler->Start] Unable to get Session Configuration.");
-            }
-        }
-        else
-        {
-            Debug.LogError("[CollisionHandler->Start] Unable to get Session Manager.");
-        }
-        //////////////////////////////////////////////////////////////////////////////////
-
-        projectManager = FindObjectOfType<UnityProject>();
-        if (!projectManager)
-        {
-            Debug.LogError("[InteractablePart] Unable to find Project Manager.");
-        }
+        EnableColliders();
     }
 
-    protected override void Update()
+    private void Update()
     {
-        base.Update();
-
         if (clicked)
         {
             if (clickTimer < 0)
@@ -244,16 +194,16 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
         }
     }
 
-    public override void OnInteractableObjectUsed(InteractableObjectEventArgs e)
+    public override void Use(InputHand hand)
     {
-        base.OnInteractableObjectUsed(e);
+        base.Use(hand);
 
         if (!isPlacing)
         {
             if (clicked == true)
             {
                 // Register as double-click.
-                LoadPartPanel(e.interactingObject, true);
+                LoadPartPanel(hand.gameObject, true);
             }
             else
             {
@@ -261,7 +211,7 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
 
                 if (!partPanel)
                 {
-                    LoadPartPanel(e.interactingObject, false);
+                    LoadPartPanel(hand.gameObject, false);
                 }
                 else
                 {
@@ -271,11 +221,6 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
                 }
             }
         }
-    }
-
-    public override void OnInteractableObjectUnused(InteractableObjectEventArgs e)
-    {
-        base.OnInteractableObjectUnused(e);
     }
 
     public void ResetMyTextures()
@@ -298,16 +243,16 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
         }
     }
 
-    public override void OnInteractableObjectTouched(InteractableObjectEventArgs e)
+    protected override void BeginTouch(InputHand hand)
     {
-        base.OnInteractableObjectTouched(e);
+        base.BeginTouch(hand);
 
-        if (!isUsable)
+        if (!useable)
         {
             return;
         }
 
-        if (!selected)
+        /*if (!selected)
         {
             // Highlight the entire part.
             foreach (MeshRenderer rend in GetComponentsInChildren<MeshRenderer>())
@@ -320,60 +265,73 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
                 }
                 rend.materials = rendMats;
             }
-        }
+        }*/
     }
 
-    public override void OnInteractableObjectUntouched(InteractableObjectEventArgs e)
+    protected override void EndTouch()
     {
-        base.OnInteractableObjectUntouched(e);
+        base.EndTouch();
 
-        if (!isUsable)
+        if (!useable)
         {
             return;
         }
 
-        if (!selected)
+        /*if (!selected)
         {
             ResetMyTextures();
             foreach (InteractablePart iPart in GetComponentsInChildren<InteractablePart>())
             {
                 iPart.ResetMyTextures();
             }
-        }
+        }*/
     }
 
-    public override void OnInteractableObjectGrabbed(InteractableObjectEventArgs e)
+    public override void BeginGrab(InputHand hand)
     {
-        base.OnInteractableObjectGrabbed(e);
+        if (!grabbable)
+        {
+            return;
+        }
 
-        StartAligning(e.interactingObject);
+        base.BeginGrab(hand);
+
+        StartAligning(hand.gameObject);
 
         collisionHandler = gameObject.AddComponent<CollisionHandler>();
         collisionHandler.enabled = false;
-        collisionHandler.grabbingObj = e.interactingObject;
+        collisionHandler.grabbingObj = hand.gameObject;
         collisionHandler.enabled = true;
 
         DisableAllEnvironmentScaling();
-        DisableAllFlying();
+        DisableAllLocomotion();
 
-        SynchronizedController cont = e.interactingObject.GetComponentInParent<SynchronizedController>();
+        SynchronizedController cont = hand.gameObject.GetComponentInParent<SynchronizedController>();
         if (cont)
         {
             XRCUnity.UpdateEntityParent(guid.ToString(), cont.uuid.ToString());
         }
     }
 
-    public override void OnInteractableObjectUngrabbed(InteractableObjectEventArgs e)
+    public override void EndGrab(InputHand hand)
     {
-        base.OnInteractableObjectUngrabbed(e);
-        
+        if (!grabbable)
+        {
+            return;
+        }
+
+        base.EndGrab(hand);
+
         StopAligning();
 
-        if (!selected)
+        if (collisionHandler != null)
         {
-            collisionHandler.ResetTextures();
+            if (!selected)
+            {
+                collisionHandler.ResetTextures();
+            }
+            Destroy(collisionHandler);
         }
-        Destroy(collisionHandler);
 
         SnapToConnector();
 
@@ -389,7 +347,7 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
         }
 
         EnableAnyEnvironmentScaling();
-        EnableAnyFlying();
+        EnableAnyLocomotion();
 
         if (transform.parent)
         {
@@ -403,11 +361,13 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
                 XRCUnity.UpdateEntityParent(guid.ToString(), "ROOT");
             }
         }
-    }
 
+        EndTouch();
+    }
+    
     public void LoadPartPanel(GameObject controller, bool reinitialize)
     {
-        if (!sessionConfig.partPanelEnabled)
+        if (!MRET.PartPanelEnabled)
         {
             return;
         }
@@ -492,6 +452,17 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
         }
     }
 
+    /// <summary>
+    /// Temporary fix for a bug occurring with colliders being disabled.
+    /// </summary>
+    private void EnableColliders()
+    {
+        foreach (Collider coll in GetComponentsInChildren<Collider>())
+        {
+            coll.enabled = true;
+        }
+    }
+
 #region SNAPPING
     private SnappingConnector connectorToSnapTo = null;
 
@@ -518,20 +489,20 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
 
     public void StartAligning(GameObject controller)
     {
-        if (VRDesktopSwitcher.isDesktopEnabled())
+        if (MRET.ConfigurationManager.config.PlacementMode == false)
         {
             return;
         }
 
         GSFC.ARVR.MRET.Alignment.VRBuilderBehaviour bb = controller.AddComponent<GSFC.ARVR.MRET.Alignment.VRBuilderBehaviour>();
         bb.OutOfRangeDistance = 0.5f;
-        bb.PreviewLayer = SessionConfiguration.previewLayer;
+        //bb.PreviewLayer = MRET.previewLayer;
 
-        EasyBuildSystem.Runtimes.Internal.Part.PartBehaviour pb = gameObject.AddComponent<EasyBuildSystem.Runtimes.Internal.Part.PartBehaviour>();
+        EasyBuildSystem.Features.Scripts.Core.Base.Piece.PieceBehaviour pb = gameObject.AddComponent<EasyBuildSystem.Features.Scripts.Core.Base.Piece.PieceBehaviour>();
 
-        pb.ChangeState(EasyBuildSystem.Runtimes.Internal.Part.StateType.Preview);
+        pb.ChangeState(EasyBuildSystem.Features.Scripts.Core.Base.Piece.Enums.StateType.Preview);
         
-        bb.ChangeMode(EasyBuildSystem.Runtimes.Internal.Builder.BuildMode.Placement);
+        bb.ChangeMode(EasyBuildSystem.Features.Scripts.Core.Base.Builder.Enums.BuildMode.Placement);
         bb.placingObject = gameObject;
 
         foreach (Collider coll in GetComponentsInChildren<Collider>())
@@ -542,7 +513,7 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
 
     public void StopAligning()
     {
-        if (VRDesktopSwitcher.isDesktopEnabled())
+        if (MRET.ConfigurationManager.config.PlacementMode == false)
         {
             return;
         }
@@ -555,10 +526,10 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
                 {
                     bb.placingObject.transform.position = bb.CurrentPreview.transform.position;
                     bb.placingObject.transform.rotation = bb.CurrentPreview.transform.rotation;
-                    bb.ChangeMode(EasyBuildSystem.Runtimes.Internal.Builder.BuildMode.None);
+                    bb.ChangeMode(EasyBuildSystem.Features.Scripts.Core.Base.Builder.Enums.BuildMode.None);
                     Destroy(bb.CurrentPreview);
                 }
-                EasyBuildSystem.Runtimes.Internal.Part.PartBehaviour pb = bb.placingObject.GetComponent<EasyBuildSystem.Runtimes.Internal.Part.PartBehaviour>();
+                EasyBuildSystem.Features.Scripts.Core.Base.Piece.PieceBehaviour pb = bb.placingObject.GetComponent<EasyBuildSystem.Features.Scripts.Core.Base.Piece.PieceBehaviour>();
                 if (pb)
                 {
                     Destroy(pb);
@@ -572,9 +543,9 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
         foreach (Collider coll in GetComponentsInChildren<Collider>())
         {
             coll.enabled = true;
-            if (coll.gameObject.layer == SessionConfiguration.previewLayer)
+            if (coll.gameObject.layer == MRET.previewLayer)
             {
-                coll.gameObject.layer = SessionConfiguration.defaultLayer;
+                coll.gameObject.layer = MRET.defaultLayer;
             }
         }
     }
@@ -584,20 +555,11 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
     private bool isPlacing = false;
     private Transform oldParent = null;
     private bool wasGrabbable = true, wasUsable = true, wasUseGravity = false, wasKinematic = false;
-    public void StartPlacing(Transform placingParent = null, VRTK_ControllerEvents cEvents = null)
+    public void StartPlacing(Transform placingParent = null)
     {
         foreach (InteractablePart iPart in gameObject.GetComponentsInChildren<InteractablePart>())
         {
             iPart.isPlacing = true;
-        }
-
-        if (VRDesktopSwitcher.isDesktopEnabled())
-        {
-            //EventManager.OnLeftClick += StopPlacing;
-        }
-        else if (cEvents)
-        {
-            cEvents.TriggerPressed += new ControllerInteractionEventHandler(StopPlacing);
         }
 
         oldParent = transform.parent;
@@ -608,10 +570,10 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
         }
 
         // Change these for grabbing purposes.
-        wasGrabbable = isGrabbable;
-        isGrabbable = false;
-        wasUsable = isUsable;
-        isUsable = true;
+        wasGrabbable = grabbable;
+        grabbable = false;
+        wasUsable = useable;
+        useable = true;
         Rigidbody rBody = gameObject.GetComponent<Rigidbody>();
         if (rBody == null)
         {
@@ -621,11 +583,6 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
         rBody.useGravity = false;
         wasKinematic = rBody.isKinematic;
         rBody.isKinematic = true;
-    }
-
-    public void StopPlacing(object sender, VRTK.ControllerInteractionEventArgs e)
-    {
-        StopPlacing();
     }
 
     public void StopPlacing()
@@ -642,8 +599,8 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
             transform.SetParent(oldParent);
 
             // Change these back.
-            isGrabbable = wasGrabbable;
-            isUsable = wasUsable;
+            grabbable = wasGrabbable;
+            useable = wasUsable;
             Rigidbody rBody = gameObject.GetComponent<Rigidbody>();
             if (rBody == null)
             {
@@ -657,21 +614,27 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
             undoManager.AddAction(
                 ProjectAction.AddObjectAction(part, transform.position, transform.rotation,
                 new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z),
-                new InteractablePartSettings(isGrabbable, !rBody.isKinematic, rBody.useGravity),
+                new InteractablePartSettings(grabbable, !rBody.isKinematic, rBody.useGravity),
                 part.GUID),
-                ProjectAction.DeleteObjectAction(transform.name));
+                ProjectAction.DeleteObjectAction(transform.name, part.GUID));
 
             lastSavedPosition = transform.position;
             lastSavedRotation = transform.rotation;
         }
     }
+
+    public override void Place()
+    {
+        base.Place();
+        StopPlacing();
+    }
 #endregion
 
 #region CONTEXTAWARECONTROL
-    private bool previousScalingState = false, previousFlyingState = false;
+    private bool previousScalingState = false, previousLocomotionPauseState = false;
     private void DisableAllEnvironmentScaling()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
+        /*VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
         if (cEvents.Length == 2)
         {
             foreach (VRTK_ControllerEvents cEvent in cEvents)
@@ -680,12 +643,21 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
                 previousScalingState = sot.enabled; // Inefficient, but it doesn't matter.
                 sot.enabled = false;
             }
+        }*/
+        foreach (InputHand hand in MRET.InputRig.hands)
+        {
+            ScaleObjectTransform sot = hand.GetComponentInChildren<ScaleObjectTransform>(true);
+            if (sot)
+            {
+                previousScalingState = sot.enabled;
+                sot.enabled = false;
+            }
         }
     }
 
     private void EnableAnyEnvironmentScaling()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
+        /*VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
         if (cEvents.Length == 2)
         {
             foreach (VRTK_ControllerEvents cEvent in cEvents)
@@ -694,35 +666,28 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
                 sot.enabled = previousScalingState;
             }
             previousScalingState = false;
+        }*/
+        foreach (InputHand hand in MRET.InputRig.hands)
+        {
+            ScaleObjectTransform sot = hand.GetComponentInChildren<ScaleObjectTransform>(true);
+            if (sot)
+            {
+                sot.enabled = previousScalingState;
+            }
+            previousScalingState = false;
         }
     }
 
-    private void DisableAllFlying()
+    private void DisableAllLocomotion()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
-        {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                SimpleMotionController smc = cEvent.GetComponentInChildren<SimpleMotionController>(true);
-                previousFlyingState = smc.motionEnabled; // Inefficient, but it doesn't matter.
-                smc.motionEnabled = false;
-            }
-        }
+        previousLocomotionPauseState = MRET.LocomotionManager.Paused;
+        MRET.LocomotionManager.Paused = true;
     }
 
-    private void EnableAnyFlying()
+    private void EnableAnyLocomotion()
     {
-        VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
-        {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                SimpleMotionController smc = cEvent.GetComponentInChildren<SimpleMotionController>(true);
-                smc.motionEnabled = previousFlyingState;
-            }
-            previousFlyingState = false;
-        }
+        MRET.LocomotionManager.Paused = previousLocomotionPauseState;
+        previousLocomotionPauseState = false;
     }
 #endregion
 
@@ -751,7 +716,7 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
                 continue;
             }
 
-            if (rend != null && rend.transform.parent != projectManager)
+            if (rend != null && rend.transform.parent != MRET.Project)
             {
                 Vector3 dir = rend.transform.InverseTransformPoint(rend.bounds.center)
                     - rend.transform.InverseTransformPoint(centerPoint);
@@ -801,8 +766,6 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
 #endregion
 
 #region Selection
-    private bool selected = false;
-
     public void Select(bool hierarchical = true)
     {
         if (selected)
@@ -827,7 +790,7 @@ public class InteractablePart : VRTK_InteractableObject, ISelectable
             Material[] rendMats = new Material[rendMatCount];
             for (int j = 0; j < rendMatCount; j++)
             {
-                rendMats[j] = selectMaterial;
+                rendMats[j] = MRET.SelectMaterial;
             }
             rend.materials = rendMats;
         }
