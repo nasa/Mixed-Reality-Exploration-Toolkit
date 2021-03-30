@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+		
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="COMPONENT-STATUS_Type">
+		<xs:restriction base="xs:short">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+			<xs:enumeration value="4"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="C2CX-SUBTYPE_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="HB"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:element name="SUBSCRIPTION">
+		<xs:complexType>
+			<xs:all>
+			
+				<xs:element name="SUBJECT-PATTERN" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>The nth subscription subject pattern held by the running application - reserved for use by implementation (PSM).</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+				
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="MSG.C2CX.HB">
+		<xs:complexType>
+			<xs:all>
+			
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+				
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+						
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version Number for this message content description.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="C2CX-SUBTYPE">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="C2CX-SUBTYPE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Identifies the type of information being transferred between the components.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="COUNTER" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Indicates the number of times that the C2CX heartbeat message has been published, including this message.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="PUB-RATE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedShort">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Indicates the rate, in number of seconds, which the C2CX heartbeat message is being published by the component. A rate of zero or less indicates that this C2CX message is not repeatedly published by the component. The default publishing rate of the C2CX heartbeat message is 30 seconds.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="COMPONENT-STATUS" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="COMPONENT-STATUS_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation></xs:documentation>
+								</xs:annotation>
+								<xs:annotation>
+									<xs:documentation>Indicates the condition of the component being monitored, typically itself, although it may be a proxy for a remote component. The component may choose the condition level based on its own criteria.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="COMPONENT-INFO" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:short">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>An additional status code the component can supply that is specific to that component.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="COMPONENT-INFO-DETAILS" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Allows a component to detail its status in a verbose message.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="SW-VERSION" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version number identifier of the reporing component. Component must ascertain the data type before accessing the value (e.g. with a function call).</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="CPU-MEM" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:float">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Amount of memory being used at this time by this component.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="CPU-UTIL" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:float">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Percentage of CPU being utilized.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="NUM-OF-SUBSCRIPTIONS" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedShort">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>The number of active subscriptions set up across all connections held by the running application - reserved for use by implementation (PSM)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="SUBSCRIPTIONS" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="SUBSCRIPTION" minOccurs="0" maxOccurs="100"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							
+							<xs:element name="MW-CONNECTION-ENDPOINT" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Broker(s) to which the client application is currently connected - reserved for use by implementation (PSM).</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+				
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+	
+</xs:schema>

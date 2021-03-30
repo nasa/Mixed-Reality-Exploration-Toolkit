@@ -1,0 +1,28 @@
+<!-- Replay Telemetry Response Message -->
+<!-- See Table 5-64 of the 2016 GMSEC Interface Specification Document for more information -->
+<SCHEMA NAME="2016.00.GMSEC.RESP.RTLM">
+	<FIELD  NAME="RESPONSE-STATUS"
+	        MODE="REQUIRED"
+	        FIELD_CLASS="STANDARD"                                          
+	        VALUE=""                                                  
+	        TYPE="I16"
+	        DESCRIPTION="Identifies the status of the request being processed.  (1:  Acknowledgement, 2:  Working/Keep Alive, 3:  Successful completion, 4:  Failed completion, 5:  Invalid Request, 6:  Final Message)"/>
+	<FIELD  NAME="TIME-COMPLETED"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="STRING"
+	        DESCRIPTION="Time application completed processing the request"/>
+	<FIELD  NAME="RETURN-VALUE"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="I32"
+	        DESCRIPTION="Return value or status based on the RESPONSE-STATUS.  Useful to provide function call status or error code in the case of failed completion"/>
+	<FIELD  NAME="DATA"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="VARIABLE"
+	        DESCRIPTION="Additional data that may be desired along with the completion status.  Type is dependent upon response."/>
+</SCHEMA>

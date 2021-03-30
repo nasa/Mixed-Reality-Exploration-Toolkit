@@ -1,0 +1,40 @@
+<!-- Command Response Message -->
+<!-- See Table 5-126 of the 2016 GMSEC Interface Specification Document for more information -->
+<SCHEMA NAME="2016.00.GMSEC.RESP.CMD">
+	<FIELD  NAME="RESPONSE-STATUS"
+	        MODE="REQUIRED"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="I16"
+	        DESCRIPTION="Identifies the status of the Command being processed (1:  Acknowledgement, 2:  Working/Keep alive, 3:  Successful Completion, 4:  Failed Completion, 5:  Invalid Request, 6:  Final Message)"/>
+	<FIELD  NAME="TIME-COMPLETED"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="STRING"
+	        DESCRIPTION="Time application completed processing the Command"/>
+	<FIELD  NAME="RETURN-VALUE"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="I32"
+	        DESCRIPTION="Return value or status based on the RESPONSE-STATUS.  Useful to provide function call status or error code in the case of failed completion"/>
+	<FIELD  NAME="RELEASE-TIME"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="STRING"
+	        DESCRIPTION="Time command finished being released from the front end processor to the remote tracking station."/>
+	<FIELD  NAME="XTCE-STATUS"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="I16"
+	        DESCRIPTION="Status codes from the OMG XML Telemetric and Command data Exchange data specification.  (1:  Acknowledgement, 2:  Invalid, 3:  TransferredToRange, 4:  SentFromRange, 5:  Received, 6:  Accepted, 7:  Queued,, 8:  Executing, 9:  Complete, 10:  Failed)"/>
+	<FIELD  NAME="RETURN-DATA"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="VARIABLE"
+	        DESCRIPTION="Additional data that may be desired along with the completion status"/>
+</SCHEMA>

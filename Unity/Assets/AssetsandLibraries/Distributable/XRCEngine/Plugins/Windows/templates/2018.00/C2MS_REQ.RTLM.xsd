@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="FILE">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="NAME-PATTERN" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Name of the last file</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="REQ.RTLM">
+		<xs:complexType>
+			<xs:all minOccurs="1">
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all minOccurs="0" maxOccurs="1">
+						
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version Number for this message content description</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="ACTION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="ACTION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Identifies the desired action to perform on the telemetry data stream.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+							
+							<xs:element name="STREAM-MODE">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="STREAM-MODE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Identifies the type of data to be published.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="PLAYBACK-RATIO" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:float">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Speed of playback as a ratio of playback rate to real-time rate. This is the default method; default = 1.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="DATA-RATE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Data rate in Kilobits per second</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="START-TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Time of first telemetry data. Defaults to the start of the archive</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="STOP-TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Time of last telemetry data. Defaults to the end of the archive</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="ORBIT" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedInt">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Orbit or revolution number of the vehicle (past or future).</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="NUM-OF-FILES">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Number of Telemetry files to replay</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+								<xs:element name="FILES" minOccurs="0">
+									<xs:complexType>
+										<xs:sequence>
+											<xs:element ref="FILE" minOccurs="0" maxOccurs="100"/>
+										</xs:sequence>
+									</xs:complexType>
+								</xs:element>
+
+							<xs:element name="FORMAT">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TLM-FORMAT_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Telemetry Message types to playback. Note: A provider may not be capable of providing all types; e.g., only raw or only processed data.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="COLLECTION-POINT" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Receiver, device, point, path, etc. where data was received. Used to distinguish data simultaneously received at multiple collection points.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="VCID" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Virtual Channel IDs: comma delimited channel IDs with ‘-‘ for channel ID ranges. Example: 1,2,6-9,10</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="APID" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>AP IDs: comma delimited AP IDs with ‘-‘ for channel ID ranges. Example: 1,2,6-9,10</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

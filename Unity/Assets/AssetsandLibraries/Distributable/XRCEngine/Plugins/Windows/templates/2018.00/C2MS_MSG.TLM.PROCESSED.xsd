@@ -1,0 +1,358 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="MNEMONIC-STATUS_Type">
+		<xs:restriction base="xs:unsignedShort">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="FORMAT_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="PROCESSED"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="FORMAT-IDENTIFIER">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="VALUE"  minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Value of the nth field used to identify the telemetry. If the message is used with XTCE, this is the nth comparison in a comparison list in the restriction criteria in an XTCE container.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="MNEMONIC">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="NAME">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Name of the nth mnemonic</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="STATUS">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="MNEMONIC-STATUS_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Status if the nth mnemonic: valid mnemonic, or valid mnemonic with no data, or invalid mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="UNITS" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Unit sassociated with the raw value converted to engineering units for the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="NUM-OF-SAMPLES">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:unsignedShort">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Number of data samples for the nth mnemonic. This value should equal the number of times the mnemonic appears in the telemetry frame (e.g. will be greater than 1 for super-commutated telemetry points).</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="SAMPLES" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="SAMPLE" minOccurs="0" maxOccurs="100"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="SAMPLE">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="TIME-STAMP" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="TIME_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Time stamp for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="RAW-VALUE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:int">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="I32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Raw value for the mth data sample for the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="EU-VALUE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:double">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="F64"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Raw value converted to engineering units if engineering units conversion is present for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="TEXT-VALUE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Raw value converted to a text string if text conversion is present for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="LIMIT-ENABLE-DISABLE">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:boolean">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates the limit checking state for the mth data sample for the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="MSG.TLM.PROCESSED">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version Number for this message content description</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FORMAT">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="FORMAT_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Message contains a processed frame</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="COLLECTION-POINT" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Receiver, device, point, path, etc. where data was received. Used to distinguish data simultaneously received at multiple collection points.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="STREAM-MODE">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="STREAM-MODE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Identifies the kind or source of the stream of telemetry as either Real-time, Replay, Simulator, or Test.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FINAL-MESSAGE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:boolean">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>When true (and known, especially for replay data), indicates the last message in the stream.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="LENGTH" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedInt">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Length of frame</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Time of frame, usually ground receipt time</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FRAMESYNC-STATUS" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="FRAMESYNC-STATUS_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>State of frame synchronization from equipment when frame is ingested</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="NUM-OF-FORMAT-IDENTIFIERS" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedShort">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Number of fields used to identify the frames (e.g. TDM major/minor frames would have a value of 2). Zero is only permissible for vehicles with one telemetry format with a single type of frame.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FORMAT-IDENTIFIERS" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="FORMAT-IDENTIFIER" minOccurs="0" maxOccurs="100"/>
+									</xs:sequence>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation></xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="NUM-OF-MNEMONICS">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Total number of mnemonics in this message</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="MNEMONICS">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="MNEMONIC" minOccurs="0" maxOccurs="1000"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
