@@ -1,0 +1,218 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="FORMAT_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="CCSDSFRAME"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="MSG.TLM.CCSDSFRAME">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version number for this message content description.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FORMAT">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="FORMAT_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Message contains a CCSDS Frame.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="COLLECTION-POINT" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Receiver, device, point, path, etc. where was received. Used to distinguish data simultaneously at mutiple collection points.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="STREAM-MODE">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="STREAM-MODE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>dentifies the kind or source of the stream of telemetry as either Real-time, Replay, Simulator, or Test.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FINAL-MESSAGE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:boolean">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>When true (and known, especially for replay data), indicates the last message in the stream.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="LENGTH" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedInt">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Length of the frame.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Time of frame, usually ground receipt time</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="PHY-CHAN">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Physical channel on which data is received</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="VCID">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:short">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Virtual Channel ID</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FRAMESYNC-STATUS" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="FRAMESYNC-STATUS_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>State of frame synchronization from equipment when frame is ingested</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="RS-PRESENT" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:boolean">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Indicates if the Reed-Solomon codes are present in the data.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="QUALITY-CHECK" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:short">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Indicates quality checking performed, if applicable. If the bit is set the particular quality check was performed.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="QUALITY" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:short">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Indicates quality state if checking is performed. If the bit is set the particular quality check failed.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="DATA" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:hexBinary">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BIN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Raw telemetry data</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

@@ -1,0 +1,28 @@
+<!-- Directive Response Message -->
+<!-- See Table 5-33 of the 2016 GMSEC Interface Specification Document for more information -->
+<SCHEMA NAME="2016.00.GMSEC.RESP.DIR">
+	<FIELD  NAME="RESPONSE-STATUS"
+	        MODE="REQUIRED"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="I16"
+	        DESCRIPTION="Identifies the status of the Directive being processed"/>
+	<FIELD  NAME="TIME-COMPLETED"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="STRING"
+	        DESCRIPTION="Time application completed processing the directive"/>
+	<FIELD  NAME="RETURN-VALUE"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="I32"
+	        DESCRIPTION="Return value or status based on the RESPONSE-STATUS.  Useful to provide function call status or error code in the case of failed completion"/>
+	<FIELD  NAME="DATA"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="VARIABLE"
+	        DESCRIPTION="Additional data that may be desired along with the completion status"/>
+</SCHEMA>

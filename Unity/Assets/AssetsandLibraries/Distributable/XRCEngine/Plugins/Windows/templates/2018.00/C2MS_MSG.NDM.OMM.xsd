@@ -1,0 +1,193 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="NDM-TYPE_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="OMM"/>
+			<xs:enumeration value="CCSDS-OMM"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="MSG.NDM.OMM">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version Number for this message content description</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="NDM-TYPE">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NDM-TYPE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Message contains an Orbit Mean-Elements Message in CCSDS or another format</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="NDM-SUBTYPE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Descriptor of the type / kind of the contents of the OMM. E.g. two-line element set, Keplerian elements, covariance matrix, or user defined</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="STREAM-MODE">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="STREAM-MODE_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Identifies the mode of the stream of messages as either Real-time, Replay, Simulator, or Test.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FINAL-MESSAGE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:boolean">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>When true (and known, especially for replay data), indicates the last message in the stream.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="CREATION-TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Time the Navigation Data Message was created.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="ACTIVITY-ID" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Specifies the activity occurring within the mission</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="ORIGINATOR" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Creating agency. E.g. GSFC-FDF, GSOC, JPL, JAXA etc.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="OBJECT-NAME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Spacecraft name</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="OBJECT-ID" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Spacecraft identifier</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FORMAT">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NDM-FORMAT_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Format of the DATA field, KVN: Keyword=Value Notation, XML: eXtensible Markup Language</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="DATA" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:hexBinary">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BIN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Orbit Mean-Elements Message contents– see Table 9-125 for reference to CCSDS format</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

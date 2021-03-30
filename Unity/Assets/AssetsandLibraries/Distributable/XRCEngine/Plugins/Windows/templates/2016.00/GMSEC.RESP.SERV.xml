@@ -1,0 +1,28 @@
+<!-- Simple Service Response Message -->
+<!-- See Table 5-151 of the 2016 GMSEC Interface Specification Document for more information -->
+<SCHEMA NAME="2016.00.GMSEC.RESP.SERV">
+	<FIELD  NAME="RESPONSE-STATUS"
+	        MODE="REQUIRED"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="I16"
+	        DESCRIPTION="Identifies the status of the Simple Service being processed.  (1:  Acknowledgement, 2:  Working/keep alive, 3:  Successful completino, 4:  Failed completion, 5:  Invalid Request, 6:  Final Message)"/>
+	<FIELD  NAME="TIME-COMPLETED"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="STRING"
+	        DESCRIPTION="Time application completed processing the Simple Service"/>
+	<FIELD  NAME="RETURN-VALUE"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="I32"
+	        DESCRIPTION="Return value or status based on the RESPONSE-STATUS.  Provides additional status information  particular to the request."/>
+	<FIELD  NAME="DATA"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="VARIABLE"
+	        DESCRIPTION="Additional data that may accompany the response"/>
+</SCHEMA>

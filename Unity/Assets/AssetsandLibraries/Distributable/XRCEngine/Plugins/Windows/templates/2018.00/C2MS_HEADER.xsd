@@ -1,0 +1,325 @@
+<?xml version="1.0"?>
+<!-- File: C2MS_Header.xsd -->
+<!-- Purpose: XML-Schema for the Header of C2MS Messages -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+	
+	<xs:complexType name="HEADER">
+		<xs:all>
+		
+			<xs:element name="HEADER-VERSION">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER-VERSION_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Version number for this message description.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="SPECIFICATION">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="LEVEL0_SPECIFICATION_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Name of the Interface Specification Document (ISD) used to define this header.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="DOMAIN1">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Additional field to allow more filtering.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="DOMAIN2">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Additional field to allow more filtering.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="MESSAGE-TYPE">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="MSG-TYPE_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Message type identifier: REQ, RESP, or MSG.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="MESSAGE-SUBTYPE">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="MSG-SUBTYPE_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Unique message subtype identifier, fixed for C2MS Standard Messages.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="MESSAGE-CLASS" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Generic field for missions to classify their message set to aid message disposition.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="UNIQUE-ID" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Globally unique ID - reserved for use by implementation (PSM)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="PUBLISH-TIME" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="TIME_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Time the message was published - reserved for use by implementation (PSM)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="MW-INFO" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:string">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Container for information on the underlying middleware - reserved for use by implementation (PSM)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="CONNECTION-ID" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:unsignedInt">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Unique ID for each connection per process.  Reserved for use by implementation (PSM).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="MISSION-ID">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Unique mission name, e.g., MOONMAP, SUNSCAN, TEMPTRACK, etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="CONSTELLATION-ID" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Used for constennations or satellite groupings.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="SAT-ID-PHYSICAL" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>An ID for the satellite that is fixed for its mission life.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="SAT-ID-LOGICAL" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>An ID for a satellite or group of satellites that can change during its mission life (ex., a positional reference).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="FACILITY">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>A physical source (i.e. ACS Lab, CandDH String, etc.) generating the message, e.g., spacecraft, remote site, etc.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="NODE" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Actual device (host) generating the message.  Reserved for use by implementation (PSM)</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="PROCESS-ID" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+                        <xs:extension base="xs:unsignedInt">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Application ID for onboard events or Process ID for ground events - reserved for use by implementation (PSM).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="CLASS" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>See Table A-1, Software Class and Subclass Categories of the C2MS ISD.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="COMPONENT">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Name of software application, ex. APP1, CLIENT2, TAC3.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="SUBCOMPONENT1" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>First subsystem level within the component that produced the message.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="SUBCOMPONENT2" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Second subsystem level within the component that produced the message.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="USER-NAME" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="HEADER_STRING_Type">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Account name or owner of the account that started the component - reserved for use by implementation (PSM).</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="ROLE" minOccurs="0">
+				<xs:complexType>
+					<xs:simpleContent>
+						<xs:extension base="xs:short">
+							<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+						</xs:extension>
+					</xs:simpleContent>
+				</xs:complexType>
+				<xs:annotation>
+					<xs:documentation>Role the component is assigned in the configuration (Primary, Backup, Hot Backup, Secondary, Spare ...).  Roles are dependent on the operational concepts being deployed by configuration.</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+		</xs:all>
+	</xs:complexType>
+</xs:schema>

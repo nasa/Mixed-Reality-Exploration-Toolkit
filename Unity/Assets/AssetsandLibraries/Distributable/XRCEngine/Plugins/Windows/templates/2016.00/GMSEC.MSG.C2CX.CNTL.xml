@@ -1,0 +1,28 @@
+<!-- Component-To-Component Transfer Control Message -->
+<!-- See Table 5-43 of the 2016 GMSEC Interface Specification Document for more information -->
+<SCHEMA NAME="2016.00.GMSEC.MSG.C2CX.CNTL">
+	<FIELD  NAME="C2CX-SUBTYPE"
+	        MODE="REQUIRED"
+	        FIELD_CLASS="STANDARD"
+	        VALUE="CNTL"
+	        TYPE="STRING"
+	        DESCRIPTION="Identifies the type of information being transferred between the Components"/>
+	<FIELD  NAME="CNTL-KEYWORD"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="STRING"
+	        DESCRIPTION="Keyword extracted from the CNTL-STRING.  Useful for routing/processing."/>
+	<FIELD  NAME="CNTL-STRING"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="STRING"
+	        DESCRIPTION="Parameters to guide the component on further processing.  E.g., INIT, Stop, Shutdown, Restart, Do X, Y, and Z."/>
+	<FIELD  NAME="SPECIAL-INFO"
+	        MODE="OPTIONAL"
+	        FIELD_CLASS="STANDARD"
+	        VALUE=""
+	        TYPE="BINARY"
+	        DESCRIPTION="For application use.  Any additional information can be provided here."/>
+</SCHEMA>

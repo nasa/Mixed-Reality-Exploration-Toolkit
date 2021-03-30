@@ -1,0 +1,319 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="MNEMONIC-STATUS_Type">
+		<xs:restriction base="xs:unsignedShort">
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+			<xs:enumeration value="3"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:element name="MNEMONIC">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="NAME" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Name of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="STATUS" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="MNEMONIC-STATUS_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Status of the nth mnemonic: valid mnemonic, or valid mnemonic with no data, or invalid mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="UNITS" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Units associated with the raw value converted to engineering units for the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="NUM-OF-SAMPLES" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:unsignedShort">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Number of data samples for the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="SAMPLES" minOccurs="0">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element ref="SAMPLE" minOccurs="0" maxOccurs="100"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="SAMPLE">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="TIME-STAMP" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="TIME_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Time stamp for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="RAW-VALUE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:int">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="I32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Raw value for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="EU-VALUE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:double">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="F64"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Raw value for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="TEXT-VALUE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Raw value converted to a text string if text conversion is present for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="FLAGS" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:int">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="I32"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Flags native to the T&amp;C component for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="LIMIT-ENABLE-DISABLE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:boolean">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates the limit checking state for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="RED-HIGH" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:boolean">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates the red high limit status for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="RED-LOW" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:boolean">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates the red low limit status for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="YELLOW-HIGH" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:boolean">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates the yellow high limit status for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="YELLOW-LOW" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:boolean">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates the yellow low limit status for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="STATIC" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:boolean">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates the static (stale) condition for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="QUALITY" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:boolean">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates the quality for the mth data sample of the nth mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="MSG.MVAL">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version number for this message content description.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FINAL-MESSAGE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:boolean">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>When true, indicates last message in the series.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="NUM-OF-MNEMONICS">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedShort">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Toral number of mnemonics in this message.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="MNEMONICS">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="MNEMONIC" minOccurs="0" maxOccurs="1000"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>

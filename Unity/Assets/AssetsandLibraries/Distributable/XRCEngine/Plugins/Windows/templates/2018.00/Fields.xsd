@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- File: Fields.xsd -->
+<!-- Purpose: XML-Schema defining various types for the fields contained in messages -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	
+	<xs:simpleType name="HEADER_STRING_Type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="[A-Z0-9\-_]*"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="TIME_Type">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{4}-\d{3}-\d{2}:\d{2}:\d{2}(\.\d{0,6})?"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="MSG-TYPE_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="MSG"/>
+			<xs:enumeration value="REQ"/>
+			<xs:enumeration value="RESP"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="MSG-SUBTYPE_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AMSG"/>
+			<xs:enumeration value="AMVAL"/>
+			<xs:enumeration value="C2CX"/>
+			<xs:enumeration value="CMD"/>
+			<xs:enumeration value="DIR"/>
+			<xs:enumeration value="LOG"/>
+			<xs:enumeration value="NDM"/>
+			<xs:enumeration value="MVAL"/>
+			<xs:enumeration value="PROD"/>
+			<xs:enumeration value="RTLM"/>
+			<xs:enumeration value="TLM"/>
+			<!--xs:enumeration value="Add more subtypes here"/-->
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="CLASS_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AAA"/>
+			<xs:enumeration value="AUTO"/>
+			<xs:enumeration value="FD"/>
+			<xs:enumeration value="MAS"/>
+			<xs:enumeration value="PAS"/>
+			<xs:enumeration value="SCRIPT"/>
+			<xs:enumeration value="SEC"/>
+			<xs:enumeration value="SYS"/>
+			<xs:enumeration value="TAC"/>
+			<!--xs:enumeration value="Add more Classes here"/-->
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="FIELD_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BIN"/>
+			<xs:enumeration value="BOOLEAN"/>
+			<xs:enumeration value="CHAR"/>
+			<xs:enumeration value="DOUBLE"/>
+            <xs:enumeration value="FLOAT"/>
+            <xs:enumeration value="F32"/>
+			<xs:enumeration value="F64"/>
+			<xs:enumeration value="I8"/>
+			<xs:enumeration value="U8"/>
+			<xs:enumeration value="I16"/>
+			<xs:enumeration value="U16"/>
+			<xs:enumeration value="I32"/>
+			<xs:enumeration value="U32"/>
+			<xs:enumeration value="I64"/>
+			<xs:enumeration value="U64"/>
+			<xs:enumeration value="LONG"/>
+			<xs:enumeration value="STRING"/>
+			<xs:enumeration value="HEADER_STRING"/>
+			<xs:enumeration value="TIME"/>
+			<xs:enumeration value="VARIABLE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="DATA_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="BIN"/>
+			<xs:enumeration value="STRING"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="C2MS_SUBJECT_Type">
+		<xs:all>
+			<xs:element name="System" type="xs:string"/>
+			<xs:element name="Domain1" type="xs:string"/>
+			<xs:element name="Domain2" type="xs:string"/>
+			<xs:element name="Mission" type="xs:string"/>
+			<xs:element name="Const" type="xs:string"/>
+			<xs:element name="SatID" type="xs:string"/>
+			<xs:element name="Type" type="xs:string"/>
+			<xs:element name="Subtype" type="xs:string"/>
+			<xs:element name="ME1" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME2" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME3" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME4" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME5" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME6" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME7" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME8" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME9" type="xs:string" minOccurs="0"/>
+		</xs:all>
+		<xs:attribute name="TEXT" type="xs:string" use="required"/>
+	</xs:complexType>
+	
+	<xs:complexType name="GMSEC_SUBJECT_Type">
+		<xs:all>
+			<xs:element name="System" type="xs:string"/>
+			<xs:element name="Mission" type="xs:string"/>
+			<xs:element name="SatID" type="xs:string"/>
+			<xs:element name="Type" type="xs:string"/>
+			<xs:element name="Subtype" type="xs:string"/>
+			<xs:element name="ME1" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME2" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME3" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME4" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME5" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME6" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME7" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME8" type="xs:string" minOccurs="0"/>
+			<xs:element name="ME9" type="xs:string" minOccurs="0"/>
+		</xs:all>
+		<xs:attribute name="TEXT" type="xs:string" use="required"/>
+	</xs:complexType>
+	
+</xs:schema>

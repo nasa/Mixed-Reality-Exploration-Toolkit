@@ -1,0 +1,448 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:include schemaLocation="Defaults.xsd"/>
+	<xs:include schemaLocation="Fields.xsd"/>
+
+	<xs:simpleType name="CONTENT-VERSION_Type">
+		<xs:restriction base="xs:float">
+			<xs:enumeration value="2018"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="TEXT-TYPE_Type">
+		<xs:restriction base="xs:NMTOKEN">
+			<xs:enumeration value="0"/>
+			<xs:enumeration value="1"/>
+			<xs:enumeration value="2"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="PROD_Type">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="AAA"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="PROD_Subtype">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DATA"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:element name="PROD-SUBTYPE">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="NAME" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>nth subcategory of the product subtype. (Subject elements ME5, ME6, etc. of the Product Message)</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:unsignedShort" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="MNEMONIC">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="NAME">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="xs:string">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Name of the mnemonic</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="DATA-TYPE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="DATA-TYPE_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates the data type to be returned, either the raw value, or the converted value (Engineering Units or Text converted), or both. Defaults to both.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="STATE-ATTRIBUTES" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="STATE-ATTRIBUTES_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Indicates if the State Attributes (flags, limits, static flag, and data quality) of the mnemonic are to be returned. Defaults to No.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="CRITERIA" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="CRITERIA_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>Identification of how data should be sampled for the mnemonic. Includes either upon change of data (value, flags or status), or every sample, or at a specified sampling rate. Defaults to Change only data.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+				<xs:element name="SAMPLE-RATE" minOccurs="0">
+					<xs:complexType>
+						<xs:simpleContent>
+							<xs:extension base="NATURAL_Type">
+								<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+							</xs:extension>
+						</xs:simpleContent>
+					</xs:complexType>
+					<xs:annotation>
+						<xs:documentation>If CRITERIA is specified as Sample Rate (3), this field will specify the data sampling rate for the mnemonic.</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+
+			</xs:all>
+			<xs:attribute name="INDEX" type="xs:short" use="required"/>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:element name="REQ.AMVAL">
+		<xs:complexType>
+			<xs:all>
+
+				<xs:element name="SUBJECT" type="C2MS_SUBJECT_Type"/>
+
+				<xs:element name="CONTENT">
+					<xs:complexType>
+						<xs:all>
+
+							<xs:element name="CONTENT-VERSION">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="CONTENT-VERSION_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Version Number for this message content description</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="START-TIME">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Requested start time of the mnemonic values to be retrieved from the telemetry archive.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="STOP-TIME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="TIME_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Requested stop time of the mnemonic values to be retrieved from the telemetry archive. Defaults to the end of the telemetry archive</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="PDB-VERSION" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Project Data Base version to be used by the responder when processing the archived data. Defaults to the PDB version used when the data was archived.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="COLLECTION-POINT" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Receiver, device, point, path, etc. where data was received. Used to distinguish data simultaneously received at multiple collection points.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="RESPOND-VIA-MSG">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="RESPOND-VIA-MSG-AMVAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Indicates the message to use to deliver the mnemonic data. MSG will be a stream of messages; RESP will be a single response message.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+            				<xs:element name="DELIVER-VIA-REFERENCE" minOccurs="0">
+       			        		<xs:complexType>
+                                    <xs:simpleContent>
+                   				        <xs:extension base="xs:boolean">
+	                                         <xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+                   				        </xs:extension>
+	                                </xs:simpleContent>
+	                            </xs:complexType>
+								<xs:annotation>
+									<xs:documentation>This parameter is used only if RESP.AMVAL is selected above. Indicates if the data will be referenced by a URI in the single response message. Defaults to No.</xs:documentation>
+								</xs:annotation>
+	                       	</xs:element>
+
+							<xs:element name="DELIVER-VIA-INCLUDE" minOccurs="0">
+        				        <xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:boolean">
+                                		    <xs:attribute name="TYPE" type="FIELD_Type" fixed="BOOLEAN"/>
+				                        </xs:extension>
+				                    </xs:simpleContent>
+				                </xs:complexType>
+								<xs:annotation>
+									<xs:documentation>This parameter is used only if RESP.AMVAL is selected above. Indicates if the data is to be included in the single response message. Defaults to Yes.</xs:documentation>
+								</xs:annotation>
+                          	</xs:element>
+
+                          	<xs:element name="PLAYBACK-RATIO" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="xs:float">
+                                            <xs:attribute name="TYPE" type="FIELD_Type" fixed="F32"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+								<xs:annotation>
+									<xs:documentation>If MSG.AMVAL is selected above, specifies the speed of data delivery as a ratio of playback rate to real-time rate.</xs:documentation>
+								</xs:annotation>
+	                        </xs:element>
+
+	                        <xs:element name="DATA-RATE" minOccurs="0">
+                                <xs:complexType>
+                                    <xs:simpleContent>
+                                        <xs:extension base="NATURAL_Type">
+                                            <xs:attribute name="TYPE" type="FIELD_Type" fixed="I16"/>
+                                        </xs:extension>
+                                    </xs:simpleContent>
+                                </xs:complexType>
+								<xs:annotation>
+									<xs:documentation>If MSG.AMVAL is selected above, specifies the speed of data delivery in Kilobits per second</xs:documentation>
+								</xs:annotation>
+	                        </xs:element>
+
+							<xs:element name="PROD-NAME" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>The PROD- fields are optionally used when the RESP.AMVAL has been specified above. Name of the product being requested.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="PROD-DESCRIPTION" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Description of the product in text or xml</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="PROD-TYPE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="PROD_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Product type being requested. (See Table A-2 Product Categories.)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="PROD-SUBTYPE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="PROD_Subtype">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Product subtype being requested. (See Table A-2 Product Categories.)</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="NUM-OF-PROD-SUBTYPES" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedShort">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Number of further delineations / categories beyond the product subtype. Also, used as msg subject elements ME5, ME6, etc. in Product Message.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="PROD-SUBTYPES" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="PROD-SUBTYPE" minOccurs="0" maxOccurs="100"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+
+							<xs:element name="URI" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Location where the requesting component is asking for the product file(s) to be stored. Could be a web address, directory or folder specification</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="NAME-PATTERN" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Describes the name of the output file</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="DESCRIPTION" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Description of the file in text or xml</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="FORMAT" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Describes the file format</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="VERSION" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:string">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="STRING"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Identifies the version of the file</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="SIZE" minOccurs="0">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="xs:unsignedInt">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U32"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Maximum size of the file acceptable to the requester.</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="NUM-OF-MNEMONICS">
+								<xs:complexType>
+									<xs:simpleContent>
+										<xs:extension base="NATURAL_Type">
+											<xs:attribute name="TYPE" type="FIELD_Type" fixed="U16"/>
+										</xs:extension>
+									</xs:simpleContent>
+								</xs:complexType>
+								<xs:annotation>
+									<xs:documentation>Total Number of mnemonics being requested</xs:documentation>
+								</xs:annotation>
+							</xs:element>
+
+							<xs:element name="MNEMONICS" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element ref="MNEMONIC" minOccurs="0" maxOccurs="1000"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+
+						</xs:all>
+					</xs:complexType>
+				</xs:element>
+
+			</xs:all>
+		</xs:complexType>
+	</xs:element>
+
+</xs:schema>
