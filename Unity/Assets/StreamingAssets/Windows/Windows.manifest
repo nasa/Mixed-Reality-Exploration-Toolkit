@@ -1,0 +1,137 @@
+ManifestFileVersion: 0
+CRC: 740814468
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: standard-assets
+      Dependencies: {}
+    Info_1:
+      Name: atlas-assets
+      Dependencies:
+        Dependency_0: default-environment-assets
+    Info_2:
+      Name: atlas-scenes
+      Dependencies:
+        Dependency_0: standard-assets
+        Dependency_1: atlas-assets
+        Dependency_2: default-environment-assets
+    Info_3:
+      Name: standard-scenes
+      Dependencies:
+        Dependency_0: standard-assets
+    Info_4:
+      Name: cubesat-assets
+      Dependencies: {}
+    Info_5:
+      Name: default-environment-assets
+      Dependencies:
+        Dependency_0: atlas-assets
+    Info_6:
+      Name: apollo-assets
+      Dependencies: {}
+    Info_7:
+      Name: apollo-scenes
+      Dependencies:
+        Dependency_0: standard-assets
+        Dependency_1: apollo-assets
+    Info_8:
+      Name: luvoir
+      Dependencies: {}
+    Info_9:
+      Name: 540-assets
+      Dependencies: {}
+    Info_10:
+      Name: 540-scenes
+      Dependencies:
+        Dependency_0: standard-assets
+        Dependency_1: default-environment-assets
+        Dependency_2: 540-assets
+    Info_11:
+      Name: hubble
+      Dependencies: {}
+    Info_12:
+      Name: pace-assets
+      Dependencies: {}
+    Info_13:
+      Name: earth-scenes
+      Dependencies:
+        Dependency_0: earth-assets1
+    Info_14:
+      Name: fortytwo-scenes
+      Dependencies:
+        Dependency_0: apollo-assets
+        Dependency_1: fortytwo-assets
+        Dependency_2: earth-assets1
+    Info_15:
+      Name: fortytwo-assets
+      Dependencies: {}
+    Info_16:
+      Name: solarsystem-scenes
+      Dependencies:
+        Dependency_0: solarsystem-models
+        Dependency_1: earth-assets1
+    Info_17:
+      Name: solarsystem-models
+      Dependencies: {}
+    Info_18:
+      Name: caesar-assets
+      Dependencies: {}
+    Info_19:
+      Name: oldrestore-assets
+      Dependencies: {}
+    Info_20:
+      Name: caesar-scenes
+      Dependencies:
+        Dependency_0: earth-assets1
+    Info_21:
+      Name: sspdworkcell-g
+      Dependencies: {}
+    Info_22:
+      Name: sspdworkcell-scenes
+      Dependencies: {}
+    Info_23:
+      Name: restore-scenes
+      Dependencies:
+        Dependency_0: oldrestore-assets
+        Dependency_1: earth-assets1
+        Dependency_2: restore-assets
+    Info_24:
+      Name: earth-assets4
+      Dependencies: {}
+    Info_25:
+      Name: earth-assets3
+      Dependencies: {}
+    Info_26:
+      Name: earth-assets6
+      Dependencies: {}
+    Info_27:
+      Name: earth-assets2
+      Dependencies:
+        Dependency_0: earth-assets4
+        Dependency_1: earth-assets3
+        Dependency_2: earth-assets6
+        Dependency_3: earth-assets5
+        Dependency_4: earth-assets1
+    Info_28:
+      Name: earth-assets5
+      Dependencies:
+        Dependency_0: earth-assets3
+        Dependency_1: earth-assets2
+        Dependency_2: earth-assets1
+    Info_29:
+      Name: earth-assets1
+      Dependencies:
+        Dependency_0: earth-assets2
+        Dependency_1: earth-assets5
+    Info_30:
+      Name: restore-assets
+      Dependencies: {}
+	Info_31:
+      Name: wfirst-assets-103019
+      Dependencies: {}
+	 Info_32:
+      Name: wfirst-assets
+      Dependencies: {}
+	 Info_33:
+      Name: wfirst-scenes
+      Dependencies: {}

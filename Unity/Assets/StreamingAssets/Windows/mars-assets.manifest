@@ -1,0 +1,39 @@
+ManifestFileVersion: 0
+CRC: 2922715913
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: a2cdb2b72ffef7d4652cac35553c786b
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: e8da9544b6fd3d7f102ca43d599162f8
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 49
+  Script: {instanceID: 0}
+Assets:
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/Z2.obj
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_spec_color_s.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_Color_s.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_spec_s.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_normal_s.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_Reflect_s.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/README.txt
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_Bump_s.jpg
+Dependencies: []

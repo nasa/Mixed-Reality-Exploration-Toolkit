@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.example.org/MRET">
+    <Environment>
+        <Label>Lunar-SouthPole</Label>
+        <Description>Lunar - South Pole</Description>
+        <AssetBundle>solarsystem-scenes</AssetBundle>
+        <Name>LunarLightingSouthPoleScene</Name>
+        <DefaultUserTransform>
+            <Position>
+                <X>119.3</X>
+                <Y>5789.7</Y>
+                <Z>509.4</Z>
+            </Position>
+            <Rotation>
+                <X>0</X>
+                <Y>0</Y>
+                <Z>0</Z>
+                <W>1</W>
+            </Rotation>
+            <Scale>
+                <X>1</X>
+                <Y>1</Y>
+                <Z>1</Z>
+            </Scale>
+        </DefaultUserTransform>
+        <Skybox>
+            <AssetBundle>none</AssetBundle>
+            <MaterialName>skyboxv1_starsonly</MaterialName>
+        </Skybox>
+        <ClippingPlanes>
+            <Near>0.15</Near>
+            <Far>500000</Far>
+        </ClippingPlanes>
+    </Environment>
+	<Parts />
+	<Drawings />
+	<Notes />
+	<AnimationPanels />
+	<ObjectGenerators />
+</Project>

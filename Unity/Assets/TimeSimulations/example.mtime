@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TimeSimulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.example.org/MRET">
+
+	<Name>MRETBirthday</Name>
+	<Description>Birthday of MRET</Description>
+	<StartTime>
+		<TimeString>2018-02-20T21:06:00</TimeString>
+<!--
+		<TimeString format="u">2018-02-20 21:06:00Z</TimeString>
+-->
+	</StartTime>
+	<UpdateRate>1.0</UpdateRate>
+	<Paused>true</Paused>
+
+</TimeSimulation>

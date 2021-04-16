@@ -1,0 +1,24 @@
+ManifestFileVersion: 0
+CRC: 1353927800
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 48f33d97fbfc33f9144fff1f4c8c3ce1
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 700cce780156dfdd5fdd2ee7678caad4
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+Assets:
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/Images/BorderGreen.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/Materials/Text.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/Materials/Text2.mat
+Dependencies: []

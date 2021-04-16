@@ -1,0 +1,171 @@
+ManifestFileVersion: 0
+CRC: 3045858353
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 669fc46795f7673fc014426aea92dbca
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 9484cbb5edeb71ab0cd6f35f89209df5
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 83
+  Script: {instanceID: 0}
+- Class: 84
+  Script: {instanceID: 0}
+- Class: 89
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 789911a0db8286645a74a4ea5c29036a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 59664e2df9298f4468cfd60c3397bec6, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f25bb97d3716fd341821dfd84849a955, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 134
+  Script: {instanceID: 0}
+- Class: 238
+  Script: {instanceID: 0}
+Assets:
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Satellite/Materials/Gold
+  Iridite No Reflection.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  floor.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Satellite/Materials/Aluminium
+  foil large folds.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/STARS.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Textures/cleanroom
+  wall filter bump.png
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  Wall.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Textures/cleanroom
+  wall filter.png
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/smoke
+  pipe.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  ceiling grid.mat
+- Assets/Resources/Skyboxes/skyboxv1_starsonly.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Audio/Sources/InstrumentDetach2.wav
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/toolbox
+  3.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/MRETLOGO.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/SKYBOXSTAR.controller
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Audio/Sources/InstrumentAttach2.wav
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Lightmap-0_comp_light.exr
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Satellite/Materials/Textures/common
+  5 percent mask.png
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  window frame.mat
+- Assets/AssetBundleContent/Non-ITAREAR/SampleAssembly/Parts/Part4.prefab
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  ceiling lights.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Newlobby.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Textures/Noise-normal-01.jpg
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  Walla.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Materials/Highlight.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/DOMELOBBYlo3.fbx
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/NavMesh.asset
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  rollup main.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Satellite/Materials/Panel.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/No
+  Name.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/DOMELOBBYlo_Material_AlbedoTransparency.png
+- Assets/AssetBundleContent/Non-ITAREAR/SampleAssembly/Parts/Part3.prefab
+- 'Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Material
+  #379.mat'
+- Assets/Resources/Skyboxes/GraySkybox.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Textures/cleanroom
+  rollup door.png
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/WorkTable.FBX
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/ReflectionProbe-0.exr
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  wall b.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Black.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Satellite/Materials/Textures/aluminium
+  foil large folds occlusion.png
+- Assets/Resources/Skyboxes/StarfieldMaterial.mat
+- 'Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Material
+  #380.mat'
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/stars.png
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  glass.mat
+- Assets/AssetBundleContent/Non-ITAREAR/SampleAssembly/Parts/Part1.prefab
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  ceiling tile.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  cell_.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/toolbox
+  1.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  wall seam.mat
+- Assets/AssetBundleContent/Non-ITAREAR/SampleAssembly/Parts/SampleAssembly.prefab
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Cleanroom.FBX
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/DOMELOBBYlo_Material_Normal.png
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Miscellaneous
+  Acoustic Tile - 2x4 White Pebbled.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Materials/MonitorTexture.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  crane cables.mat
+- Assets/AssetBundleContent/Non-ITAREAR/SampleAssembly/Parts/Enclosure.prefab
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/lighanim.anim
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/SKYBOXSTAR.fbx
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  window shade.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Textures/Panel
+  Cell.png
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/toolbox
+  2.mat
+- Assets/AssetBundleContent/Non-ITAREAR/SampleAssembly/Parts/Part2.prefab
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Staranim.anim
+- 'Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Material
+  #505.mat'
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/unassigned.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Satellite/Materials/Textures/steel
+  common rough occlusion.png
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Directional
+  light.controller
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/MRETLOGO.PNG
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleenroom
+  crane.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/lobbyglass.mat
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/DOMELOBBYlo_Material_MetallicSmoothness.png
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/MonitorTexture.renderTexture
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Satellite/Materials/Textures/aluminium
+  foil large folds normal.png
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/cleanroom
+  cell frame.mat
+- Assets/AssetBundleContent/Non-ITAREAR/SampleAssembly/Parts/Part5.prefab
+- Assets/AssetBundleContent/Non-ITAREAR/MMS-Cleanroom/MMS-Assets/Models/Cleanroom/Materials/Textures/Panel
+  Cell Bump.png
+Dependencies: []

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TimeSimulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.example.org/MRET">
+
+	<Name>Apollo15Eva3</Name>
+	<Description>Apollo 15 EVA 3</Description>
+	<StartTime>
+		<TimeString>1971-08-02T08:52:14</TimeString>
+	</StartTime>
+	<UpdateRate>1.0</UpdateRate>
+	<Paused>true</Paused>
+
+</TimeSimulation>

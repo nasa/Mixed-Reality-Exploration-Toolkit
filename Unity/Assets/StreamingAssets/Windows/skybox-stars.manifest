@@ -1,0 +1,26 @@
+ManifestFileVersion: 0
+CRC: 957148612
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 8ceb867a0a970671ecbbf1c48cffe45e
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 22357172b8cea85847937e8f62d0c077
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+Assets:
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars003.png
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/skyboxv1_starsonly.mat
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars002.png
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars001.png
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars005.png
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars006.png
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars004.png
+Dependencies: []

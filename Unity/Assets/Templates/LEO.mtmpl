@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mt:Project xmlns:mt="http://www.example.org/MRET" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/MRET Project.xsd ">
+  <mt:Environment>
+    <mt:Label>LowEarthOrbit</mt:Label>
+    <mt:Description>Earth, Sun, Moon and Skymap suitable for LEO applications.</mt:Description>
+    <mt:AssetBundle>standard-scenes</mt:AssetBundle>
+    <mt:Name>LowEarthOrbit</mt:Name>
+    <mt:DefaultUserTransform>
+      <mt:Position>
+        <mt:X>0</mt:X>
+        <mt:Y>0</mt:Y>
+        <mt:Z>0</mt:Z>
+      </mt:Position>
+      <mt:Rotation>
+        <mt:X>0</mt:X>
+        <mt:Y>0</mt:Y>
+        <mt:Z>0</mt:Z>
+      </mt:Rotation>
+      <mt:Scale>
+        <mt:X>1</mt:X>
+        <mt:Y>1</mt:Y>
+        <mt:Z>1</mt:Z>
+      </mt:Scale>
+    </mt:DefaultUserTransform>
+    <mt:Skybox>
+      <mt:AssetBundle>none</mt:AssetBundle>
+      <mt:MaterialName>StarfieldMaterial</mt:MaterialName>
+    </mt:Skybox>
+    <mt:ClippingPlanes>
+      <mt:Near>0.05</mt:Near>
+      <mt:Far>10000</mt:Far>
+    </mt:ClippingPlanes>
+  </mt:Environment>
+  <mt:Parts>
+  </mt:Parts>
+</mt:Project>

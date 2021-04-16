@@ -1,0 +1,44 @@
+ManifestFileVersion: 0
+CRC: 1574900323
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 50d4844866ac09ff41c2dfef41631338
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: b891a8bca12d59fc8c4db6f97ce45afd
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 89
+  Script: {instanceID: 0}
+- Class: 104
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 121
+  Script: {instanceID: 0}
+- Class: 157
+  Script: {instanceID: 0}
+- Class: 258
+  Script: {instanceID: 0}
+Assets:
+- Assets/AssetBundleContent/Non-ITAREAR/Comet67p/Comet67p.unity
+Dependencies:
+- C:/Users/dzbaker/Documents/Unity Projects/MRET/VR_TestProj/MixedRealityEngineeringToolkit/AssetBundles/Windows/solarsystem-models
+- C:/Users/dzbaker/Documents/Unity Projects/MRET/VR_TestProj/MixedRealityEngineeringToolkit/AssetBundles/Windows/earth-assets1
