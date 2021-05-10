@@ -40,7 +40,7 @@ public class InteractableTool : SceneObject
             }
             objectMaterials = objMatList.ToArray();
         }
-        
+
         initialized = true;
     }
 
@@ -70,7 +70,6 @@ public class InteractableTool : SceneObject
         }
 
         DisableAllEnvironmentScaling();
-        DisableAllLocomotion();
     }
 
     public override void EndGrab(InputHand hand)
@@ -94,10 +93,9 @@ public class InteractableTool : SceneObject
         }
 
         EnableAnyEnvironmentScaling();
-        EnableAnyLocomotion();
     }
 
-#region CONTEXTAWARECONTROL
+    #region CONTEXTAWARECONTROL
     private bool previousScalingState = false, previousLocomotionPauseState = false;
     private void DisableAllEnvironmentScaling()
     {
@@ -119,17 +117,5 @@ public class InteractableTool : SceneObject
         }
         previousScalingState = false;
     }
-
-    private void DisableAllLocomotion()
-    {
-        previousLocomotionPauseState = MRET.LocomotionManager.Paused;
-        MRET.LocomotionManager.Paused = true;
-    }
-
-    private void EnableAnyLocomotion()
-    {
-        MRET.LocomotionManager.Paused = previousLocomotionPauseState;
-        previousLocomotionPauseState = false;
-    }
-#endregion
+    #endregion
 }

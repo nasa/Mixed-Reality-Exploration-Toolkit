@@ -76,6 +76,12 @@ public class InteractablePart : SceneObject, ISelectable
     public bool randomizeTexture = false;
     public System.Guid guid = System.Guid.NewGuid();
 
+    public new static InteractablePart Create()
+    {
+        GameObject interactablePartGameObject = new GameObject();
+        return interactablePartGameObject.AddComponent<InteractablePart>();
+    }
+
     // TODO: Don't look at me! I'm too ugly for human eyes.
     public PartType Serialize()
     {
@@ -304,12 +310,13 @@ public class InteractablePart : SceneObject, ISelectable
         collisionHandler.enabled = true;
 
         DisableAllEnvironmentScaling();
-        DisableAllLocomotion();
 
         SynchronizedController cont = hand.gameObject.GetComponentInParent<SynchronizedController>();
         if (cont)
         {
+#if !HOLOLENS_BUILD
             XRCUnity.UpdateEntityParent(guid.ToString(), cont.uuid.ToString());
+#endif
         }
     }
 
@@ -347,10 +354,10 @@ public class InteractablePart : SceneObject, ISelectable
         }
 
         EnableAnyEnvironmentScaling();
-        EnableAnyLocomotion();
 
         if (transform.parent)
         {
+#if !HOLOLENS_BUILD
             InteractablePart iPt = transform.parent.GetComponentInParent<InteractablePart>();
             if (iPt)
             {
@@ -360,11 +367,12 @@ public class InteractablePart : SceneObject, ISelectable
             {
                 XRCUnity.UpdateEntityParent(guid.ToString(), "ROOT");
             }
+#endif
         }
 
         EndTouch();
     }
-    
+
     public void LoadPartPanel(GameObject controller, bool reinitialize)
     {
         if (!MRET.PartPanelEnabled)
@@ -390,7 +398,7 @@ public class InteractablePart : SceneObject, ISelectable
                 if (objectCollider)
                 {
                     Vector3 selectedPosition = objectCollider.ClosestPointOnBounds(controller.transform.position);
-                    
+
                     // Move panel between selected point and headset.
                     partPanel.transform.position = Vector3.Lerp(selectedPosition, headsetObject.transform.position, 0.1f);
 
@@ -463,7 +471,7 @@ public class InteractablePart : SceneObject, ISelectable
         }
     }
 
-#region SNAPPING
+    #region SNAPPING
     private SnappingConnector connectorToSnapTo = null;
 
     public void SetCurrentSnappingConnector(SnappingConnector snappingConnector)
@@ -501,7 +509,7 @@ public class InteractablePart : SceneObject, ISelectable
         EasyBuildSystem.Features.Scripts.Core.Base.Piece.PieceBehaviour pb = gameObject.AddComponent<EasyBuildSystem.Features.Scripts.Core.Base.Piece.PieceBehaviour>();
 
         pb.ChangeState(EasyBuildSystem.Features.Scripts.Core.Base.Piece.Enums.StateType.Preview);
-        
+
         bb.ChangeMode(EasyBuildSystem.Features.Scripts.Core.Base.Builder.Enums.BuildMode.Placement);
         bb.placingObject = gameObject;
 
@@ -549,9 +557,9 @@ public class InteractablePart : SceneObject, ISelectable
             }
         }
     }
-#endregion
+    #endregion
 
-#region PLACEMENT
+    #region PLACEMENT
     private bool isPlacing = false;
     private Transform oldParent = null;
     private bool wasGrabbable = true, wasUsable = true, wasUseGravity = false, wasKinematic = false;
@@ -628,9 +636,9 @@ public class InteractablePart : SceneObject, ISelectable
         base.Place();
         StopPlacing();
     }
-#endregion
+    #endregion
 
-#region CONTEXTAWARECONTROL
+    #region CONTEXTAWARECONTROL
     private bool previousScalingState = false, previousLocomotionPauseState = false;
     private void DisableAllEnvironmentScaling()
     {
@@ -677,21 +685,9 @@ public class InteractablePart : SceneObject, ISelectable
             previousScalingState = false;
         }
     }
+    #endregion
 
-    private void DisableAllLocomotion()
-    {
-        previousLocomotionPauseState = MRET.LocomotionManager.Paused;
-        MRET.LocomotionManager.Paused = true;
-    }
-
-    private void EnableAnyLocomotion()
-    {
-        MRET.LocomotionManager.Paused = previousLocomotionPauseState;
-        previousLocomotionPauseState = false;
-    }
-#endregion
-
-#region EXPLODE
+    #region EXPLODE
 
     public float explodeFactor = 2;
     public bool isExploded = false;
@@ -763,19 +759,19 @@ public class InteractablePart : SceneObject, ISelectable
         originalRendPositions = rendPositions.ToArray();
     }
 
-#endregion
+    #endregion
 
-#region Selection
+    #region Selection
     public void Select(bool hierarchical = true)
     {
         if (selected)
         {
             return;
         }
-        
+
         selected = true;
         ISelectable[] sels = GetComponentsInParent<ISelectable>();
-        if ((sels.Length == 0 || ( sels.Length == 1 && sels[0] == (ISelectable) this)) && hierarchical)
+        if ((sels.Length == 0 || (sels.Length == 1 && sels[0] == (ISelectable)this)) && hierarchical)
         {
             foreach (ISelectable selChild in GetInteractablePartRoot(this).GetComponentsInChildren<ISelectable>(true))
             {
@@ -805,7 +801,7 @@ public class InteractablePart : SceneObject, ISelectable
 
         selected = false;
         ISelectable[] sels = GetComponentsInParent<ISelectable>();
-        if ((sels.Length == 0 || (sels.Length == 1 && sels[0] == (ISelectable) this)) && hierarchical)
+        if ((sels.Length == 0 || (sels.Length == 1 && sels[0] == (ISelectable)this)) && hierarchical)
         {
             foreach (ISelectable selChild in GetInteractablePartRoot(this).GetComponentsInChildren<ISelectable>(true))
             {
@@ -830,8 +826,8 @@ public class InteractablePart : SceneObject, ISelectable
         {
             iPartToReturn = newIPart[0];
         }
-        
+
         return iPartToReturn;
     }
-#endregion
+    #endregion
 }

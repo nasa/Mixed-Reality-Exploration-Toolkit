@@ -17,6 +17,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
     ///     and associated data store keys to to support fast, normal and slow motion for each of the
     ///     locomotion controllers. Added logic to receive the navigation press events to control fast/normal
     ///     motion constraints. (J. Hosler)
+    /// 30 April 2021: Replaced the Pause mechanism with a reference counting system, akin to a mutex lock/unlock.
+    ///     Pausing is now performed with calls to PauseRequest and PauseRelease. If the reference counter
+    ///     is greater than 0 (calls to PauseRequest), the locomotion system is paused. Once the reference
+    ///     counter reaches 0 (calls to PauseRelease), the locomotion system is unpaused.
     /// </remarks>
     /// <summary>
     /// LocomotionManager is a class that provides
@@ -77,6 +81,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         public const string rotateYKey = KEY_PREFIX + ".ROTATEY";
         public const string rotateZKey = KEY_PREFIX + ".ROTATEZ";
         public const string scaleKey = KEY_PREFIX + ".SCALE";
+        public const string pausedKey = KEY_PREFIX + ".PAUSED";
+        public const string pauseReferenceCountKey = KEY_PREFIX + ".PAUSED.REFERENCECOUNT";
 
         /// <summary>
         /// Input Rig to be used with locomotion.
@@ -94,32 +100,59 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected ScaleObjectTransform[] sots;
 
         /// <value>Locomotion pause state</value>
-        private bool _paused = false;
+        private int _pauseReferenceCount = 0;
         public bool Paused
         {
-            set
-            {
-                SetPaused(value);
-            }
             get
             {
-                return _paused;
+                return (_pauseReferenceCount > 0);
             }
         }
 
         /// <summary>
-        /// Sets the locomotion paused state
+        /// Called to request that the locomotion be paused. This works like a reference counter, so
+        /// for every time this method is called (increasing the reference count), the
+        /// <code>PauseRelease</code> must be called (decrementing the reference counter) to undo the
+        /// pause request. Once the pause reference counter reaches 0, the locomotion state will no longer
+        /// be paused.
         /// </summary>
         /// 
-        /// <param name="value">The new locomotion paused state</param>
-        protected void SetPaused(bool value)
+        /// <see cref="PauseRelease"/>
+        public void PauseRequest()
         {
-            // If pausing, disable all locomotion modes
-            _paused = value;
-            if (_paused)
+            // Increment the reference counter
+            _pauseReferenceCount++;
+
+            // Save the new state to the DataManager
+            MRET.DataManager.SaveValue(pauseReferenceCountKey, _pauseReferenceCount);
+            MRET.DataManager.SaveValue(pausedKey, Paused);
+
+            // Update the internal locomotion state
+            UpdateLocomotionState();
+        }
+
+        /// <summary>
+        /// Called to release a previously called pause request. The mechanism works like a reference
+        /// counter, so for every time <code>PauseRequest</code> is called (increasing the reference count),
+        /// this method must be called (decrementing the reference counter) to undo the pause request.
+        /// Once the pause reference counter reaches 0, the locomotion state will no longer be paused.
+        /// </summary>
+        /// 
+        /// <see cref="PauseRequest"/>
+        public void PauseRelease()
+        {
+            // If paused, decrement the reference counter (prevents reference counter from going negative)
+            if (Paused)
             {
-                // TODO: Disable without disabling the mode setting in the DataManager
-                DisableAllLocomotionModes();
+                // Decrement the reference counter
+                _pauseReferenceCount--;
+
+                // Save the new state to the DataManager
+                MRET.DataManager.SaveValue(pauseReferenceCountKey, _pauseReferenceCount);
+                MRET.DataManager.SaveValue(pausedKey, Paused);
+
+                // Update the internal locomotion state
+                UpdateLocomotionState();
             }
         }
 
@@ -131,6 +164,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             instance = this;
 
             // Initialize DataManager
+            MRET.DataManager.SaveValue(new DataManager.DataValue(pausedKey, false));
+            MRET.DataManager.SaveValue(new DataManager.DataValue(pauseReferenceCountKey, _pauseReferenceCount));
             MRET.DataManager.SaveValue(new DataManager.DataValue(teleportKey, false));
             MRET.DataManager.SaveValue(new DataManager.DataValue(flyKey, false));
             MRET.DataManager.SaveValue(new DataManager.DataValue(navigateKey, false));
@@ -206,6 +241,22 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// <summary>
         /// Disables all locomotion mechanisms.
         /// </summary>
+        protected virtual void UpdateLocomotionState()
+        {
+            // Locomotion controllers
+            UpdateArmswingState();
+            UpdateFlyingState();
+            UpdateNavigationState();
+            UpdateTeleportState();
+
+            // Rotation and scaling
+            UpdateRotationState();
+            UpdateScalingState();
+        }
+
+        /// <summary>
+        /// Disables all locomotion mechanisms.
+        /// </summary>
         public void DisableAllLocomotionModes()
         {
             DisableArmswing();
@@ -214,7 +265,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             DisableTeleport();
         }
 
-#region Event Handlers
+        #region Event Handlers
 
         /// <summary>
         /// Called when the navigate press action begins.
@@ -300,11 +351,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (Paused) return;
 
             // Disable locomotion for the active mode
-            if ((bool) MRET.DataManager.FindPoint(armswingKey) == true)
+            if ((bool)MRET.DataManager.FindPoint(armswingKey) == true)
             {
                 hand.DisableArmswing();
             }
-            else if ((bool) MRET.DataManager.FindPoint(flyKey) == true)
+            else if ((bool)MRET.DataManager.FindPoint(flyKey) == true)
             {
                 hand.DisableFly();
             }
@@ -326,7 +377,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (Paused) return;
 
             // Enable locomotion for the active mode
-            if ((bool) MRET.DataManager.FindPoint(navigateKey) == true)
+            if ((bool)MRET.DataManager.FindPoint(navigateKey) == true)
             {
                 hand.EnableNavigate();
             }
@@ -348,7 +399,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (Paused) return;
 
             // Disable locomotion for the active mode
-            if ((bool) MRET.DataManager.FindPoint(navigateKey) == true)
+            if ((bool)MRET.DataManager.FindPoint(navigateKey) == true)
             {
                 hand.DisableNavigate();
             }
@@ -370,7 +421,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (Paused) return;
 
             // Enable locomotion for the active mode
-            if ((bool) MRET.DataManager.FindPoint(teleportKey) == true)
+            if ((bool)MRET.DataManager.FindPoint(teleportKey) == true)
             {
                 hand.ToggleTeleportOn();
             }
@@ -392,7 +443,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (Paused) return;
 
             // Disable locomotion for the active mode
-            if ((bool) MRET.DataManager.FindPoint(teleportKey) == true)
+            if ((bool)MRET.DataManager.FindPoint(teleportKey) == true)
             {
                 hand.CompleteTeleport();
                 hand.ToggleTeleportOff();
@@ -401,9 +452,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             // TODO other locomotion forms.
         }
 
-#endregion // Event Handlers
+        #endregion // Event Handlers
 
-#region Rig Settings
+        #region Rig Settings
 
         /// <summary>
         /// Applies gravity to the based upon the supplied gravity constraints
@@ -519,11 +570,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             Debug.Log("[" + ClassName + "->" + nameof(DisableGravity) + "] Gravity disabled");
         }
 
-#endregion // Rig Settings
+        #endregion // Rig Settings
 
-#region Modes
+        #region Modes
 
-#region Teleport
+        #region Teleport
 
         /// <summary>
         /// The multiplier to be applied to the flying motion.
@@ -602,25 +653,52 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         }
 
         /// <summary>
+        /// Updates teleport locomotion to reflect the current state. Available for subclasses to override.
+        /// </summary>
+        protected virtual void UpdateTeleportState()
+        {
+            // Obtain the current locomotion state
+            bool teleporting = (bool)MRET.DataManager.FindPoint(teleportKey);
+
+            // Only enable if the state is on AND we are not paused. Disable otherwise.
+            if (!Paused && teleporting)
+            {
+                // Enable teleport
+                foreach (InputHand inputHand in inputRig.hands)
+                {
+                    inputHand.EnableTeleport();
+                }
+            }
+            else
+            {
+                // Disable teleport
+                foreach (InputHand inputHand in inputRig.hands)
+                {
+                    inputHand.DisableTeleport();
+                }
+            }
+        }
+
+        /// <summary>
         /// Enables teleportation locomotion.
         /// </summary>
         public void EnableTeleport()
         {
-            // Check that not already enabled.
-            if ((bool) MRET.DataManager.FindPoint(teleportKey) == true)
+            // Obtain the current locomotion state
+            bool teleporting = (bool)MRET.DataManager.FindPoint(teleportKey);
+
+            // Check that not already enabled
+            if (teleporting)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(EnableTeleport) + "] Teleport already enabled");
                 return;
             }
 
-            // Enable teleport
-            foreach (InputHand inputHand in inputRig.hands)
-            {
-                inputHand.EnableTeleport();
-            }
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(teleportKey, true);
+
+            // Update the teleport state
+            UpdateTeleportState();
 
             Debug.Log("[" + ClassName + "->" + nameof(EnableTeleport) + "] Teleport enabled");
         }
@@ -630,31 +708,28 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void DisableTeleport()
         {
+            // Obtain the current locomotion state
+            bool teleporting = (bool)MRET.DataManager.FindPoint(teleportKey);
+
             // Check that not already disabled
-            if ((bool) MRET.DataManager.FindPoint(teleportKey) == false)
+            if (!teleporting)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(DisableTeleport) + "] Teleport already disabled");
                 return;
             }
 
-            // Disable teleport.
-            foreach (InputHand inputHand in inputRig.hands)
-            {
-                inputHand.DisableTeleport();
-            }
+            // Save the new state to the DataManager
+            MRET.DataManager.SaveValue(teleportKey, false);
 
-            // Save to DataManager, but only if we aren't paused
-            if (!Paused)
-            {
-                MRET.DataManager.SaveValue(teleportKey, false);
-            }
+            // Update the teleport state
+            UpdateTeleportState();
 
             Debug.Log("[" + ClassName + "->" + nameof(DisableTeleport) + "] Teleport disabled");
         }
 
-#endregion // Teleport
+        #endregion // Teleport
 
-#region Flying
+        #region Flying
 
         /// <summary>
         /// The multiplier to be applied to the normal flying motion.
@@ -785,7 +860,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleFlying()
         {
-            if ((bool) MRET.DataManager.FindPoint(flyKey) == false)
+            if ((bool)MRET.DataManager.FindPoint(flyKey) == false)
             {
                 EnableFlying();
             }
@@ -811,25 +886,49 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         }
 
         /// <summary>
+        /// Updates flying locomotion to reflect the current state. Available for subclasses to override.
+        /// </summary>
+        protected virtual void UpdateFlyingState()
+        {
+            // Obtain the current locomotion state
+            bool flying = (bool)MRET.DataManager.FindPoint(flyKey);
+
+            // Only enable if the state is on AND we are not paused. Disable otherwise.
+            if (!Paused && flying)
+            {
+                // Enable flying
+                inputRig.EnableFlying();
+            }
+            else
+            {
+                // Disable flying
+                inputRig.DisableFlying();
+            }
+
+            // Gravity
+            ApplyGravityFromEnabledLocomotion();
+        }
+
+        /// <summary>
         /// Enables flying locomotion.
         /// </summary>
         public void EnableFlying()
         {
+            // Obtain the current locomotion state
+            bool flying = (bool)MRET.DataManager.FindPoint(flyKey);
+
             // Check that not already enabled
-            if ((bool) MRET.DataManager.FindPoint(flyKey) == true)
+            if (flying)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(EnableFlying) + "] Fly already enabled");
                 return;
             }
 
-            // Enable flying
-            inputRig.EnableFlying();
-
-            // Gravity
-            ApplyGravityFromEnabledLocomotion();
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(flyKey, true);
+
+            // Update the flying state
+            UpdateFlyingState();
 
             Debug.Log("[" + ClassName + "->" + nameof(EnableFlying) + "] Fly enabled");
         }
@@ -839,31 +938,28 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void DisableFlying()
         {
+            // Obtain the current locomotion state
+            bool flying = (bool)MRET.DataManager.FindPoint(flyKey);
+
             // Check that not already disabled
-            if ((bool) MRET.DataManager.FindPoint(flyKey) == false)
+            if (!flying)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(DisableFlying) + "] Fly already disabled");
                 return;
             }
 
-            // Disable flying
-            inputRig.DisableFlying();
+            // Save the new state to the DataManager
+            MRET.DataManager.SaveValue(flyKey, false);
 
-            // Gravity
-            ApplyGravityFromEnabledLocomotion();
-
-            // Save to DataManager, but only if we aren't paused
-            if (!Paused)
-            {
-                MRET.DataManager.SaveValue(flyKey, false);
-            }
+            // Update the flying state
+            UpdateFlyingState();
 
             Debug.Log("[" + ClassName + "->" + nameof(DisableFlying) + "] Fly disabled");
         }
 
-#endregion // Flying
+        #endregion // Flying
 
-#region Navigation
+        #region Navigation
 
         /// <summary>
         /// The multiplier to be applied to the normal navigation motion.
@@ -994,7 +1090,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleNavigation()
         {
-            if ((bool) MRET.DataManager.FindPoint(navigateKey) == false)
+            if ((bool)MRET.DataManager.FindPoint(navigateKey) == false)
             {
                 EnableNavigate();
             }
@@ -1020,25 +1116,49 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         }
 
         /// <summary>
+        /// Updates navigation locomotion to reflect the current state. Available for subclasses to override.
+        /// </summary>
+        protected virtual void UpdateNavigationState()
+        {
+            // Obtain the current locomotion state
+            bool navigating = (bool)MRET.DataManager.FindPoint(navigateKey);
+
+            // Only enable if the state is on AND we are not paused. Disable otherwise.
+            if (!Paused && navigating)
+            {
+                // Enable navigation
+                inputRig.EnableNavigation();
+            }
+            else
+            {
+                // Disable navigation
+                inputRig.DisableNavigation();
+            }
+
+            // Gravity
+            ApplyGravityFromEnabledLocomotion();
+        }
+
+        /// <summary>
         /// Enables navigation locomotion.
         /// </summary>
         public void EnableNavigate()
         {
+            // Obtain the current locomotion state
+            bool navigating = (bool)MRET.DataManager.FindPoint(navigateKey);
+
             // Check that not already enabled
-            if ((bool) MRET.DataManager.FindPoint(navigateKey) == true)
+            if (navigating)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(EnableNavigate) + "] Navigate already enabled");
                 return;
             }
 
-            // Enable navigation
-            inputRig.EnableNavigation();
-
-            // Gravity
-            ApplyGravityFromEnabledLocomotion();
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(navigateKey, true);
+
+            // Update the navigation state
+            UpdateNavigationState();
 
             Debug.Log("[" + ClassName + "->" + nameof(EnableNavigate) + "] Navigate enabled");
         }
@@ -1048,31 +1168,28 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void DisableNavigate()
         {
+            // Obtain the current locomotion state
+            bool navigating = (bool)MRET.DataManager.FindPoint(navigateKey);
+
             // Check that not already disabled
-            if ((bool) MRET.DataManager.FindPoint(navigateKey) == false)
+            if (!navigating)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(DisableNavigate) + "] Navigate already disabled");
                 return;
             }
 
-            // Disable navigation
-            inputRig.DisableNavigation();
+            // Save the new state to the DataManager
+            MRET.DataManager.SaveValue(navigateKey, false);
 
-            // Gravity
-            ApplyGravityFromEnabledLocomotion();
-
-            // Save to DataManager, but only if we aren't paused
-            if (!Paused)
-            {
-                MRET.DataManager.SaveValue(navigateKey, false);
-            }
+            // Update the navigation state
+            UpdateNavigationState();
 
             Debug.Log("[" + ClassName + "->" + nameof(DisableNavigate) + "] Navigate disabled");
         }
 
-#endregion // Navigation
+        #endregion // Navigation
 
-#region Armswing
+        #region Armswing
 
         /// <summary>
         /// The multiplier to be applied to the normal arm swing motion.
@@ -1203,7 +1320,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleArmswing()
         {
-            if ((bool) MRET.DataManager.FindPoint(armswingKey) == false)
+            if ((bool)MRET.DataManager.FindPoint(armswingKey) == false)
             {
                 EnableArmswing();
             }
@@ -1229,25 +1346,49 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         }
 
         /// <summary>
+        /// Updates armswing locomotion to reflect the current state. Available for subclasses to override.
+        /// </summary>
+        protected virtual void UpdateArmswingState()
+        {
+            // Obtain the current locomotion state
+            bool armswinging = (bool)MRET.DataManager.FindPoint(armswingKey);
+
+            // Only enable if the state is on AND we are not paused. Disable otherwise.
+            if (!Paused && armswinging)
+            {
+                // Enable armswing
+                inputRig.EnableArmswing();
+            }
+            else
+            {
+                // Disable armswing
+                inputRig.DisableArmswing();
+            }
+
+            // Gravity
+            ApplyGravityFromEnabledLocomotion();
+        }
+
+        /// <summary>
         /// Enables armswing locomotion.
         /// </summary>
         public void EnableArmswing()
         {
+            // Obtain the current locomotion state
+            bool armswinging = (bool)MRET.DataManager.FindPoint(armswingKey);
+
             // Check that not already enabled
-            if ((bool) MRET.DataManager.FindPoint(armswingKey) == true)
+            if (armswinging)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(EnableArmswing) + "] Armswing already enabled");
                 return;
             }
 
-            // Enable armswing
-            inputRig.EnableArmswing();
-
-            // Gravity
-            ApplyGravityFromEnabledLocomotion();
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(armswingKey, true);
+
+            // Update the armswing state
+            UpdateArmswingState();
 
             Debug.Log("[" + ClassName + "->" + nameof(EnableArmswing) + "] Armswing enabled");
         }
@@ -1257,40 +1398,36 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void DisableArmswing()
         {
+            bool armswinging = (bool)MRET.DataManager.FindPoint(armswingKey);
+
             // Check that not already disabled
-            if ((bool) MRET.DataManager.FindPoint(armswingKey) == false)
+            if (!armswinging)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(DisableArmswing) + "] Armswing already disabled");
                 return;
             }
 
-            // Disable armswing
-            inputRig.DisableArmswing();
+            // Save the new state to the DataManager
+            MRET.DataManager.SaveValue(armswingKey, false);
 
-            // Gravity
-            ApplyGravityFromEnabledLocomotion();
-
-            // Save to DataManager, but only if we aren't paused
-            if (!Paused)
-            {
-                MRET.DataManager.SaveValue(armswingKey, false);
-            }
+            // Update the armswing state
+            UpdateArmswingState();
 
             Debug.Log("[" + ClassName + "->" + nameof(DisableArmswing) + "] Armswing disabled");
         }
 
-#endregion // Armswing
+        #endregion // Armswing
 
-#endregion // Modes
+        #endregion // Modes
 
- #region Rotation/Scaling
+        #region Rotation/Scaling
 
         /// <summary>
         /// Toggles X axis rotation.
         /// </summary>
         public void ToggleXRotation()
         {
-            if ((bool) MRET.DataManager.FindPoint(rotateXKey) == false)
+            if ((bool)MRET.DataManager.FindPoint(rotateXKey) == false)
             {
                 EnableXRotation();
             }
@@ -1305,7 +1442,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleYRotation()
         {
-            if ((bool) MRET.DataManager.FindPoint(rotateYKey) == false)
+            if ((bool)MRET.DataManager.FindPoint(rotateYKey) == false)
             {
                 EnableYRotation();
             }
@@ -1320,7 +1457,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleZRotation()
         {
-            if ((bool) MRET.DataManager.FindPoint(rotateZKey) == false)
+            if ((bool)MRET.DataManager.FindPoint(rotateZKey) == false)
             {
                 EnableZRotation();
             }
@@ -1335,7 +1472,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleScaling()
         {
-            if ((bool) MRET.DataManager.FindPoint(scaleKey) == false)
+            if ((bool)MRET.DataManager.FindPoint(scaleKey) == false)
             {
                 EnableScaling();
             }
@@ -1410,29 +1547,67 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         }
 
         /// <summary>
+        /// Updates rotation to reflect the current state. Available for subclasses to override.
+        /// </summary>
+        protected virtual void UpdateRotationState()
+        {
+            // Obtain the current rotation states
+            bool rotatingX = (bool)MRET.DataManager.FindPoint(rotateXKey);
+            bool rotatingY = (bool)MRET.DataManager.FindPoint(rotateYKey);
+            bool rotatingZ = (bool)MRET.DataManager.FindPoint(rotateZKey);
+            bool rotating = rotatingX || rotatingY || rotatingZ;
+
+            // Only enable if the state is on AND we are not paused. Disable otherwise.
+            if (!Paused && rotating)
+            {
+                // Enable rotation
+                foreach (RotateObjectTransform rot in rots)
+                {
+                    // Enable rotation
+                    rot.enabled = rotating;
+
+                    // Enable each axis based upon the state
+                    rot.xEnabled = rotatingX;
+                    rot.yEnabled = rotatingY;
+                    rot.zEnabled = rotatingZ;
+                }
+            }
+            else
+            {
+                // Disable rotation
+                foreach (RotateObjectTransform rot in rots)
+                {
+                    // Disable rotation
+                    rot.enabled = false;
+
+                    // Disable each axis
+                    rot.xEnabled = false;
+                    rot.yEnabled = false;
+                    rot.zEnabled = false;
+                }
+            }
+        }
+
+        /// <summary>
         /// Enables X axis rotation.
         /// </summary>
         public void EnableXRotation()
         {
+            // Obtain the current rotating X state
+            bool rotatingX = (bool)MRET.DataManager.FindPoint(rotateXKey);
+
             // Check that not already enabled
-            if ((bool) MRET.DataManager.FindPoint(rotateXKey) == true)
+            if (rotatingX)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(EnableXRotation) + "] X rotation already enabled");
                 return;
             }
 
-            // Enable X rotation
-            foreach (RotateObjectTransform rot in rots)
-            {
-                // Enable rotation
-                rot.enabled = true;
-
-                // Enable the X axis
-                rot.xEnabled = true;
-            }
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(rotateXKey, true);
+
+            // Update the rotation state
+            UpdateRotationState();
 
             Debug.Log("[" + ClassName + "->" + nameof(EnableXRotation) + "] X rotation enabled");
         }
@@ -1442,25 +1617,21 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void DisableXRotation()
         {
+            // Obtain the current rotating X state
+            bool rotatingX = (bool)MRET.DataManager.FindPoint(rotateXKey);
+
             // Check that not already disabled
-            if ((bool) MRET.DataManager.FindPoint(rotateXKey) == false)
+            if (!rotatingX)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(DisableXRotation) + "] X rotation already disabled");
                 return;
             }
 
-            // Disable X rotation
-            foreach (RotateObjectTransform rot in rots)
-            {
-                // Disable the X axis
-                rot.xEnabled = false;
-
-                // Disable rotation if all axes are turned off
-                rot.enabled = rot.xEnabled || rot.yEnabled || rot.zEnabled;
-            }
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(rotateXKey, false);
+
+            // Update the rotation state
+            UpdateRotationState();
 
             Debug.Log("[" + ClassName + "->" + nameof(DisableXRotation) + "] X rotation disabled");
         }
@@ -1470,25 +1641,21 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void EnableYRotation()
         {
+            // Obtain the current rotating Y state
+            bool rotatingY = (bool)MRET.DataManager.FindPoint(rotateYKey);
+
             // Check that not already enabled.
-            if ((bool) MRET.DataManager.FindPoint(rotateYKey) == true)
+            if (rotatingY)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(EnableYRotation) + "] Y rotation already enabled");
                 return;
             }
 
-            // Enable Y rotation
-            foreach (RotateObjectTransform rot in rots)
-            {
-                // Enable rotation
-                rot.enabled = true;
-
-                // Enable the Y axis
-                rot.yEnabled = true;
-            }
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(rotateYKey, true);
+
+            // Update the rotation state
+            UpdateRotationState();
 
             Debug.Log("[" + ClassName + "->" + nameof(EnableYRotation) + "] Y rotation enabled");
         }
@@ -1498,25 +1665,21 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void DisableYRotation()
         {
+            // Obtain the current rotating Y state
+            bool rotatingY = (bool)MRET.DataManager.FindPoint(rotateYKey);
+
             // Check that not already disabled
-            if ((bool) MRET.DataManager.FindPoint(rotateYKey) == false)
+            if (!rotatingY)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(DisableYRotation) + "] Y rotation already disabled");
                 return;
             }
 
-            // Disable Y rotation
-            foreach (RotateObjectTransform rot in rots)
-            {
-                // Disable the Y axis
-                rot.yEnabled = false;
-
-                // Disable rotation if all axes are turned off
-                rot.enabled = rot.xEnabled || rot.yEnabled || rot.zEnabled;
-            }
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(rotateYKey, false);
+
+            // Update the rotation state
+            UpdateRotationState();
 
             Debug.Log("[" + ClassName + "->" + nameof(DisableYRotation) + "] Y rotation disabled");
         }
@@ -1526,25 +1689,21 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void EnableZRotation()
         {
+            // Obtain the current rotating Z state
+            bool rotatingZ = (bool)MRET.DataManager.FindPoint(rotateZKey);
+
             // Check that not already enabled
-            if ((bool) MRET.DataManager.FindPoint(rotateZKey) == true)
+            if (rotatingZ)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(EnableZRotation) + "] Z rotation already enabled");
                 return;
             }
 
-            // Enable Z rotation
-            foreach (RotateObjectTransform rot in rots)
-            {
-                // Enable rotation
-                rot.enabled = true;
-
-                // Enable the Z axis
-                rot.zEnabled = true;
-            }
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(rotateZKey, true);
+
+            // Update the rotation state
+            UpdateRotationState();
 
             Debug.Log("[" + ClassName + "->" + nameof(EnableZRotation) + "] Z rotation enabled");
         }
@@ -1554,27 +1713,50 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void DisableZRotation()
         {
+            // Obtain the current rotating Z state
+            bool rotatingZ = (bool)MRET.DataManager.FindPoint(rotateZKey);
+
             // Check that not already disabled
-            if ((bool) MRET.DataManager.FindPoint(rotateZKey) == false)
+            if (!rotatingZ)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(DisableZRotation) + "] Z rotation already disabled");
                 return;
             }
 
-            // Disable Z rotation
-            foreach (RotateObjectTransform rot in rots)
-            {
-                // Disable the Z axis
-                rot.zEnabled = false;
-
-                // Disable rotation if all axes are turned off
-                rot.enabled = rot.xEnabled || rot.yEnabled || rot.zEnabled;
-            }
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(rotateZKey, false);
 
+            // Update the rotation state
+            UpdateRotationState();
+
             Debug.Log("[" + ClassName + "->" + nameof(DisableZRotation) + "] Z rotation disabled");
+        }
+
+        /// <summary>
+        /// Updates scaling to reflect the current state. Available for subclasses to override.
+        /// </summary>
+        protected virtual void UpdateScalingState()
+        {
+            // Obtain the current scaling state
+            bool scaling = (bool)MRET.DataManager.FindPoint(scaleKey);
+
+            // Only enable if the state is on AND we are not paused. Disable otherwise.
+            if (!Paused && scaling)
+            {
+                // Enable scaling
+                foreach (ScaleObjectTransform sot in sots)
+                {
+                    sot.enabled = true;
+                }
+            }
+            else
+            {
+                // Disable scaling
+                foreach (ScaleObjectTransform sot in sots)
+                {
+                    sot.enabled = false;
+                }
+            }
         }
 
         /// <summary>
@@ -1582,21 +1764,21 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void EnableScaling()
         {
+            // Obtain the current scaling state
+            bool scaling = (bool)MRET.DataManager.FindPoint(scaleKey);
+
             // Check that not already enabled
-            if ((bool) MRET.DataManager.FindPoint(scaleKey) == true)
+            if (scaling)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(EnableScaling) + "] Scaling already enabled");
                 return;
             }
 
-            // Enable scaling
-            foreach (ScaleObjectTransform sot in sots)
-            {
-                sot.enabled = true;
-            }
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(scaleKey, true);
+
+            // Update the scaling state
+            UpdateScalingState();
 
             Debug.Log("[" + ClassName + "->" + nameof(EnableScaling) + "] Scaling enabled");
         }
@@ -1606,26 +1788,26 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void DisableScaling()
         {
+            // Obtain the current scaling state
+            bool scaling = (bool)MRET.DataManager.FindPoint(scaleKey);
+
             // Check that not already disabled
-            if ((bool) MRET.DataManager.FindPoint(scaleKey) == false)
+            if (!scaling)
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(DisableScaling) + "] Scaling already disabled");
                 return;
             }
 
-            // Disable scaling
-            foreach (ScaleObjectTransform sot in sots)
-            {
-                sot.enabled = false;
-            }
-
-            // Save to DataManager
+            // Save the new state to the DataManager
             MRET.DataManager.SaveValue(scaleKey, false);
+
+            // Update the scaling state
+            UpdateScalingState();
 
             Debug.Log("[" + ClassName + "->" + nameof(DisableScaling) + "] Scaling disabled");
         }
 
-#endregion // Rotation/Scaling
+        #endregion // Rotation/Scaling
 
     }
 }

@@ -2,6 +2,7 @@
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
+using System.Collections;
 using GSFC.ARVR.MRET.Components.UI;
 using GSFC.ARVR.XRUI.WorldSpaceMenu;
 
@@ -10,6 +11,7 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
     /// <remarks>
     /// History:
     /// 11 February 2021: Created
+    /// 22 April 2021: Changed MoveKeyboardOut() to coroutine
     /// </remarks>
     /// <summary>
     /// This script manages virtual keyboards in MRET.
@@ -79,13 +81,13 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
                     keyboard = numericKeyboard;
                 }
             }
-            
+
             keyboard.gameObject.SetActive(true);
             keyboard.transform.position = position;
             keyboard.transform.rotation = rotation;
             keyboard.textToControl = inputField;
 
-            MoveKeyboardOut(keyboard.gameObject, inputField.gameObject);
+            StartCoroutine(MoveKeyboardOut(keyboard.gameObject, inputField.gameObject));
 
             // Reset keyboard text.
             keyboard.enteredText = inputField.text;
@@ -102,26 +104,26 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
         }
 
         private const int maxIterations = 1000;
-        private void MoveKeyboardOut(GameObject keyboard, GameObject textObject)
+        private IEnumerator MoveKeyboardOut(GameObject keyboard, GameObject textObject)
         {
             // Get collider corresponding to keyboard.
             Collider keyboardCollider = keyboard.GetComponent<Collider>();
             if (keyboardCollider == null)
             {
-                return;
+                yield break;
             }
 
             // Get collider corresponding to menu.
             WorldSpaceMenuManager textMenu = textObject.GetComponentInParent<WorldSpaceMenuManager>();
             if (textMenu == null)
             {
-                return;
+                yield break;
             }
 
             Collider textMenuCollider = textMenu.GetComponent<Collider>();
             if (textMenuCollider == null)
             {
-                return;
+                yield break;
             }
 
             Transform originalParent = keyboard.transform.parent;
@@ -145,6 +147,7 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
                 }
 
                 iterations++;
+                yield return new WaitForFixedUpdate();
             }
 
             keyboard.transform.SetParent(originalParent);
