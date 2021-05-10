@@ -56,6 +56,9 @@ Now navigate in Unity to `Project > Assets > Framework > Scenes > MainScene` and
 
 (you will still need the MRET Components to be placed, where they need to be placed to..)
 
+### Additional Configuration
+Ensure that Project Settings->Player->Other Settings->Active Input Handling is set to "Both".
+
 ## Contributing
 
 Pull requests are welcome. For more information on contributing, please see [Contributing.md](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/blob/master/CONTRIBUTING.md).
