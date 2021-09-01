@@ -10,7 +10,7 @@ namespace GSFC.ARVR.XRC
 {
     public class DebugCPP : MonoBehaviour
     {
-
+#if !HOLOLENS_BUILD
         // Use this for initialization
         void OnEnable()
         {
@@ -41,5 +41,6 @@ namespace GSFC.ARVR.XRC
 
             UnityEngine.Debug.Log(debug_string);
         }
+#endif
     }
 }

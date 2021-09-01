@@ -6,6 +6,7 @@ using GSFC.ARVR.GMSEC;
 
 public class GMSECBusToDataManager : MonoBehaviour
 {
+#if !HOLOLENS_BUILD
     public DataManager dataManager;
 
     public enum ConnectionTypes { bolt, mb, amq383, amq384, ws71, ws75, ws80 };
@@ -162,4 +163,5 @@ public class GMSECBusToDataManager : MonoBehaviour
         return connType;
     }
 #endregion
+#endif
 }

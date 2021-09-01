@@ -15,6 +15,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
     /// 17 March 2021: Added the motion constraint properties and multipliers to support fast, normal
     ///     and slow motion to centralize the logic for locomotion controllers across input rig
     ///     implementations
+    /// 26 April 2021: Added mode field to indicate which mode the SDK is in
+    ///     (desktop, VR, AR). (D. Baker)
     /// </remarks>
     /// <summary>
     /// InputRig is a class that contains top-level references
@@ -23,6 +25,17 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
     /// </summary>
     public class InputRig : MonoBehaviour
     {
+        /// <summary>
+        /// Mode for the rig.
+        /// </summary>
+        public enum Mode { AR, VR, Desktop }
+
+        /// <summary>
+        /// Mode for the rig.
+        /// </summary>
+        [Tooltip("Mode for the rig.")]
+        public Mode mode = Mode.Desktop;
+
         /// <summary>
         /// The head object.
         /// </summary>
@@ -115,29 +128,6 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
                 return inputRigSDK.placingHand;
             }
         }
-
-        /// <summary>
-        /// Interaction mode for the overall rig.
-        /// </summary>
-        /*public InputHand.InteractionMode interactionMode
-        {
-            get
-            {
-                foreach (InputHand hand in hands)
-                {
-                    return hand.interactionMode;
-                }
-
-                return InputHand.InteractionMode.Object;
-            }
-            set
-            {
-                foreach (InputHand hand in hands)
-                {
-                    hand.SetInteractionMode(value);
-                }
-            }
-        }*/
 
         /// <summary>
         /// Initializes the input rig.

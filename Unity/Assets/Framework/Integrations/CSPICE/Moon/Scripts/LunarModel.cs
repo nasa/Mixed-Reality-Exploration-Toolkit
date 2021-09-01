@@ -42,6 +42,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
         ====================================================================== */
         public static void SubSolarPoint(double et, out double longitude, out double latitude)
         {
+#if !HOLOLENS_BUILD
             double[] spoint = new double[3];
             double trgepc;
             double[] srfvec = new double[3];
@@ -63,6 +64,10 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 out radius,
                 out longitude,
                 out latitude);
+#else
+            longitude = 0;
+            latitude = 0;
+#endif
         }
 
         /*
@@ -83,6 +88,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
             double longitude, double latitude, double elevation,
             double[] sunvec)
         {
+#if !HOLOLENS_BUILD
             double[] locpos = new double[3];
             double[] sunpos = new double[3];
             double lt;
@@ -138,6 +144,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 m,
                 sunvec,
                 sunvec);
+#endif
         }
 
         /*
@@ -152,6 +159,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
         public static void SunAzimuthAltitude(double[] sunvec,
             out double radius, out double azimuth, out double altitude)
         {
+#if !HOLOLENS_BUILD
             /* convert to angles */
             Rectangular2LatitudinalCoordinates(
                 sunvec,
@@ -163,6 +171,11 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                but azimuth is clockwise from north, 0 to 360 */
             azimuth = ToRadians(90.0) - azimuth;
             if (azimuth < 0.0) azimuth += ToRadians(360.0);
+#else
+            radius = 0;
+            azimuth = 0;
+            altitude = 0;
+#endif
         }
 
         /*
@@ -183,6 +196,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
             double longitude, double latitude, double elevation,
             double[] earthvec)
         {
+#if !HOLOLENS_BUILD
             double[] locpos = new double[3];
             double[] earthpos = new double[3];
             double lt;
@@ -238,6 +252,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 m,
                 earthvec,
                 earthvec);
+#endif
         }
 
         /*
@@ -252,6 +267,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
         public static void EarthAzimuthAltitude(double[] earthvec,
             out double radius, out double azimuth, out double altitude)
         {
+#if !HOLOLENS_BUILD
             /* convert to angles */
             Rectangular2LatitudinalCoordinates(
                 earthvec,
@@ -263,6 +279,11 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                but azimuth is clockwise from north, 0 to 360 */
             azimuth = ToRadians(90.0) - azimuth;
             if (azimuth < 0.0) azimuth += ToRadians(360.0);
+#else
+            radius = 0;
+            azimuth = 0;
+            altitude = 0;
+#endif
         }
 
     }

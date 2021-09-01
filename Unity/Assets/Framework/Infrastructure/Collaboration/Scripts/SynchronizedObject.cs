@@ -39,6 +39,7 @@ public class SynchronizedObject : MonoBehaviour
 
     void Update()
     {
+#if !HOLOLENS_BUILD
         positionThrottleCounter++;
         rotationThrottleCounter++;
         scaleThrottleCounter++;
@@ -119,6 +120,7 @@ public class SynchronizedObject : MonoBehaviour
                 transform.hasChanged = false;
             }
         }
+#endif
     }
 
     private string GetFullPath(GameObject obj)

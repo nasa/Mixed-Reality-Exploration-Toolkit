@@ -39,6 +39,7 @@ public class SynchronizedController : MonoBehaviour
 
     void Update()
     {
+#if !HOLOLENS_BUILD
         positionThrottleCounter++;
         rotationThrottleCounter++;
         scaleThrottleCounter++;
@@ -128,5 +129,6 @@ public class SynchronizedController : MonoBehaviour
                 }
             }
         }
+#endif
     }
 }

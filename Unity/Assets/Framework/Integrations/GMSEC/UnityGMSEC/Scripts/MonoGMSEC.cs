@@ -3,7 +3,9 @@
 
 using UnityEngine;
 using System;
+#if !HOLOLENS_BUILD
 using System.Runtime.InteropServices;
+#endif
 
 namespace GSFC.ARVR.GMSEC
 {
@@ -11,11 +13,11 @@ namespace GSFC.ARVR.GMSEC
     {
         static string GMSEC_PACKAGE_NAME = "UnityGMSEC";
 
-        #region GMSECDEFS
+#region GMSECDEFS
         public readonly int GMSEC_WAIT_FOREVER = -1;
-        #endregion
-
-        #region DLLImports
+#endregion
+#if !HOLOLENS_BUILD
+#region DLLImports
         [DllImport("GMSECUnityCPP", EntryPoint = "CreateConfig")]
         private static extern void I_CreateConfig();
 
@@ -96,9 +98,9 @@ namespace GSFC.ARVR.GMSEC
 
         [DllImport("GMSECUnityCPP", EntryPoint = "Reply")]
         private static extern void I_Reply(string requestMessage, string replyMessage);
-        #endregion
+#endregion
 
-        #region Wrappers
+#region Wrappers
         public void CreateConfig()
         {
             I_CreateConfig();
@@ -257,7 +259,8 @@ namespace GSFC.ARVR.GMSEC
         {
             I_Reply(requestMessage.ToJSON(), replyMessage.ToJSON());
         }
-        #endregion
+#endregion
+#endif
 
         private void Awake()
         {

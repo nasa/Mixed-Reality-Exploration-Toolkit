@@ -90,7 +90,7 @@
                 {
                     "name": "",
                     "id": "25698cc7-9de9-475d-9f45-aa5cf19958a4",
-                    "path": "<XRController>{LeftHand}/primary",
+                    "path": "<XRController>{LeftHand}/menu",
                     "interactions": "",
                     "processors": "",
                     "groups": "XR",
@@ -145,7 +145,7 @@
                 {
                     "name": "",
                     "id": "03928fb2-868a-4d8e-9a02-00313ecab654",
-                    "path": "<XRController>{RightHand}/primary",
+                    "path": "<XRController>{RightHand}/menu",
                     "interactions": "",
                     "processors": "",
                     "groups": "XR",

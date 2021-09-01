@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: 8353f7c1e088b904fbc836bff0c70dc8
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - m_ViewDataDictionary: {instanceID: 0}
+  - VirtualCameraManagerPrefab: {fileID: 8013854073838082950, guid: 8c9537fd327128f4e84a76dde993d3ec, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

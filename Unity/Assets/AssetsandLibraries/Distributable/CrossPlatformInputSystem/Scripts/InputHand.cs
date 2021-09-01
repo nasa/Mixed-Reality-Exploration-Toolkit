@@ -11,6 +11,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
     /// History:
     /// 27 October 2020: Created
     /// 03 February 2021: Added ArmSwing locomotion (J. Hosler)
+    /// 17 August 2021: Added pointer functions.
     /// </remarks>
     /// <summary>
     /// InputHand is a class that contains references
@@ -90,8 +91,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         {
             get
             {
-                // TODO
-                return false;
+                return inputHandSDK.pointerOn;
             }
         }
 
@@ -102,8 +102,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         {
             get
             {
-                // TODO
-                return Vector3.zero;
+                return inputHandSDK.pointerEnd;
             }
         }
 
@@ -173,6 +172,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
 
         /// <summary>
         /// Used to poll select press.
+        /// 
+        /// Oculus: Trigger
+        /// Vive: Trigger
+        /// Knuckles: Trigger
+        /// 
+        /// Other Models: Most likely Trigger
         /// </summary>
         public bool selectPressed
         {
@@ -184,6 +189,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
 
         /// <summary>
         /// Used to poll select value.
+        /// 
+        /// 
+        /// Oculus: Trigger
+        /// Vive: Trigger
+        /// Knuckles: Trigger
+        /// 
+        /// Other Models: Most likely Trigger
         /// </summary>
         public float selectValue
         {
@@ -253,6 +265,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
 
         /// <summary>
         /// Used to poll navigate pressing.
+        /// 
+        /// Oculus: Joystick
+        /// Vive: Touchpad
+        /// Knuckles: Joystick
+        /// 
+        /// Other Models: Most likely Joystick
         /// </summary>
         public bool navigatePressing
         {
@@ -264,6 +282,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
 
         /// <summary>
         /// Used to poll navigate value.
+        /// 
+        /// Oculus: Joystick
+        /// Vive: Touchpad
+        /// Knuckles: Joystick
+        /// 
+        /// Other Models: Most likely Joystick
         /// </summary>
         public Vector2 navigateValue
         {

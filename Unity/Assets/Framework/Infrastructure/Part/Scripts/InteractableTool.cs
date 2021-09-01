@@ -40,7 +40,7 @@ public class InteractableTool : SceneObject
             }
             objectMaterials = objMatList.ToArray();
         }
-
+        
         initialized = true;
     }
 
@@ -95,7 +95,7 @@ public class InteractableTool : SceneObject
         EnableAnyEnvironmentScaling();
     }
 
-    #region CONTEXTAWARECONTROL
+#region CONTEXTAWARECONTROL
     private bool previousScalingState = false, previousLocomotionPauseState = false;
     private void DisableAllEnvironmentScaling()
     {
@@ -117,5 +117,5 @@ public class InteractableTool : SceneObject
         }
         previousScalingState = false;
     }
-    #endregion
+#endregion
 }

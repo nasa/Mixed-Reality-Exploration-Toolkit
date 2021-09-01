@@ -43,6 +43,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
         [System.Xml.Serialization.XmlElementAttribute("GMSECSources", typeof(GMSECSourcesType))]
         [System.Xml.Serialization.XmlElementAttribute("Marker", typeof(MarkerType))]
         [System.Xml.Serialization.XmlElementAttribute("MatlabConnection", typeof(MatlabConnectionType))]
+        [System.Xml.Serialization.XmlElementAttribute("VDEConnection", typeof(VDEConnectionType))]
         [System.Xml.Serialization.XmlElementAttribute("Notes", typeof(NotesType))]
         [System.Xml.Serialization.XmlElementAttribute("ObjectGenerators", typeof(ObjectGeneratorsType))]
         [System.Xml.Serialization.XmlElementAttribute("Parts", typeof(PartsType))]
@@ -1427,6 +1428,107 @@ namespace GSFC.ARVR.MRET.Common.Schemas
     [System.Diagnostics.DebuggerStepThroughAttribute()]
     [System.ComponentModel.DesignerCategoryAttribute("code")]
     [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.example.org/MRET")]
+    public partial class VDEConnectionType
+    {
+        private bool standaloneField;
+
+        private bool renderInCloudField;
+
+        private string serverURLField;
+
+        private string bakedConfigResourceField;
+
+        private string bakedEntitiesResourceField;
+
+        private string bakedLinksResourceField;
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("Standalone")]
+        public bool standalone
+        {
+            get
+            {
+                return this.standaloneField;
+            }
+            set
+            {
+                this.standaloneField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("RenderInCloud")]
+        public bool renderInCloud
+        {
+            get
+            {
+                return this.renderInCloudField;
+            }
+            set
+            {
+                this.renderInCloudField = value;
+            }
+        }
+
+        /// <remarks/>
+        public string serverURL
+        {
+            get
+            {
+                return this.serverURLField;
+            }
+            set
+            {
+                this.serverURLField = value;
+            }
+        }
+
+        /// <remarks/>
+        public string bakedConfigResource
+        {
+            get
+            {
+                return this.bakedConfigResourceField;
+            }
+            set
+            {
+                this.bakedConfigResourceField = value;
+            }
+        }
+
+        /// <remarks/>
+        public string bakedEntitiesResource
+        {
+            get
+            {
+                return this.bakedEntitiesResourceField;
+            }
+            set
+            {
+                this.bakedEntitiesResourceField = value;
+            }
+        }
+
+        /// <remarks/>
+        public string bakedLinksResource
+        {
+            get
+            {
+                return this.bakedLinksResourceField;
+            }
+            set
+            {
+                this.bakedLinksResourceField = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.6.1590.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.example.org/MRET")]
     public partial class GMSECSourceType
     {
 
@@ -2274,6 +2376,9 @@ namespace GSFC.ARVR.MRET.Common.Schemas
 
         /// <remarks/>
         MatlabConnection,
+
+        /// <remarks/>
+        VDEConnection,
 
         /// <remarks/>
         Notes,

@@ -47,12 +47,16 @@ namespace GSFC.ARVR.MRET.XRC
 
         public void StartXRC()
         {
+#if !HOLOLENS_BUILD
             XRCUnity.StartUp();
+#endif
         }
 
         public void StopXRC()
         {
+#if !HOLOLENS_BUILD
             XRCUnity.ShutDown();
+#endif
         }
 
         public void CleanUp()
@@ -80,6 +84,7 @@ namespace GSFC.ARVR.MRET.XRC
 
         public void RecordAction(ProjectAction actionPerformed)
         {
+#if !HOLOLENS_BUILD
             if (!XRCUnity.IsSessionActive)
             {
                 return;
@@ -217,10 +222,12 @@ namespace GSFC.ARVR.MRET.XRC
                     Debug.LogError("[XRCManager->RecordAction] Unknown project action type.");
                     break;
             }
+#endif
         }
 
         public void EntityCreationEventManager()
         {
+#if !HOLOLENS_BUILD
             EntityEventParameters evParams = XRCUnity.entityCreatedEventQueue.Dequeue();
             if (evParams != null)
             {
@@ -316,10 +323,12 @@ namespace GSFC.ARVR.MRET.XRC
                     Debug.LogWarning("[XRCManager] Unknown entity creation event category.");
                 }
             }
+#endif
         }
 
         public void EntityDestructionEventManager()
         {
+#if !HOLOLENS_BUILD
             EntityEventParameters evParams = XRCUnity.entityDestroyedEventQueue.Dequeue();
             if (evParams != null)
             {
@@ -344,19 +353,23 @@ namespace GSFC.ARVR.MRET.XRC
                     Debug.LogWarning("[XRCManager] Unknown entity deletion event category.");
                 }
             }
+#endif
         }
 
         public void EntityReinitializationEventManager()
         {
+#if !HOLOLENS_BUILD
             EntityEventParameters evParams = XRCUnity.entityReinitializedEventQueue.Dequeue();
             if (evParams != null)
             {
                 Debug.LogWarning("[XRCManager] Entity reinitialization not yet implemented.");
             }
+#endif
         }
 
         public void EntityUpdatingEventManager()
         {
+#if !HOLOLENS_BUILD
             EntityEventParameters evParams = XRCUnity.entityUpdatedEventQueue.Dequeue();
             if (evParams != null)
             {
@@ -484,15 +497,18 @@ namespace GSFC.ARVR.MRET.XRC
                     Debug.LogWarning("[XRCManager] Unknown entity updating event category " + evParams.category + ".");
                 }
             }
+#endif
         }
 
         public void EntityEditingEventManager()
         {
+#if !HOLOLENS_BUILD
             EntityEventParameters evParams = XRCUnity.entityEditedEventQueue.Dequeue();
             if (evParams != null)
             {
                 Debug.LogError("[XRCManager] Entity editing not yet implemented.");
             }
+#endif
         }
 
         public void SessionJoiningEventManager()
@@ -504,6 +520,7 @@ namespace GSFC.ARVR.MRET.XRC
 
         public void SessionParticipantAddedEventManager()
         {
+#if !HOLOLENS_BUILD
             ActiveSessionEventParameters sessParams = XRCUnity.asParticipantAddedEventQueue.Dequeue();
             if (sessParams != null)
             {
@@ -511,19 +528,23 @@ namespace GSFC.ARVR.MRET.XRC
                     (SynchronizedUser.UserType) sessParams.type, sessParams.color, sessParams.id,
                     sessParams.lcID, sessParams.rcID, sessParams.lpID, sessParams.rpID, false));
             }
+#endif
         }
 
         public void SessionParticipantResyncedEventManager()
         {
+#if !HOLOLENS_BUILD
             ActiveSessionEventParameters sessParams = XRCUnity.asParticipantResyncedEventQueue.Dequeue();
             if (sessParams != null)
             {
 
             }
+#endif
         }
 
         public void SessionParticipantDeletedEventManager()
         {
+#if !HOLOLENS_BUILD
             ActiveSessionEventParameters sessParams = XRCUnity.asParticipantDeletedEventQueue.Dequeue();
             if (sessParams != null)
             {
@@ -539,33 +560,40 @@ namespace GSFC.ARVR.MRET.XRC
                     Debug.LogWarning("[XRCManager] Unknown user left: " + sessParams.tag);
                 }
             }
+#endif
         }
 
         public void RemoteSessionAddedEventManager()
         {
+#if !HOLOLENS_BUILD
             RemoteSessionEventParameters sessParams = XRCUnity.rsAddedEventQueue.Dequeue();
             if (sessParams != null)
             {
 
             }
+#endif
         }
 
         public void RemoteSessionUpdatedEventManager()
         {
+#if !HOLOLENS_BUILD
             RemoteSessionEventParameters sessParams = XRCUnity.rsUpdatedEventQueue.Dequeue();
             if (sessParams != null)
             {
 
             }
+#endif
         }
 
         public void RemoteSessionDeletedEventManager()
         {
+#if !HOLOLENS_BUILD
             RemoteSessionEventParameters sessParams = XRCUnity.rsDeletedEventQueue.Dequeue();
             if (sessParams != null)
             {
 
             }
+#endif
         }
 
         public void InitializeSessionUsers()
@@ -602,6 +630,7 @@ namespace GSFC.ARVR.MRET.XRC
 
         public void InitializeSessionEntities()
         {
+#if !HOLOLENS_BUILD
             foreach (SessionEntity sessionEntity in XRCUnity.GetAllSessionEntities())
             {
                 if (sessionEntity.category == USERCATEGORY ||
@@ -618,6 +647,7 @@ namespace GSFC.ARVR.MRET.XRC
                     sessionEntity.settings, sessionEntity.position, sessionEntity.rotation, sessionEntity.scale));
                 EntityCreationEventManager();
             }
+#endif
         }
 
         public SynchronizedUser GetControlledUser()
@@ -692,6 +722,7 @@ namespace GSFC.ARVR.MRET.XRC
         public static void AddControllersToSession(string userTag, string userUUID,
             string lcUUID, string rcUUID, string lpUUID, string rpUUID)
         {
+#if !HOLOLENS_BUILD
             XRCUnity.AddSessionEntity(userTag + ".L.CONTROLLER", LCONTROLLERCATEGORY, null, null,
                 lcUUID, userUUID, null, null, null, null,
                 Vector3.zero, Quaternion.identity, Vector3.one,
@@ -708,10 +739,12 @@ namespace GSFC.ARVR.MRET.XRC
                 rpUUID, userUUID, null, null, null, null,
                 Vector3.zero, Quaternion.identity, Vector3.one,
                 UnitType.meter, UnitType.degrees, UnitType.meter);
+#endif
         }
 
         public SessionEntity[] GetSessionUsers()
         {
+#if !HOLOLENS_BUILD
             SessionEntity[] sessionEntities = XRCUnity.GetAllSessionEntities();
             if (sessionEntities != null)
             {
@@ -725,11 +758,13 @@ namespace GSFC.ARVR.MRET.XRC
                 }
                 return sessionUsers.ToArray();
             }
+#endif
             return null;
         }
 
         private void AddControllersToSession()
         {
+#if !HOLOLENS_BUILD
             SynchronizedUser sU = GetControlledUser();
             if (sU)
             {
@@ -753,6 +788,7 @@ namespace GSFC.ARVR.MRET.XRC
                     sU.rightController.pointer.transform.position, sU.rightController.pointer.transform.rotation,
                     sU.rightController.pointer.transform.localScale, UnitType.meter, UnitType.degrees, UnitType.meter);
             }
+#endif
         }
 
 #region TypeDeserialization

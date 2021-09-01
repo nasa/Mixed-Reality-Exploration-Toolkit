@@ -496,9 +496,9 @@ MonoBehaviour:
 
 
     The Mixed Reality Exploration Toolkit
-    (MRET) is a cross-domain mixed reality tool, primarily suited for aerospace engineering
-    problems. It is maintained by the NASA-GSFC AR/VR R&D Lab. For more information,
-    contact thomas.g.grubb@nasa.gov or dylan.z.baker@nasa.gov.'
+    (MRET) is a cross-domain mixed reality tool, primarily suited for aerospace engineering,
+    scientific and exploration problems. It is maintained by the NASA-GSFC AR/VR
+    R&D Lab. For more information, contact thomas.g.grubb@nasa.gov or dylan.z.baker@nasa.gov.'
 --- !u!1 &1506595070455682
 GameObject:
   m_ObjectHideFlags: 0

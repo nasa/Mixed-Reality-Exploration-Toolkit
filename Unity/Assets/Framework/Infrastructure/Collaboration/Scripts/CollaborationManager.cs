@@ -57,6 +57,7 @@ public class CollaborationManager : MonoBehaviour
 
     public void EnterMasterMode(SessionInformation sessionInfo, string alias)
     {
+#if !HOLOLENS_BUILD
         if (engineType == EngineType.LegacyGMSEC)
         {
             synchManager.enabled = true;
@@ -78,6 +79,7 @@ public class CollaborationManager : MonoBehaviour
             modeNavigator.projectManager.userAlias = alias;
             modeNavigator.OpenProject(sessionInfo.projectName, true);
         }
+#endif
     }
 
     public void EnterSlaveMode(SessionInformation sessionInfo, string alias)

@@ -41,6 +41,13 @@ public class EraserManager : MonoBehaviour
             if (leftTouching)
             {
                 undoManager.AddAction(leftRedo, leftUndo);
+
+                // Destroy all children first.
+                foreach (Transform t in leftTouching.gameObject.transform)
+                {
+                    Destroy(t.gameObject);
+                }
+
                 Destroy(leftTouching.gameObject);
             }
         }
@@ -53,6 +60,13 @@ public class EraserManager : MonoBehaviour
             if (rightTouching)
             {
                 undoManager.AddAction(rightRedo, rightUndo);
+
+                // Destroy all children first.
+                foreach (Transform t in rightTouching.gameObject.transform)
+                {
+                    Destroy(t.gameObject);
+                }
+
                 Destroy(rightTouching.gameObject);
             }
         }
@@ -74,7 +88,7 @@ public class EraserManager : MonoBehaviour
                         serializedPart.PartTransform.Scale.Z),
                         new InteractablePart.InteractablePartSettings(serializedPart.EnableInteraction[0],
                         serializedPart.EnableCollisions[0], serializedPart.EnableGravity[0]));
-                    leftRedo = ProjectAction.DeleteObjectAction(iPart.gameObject.name);
+                    leftRedo = ProjectAction.DeleteObjectAction(iPart.gameObject.name, serializedPart.GUID);
 
                     leftTouching = iPart;
                 }
@@ -93,9 +107,9 @@ public class EraserManager : MonoBehaviour
                 {
                     leftUndo = ProjectAction.AddNoteAction(note.ToNoteType(),
                         note.name, note.transform.position, note.transform.rotation);
-                    leftRedo = ProjectAction.DeleteNoteAction(note.name);
+                    leftRedo = ProjectAction.DeleteNoteAction(note.name, note.guid.ToString());
 
-                    leftTouching = go.GetComponent<SceneObject>();
+                    leftTouching = go.GetComponentInParent<SceneObject>();
                 }
             }
         }
@@ -117,7 +131,7 @@ public class EraserManager : MonoBehaviour
                         serializedPart.PartTransform.Scale.Z),
                         new InteractablePart.InteractablePartSettings(serializedPart.EnableInteraction[0],
                         serializedPart.EnableCollisions[0], serializedPart.EnableGravity[0]));
-                    rightRedo = ProjectAction.DeleteObjectAction(iPart.gameObject.name);
+                    rightRedo = ProjectAction.DeleteObjectAction(iPart.gameObject.name, serializedPart.GUID);
 
                     rightTouching = iPart;
                 }
@@ -136,7 +150,7 @@ public class EraserManager : MonoBehaviour
                 {
                     rightUndo = ProjectAction.AddNoteAction(note.ToNoteType(),
                         note.name, note.transform.position, note.transform.rotation);
-                    rightRedo = ProjectAction.DeleteNoteAction(note.name);
+                    rightRedo = ProjectAction.DeleteNoteAction(note.name, note.guid.ToString());
 
                     rightTouching = go.GetComponentInParent<SceneObject>();
                 }

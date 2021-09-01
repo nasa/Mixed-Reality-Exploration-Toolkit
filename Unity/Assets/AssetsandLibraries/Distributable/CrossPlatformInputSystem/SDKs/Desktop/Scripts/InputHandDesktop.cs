@@ -16,6 +16,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
     ///     since the motion constraints are now contained within the rig SDK. Lastly, the shift key press
     ///     is now exposed as a navigation press event so that the locomotion manager can attach an event
     ///     handler to use the event to trigger motion constraint changes. (J. Hosler)
+    /// 17 August 2021: Added pointer functions.
     /// </remarks>
     /// <summary>
     /// Desktop wrapper for the input hand.
@@ -69,6 +70,72 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
             }
         }
         private Vector2 _navigateValue = Vector2.zero;
+
+        /// <summary>
+        /// Whether or not the pointer is currently on.
+        /// </summary>
+        public override bool pointerOn
+        {
+            get
+            {
+                if (uiPointerController != null)
+                {
+                    if (uiPointerController.raycastLaser != null)
+                    {
+                        if (uiPointerController.raycastLaser.active)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                if (teleportController != null)
+                {
+                    if (teleportController.raycastLaser != null)
+                    {
+                        if (teleportController.raycastLaser.active)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// The current endpoint of the pointer.
+        /// </summary>
+        public override Vector3 pointerEnd
+        {
+            get
+            {
+                if (uiPointerController != null)
+                {
+                    if (uiPointerController.raycastLaser != null)
+                    {
+                        if (uiPointerController.raycastLaser.active)
+                        {
+                            return uiPointerController.raycastLaser.hitPos;
+                        }
+                    }
+                }
+
+                if (teleportController != null)
+                {
+                    if (teleportController.raycastLaser != null)
+                    {
+                        if (teleportController.raycastLaser.active)
+                        {
+                            return teleportController.raycastLaser.hitPos;
+                        }
+                    }
+                }
+
+                return Vector3.zero;
+            }
+        }
 
         /// <summary>
         /// Handler for menu press event.

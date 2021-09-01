@@ -19,6 +19,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
     ///     begin isolating the cross platform input system from the MRET application. May have to
     ///     revisit the use of interfaces since they require custom property handling in order to
     ///     make them work in the editor. (J. Hosler)
+    /// 17 August 2021: Added pointer functions.
     /// </remarks>
     /// <summary>
     /// SDK wrapper for the input hand.
@@ -73,6 +74,28 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         /// </summary>
         [Tooltip("UI Pointer Controller for the hand.")]
         public UIPointerController uiPointerController;
+
+        /// <summary>
+        /// Whether or not the pointer is currently on.
+        /// </summary>
+        public virtual bool pointerOn
+        {
+            get
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// The current endpoint of the pointer.
+        /// </summary>
+        public virtual Vector3 pointerEnd
+        {
+            get
+            {
+                return Vector3.zero;
+            }
+        }
 
         public virtual bool teleportBlocked
         {

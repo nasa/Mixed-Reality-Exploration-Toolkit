@@ -18,6 +18,7 @@ namespace GSFC.ARVR.MRET.Components.Notes
         public VR_InputField titleText, informationText;
         public GameObject fullNote, minimizedNote, drawingContainer;
         public Gradient lineColor;
+        public Material drawingMaterial;
         public Color highlightColor = new Color();
         public bool textBeingAutoChanged = false;
         public int id = -1;
@@ -146,6 +147,7 @@ namespace GSFC.ARVR.MRET.Components.Notes
                         currentLeftLine.useWorldSpace = false;
                         currentLeftLine.SetPosition(0, raycastPoint);
                         currentLeftLine.positionCount = 0;
+                        currentLeftLine.material = drawingMaterial;
                     }
 
                     currentLeftLine.positionCount++;
@@ -168,6 +170,7 @@ namespace GSFC.ARVR.MRET.Components.Notes
                         currentRightLine.useWorldSpace = false;
                         currentRightLine.SetPosition(0, raycastPoint);
                         currentRightLine.positionCount = 0;
+                        currentRightLine.material = drawingMaterial;
                     }
 
                     currentRightLine.positionCount++;
@@ -371,6 +374,7 @@ namespace GSFC.ARVR.MRET.Components.Notes
                     lineRend.colorGradient = lineColor;
                     lineRend.useWorldSpace = false;
                     lineRend.positionCount = 0;
+                    lineRend.material = drawingMaterial;
 
                     foreach (Vector3Type point in drawing.Points)
                     {

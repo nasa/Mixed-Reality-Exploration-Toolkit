@@ -37,9 +37,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
                 && currentInteractable.transform.IsChildOf(transform))
             {
                 currentInteractable.EndGrab(hand);
-                MRET.LocomotionManager.PauseRelease();
             }
 
+            MRET.LocomotionManager.PauseRelease();
             grabbing = false;
         }
 
@@ -116,7 +116,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
 
         private bool CanPerformInteraction()
         {
-            return !((bool)MRET.DataManager.FindPoint(DrawLineManager.ISDRAWINGFLAGKEY));
+            return !((bool) MRET.DataManager.FindPoint(DrawLineManager.ISDRAWINGFLAGKEY));
         }
     }
 }

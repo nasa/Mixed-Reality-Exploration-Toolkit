@@ -140,7 +140,9 @@ public class GripMeasure : MonoBehaviour
                 {
                     RectTransform Size = targetGameObject.GetComponentInChildren<RectTransform>();
                     BoxCollider Box = targetGameObject.GetComponentInChildren<BoxCollider>();
+#if !HOLOLENS_BUILD
                     ZenFulcrum.EmbeddedBrowser.Browser htmlBrowser = targetGameObject.GetComponentInChildren<ZenFulcrum.EmbeddedBrowser.Browser>();
+#endif
 
                     // maybe display a axis to help the user
 

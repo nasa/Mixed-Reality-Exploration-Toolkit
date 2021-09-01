@@ -26,6 +26,27 @@ namespace GSFC.ARVR.MRET.Common.Schemas
 
     public class UnityProject : MonoBehaviour
     {
+        public class VDESettings
+        {
+            public bool standalone;
+            public bool renderInCloud;
+            public string serverURL;
+            public string nameOfBakedConfigResource;
+            public string nameOfBakedEntitiesResource;
+            public string nameOfBakedLinksResource;
+
+            public VDESettings(bool _standalone, bool _renderInCloud, string _serverURL,
+                string _bakedConfig, string _bakedEntities, string _bakedLinks)
+            {
+                standalone = _standalone;
+                renderInCloud = _renderInCloud;
+                serverURL = _serverURL;
+                nameOfBakedConfigResource = _bakedConfig;
+                nameOfBakedEntitiesResource = _bakedEntities;
+                nameOfBakedLinksResource = _bakedLinks;
+            }
+        }
+
         public static readonly string NAME = nameof(UnityProject);
 
         public static UnityProject instance;
@@ -57,6 +78,9 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             lpUUID = Guid.NewGuid(), rpUUID = Guid.NewGuid();
 
         public bool Loaded { get; private set; } = false;
+
+        // TODO: This is very temporary.
+        public VDESettings vdeSettings;
 
         // Loaded Project Information.
         private ViewType loadedProject_currentView = null;
@@ -122,10 +146,12 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             Debug.Log("Unloading project.");
 
             // Leave collaboration session if in one.
+#if !HOLOLENS_BUILD
             if (XRC.XRCUnity.IsSessionActive)
             {
                 ARVR.XRC.XRCInterface.LeaveSession();
             }
+#endif
 
             // Detatch all objects from the controllers.
             UngrabAllObjects();
@@ -196,7 +222,14 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             XRC.XRCManager.instance.CleanUp();
 
             // Show the Lobby area.
-            lobbyArea.SetActive(true);
+            if (Infrastructure.Framework.MRET.InputRig.mode == InputRig.Mode.AR)
+            {
+                lobbyArea.SetActive(false);
+            }
+            else
+            {
+                lobbyArea.SetActive(true);
+            }
 
             loadingIndicatorManager.StopLoadingIndicator();
         }
@@ -496,30 +529,46 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                                     synchedUser.uuid = userUUID;
                                     synchedUser.userLabelColor = userLabelColor;
 
-                                    synchedUser.leftController = Infrastructure.Framework.MRET.InputRig.leftHand.gameObject.AddComponent<SynchronizedController>();
+                                    InputHand leftHand = Infrastructure.Framework.MRET.InputRig.leftHand;
+                                    InputHand rightHand = Infrastructure.Framework.MRET.InputRig.rightHand;
+                                    if (leftHand == null && rightHand == null)
+                                    {
+                                        List<InputHand> hands = Infrastructure.Framework.MRET.InputRig.hands;
+                                        if (hands.Count != 2)
+                                        {
+                                            Debug.LogError("Incorrect number of hands. Will not load project correctly.");
+                                        }
+                                        else
+                                        {
+                                            leftHand = hands[0];
+                                            rightHand = hands[1];
+                                        }
+                                    }
+
+                                    synchedUser.leftController = leftHand.gameObject.AddComponent<SynchronizedController>();
                                     synchedUser.leftController.controllerSide = SynchronizedController.ControllerSide.Left;
                                     synchedUser.leftController.synchronizedUser = synchedUser;
                                     synchedUser.leftController.uuid = lcUUID;
 
                                     GameObject leftLaser = new GameObject("Laser");
-                                    leftLaser.transform.parent = Infrastructure.Framework.MRET.InputRig.leftHand.transform.parent;
+                                    leftLaser.transform.parent = leftHand.transform;
                                         
                                     synchedUser.leftController.pointer = leftLaser.AddComponent<SynchronizedPointer>();
                                     synchedUser.leftController.pointer.synchronizedController = synchedUser.leftController;
                                     synchedUser.leftController.pointer.uuid = lpUUID;
-                                    synchedUser.leftController.pointer.hand = Infrastructure.Framework.MRET.InputRig.leftHand;
+                                    synchedUser.leftController.pointer.hand = leftHand;
 
-                                    synchedUser.rightController = Infrastructure.Framework.MRET.InputRig.rightHand.gameObject.AddComponent<SynchronizedController>();
+                                    synchedUser.rightController = rightHand.gameObject.AddComponent<SynchronizedController>();
                                     synchedUser.rightController.controllerSide = SynchronizedController.ControllerSide.Right;
                                     synchedUser.rightController.synchronizedUser = synchedUser;
                                     synchedUser.rightController.uuid = rcUUID;
 
                                     GameObject rightLaser = new GameObject("Laser");
-                                    rightLaser.transform.parent = Infrastructure.Framework.MRET.InputRig.rightHand.transform.parent;
+                                    rightLaser.transform.parent = rightHand.transform;
                                     synchedUser.rightController.pointer = rightLaser.AddComponent<SynchronizedPointer>();
                                     synchedUser.rightController.pointer.synchronizedController = synchedUser.rightController;
                                     synchedUser.rightController.pointer.uuid = rpUUID;
-                                    synchedUser.rightController.pointer.hand = Infrastructure.Framework.MRET.InputRig.rightHand;
+                                    synchedUser.rightController.pointer.hand = rightHand;
 
                                     Debug.Log("Synchronized user added.");
 
@@ -590,7 +639,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
 
                             case ItemsChoiceType.GMSECSources:
                                 GMSECSourcesType gmsecSources = (GMSECSourcesType)serializedProject.Items[i];
-
+#if !HOLOLENS_BUILD
                                 if (gmsecSources.GMSECSources != null)
                                 {
                                     foreach (GMSECSourceType gmsecSource in gmsecSources.GMSECSources)
@@ -645,6 +694,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
 
                                     }
                                 }
+#endif
                                 break;
 
                             case ItemsChoiceType.MatlabConnection:
@@ -745,6 +795,35 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                                 }
                                 break;
 
+                            case ItemsChoiceType.VDEConnection:
+                                VDEConnectionType vct = (VDEConnectionType) serializedProject.Items[i];
+                                if (vct != null)
+                                {
+                                    if (string.IsNullOrEmpty(vct.serverURL))
+                                    {
+                                        vct.serverURL = "https://vde.coda.ee/VDE";
+                                    }
+
+                                    if (string.IsNullOrEmpty(vct.bakedConfigResource))
+                                    {
+                                        vct.bakedConfigResource = "config";
+                                    }
+
+                                    if (string.IsNullOrEmpty(vct.bakedEntitiesResource))
+                                    {
+                                        vct.bakedEntitiesResource = "entities";
+                                    }
+
+                                    if (string.IsNullOrEmpty(vct.bakedLinksResource))
+                                    {
+                                        vct.bakedLinksResource = "links";
+                                    }
+
+                                    vdeSettings = new VDESettings(vct.standalone, vct.renderInCloud,
+                                        vct.serverURL, vct.bakedConfigResource,
+                                        vct.bakedEntitiesResource, vct.bakedLinksResource);
+                                }
+                                break;
 
                             default:
                                 break;
@@ -759,6 +838,14 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             catch (Exception e)
             {
                 Debug.Log("[UnityProject->Deserialize] " + e.ToString());
+            }
+
+            // TODO: Very temporary.
+            foreach (Assets.VDE.VDE vde in FindObjectsOfType<Assets.VDE.VDE>())
+            {
+                //vde.Init(vdeSettings.standalone, vdeSettings.renderInCloud,
+                //    vdeSettings.serverURL, vdeSettings.nameOfBakedConfigResource,
+                //    vdeSettings.nameOfBakedEntitiesResource, vdeSettings.nameOfBakedLinksResource);
             }
 
             // Indicate that project is done loading.

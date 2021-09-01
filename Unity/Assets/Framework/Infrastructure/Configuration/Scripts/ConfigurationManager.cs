@@ -79,6 +79,10 @@ public class ConfigurationManager : MonoBehaviour
         {
             Debug.Log("[ConfigurationManager->Initialize] " + e.ToString());
         }
+
+#if HOLOLENS_BUILD
+        CreateHololensDirectories();
+#endif
     }
 
     public void AddRecentProject(ProjectInfo projInfo)
@@ -148,16 +152,16 @@ public class ConfigurationManager : MonoBehaviour
                     return;
             }
 
-            if (!File.Exists(Application.dataPath + "/" + recentFileNameToUse))
+            if (!File.Exists(GetDatapath() + Path.DirectorySeparatorChar + recentFileNameToUse))
             {
-                FileStream fs = File.Create(Application.dataPath + "/" + recentFileNameToUse);
+                FileStream fs = File.Create(GetDatapath() + Path.DirectorySeparatorChar + recentFileNameToUse);
                 fs.Close();
                 fs.Dispose();
             }
 
             int numProjectsRecorded = 1;
             string recentProjectsToWrite = projName;
-            foreach (string line in File.ReadAllLines(Application.dataPath + "/" + recentFileNameToUse))
+            foreach (string line in File.ReadAllLines(GetDatapath() + Path.DirectorySeparatorChar + recentFileNameToUse))
             {
                 if (line != "\n" && line != projName)
                 {
@@ -168,7 +172,7 @@ public class ConfigurationManager : MonoBehaviour
                     }
                 }
             }
-            File.WriteAllText(Application.dataPath + "/" + recentFileNameToUse, recentProjectsToWrite);
+            File.WriteAllText(GetDatapath() + Path.DirectorySeparatorChar + recentFileNameToUse, recentProjectsToWrite);
         }
         catch (Exception e)
         {
@@ -213,9 +217,9 @@ public class ConfigurationManager : MonoBehaviour
                 return null;
         }
 
-        if (File.Exists(Application.dataPath + "/" + recentFileNameToUse))
+        if (File.Exists(GetDatapath() + Path.DirectorySeparatorChar + recentFileNameToUse))
         {
-            foreach (string line in File.ReadAllLines(Application.dataPath + "/" + recentFileNameToUse))
+            foreach (string line in File.ReadAllLines(GetDatapath() + Path.DirectorySeparatorChar + recentFileNameToUse))
             {
                 if (line.Substring(Math.Max(0, line.Length - 7)).Equals(".mtproj"))
                 {
@@ -232,126 +236,103 @@ public class ConfigurationManager : MonoBehaviour
         return projectsToReturn.ToArray();
     }
 
-    /*public void UpdateConfig()
-    {
-        XmlSerializer xmlSerializer = new XmlSerializer(typeof(ConfigurationType));
-        StreamReader sr = new StreamReader(Application.dataPath + Path.DirectorySeparatorChar + configurationFileName);
-        config = (ConfigurationType)xmlSerializer.Deserialize(sr);
-
-        huds.Clear();
-
-        String dirPath = Application.dataPath + Path.DirectorySeparatorChar + config.HudPath;
-        foreach (string hudFile in Directory.GetFiles(dirPath))
-        {
-            if (hudFile.Substring(Math.Max(0, hudFile.Length - 4)).Equals(".xml"))
-            {
-                int startIndex = hudFile.LastIndexOf(Path.DirectorySeparatorChar) + 1;
-                string name = hudFile.Substring(startIndex, Math.Max(0, hudFile.Length - 4 - startIndex));
-                DateTime timeStamp = File.GetLastWriteTime(hudFile);
-
-                huds.Add(new HudInfo(name, hudFile, timeStamp));
-            }
-        }
-    }*/
-
-
     private void ReadConfig()
     {
         try
         {
             // Get the top-level config object.
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(ConfigurationType));
-            StreamReader sr = new StreamReader(Application.dataPath + Path.DirectorySeparatorChar + configurationFileName);
-            config = (ConfigurationType)xmlSerializer.Deserialize(sr);
+            StreamReader sr = new StreamReader(Path.Combine(GetDatapath(), configurationFileName));
+            config = (ConfigurationType) xmlSerializer.Deserialize(sr);
 
             if (!string.IsNullOrEmpty(config.ProjectsPath))
             {
                 defaultProjectDirectory
-                    = Path.Combine(Application.dataPath, config.ProjectsPath);
+                    = Path.Combine(GetDatapath(), config.ProjectsPath);
             }
             else
             {
-                defaultProjectDirectory = Application.dataPath;
+                defaultProjectDirectory = GetDatapath();
             }
 
             if (!string.IsNullOrEmpty(config.TemplatesPath))
             {
                 defaultTemplateDirectory
-                    = Path.Combine(Application.dataPath, config.TemplatesPath);
+                    = Path.Combine(GetDatapath(), config.TemplatesPath);
             }
             else
             {
-                defaultTemplateDirectory = Application.dataPath;
+                defaultTemplateDirectory = GetDatapath();
             }
 
             if (!string.IsNullOrEmpty(config.AssetsPath))
             {
                 defaultPartDirectory
-                    = Path.Combine(Application.dataPath, config.AssetsPath);
+                    = Path.Combine(GetDatapath(), config.AssetsPath);
             }
             else
             {
-                defaultPartDirectory = Application.dataPath;
+                defaultPartDirectory = GetDatapath();
             }
 
             //if (!string.IsNullOrEmpty(config.TerrainsPath))
             {
                 defaultTerrainDirectory
-                    = Path.Combine(Application.dataPath, "Terrains"); // config.TerrainsPath
+                    = Path.Combine(GetDatapath(), "Terrains"); // config.TerrainsPath
             }
             //else
             //{
-            //    defaultTerrainDirectory = Application.dataPath;
+            //    defaultTerrainDirectory = GetDatapath();
             //}
 
             if (!string.IsNullOrEmpty(config.AnimationsPath))
             {
                 defaultAnimationDirectory
-                    = Path.Combine(Application.dataPath, config.AnimationsPath);
+                    = Path.Combine(GetDatapath(), config.AnimationsPath);
             }
             else
             {
-                defaultAnimationDirectory = Application.dataPath;
+                defaultAnimationDirectory = GetDatapath();
             }
 
             if (!string.IsNullOrEmpty(config.TextAnnotationPath))
             {
                 defaultAnnotationDirectory
-                    = Path.Combine(Application.dataPath, config.TextAnnotationPath);
+                    = Path.Combine(GetDatapath(), config.TextAnnotationPath);
             }
             else
             {
-                defaultAnnotationDirectory = Application.dataPath;
+                defaultAnnotationDirectory = GetDatapath();
             }
 
             if (!string.IsNullOrEmpty(config.HudPath))
             {
                 defaultHUDDirectory
-                    = Path.Combine(Application.dataPath, config.HudPath);
+                    = Path.Combine(GetDatapath(), config.HudPath);
             }
             else
             {
-                defaultHUDDirectory = Application.dataPath;
+                defaultHUDDirectory = GetDatapath();
             }
 
             if (!string.IsNullOrEmpty(config.PointCloudsPath))
             {
                 defaultPointCloudDirectory
-                    = Path.Combine(Application.dataPath, config.PointCloudsPath);
+                    = Path.Combine(GetDatapath(), config.PointCloudsPath);
             }
             else
             {
-                defaultPointCloudDirectory = Application.dataPath;
+                defaultPointCloudDirectory = GetDatapath();
             }
 
             if (!string.IsNullOrEmpty(config.TimeSimulationPath))
             {
                 defaultTimeSimulationDirectory
-                    = Path.Combine(Application.dataPath, config.TimeSimulationPath);
+                    = Path.Combine(GetDatapath(), config.TimeSimulationPath);
             }
             else
             {
-                defaultTimeSimulationDirectory = Application.dataPath;
+                defaultTimeSimulationDirectory = GetDatapath();
             }
 
             switch (config.ColliderMode)
@@ -391,5 +372,34 @@ public class ConfigurationManager : MonoBehaviour
         }
 
         return returnTexture;
+    }
+
+    private string GetDatapath()
+    {
+#if (!UNITY_EDITOR && HOLOLENS_BUILD)
+        return Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "MRET");
+#else
+        return Application.dataPath;
+#endif
+    }
+
+    private void CreateHololensDirectories()
+    {
+#if (!UNITY_EDITOR && HOLOLENS_BUILD)
+        List<string> dirsToAdd = new List<string>();
+        string mretDir = Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "MRET");
+        dirsToAdd.Add(mretDir);
+        dirsToAdd.Add(Path.Combine(mretDir, "Anims"));
+        dirsToAdd.Add(Path.Combine(mretDir, "Huds"));
+        dirsToAdd.Add(Path.Combine(mretDir, "Parts"));
+        dirsToAdd.Add(Path.Combine(mretDir, "Projects"));
+        dirsToAdd.Add(Path.Combine(mretDir, "TimeSimulations"));
+        dirsToAdd.Add(Path.Combine(mretDir, "UWP"));
+
+        foreach (string dirToAdd in dirsToAdd)
+        {
+            Directory.CreateDirectory(dirToAdd);
+        }
+#endif
     }
 }

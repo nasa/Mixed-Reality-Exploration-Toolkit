@@ -51,6 +51,7 @@ public class XRCTest : MonoBehaviour
 
     public void EntityCreationEventManager()
     {
+#if !HOLOLENS_BUILD
         Debug.Log("Entity Creation Event Called.");
         EntityEventParameters evParams = XRCUnity.entityCreatedEventQueue.Dequeue();
         if (evParams != null)
@@ -62,6 +63,7 @@ public class XRCTest : MonoBehaviour
             Debug.Log("Type=" + evParams.type);
             Debug.Log("UUID=" + evParams.uuid);
         }
+#endif
     }
 
     public void SessionJoiningEventManager()
@@ -82,6 +84,8 @@ public class XRCTest : MonoBehaviour
 
     public void SessionParticipantAddedEventManager()
     {
+#if !HOLOLENS_BUILD
+
         Debug.Log("Participant Added Event Called.");
         ActiveSessionEventParameters sessParams = XRCUnity.asParticipantAddedEventQueue.Dequeue();
         if (sessParams != null)
@@ -95,10 +99,12 @@ public class XRCTest : MonoBehaviour
             Debug.Log("Left Pointer ID=" + sessParams.lpID);
             Debug.Log("Right Pointer ID=" + sessParams.rpID);
         }
+#endif
     }
 
     private void RunMasterTest()
     {
+#if !HOLOLENS_BUILD
         Debug.Log("[XRCTest] Running as master node...");
 
         Guid userUUID = Guid.NewGuid();
@@ -141,10 +147,12 @@ public class XRCTest : MonoBehaviour
         Debug.Log("[XRCTest] Adding controllers to session...");
         XRCManager.AddControllersToSession(userAlias, userUUID.ToString(),
             lcUUID.ToString(), rcUUID.ToString(), lpUUID.ToString(), rpUUID.ToString());
+#endif
     }
 
     private void RunSlaveTest()
     {
+#if !HOLOLENS_BUILD
         Debug.Log("[XRCTest] Running as slave node...");
 
         Debug.Log("[XRCTest] Shutting down XRC...");
@@ -161,6 +169,7 @@ public class XRCTest : MonoBehaviour
         }
 
         updateSessionsList = true;
+#endif
     }
 
     // Helper function for parsing the command line arguments
@@ -280,6 +289,7 @@ public class XRCTest : MonoBehaviour
 
     private void Update()
     {
+#if !HOLOLENS_BUILD
         if (numFramesWaited < numFramesToWait)
         {
             numFramesWaited++;
@@ -344,10 +354,12 @@ public class XRCTest : MonoBehaviour
                 idx++;
             }
         }
+#endif
     }
 
     private void JoinSession(int idx)
     {
+#if !HOLOLENS_BUILD
         updateSessionsList = false;
 
         Guid userUUID = Guid.NewGuid();
@@ -369,5 +381,6 @@ public class XRCTest : MonoBehaviour
         XRCUnity.JoinSession(availableXRCSessions[idx].id,
             userUUID.ToString(), userAlias, (int) userType,
             userLabelColor.ToString(), lcUUID.ToString(), rcUUID.ToString(), lpUUID.ToString(), rpUUID.ToString());
+#endif
     }
 }

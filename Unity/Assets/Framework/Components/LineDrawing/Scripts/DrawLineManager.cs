@@ -439,7 +439,7 @@ public class DrawLineManager : MonoBehaviour
                 break;
 
             case CaptureTypes.Free:
-                if (drawingControllers[ctrlIndex].currentDrawing != null)
+                if (drawingControllers[ctrlIndex].currentDrawing.meshModel != null)
                 {
                     drawingControllers[ctrlIndex].currentDrawing.meshModel.name = "LineDrawing" + ++lineID;
                     MeshCollider coll = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<MeshCollider>();
@@ -484,7 +484,7 @@ public class DrawLineManager : MonoBehaviour
             case CaptureTypes.Lines:
                 if (drawingControllers[ctrlIndex].newLine)
                 {
-                    if (drawingControllers[ctrlIndex].currentDrawing != null)
+                    if (drawingControllers[ctrlIndex].currentDrawing.meshModel != null)
                     {
                         drawingControllers[ctrlIndex].currentDrawing.meshModel.name = "LineDrawing" + ++lineID;
                         MeshCollider coll = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<MeshCollider>();
@@ -515,7 +515,7 @@ public class DrawLineManager : MonoBehaviour
             case CaptureTypes.Laser:
                 if (drawingControllers[ctrlIndex].newLine)
                 {
-                    if (drawingControllers[ctrlIndex].currentDrawing != null)
+                    if (drawingControllers[ctrlIndex].currentDrawing.meshModel != null)
                     {
                         drawingControllers[ctrlIndex].currentDrawing.meshModel.name = "LineDrawing" + ++lineID;
                         MeshCollider coll = drawingControllers[ctrlIndex].currentDrawing.meshModel.AddComponent<MeshCollider>();

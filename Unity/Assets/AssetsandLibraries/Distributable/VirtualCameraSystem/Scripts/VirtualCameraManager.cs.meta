@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 8e4b7f1366cd71844bc907eaa1072dbb
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - BaseVirtualCamera: {fileID: 3778649269545533936, guid: 736589d447b7a7e4b964f55ab0005f95, type: 3}
+  - CamInstantiateLocation: {instanceID: 0}
+  - RecordCamTransform: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -12,6 +12,7 @@ namespace GSFC.ARVR.MRET.XRC
 {
     public class XRCUnity : MonoBehaviour
     {
+        #if !HOLOLENS_BUILD
         public static readonly int RESOURCEBUFSIZE = 65536;
 
         private static readonly string TYPESTRING = "TYPE",
@@ -106,6 +107,34 @@ namespace GSFC.ARVR.MRET.XRC
 
             XRCInterface.GetEventEntityStringAttribute(TEXTSTRING, out text);
 
+            XRCInterface.StagedEntityCreate(entityId);
+
+            XRCInterface.SetEntityStringAttribute(entityId, CATEGORYSTRING, category);
+
+            XRCInterface.SetEntityStringAttribute(entityId, SUBCATEGORYSTRING, subcategory);
+
+            XRCInterface.SetEntityStringAttribute(entityId, BUNDLESTRING, bundle);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TAGSTRING, tag);
+
+            XRCInterface.SetEntityStringAttribute(entityId, PARENTUUIDSTRING, parUUID);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, INTERACTIONSTRING, interaction);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, COLLISIONSTRING, collision);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, GRAVITYSTRING, gravity);
+
+            XRCInterface.SetEntityBlobAttribute(entityId, RESOURCESTRING, resource, resource.Length);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TITLESTRING, title);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TEXTSTRING, text);
+
+            XRCInterface.SetEntityQTransform(entityId, xPos, yPos, zPos, posUnits, posRef,
+                xScl, yScl, zScl, sclUnits, sclRef,
+                xRot, yRot, zRot, wRot, rotUnits, rotRef);
+
             entityCreatedEventQueue.Enqueue(new EntityEventParameters(tag, type, resource,
                 category, subcategory, bundle, entityId, parUUID,
                 new InteractablePart.InteractablePartSettings(interaction, collision, gravity),
@@ -124,6 +153,8 @@ namespace GSFC.ARVR.MRET.XRC
             XRCInterface.GetEntityStringAttribute(entityId, SUBCATEGORYSTRING, out subcategory);
             XRCInterface.GetEntityStringAttribute(entityId, TAGSTRING, out tag);
             XRCInterface.GetEntityStringAttribute(entityId, PARENTUUIDSTRING, out parUUID);
+
+            XRCInterface.StagedEntityDelete(entityId);
 
             entityDestroyedEventQueue.Enqueue(new EntityEventParameters(
                 tag, category, subcategory, entityId, parUUID, null));
@@ -157,6 +188,34 @@ namespace GSFC.ARVR.MRET.XRC
             XRCInterface.GetEventEntityBooleanAttribute(GRAVITYSTRING, out gravity);
             XRCInterface.GetEventEntityStringAttribute(TITLESTRING, out title);
             XRCInterface.GetEventEntityStringAttribute(TEXTSTRING, out text);
+
+            XRCInterface.StagedEntityCreate(entityId);
+
+            XRCInterface.SetEntityStringAttribute(entityId, CATEGORYSTRING, category);
+
+            XRCInterface.SetEntityStringAttribute(entityId, SUBCATEGORYSTRING, subcategory);
+
+            XRCInterface.SetEntityStringAttribute(entityId, BUNDLESTRING, bundle);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TAGSTRING, tag);
+
+            XRCInterface.SetEntityStringAttribute(entityId, PARENTUUIDSTRING, parUUID);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, INTERACTIONSTRING, interaction);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, COLLISIONSTRING, collision);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, GRAVITYSTRING, gravity);
+
+            XRCInterface.SetEntityBlobAttribute(entityId, RESOURCESTRING, resource, resource.Length);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TITLESTRING, title);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TEXTSTRING, text);
+
+            XRCInterface.SetEntityQTransform(entityId, xPos, yPos, zPos, posUnits, posRef,
+                xScl, yScl, zScl, sclUnits, sclRef,
+                xRot, yRot, zRot, wRot, rotUnits, rotRef);
 
             entityReinitializedEventQueue.Enqueue(new EntityEventParameters(tag, type, resource,
                 category, subcategory, bundle, entityId, parUUID,
@@ -194,6 +253,32 @@ namespace GSFC.ARVR.MRET.XRC
             XRCInterface.GetEventEntityStringAttribute(TITLESTRING, out title);
             XRCInterface.GetEventEntityStringAttribute(TEXTSTRING, out text);
 
+            XRCInterface.StagedEntityCreate(entityId);
+
+            XRCInterface.SetEntityStringAttribute(entityId, CATEGORYSTRING, category);
+
+            XRCInterface.SetEntityStringAttribute(entityId, SUBCATEGORYSTRING, subcategory);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TAGSTRING, tag);
+
+            XRCInterface.SetEntityStringAttribute(entityId, PARENTUUIDSTRING, parUUID);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, INTERACTIONSTRING, interaction);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, COLLISIONSTRING, collision);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, GRAVITYSTRING, gravity);
+
+            XRCInterface.SetEntityBlobAttribute(entityId, RESOURCESTRING, resource, resource.Length);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TITLESTRING, title);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TEXTSTRING, text);
+
+            XRCInterface.SetEntityQTransform(entityId, xPos, yPos, zPos, posUnits, posRef,
+                xScl, yScl, zScl, sclUnits, sclRef,
+                xRot, yRot, zRot, wRot, rotUnits, rotRef);
+
             entityUpdatedEventQueue.Enqueue(new EntityEventParameters(tag, type, resource,
                 category, subcategory, null, entityId, parUUID,
                 new InteractablePart.InteractablePartSettings(interaction, collision, gravity),
@@ -229,6 +314,32 @@ namespace GSFC.ARVR.MRET.XRC
             XRCInterface.GetEventEntityBooleanAttribute(GRAVITYSTRING, out gravity);
             XRCInterface.GetEventEntityStringAttribute(TITLESTRING, out title);
             XRCInterface.GetEventEntityStringAttribute(TEXTSTRING, out text);
+
+            XRCInterface.StagedEntityCreate(entityId);
+
+            XRCInterface.SetEntityStringAttribute(entityId, CATEGORYSTRING, category);
+
+            XRCInterface.SetEntityStringAttribute(entityId, SUBCATEGORYSTRING, subcategory);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TAGSTRING, tag);
+
+            XRCInterface.SetEntityStringAttribute(entityId, PARENTUUIDSTRING, parUUID);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, INTERACTIONSTRING, interaction);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, COLLISIONSTRING, collision);
+
+            XRCInterface.SetEntityBooleanAttribute(entityId, GRAVITYSTRING, gravity);
+
+            XRCInterface.SetEntityBlobAttribute(entityId, RESOURCESTRING, resource, resource.Length);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TITLESTRING, title);
+
+            XRCInterface.SetEntityStringAttribute(entityId, TEXTSTRING, text);
+
+            XRCInterface.SetEntityQTransform(entityId, xPos, yPos, zPos, posUnits, posRef,
+                xScl, yScl, zScl, sclUnits, sclRef,
+                xRot, yRot, zRot, wRot, rotUnits, rotRef);
 
             entityEditedEventQueue.Enqueue(new EntityEventParameters(tag, type, resource,
                 category, subcategory, null, entityId, parUUID,
@@ -1021,5 +1132,6 @@ namespace GSFC.ARVR.MRET.XRC
         {
             Debug.LogWarning(location + ": Session Already Active");
         }
+#endif
     }
 }

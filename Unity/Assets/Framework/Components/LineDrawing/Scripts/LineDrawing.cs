@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using GSFC.ARVR.MRET.Common.Schemas;
 using GSFC.ARVR.MRET.Infrastructure.Framework;
 
-public class LineDrawing
+public class LineDrawing : MonoBehaviour
 {
     public enum RenderTypes { Cable, Drawing, Measurement };
     public enum unit { meters, centimeters, millimeters, yards, feet, inches };
@@ -17,7 +17,6 @@ public class LineDrawing
     public RenderTypes renderType;
     public unit desiredUnits = unit.meters;
     public float lineWidth = 0.005f;
-    public string name;
     public GameObject measurementText, meshModel, previewModel;
     public Guid guid;
 

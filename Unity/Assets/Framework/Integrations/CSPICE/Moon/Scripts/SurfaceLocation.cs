@@ -237,11 +237,15 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
             headingRect[1] = forward.x;
             headingRect[2] = forward.y;
             double headingDistance, headingLongitude, headingLatitude;
+#if !HOLOLENS_BUILD
             LunarModel.Rectangular2LatitudinalCoordinates(headingRect, out headingDistance, out headingLongitude, out headingLatitude);
 
             //TODO: Need to correct for the terrain azimuth (Currently done in LightingModelGraphics but needs to be done here)
 
             return (LunarModel.ToDegrees(headingLongitude) + 360) % 360; // Normalize to [0-360]
+#else
+            return 0;
+#endif
         }
 
         /**
@@ -333,7 +337,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 // TODO: This doesn't appear to be completely accurate. Can we do better? We don't have a radius at this position, so how
                 // can we get a true value?
                 positionCoord[2] = (((terrainUpperLeft[2] - terrainLowerLeft[2]) * ratioZ) + terrainLowerLeft[2]);
-
+#if !HOLOLENS_BUILD
                 // Convert the rectangular position coordinate to latitudinal coordinates
                 double radius, longitude, latitude;
                 LunarModel.Rectangular2LatitudinalCoordinates(
@@ -346,6 +350,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 result.x = LunarModel.ToDegrees(longitude);
                 result.y = activeTerrain.SampleHeight(position);
                 result.z = LunarModel.ToDegrees(latitude);
+#endif
             }
 
             return result;
@@ -406,7 +411,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                     {
                         terrainLowerRightElevation = activeTerrain.SampleHeight(position);
                     }
-
+#if !HOLOLENS_BUILD
                     // Get the cartesian coordinates of the terrain bounds
                     LunarModel.Latitudinal2RectangularCoordinates(
                         LunarModel.MOON_RADIUS + (terrainUpperLeftElevation / 1000d),
@@ -493,6 +498,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
 
                     // Mark as initialized
                     terrainInitialized = true;
+#endif
                 }
             }
         }

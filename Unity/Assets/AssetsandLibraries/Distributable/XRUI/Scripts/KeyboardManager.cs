@@ -12,6 +12,7 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
     /// History:
     /// 11 February 2021: Created
     /// 22 April 2021: Changed MoveKeyboardOut() to coroutine
+    /// 17 August 2021: Not parenting keyboard
     /// </remarks>
     /// <summary>
     /// This script manages virtual keyboards in MRET.
@@ -35,6 +36,11 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
         /// </summary>
         [Tooltip("The numeric keyboard GameObject.")]
         public KeyboardController numericKeyboard;
+
+        /// <summary>
+        /// The original parent for the keyboards.
+        /// </summary>
+        private Transform originalParent;
 
         /// <summary>
         /// The instance of the keyboard manager.
@@ -81,7 +87,7 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
                     keyboard = numericKeyboard;
                 }
             }
-
+            
             keyboard.gameObject.SetActive(true);
             keyboard.transform.position = position;
             keyboard.transform.rotation = rotation;
@@ -101,6 +107,7 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
         public void Initialize()
         {
             instance = this;
+            originalParent = fullKeyboard.transform.parent;
         }
 
         private const int maxIterations = 1000;
@@ -126,11 +133,10 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
                 yield break;
             }
 
-            Transform originalParent = keyboard.transform.parent;
             keyboard.transform.SetParent(textMenu.transform);
             keyboard.transform.localPosition = Vector3.zero;
             keyboard.transform.localRotation = Quaternion.identity;
-
+            
             int iterations = 0;
             float amtToIncrement = -0.1f;
             while (iterations < maxIterations)
@@ -149,7 +155,7 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
                 iterations++;
                 yield return new WaitForFixedUpdate();
             }
-
+            
             keyboard.transform.SetParent(originalParent);
         }
     }

@@ -50,6 +50,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
          */
         public static void GetDestination(double lon1, double lat1, double bearing, double distance, out double lon, out double lat)
         {
+#if !HOLOLENS_BUILD
             // TODO: Allow radius to be specified
             double R = LunarModel.MOON_RADIUS * 1000.0; // meters
             double φ1 = LunarModel.ToRadians(lat1);
@@ -63,6 +64,10 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
 
             lat = LunarModel.ToDegrees(φ2);
             lon = (LunarModel.ToDegrees(λ2) + 540) % 360 - 180; // Normalize to [-180,180]
+#else
+            lon = 0;
+            lat = 0;
+#endif
         }
 
         /**
@@ -78,6 +83,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
          */
         public static void GetMidpoint(double lon1, double lat1, double lon2, double lat2, out double lon, out double lat)
         {
+#if !HOLOLENS_BUILD
             double φ1 = LunarModel.ToRadians(lat1);
             double φ2 = LunarModel.ToRadians(lat2);
             double λ1 = LunarModel.ToRadians(lon1);
@@ -93,6 +99,10 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
 
             lat = LunarModel.ToDegrees(φ3);
             lon = (LunarModel.ToDegrees(λ3) + 540) % 360 - 180; // Normalize to [-180,180]
+#else
+            lon = 0;
+            lat = 0;
+#endif
         }
 
         /**
@@ -107,6 +117,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
          */
         public static double GetBearing(double lon1, double lat1, double lon2, double lat2)
         {
+#if !HOLOLENS_BUILD
             double φ1 = LunarModel.ToRadians(lat1);
             double φ2 = LunarModel.ToRadians(lat2);
             double Δλ = LunarModel.ToRadians(lon2 - lon1);
@@ -116,6 +127,9 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 (Math.Sin(φ1) * Math.Cos(φ2) * Math.Cos(Δλ));
 
             return (LunarModel.ToDegrees(Math.Atan2(y, x)) + 360) % 360; // Normalize to [0-360]
+#else
+            return 0;
+#endif
         }
 
         /**
@@ -130,6 +144,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
          */
         public static double GetDistance(double lon1, double lat1, double lon2, double lat2)
         {
+#if !HOLOLENS_BUILD
             // TODO: Allow radius to be specified
             double R = LunarModel.MOON_RADIUS * 1000.0; // meters
             double φ1 = LunarModel.ToRadians(lat1);
@@ -143,6 +158,9 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
             double c = 2.0 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
 
             return R * c;
+#else
+            return 0;
+#endif
         }
 
         /**

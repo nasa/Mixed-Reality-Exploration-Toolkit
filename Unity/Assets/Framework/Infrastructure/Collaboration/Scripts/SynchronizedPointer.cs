@@ -56,11 +56,13 @@ public class SynchronizedPointer : MonoBehaviour
                         lastRecordedPosition = newPos;
                         if (collaborationManager.engineType == CollaborationManager.EngineType.XRC)
                         {
+#if !HOLOLENS_BUILD
                             XRCUnity.UpdateEntityPosition(synchronizedController.synchronizedUser.userAlias,
                                 synchronizedController.controllerSide == SynchronizedController.ControllerSide.Left ?
                                 XRCManager.LPOINTERCATEGORY : XRCManager.RPOINTERCATEGORY
                                 , lastRecordedPosition, uuid.ToString(),
                                 synchronizedController.synchronizedUser.uuid.ToString(), GSFC.ARVR.XRC.UnitType.meter);
+#endif
                         }
                         else
                         {

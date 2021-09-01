@@ -20,6 +20,7 @@ public class HTMLPointer : MonoBehaviour
         {
             if (raycastDetector.intersectingObject)
             {
+#if !HOLOLENS_BUILD
                 if (raycastDetector.intersectingObject.GetComponentInChildren<ZenFulcrum.EmbeddedBrowser.Browser>() != null)
                 {
                     if (raycastDetector.intersectingObject.GetComponentInChildren<ZenFulcrum.EmbeddedBrowser.Browser>().EnableInput)
@@ -73,6 +74,7 @@ public class HTMLPointer : MonoBehaviour
                         */
                     }
                 }
+#endif
             }
         }
         else

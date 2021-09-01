@@ -172,8 +172,10 @@ public class HudMenu : MonoBehaviour {
         {
             serializedDisplay.FeedSource = new VideoSourceType();
             serializedDisplay.FeedSource.Title = feedSwitch.feedSource.title;
+#if !HOLOLENS_BUILD
             serializedDisplay.FeedSource.Time = display.GetComponent<UniversalMediaPlayer>().Time;
             feedSwitch.feedSource.time = display.GetComponent<UniversalMediaPlayer>().Time;
+#endif
             //serializedDisplay.FeedSource = feedSwitch.feedSource.Serialize();
         }
         hudManager.hudDisplays.Add(serializedDisplay);

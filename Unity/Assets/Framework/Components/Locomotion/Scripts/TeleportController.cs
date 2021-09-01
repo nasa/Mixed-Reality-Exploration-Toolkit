@@ -107,6 +107,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.Components.Locomotion
         /// <param name="rig">Rig to teleport to selected location.</param>
         public void CompleteTeleport(GameObject rig)
         {
+            if (teleportBlocked == true)
+            {
+                return;
+            }
+
             if (raycastLaser == null)
             {
                 return;

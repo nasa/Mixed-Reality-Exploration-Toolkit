@@ -13,6 +13,12 @@ public class InteractableDrawing : SceneObject
     public Transform headsetObject;
     public GameObject drawingPanelPrefab;
 
+    public new static InteractableDrawing Create()
+    {
+        GameObject interactableDrawingGameObject = new GameObject();
+        return interactableDrawingGameObject.AddComponent<InteractableDrawing>();
+    }
+
     public override void Use(InputHand hand)
     {
         if (!drawingPanel)

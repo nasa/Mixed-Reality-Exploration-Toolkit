@@ -10,6 +10,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
     /// <remarks>
     /// History:
     /// 27 October 2020: Created
+    /// 22 July 2021: Inverting rotation lock behavior (DZB)
     /// </remarks>
     /// <summary>
     /// Desktop wrapper for the head.
@@ -62,7 +63,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
         /// <param name="callbackContext">InputSystem callback context.</param>
         public void LookEvent(InputAction.CallbackContext callbackContext)
         {
-            if (rotationLocked)
+            if (!rotationLocked)
             {
                 return;
             }
@@ -111,28 +112,5 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
 
             return rtn;
         }
-
-        /*private void Update()
-        {
-            // Try raycast.
-            RaycastHit controllerLoc;
-            if (Physics.Raycast(controlled.transform.position, controlled.transform.TransformDirection(Vector3.forward), out controllerLoc, Mathf.Infinity))
-            {
-                // If successful, set icon to active and position it.
-                if (inputHandDesktop.inputHand.activeHandModel)
-                {
-                    inputHandDesktop.inputHand.activeHandModel.SetActive(true);
-                }
-                inputHandDesktop.transform.position = controllerLoc.point;
-            }
-            else
-            {
-                // If not, set icon to inactive.
-                if (inputHandDesktop.inputHand.activeHandModel)
-                {
-                    inputHandDesktop.inputHand.activeHandModel.SetActive(false);
-                }
-            }
-        }*/
     }
 }

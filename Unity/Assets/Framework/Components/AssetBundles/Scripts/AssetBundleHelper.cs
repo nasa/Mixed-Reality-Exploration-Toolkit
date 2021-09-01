@@ -63,8 +63,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Components.AssetBundles
             instance = this;
 
             // Build the URIs we will use to obtain out streaming assets and manifest
+#if WINDOWS_UWP
+            streamingAssetsUri = Windows.Storage.ApplicationData.Current.LocalFolder.Path + "/MRET/UWP";
+            manifestUri = streamingAssetsUri + "/UWP";
+#else
             streamingAssetsUri = Application.streamingAssetsPath + "/Windows";
             manifestUri = streamingAssetsUri + "/Windows";
+#endif
             var manifestBundle = AssetBundle.LoadFromFile(manifestUri);
             if (manifestBundle)
             {

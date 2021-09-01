@@ -68,6 +68,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
 
         void PositionObjectOnMoon(GameObject theObject, double actualMoonRadius, double actualRelativeObjectElevation, double objectLongitudeRad, double objectLatitudeRad)
         {
+#if !HOLOLENS_BUILD
             if ((moonObject != null) && (theObject != null))
             {
                 Vector3 moonScale = moonObject.transform.localScale;
@@ -86,10 +87,12 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 Vector3 scaledPosition = new Vector3((float)rectCoord[1], (float)rectCoord[2], (float)-rectCoord[0]);
                 theObject.transform.localPosition = scaledPosition;
             }
+#endif
         }
 
         void PositionSun(GameObject theSun, double terrainAzimuth, double sunAzimuthDeg, double sunAltitudeDeg, double sunRadius)
         {
+#if !HOLOLENS_BUILD
             if (theSun != null)
             {
                 // Figure out the visual azimuth based upon the orientation of the terrain
@@ -111,10 +114,12 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 Vector3 scaledPosition = new Vector3((float)(rectCoord[1] / FACTOR), (float)(rectCoord[2] / FACTOR), (float)(rectCoord[0] / FACTOR));
                 theSun.transform.position = scaledPosition;
             }
+#endif
         }
 
         void PositionEarth(GameObject theEarth, double terrainAzimuth, double earthAzimuthDeg, double earthAltitudeDeg, double earthRadius)
         {
+#if !HOLOLENS_BUILD
             if (theEarth != null)
             {
                 // Figure out the visual azimuth based upon the orientation of the terrain
@@ -136,6 +141,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 Vector3 scaledPosition = new Vector3((float)(rectCoord[1] / FACTOR), (float)(rectCoord[2] / FACTOR), (float)(rectCoord[0] / FACTOR));
                 theEarth.transform.localPosition = scaledPosition;
             }
+#endif
         }
 
         private double AdjustAzimuth(double terrainAzimuth, double azimuth)
@@ -357,6 +363,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 var moonLatitudeVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_MOON_LATITUDE_RAD);
                 var moonElevationVar = dataManager.FindPoint(SunAzimuthAltitude.KEY_MOON_ELEVATION_KM);
                 var objectHeadingVar = dataManager.FindPoint(SurfaceLocation.KEY_HEADING_DEG);
+#if !HOLOLENS_BUILD
 
                 if ((timeVar is DateTime) &&
                     (ephemerisTimeVar is double) &&
@@ -539,6 +546,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                     Debug.Log("Date/Time: " + time.ToUniversalTime().ToString("u") + "\n");
 
                 }
+#endif
             }
         }
     }

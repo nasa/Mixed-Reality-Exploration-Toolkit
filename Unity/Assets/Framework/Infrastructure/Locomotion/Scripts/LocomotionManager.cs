@@ -20,7 +20,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
     /// 30 April 2021: Replaced the Pause mechanism with a reference counting system, akin to a mutex lock/unlock.
     ///     Pausing is now performed with calls to PauseRequest and PauseRelease. If the reference counter
     ///     is greater than 0 (calls to PauseRequest), the locomotion system is paused. Once the reference
-    ///     counter reaches 0 (calls to PauseRelease), the locomotion system is unpaused.
+    ///     counter reaches 0 (calls to PauseRelease), the locomotion system is unpaused. (J. Hosler)
+    /// 14 May 2021: Removed InputRig public property and replaced references with MRET.InputRig (D. Baker)
+    /// 22 July 2021: Repaired accidental merge with an old version that ended up breaking the pause
+	///     functionality of Locomotion: commit hash 4d9a097b. Restored the version at commit hash ce9e2fc8/
+    ///     [30 April 2021] and reapplied the changes performed in commit hash 942cf513/[14 May 2021].  (J. Hosler)
     /// </remarks>
     /// <summary>
     /// LocomotionManager is a class that provides
@@ -83,11 +87,6 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         public const string scaleKey = KEY_PREFIX + ".SCALE";
         public const string pausedKey = KEY_PREFIX + ".PAUSED";
         public const string pauseReferenceCountKey = KEY_PREFIX + ".PAUSED.REFERENCECOUNT";
-
-        /// <summary>
-        /// Input Rig to be used with locomotion.
-        /// </summary>
-        public InputRig inputRig;
 
         /// <summary>
         /// The rotate object transforms.
@@ -174,7 +173,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             // Create the rig references that we need to perform rig motion
             List<RotateObjectTransform> rotsList = new List<RotateObjectTransform>();
             List<ScaleObjectTransform> sotsList = new List<ScaleObjectTransform>();
-            foreach (InputHand inputHand in inputRig.hands)
+            foreach (InputHand inputHand in MRET.InputRig.hands)
             {
                 // Obtain the rotation for the hand if it exists
                 RotateObjectTransform rot = inputHand.GetComponentInChildren<RotateObjectTransform>();
@@ -211,7 +210,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
 
             // References are initialized now, so update data manager keys based upon initial MRET settings,
             // where appropriate
-            MRET.DataManager.SaveValue(new DataManager.DataValue(gravityKey, inputRig.GravityEnabled));
+            MRET.DataManager.SaveValue(new DataManager.DataValue(gravityKey, MRET.InputRig.GravityEnabled));
 
             // Rotation
             bool rotXEnabled = false;
@@ -265,7 +264,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             DisableTeleport();
         }
 
-        #region Event Handlers
+#region Event Handlers
 
         /// <summary>
         /// Called when the navigate press action begins.
@@ -285,7 +284,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
                 ((bool)MRET.DataManager.FindPoint(flyKey) == true) ||
                 ((bool)MRET.DataManager.FindPoint(navigateKey) == true))
             {
-                inputRig.MotionConstraint = MotionConstraint.Fast;
+                MRET.InputRig.MotionConstraint = MotionConstraint.Fast;
             }
         }
 
@@ -307,7 +306,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
                 ((bool)MRET.DataManager.FindPoint(flyKey) == true) ||
                 ((bool)MRET.DataManager.FindPoint(navigateKey) == true))
             {
-                inputRig.MotionConstraint = MotionConstraint.Normal;
+                MRET.InputRig.MotionConstraint = MotionConstraint.Normal;
             }
         }
 
@@ -351,11 +350,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (Paused) return;
 
             // Disable locomotion for the active mode
-            if ((bool)MRET.DataManager.FindPoint(armswingKey) == true)
+            if ((bool) MRET.DataManager.FindPoint(armswingKey) == true)
             {
                 hand.DisableArmswing();
             }
-            else if ((bool)MRET.DataManager.FindPoint(flyKey) == true)
+            else if ((bool) MRET.DataManager.FindPoint(flyKey) == true)
             {
                 hand.DisableFly();
             }
@@ -377,7 +376,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (Paused) return;
 
             // Enable locomotion for the active mode
-            if ((bool)MRET.DataManager.FindPoint(navigateKey) == true)
+            if ((bool) MRET.DataManager.FindPoint(navigateKey) == true)
             {
                 hand.EnableNavigate();
             }
@@ -399,7 +398,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (Paused) return;
 
             // Disable locomotion for the active mode
-            if ((bool)MRET.DataManager.FindPoint(navigateKey) == true)
+            if ((bool) MRET.DataManager.FindPoint(navigateKey) == true)
             {
                 hand.DisableNavigate();
             }
@@ -421,7 +420,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (Paused) return;
 
             // Enable locomotion for the active mode
-            if ((bool)MRET.DataManager.FindPoint(teleportKey) == true)
+            if ((bool) MRET.DataManager.FindPoint(teleportKey) == true)
             {
                 hand.ToggleTeleportOn();
             }
@@ -443,7 +442,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (Paused) return;
 
             // Disable locomotion for the active mode
-            if ((bool)MRET.DataManager.FindPoint(teleportKey) == true)
+            if ((bool) MRET.DataManager.FindPoint(teleportKey) == true)
             {
                 hand.CompleteTeleport();
                 hand.ToggleTeleportOff();
@@ -452,9 +451,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             // TODO other locomotion forms.
         }
 
-        #endregion // Event Handlers
+#endregion // Event Handlers
 
-        #region Rig Settings
+#region Rig Settings
 
         /// <summary>
         /// Applies gravity to the based upon the supplied gravity constraints
@@ -493,19 +492,19 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             bool applied = false;
 
             // Check armswing
-            if (!applied && inputRig.ArmswingEnabled)
+            if (!applied && MRET.InputRig.ArmswingEnabled)
             {
                 applied = ApplyGravityConstraints(ArmswingGravityConstraint);
             }
 
             // Check flying
-            if (!applied && inputRig.FlyingEnabled)
+            if (!applied && MRET.InputRig.FlyingEnabled)
             {
                 applied = ApplyGravityConstraints(FlyingGravityConstraint);
             }
 
             // Check navigation
-            if (!applied && inputRig.NavigationEnabled)
+            if (!applied && MRET.InputRig.NavigationEnabled)
             {
                 applied = ApplyGravityConstraints(NavigationGravityConstraint);
             }
@@ -541,7 +540,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
 
             // Enable gravity
-            inputRig.EnableGravity();
+            MRET.InputRig.EnableGravity();
 
             // Save to DataManager
             MRET.DataManager.SaveValue(gravityKey, true);
@@ -562,7 +561,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
 
             // Disable gravity
-            inputRig.DisableGravity();
+            MRET.InputRig.DisableGravity();
 
             // Save to DataManager
             MRET.DataManager.SaveValue(gravityKey, false);
@@ -570,11 +569,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             Debug.Log("[" + ClassName + "->" + nameof(DisableGravity) + "] Gravity disabled");
         }
 
-        #endregion // Rig Settings
+#endregion // Rig Settings
 
-        #region Modes
+#region Modes
 
-        #region Teleport
+#region Teleport
 
         /// <summary>
         /// The multiplier to be applied to the flying motion.
@@ -594,7 +593,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
                 // have top-level control, but I can envision scenarios where there are different types of hands being used
                 // simultaneously.
                 float maxDistance = 0f;
-                foreach (InputHand inputHand in inputRig.hands)
+                foreach (InputHand inputHand in MRET.InputRig.hands)
                 {
                     maxDistance = (inputHand.TeleportMaxDistance > maxDistance) ? inputHand.TeleportMaxDistance : maxDistance;
                 }
@@ -612,7 +611,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             // TODO: If relocated to the rig, this would need updating.
             // DZB: See above.
             float maxDistance = 0f;
-            foreach (InputHand inputHand in inputRig.hands)
+            foreach (InputHand inputHand in MRET.InputRig.hands)
             {
                 inputHand.TeleportMaxDistance = value;
                 maxDistance = (inputHand.TeleportMaxDistance > maxDistance) ? inputHand.TeleportMaxDistance : maxDistance;
@@ -664,7 +663,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (!Paused && teleporting)
             {
                 // Enable teleport
-                foreach (InputHand inputHand in inputRig.hands)
+                foreach (InputHand inputHand in MRET.InputRig.hands)
                 {
                     inputHand.EnableTeleport();
                 }
@@ -672,7 +671,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             else
             {
                 // Disable teleport
-                foreach (InputHand inputHand in inputRig.hands)
+                foreach (InputHand inputHand in MRET.InputRig.hands)
                 {
                     inputHand.DisableTeleport();
                 }
@@ -727,9 +726,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             Debug.Log("[" + ClassName + "->" + nameof(DisableTeleport) + "] Teleport disabled");
         }
 
-        #endregion // Teleport
+#endregion // Teleport
 
-        #region Flying
+#region Flying
 
         /// <summary>
         /// The multiplier to be applied to the normal flying motion.
@@ -742,7 +741,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.FlyingNormalMotionConstraintMultiplier;
+                return MRET.InputRig.FlyingNormalMotionConstraintMultiplier;
             }
         }
 
@@ -753,13 +752,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetFlyingNormalMotionConstraintMultiplier(float value)
         {
             // Set the flying motion multiplier
-            inputRig.FlyingNormalMotionConstraintMultiplier = value;
+            MRET.InputRig.FlyingNormalMotionConstraintMultiplier = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(flyMotionConstraintMultiplerNormalKey, inputRig.FlyingNormalMotionConstraintMultiplier);
+            MRET.DataManager.SaveValue(flyMotionConstraintMultiplerNormalKey, MRET.InputRig.FlyingNormalMotionConstraintMultiplier);
 
             Debug.Log("[" + ClassName + "->" + nameof(SetFlyingNormalMotionConstraintMultiplier) +
-                "] Flying normal motion constraint multiplier set to: " + inputRig.FlyingNormalMotionConstraintMultiplier);
+                "] Flying normal motion constraint multiplier set to: " + MRET.InputRig.FlyingNormalMotionConstraintMultiplier);
         }
 
         /// <summary>
@@ -773,7 +772,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.FlyingSlowMotionConstraintMultiplier;
+                return MRET.InputRig.FlyingSlowMotionConstraintMultiplier;
             }
         }
 
@@ -784,13 +783,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetFlyingSlowMotionConstraintMultiplier(float value)
         {
             // Set the flying motion multiplier
-            inputRig.FlyingSlowMotionConstraintMultiplier = value;
+            MRET.InputRig.FlyingSlowMotionConstraintMultiplier = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(flyMotionConstraintMultiplerSlowKey, inputRig.FlyingSlowMotionConstraintMultiplier);
+            MRET.DataManager.SaveValue(flyMotionConstraintMultiplerSlowKey, MRET.InputRig.FlyingSlowMotionConstraintMultiplier);
 
             Debug.Log("[" + ClassName + "->" + nameof(SetFlyingSlowMotionConstraintMultiplier) +
-                "] Flying slow motion constraint multiplier set to: " + inputRig.FlyingSlowMotionConstraintMultiplier);
+                "] Flying slow motion constraint multiplier set to: " + MRET.InputRig.FlyingSlowMotionConstraintMultiplier);
         }
 
         /// <summary>
@@ -804,7 +803,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.FlyingFastMotionConstraintMultiplier;
+                return MRET.InputRig.FlyingFastMotionConstraintMultiplier;
             }
         }
 
@@ -815,13 +814,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetFlyingFastMotionConstraintMultiplier(float value)
         {
             // Set the flying motion multiplier
-            inputRig.FlyingFastMotionConstraintMultiplier = value;
+            MRET.InputRig.FlyingFastMotionConstraintMultiplier = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(flyMotionConstraintMultiplerFastKey, inputRig.FlyingFastMotionConstraintMultiplier);
+            MRET.DataManager.SaveValue(flyMotionConstraintMultiplerFastKey, MRET.InputRig.FlyingFastMotionConstraintMultiplier);
 
             Debug.Log("[" + ClassName + "->" + nameof(SetFlyingFastMotionConstraintMultiplier) +
-                "] Flying fast motion constraint multiplier set to: " + inputRig.FlyingFastMotionConstraintMultiplier);
+                "] Flying fast motion constraint multiplier set to: " + MRET.InputRig.FlyingFastMotionConstraintMultiplier);
         }
 
         /// <summary>
@@ -835,7 +834,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.FlyingGravityConstraint;
+                return MRET.InputRig.FlyingGravityConstraint;
             }
         }
 
@@ -847,12 +846,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetFlyingGravityConstraint(GravityConstraint value)
         {
             // Set the flying gravity constraint
-            inputRig.FlyingGravityConstraint = value;
+            MRET.InputRig.FlyingGravityConstraint = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(flyGravityConstraintKey, inputRig.FlyingGravityConstraint);
+            MRET.DataManager.SaveValue(flyGravityConstraintKey, MRET.InputRig.FlyingGravityConstraint);
 
-            Debug.Log("[" + ClassName + "->" + nameof(SetFlyingGravityConstraint) + "] Flying gravity constraint set to: " + inputRig.FlyingGravityConstraint);
+            Debug.Log("[" + ClassName + "->" + nameof(SetFlyingGravityConstraint) + "] Flying gravity constraint set to: " + MRET.InputRig.FlyingGravityConstraint);
         }
 
         /// <summary>
@@ -860,7 +859,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleFlying()
         {
-            if ((bool)MRET.DataManager.FindPoint(flyKey) == false)
+            if ((bool) MRET.DataManager.FindPoint(flyKey) == false)
             {
                 EnableFlying();
             }
@@ -897,12 +896,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (!Paused && flying)
             {
                 // Enable flying
-                inputRig.EnableFlying();
+                MRET.InputRig.EnableFlying();
             }
             else
             {
                 // Disable flying
-                inputRig.DisableFlying();
+                MRET.InputRig.DisableFlying();
             }
 
             // Gravity
@@ -939,7 +938,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         public void DisableFlying()
         {
             // Obtain the current locomotion state
-            bool flying = (bool)MRET.DataManager.FindPoint(flyKey);
+            bool flying = (bool) MRET.DataManager.FindPoint(flyKey);
 
             // Check that not already disabled
             if (!flying)
@@ -957,9 +956,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             Debug.Log("[" + ClassName + "->" + nameof(DisableFlying) + "] Fly disabled");
         }
 
-        #endregion // Flying
+#endregion // Flying
 
-        #region Navigation
+#region Navigation
 
         /// <summary>
         /// The multiplier to be applied to the normal navigation motion.
@@ -972,7 +971,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.NavigationNormalMotionConstraintMultiplier;
+                return MRET.InputRig.NavigationNormalMotionConstraintMultiplier;
             }
         }
 
@@ -983,13 +982,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetNavigationNormalMotionConstraintMultiplier(float value)
         {
             // Set the navigation motion multiplier
-            inputRig.NavigationNormalMotionConstraintMultiplier = value;
+            MRET.InputRig.NavigationNormalMotionConstraintMultiplier = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(navigateMotionConstraintMultiplerNormalKey, inputRig.NavigationNormalMotionConstraintMultiplier);
+            MRET.DataManager.SaveValue(navigateMotionConstraintMultiplerNormalKey, MRET.InputRig.NavigationNormalMotionConstraintMultiplier);
 
             Debug.Log("[" + ClassName + "->" + nameof(SetNavigationNormalMotionConstraintMultiplier) +
-                "] Navigation normal motion constraint multiplier set to: " + inputRig.NavigationNormalMotionConstraintMultiplier);
+                "] Navigation normal motion constraint multiplier set to: " + MRET.InputRig.NavigationNormalMotionConstraintMultiplier);
         }
 
         /// <summary>
@@ -1003,7 +1002,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.NavigationSlowMotionConstraintMultiplier;
+                return MRET.InputRig.NavigationSlowMotionConstraintMultiplier;
             }
         }
 
@@ -1014,13 +1013,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetNavigationSlowMotionConstraintMultiplier(float value)
         {
             // Set the navigation motion multiplier
-            inputRig.NavigationSlowMotionConstraintMultiplier = value;
+            MRET.InputRig.NavigationSlowMotionConstraintMultiplier = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(navigateMotionConstraintMultiplerSlowKey, inputRig.NavigationSlowMotionConstraintMultiplier);
+            MRET.DataManager.SaveValue(navigateMotionConstraintMultiplerSlowKey, MRET.InputRig.NavigationSlowMotionConstraintMultiplier);
 
             Debug.Log("[" + ClassName + "->" + nameof(SetNavigationSlowMotionConstraintMultiplier) +
-                "] Navigation slow motion constraint multiplier set to: " + inputRig.NavigationSlowMotionConstraintMultiplier);
+                "] Navigation slow motion constraint multiplier set to: " + MRET.InputRig.NavigationSlowMotionConstraintMultiplier);
         }
 
         /// <summary>
@@ -1034,7 +1033,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.NavigationFastMotionConstraintMultiplier;
+                return MRET.InputRig.NavigationFastMotionConstraintMultiplier;
             }
         }
 
@@ -1045,13 +1044,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetNavigationFastMotionConstraintMultiplier(float value)
         {
             // Set the navigation motion multiplier
-            inputRig.NavigationFastMotionConstraintMultiplier = value;
+            MRET.InputRig.NavigationFastMotionConstraintMultiplier = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(navigateMotionConstraintMultiplerFastKey, inputRig.NavigationFastMotionConstraintMultiplier);
+            MRET.DataManager.SaveValue(navigateMotionConstraintMultiplerFastKey, MRET.InputRig.NavigationFastMotionConstraintMultiplier);
 
             Debug.Log("[" + ClassName + "->" + nameof(SetNavigationFastMotionConstraintMultiplier) +
-                "] Navigation fast motion constraint multiplier set to: " + inputRig.NavigationFastMotionConstraintMultiplier);
+                "] Navigation fast motion constraint multiplier set to: " + MRET.InputRig.NavigationFastMotionConstraintMultiplier);
         }
 
         /// <summary>
@@ -1065,7 +1064,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.NavigationGravityConstraint;
+                return MRET.InputRig.NavigationGravityConstraint;
             }
         }
 
@@ -1077,12 +1076,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetNavigationGravityConstraint(GravityConstraint value)
         {
             // Set the flying gravity constraint
-            inputRig.NavigationGravityConstraint = value;
+            MRET.InputRig.NavigationGravityConstraint = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(navigateGravityConstraintKey, inputRig.NavigationGravityConstraint);
+            MRET.DataManager.SaveValue(navigateGravityConstraintKey, MRET.InputRig.NavigationGravityConstraint);
 
-            Debug.Log("[" + ClassName + "->" + nameof(SetNavigationGravityConstraint) + "] Navigation gravity constraint set to: " + inputRig.NavigationGravityConstraint);
+            Debug.Log("[" + ClassName + "->" + nameof(SetNavigationGravityConstraint) + "] Navigation gravity constraint set to: " + MRET.InputRig.NavigationGravityConstraint);
         }
 
         /// <summary>
@@ -1090,7 +1089,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleNavigation()
         {
-            if ((bool)MRET.DataManager.FindPoint(navigateKey) == false)
+            if ((bool) MRET.DataManager.FindPoint(navigateKey) == false)
             {
                 EnableNavigate();
             }
@@ -1127,12 +1126,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (!Paused && navigating)
             {
                 // Enable navigation
-                inputRig.EnableNavigation();
+                MRET.InputRig.EnableNavigation();
             }
             else
             {
                 // Disable navigation
-                inputRig.DisableNavigation();
+                MRET.InputRig.DisableNavigation();
             }
 
             // Gravity
@@ -1187,9 +1186,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             Debug.Log("[" + ClassName + "->" + nameof(DisableNavigate) + "] Navigate disabled");
         }
 
-        #endregion // Navigation
+#endregion // Navigation
 
-        #region Armswing
+#region Armswing
 
         /// <summary>
         /// The multiplier to be applied to the normal arm swing motion.
@@ -1202,7 +1201,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.ArmswingNormalMotionConstraintMultiplier;
+                return MRET.InputRig.ArmswingNormalMotionConstraintMultiplier;
             }
         }
 
@@ -1213,13 +1212,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetArmswingNormalMotionConstraintMultiplier(float value)
         {
             // Set the arm swing motion multiplier
-            inputRig.ArmswingNormalMotionConstraintMultiplier = value;
+            MRET.InputRig.ArmswingNormalMotionConstraintMultiplier = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(armswingMotionConstraintMultiplerNormalKey, inputRig.ArmswingNormalMotionConstraintMultiplier);
+            MRET.DataManager.SaveValue(armswingMotionConstraintMultiplerNormalKey, MRET.InputRig.ArmswingNormalMotionConstraintMultiplier);
 
             Debug.Log("[" + ClassName + "->" + nameof(SetArmswingNormalMotionConstraintMultiplier) +
-                "] Armswing normal motion constraint multiplier set to: " + inputRig.ArmswingNormalMotionConstraintMultiplier);
+                "] Armswing normal motion constraint multiplier set to: " + MRET.InputRig.ArmswingNormalMotionConstraintMultiplier);
         }
 
         /// <summary>
@@ -1233,7 +1232,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.ArmswingSlowMotionConstraintMultiplier;
+                return MRET.InputRig.ArmswingSlowMotionConstraintMultiplier;
             }
         }
 
@@ -1244,13 +1243,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetArmswingSlowMotionConstraintMultiplier(float value)
         {
             // Set the arm swing motion multiplier
-            inputRig.ArmswingSlowMotionConstraintMultiplier = value;
+            MRET.InputRig.ArmswingSlowMotionConstraintMultiplier = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(armswingMotionConstraintMultiplerSlowKey, inputRig.ArmswingSlowMotionConstraintMultiplier);
+            MRET.DataManager.SaveValue(armswingMotionConstraintMultiplerSlowKey, MRET.InputRig.ArmswingSlowMotionConstraintMultiplier);
 
             Debug.Log("[" + ClassName + "->" + nameof(SetArmswingSlowMotionConstraintMultiplier) +
-                "] Armswing slow motion constraint multiplier set to: " + inputRig.ArmswingSlowMotionConstraintMultiplier);
+                "] Armswing slow motion constraint multiplier set to: " + MRET.InputRig.ArmswingSlowMotionConstraintMultiplier);
         }
 
         /// <summary>
@@ -1264,7 +1263,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.ArmswingFastMotionConstraintMultiplier;
+                return MRET.InputRig.ArmswingFastMotionConstraintMultiplier;
             }
         }
 
@@ -1275,13 +1274,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetArmswingFastMotionConstraintMultiplier(float value)
         {
             // Set the arm swing motion multiplier
-            inputRig.ArmswingFastMotionConstraintMultiplier = value;
+            MRET.InputRig.ArmswingFastMotionConstraintMultiplier = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(armswingMotionConstraintMultiplerFastKey, inputRig.ArmswingFastMotionConstraintMultiplier);
+            MRET.DataManager.SaveValue(armswingMotionConstraintMultiplerFastKey, MRET.InputRig.ArmswingFastMotionConstraintMultiplier);
 
             Debug.Log("[" + ClassName + "->" + nameof(SetArmswingFastMotionConstraintMultiplier) +
-                "] Armswing fast motion constraint multiplier set to: " + inputRig.ArmswingFastMotionConstraintMultiplier);
+                "] Armswing fast motion constraint multiplier set to: " + MRET.InputRig.ArmswingFastMotionConstraintMultiplier);
         }
 
         /// <summary>
@@ -1295,7 +1294,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             }
             get
             {
-                return inputRig.ArmswingGravityConstraint;
+                return MRET.InputRig.ArmswingGravityConstraint;
             }
         }
 
@@ -1307,12 +1306,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         protected virtual void SetArmswingGravityConstraint(GravityConstraint value)
         {
             // Set the armswing gravity constraint
-            inputRig.ArmswingGravityConstraint = value;
+            MRET.InputRig.ArmswingGravityConstraint = value;
 
             // Save to DataManager
-            MRET.DataManager.SaveValue(armswingGravityConstraintKey, inputRig.ArmswingGravityConstraint);
+            MRET.DataManager.SaveValue(armswingGravityConstraintKey, MRET.InputRig.ArmswingGravityConstraint);
 
-            Debug.Log("[" + ClassName + "->" + nameof(SetArmswingGravityConstraint) + "] Armswing gravity constraint set to: " + inputRig.ArmswingGravityConstraint);
+            Debug.Log("[" + ClassName + "->" + nameof(SetArmswingGravityConstraint) + "] Armswing gravity constraint set to: " + MRET.InputRig.ArmswingGravityConstraint);
         }
 
         /// <summary>
@@ -1320,7 +1319,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleArmswing()
         {
-            if ((bool)MRET.DataManager.FindPoint(armswingKey) == false)
+            if ((bool) MRET.DataManager.FindPoint(armswingKey) == false)
             {
                 EnableArmswing();
             }
@@ -1357,12 +1356,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if (!Paused && armswinging)
             {
                 // Enable armswing
-                inputRig.EnableArmswing();
+                MRET.InputRig.EnableArmswing();
             }
             else
             {
                 // Disable armswing
-                inputRig.DisableArmswing();
+                MRET.InputRig.DisableArmswing();
             }
 
             // Gravity
@@ -1416,18 +1415,18 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             Debug.Log("[" + ClassName + "->" + nameof(DisableArmswing) + "] Armswing disabled");
         }
 
-        #endregion // Armswing
+#endregion // Armswing
 
-        #endregion // Modes
+#endregion // Modes
 
-        #region Rotation/Scaling
+ #region Rotation/Scaling
 
         /// <summary>
         /// Toggles X axis rotation.
         /// </summary>
         public void ToggleXRotation()
         {
-            if ((bool)MRET.DataManager.FindPoint(rotateXKey) == false)
+            if ((bool) MRET.DataManager.FindPoint(rotateXKey) == false)
             {
                 EnableXRotation();
             }
@@ -1442,7 +1441,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleYRotation()
         {
-            if ((bool)MRET.DataManager.FindPoint(rotateYKey) == false)
+            if ((bool) MRET.DataManager.FindPoint(rotateYKey) == false)
             {
                 EnableYRotation();
             }
@@ -1457,7 +1456,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleZRotation()
         {
-            if ((bool)MRET.DataManager.FindPoint(rotateZKey) == false)
+            if ((bool) MRET.DataManager.FindPoint(rotateZKey) == false)
             {
                 EnableZRotation();
             }
@@ -1472,7 +1471,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         /// </summary>
         public void ToggleScaling()
         {
-            if ((bool)MRET.DataManager.FindPoint(scaleKey) == false)
+            if ((bool) MRET.DataManager.FindPoint(scaleKey) == false)
             {
                 EnableScaling();
             }
@@ -1807,7 +1806,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             Debug.Log("[" + ClassName + "->" + nameof(DisableScaling) + "] Scaling disabled");
         }
 
-        #endregion // Rotation/Scaling
+#endregion // Rotation/Scaling
 
     }
 }

@@ -1,4 +1,4 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// Copyright © 2018-2021 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using System;
@@ -36,6 +36,22 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
 
         [Tooltip("Material to use for highlighting (only if touchBehavior is set to highlight).")]
         public Material highlightMaterial;
+
+        protected bool lockStatus = false;
+        /// <summary>
+        /// Whether or not the interactable is locked.
+        /// </summary>
+        public bool locked
+        {
+            set
+            {
+                lockStatus = value;
+            }
+            get
+            {
+                return lockStatus;
+            }
+        }
 
         protected bool grabEnabled = true;
         /// <summary>
