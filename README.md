@@ -28,6 +28,7 @@ Hence import all these assets first into the project under [Unity/Assets/Assetsa
 
 * [SteamVR](https://github.com/ValveSoftware/steamvr_unity_plugin/releases/tag/2.6.1) Version 2.6.1
 * [VR Capture](https://assetstore.unity.com/packages/tools/video/vr-capture-75654) Version 11.6
+* [MRTK](https://github.com/microsoft/MixedRealityToolkit-Unity) Version 2.6.1
 
 ### Paid assets:
 
