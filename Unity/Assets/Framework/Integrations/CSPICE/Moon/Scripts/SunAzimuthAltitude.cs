@@ -95,6 +95,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
          */
         void CalculateSunPosition(DateTime atTime, double lon, double lat, double el)
         {
+#if !HOLOLENS_BUILD
             double et;
             double r, az, alt;
             double[] sunvec = new double[3];
@@ -139,7 +140,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 dataManager.SaveValue(KEY_SUN_LATITUDE_RAD, sslat);
                 dataManager.SaveValue(KEY_SUN_LATITUDE_DEG, LunarModel.ToDegrees(sslat));
             }
-
+#endif
         }
 
         /// <seealso cref="MRETUpdateBehaviour.IntegrityCheck"/>
@@ -174,8 +175,10 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
 
                 // Load the CSPICE Kernels for the Moon
                 string kernelPath = Application.dataPath + Path.DirectorySeparatorChar + XRCSPICE_KERNEL_DIR;
+#if !HOLOLENS_BUILD
                 Debug.Log("Loading CSPICE kernels: " + XRCSPICE_KERNEL_FILE + "' from path: " + kernelPath);
                 LunarModel.LoadMetaKernel(kernelPath, XRCSPICE_KERNEL_FILE);
+#endif
 
                 // Mark as loaded
                 f_kernelsLoaded = true;
@@ -211,7 +214,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 var userLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_CENTER_LONGITUDE_DEG);
 //              var userElevationVar = dataManager.FindPoint(SurfaceLocation.KEY_ELEVATION_M);
                 var userElevationVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_CENTER_ELEVATION_M);
-
+#if !HOLOLENS_BUILD
                 if ((userTimeVar is DateTime) &&
                     (userLatitudeVar is double) &&
                     (userLongitudeVar is double) &&
@@ -226,6 +229,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                     // Set the position of the Sun light
                     CalculateSunPosition(userTime, userLongitude, userLatitude, userElevation);
                 }
+#endif
             }
         }
 

@@ -37,7 +37,8 @@ namespace GSFC.ARVR.MRET.Components.Camera
         public ImageCameraCaptureManager imageCameraManager;
         public VideoCameraCaptureManager videoCameraManager;
         public VideoCameraCaptureManager bodyCameraManager;
-        public SpectatorController spectatorManager;
+        //TODO: make sure this is changed to a virtual Camera Manager
+        //public VirtualCameraManager spectatorManager;
 
 
         [Header("Other Options")]

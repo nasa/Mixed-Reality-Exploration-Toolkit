@@ -12,6 +12,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
     /// 17 March 2021: Removed the running/walking references to make use of the generalized
     ///     motion constraints in the input rig SDK. Removed the armswing implementations, and
     ///     updated to reflect use of the controller interface. (J. Hosler)
+    /// 5 April 2021: Removed redundant character controller property (D. Baker)
     /// </remarks>
     /// <summary>
     /// Desktop wrapper for the input rig.
@@ -19,12 +20,6 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
     /// </summary>
     public class InputRigDesktop : InputRigSDK
     {
-        /// <summary>
-        /// The character controller for the input rig.
-        /// </summary>
-        [Tooltip("The character controller for the input rig.")]
-        public CharacterController characterController;
-
         /// <summary>
         /// The head's transform for the input rig.
         /// </summary>

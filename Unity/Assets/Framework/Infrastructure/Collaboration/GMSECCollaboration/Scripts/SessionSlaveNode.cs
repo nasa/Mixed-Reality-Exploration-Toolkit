@@ -148,10 +148,14 @@ public class SessionSlaveNode : MonoBehaviour
             req.AddField("PROJECT-NAME", sessionInfo.projectName);
             req.AddField("GROUP-NAME", sessionInfo.groupName);
             req.AddField("TOKEN-INFO", alias);
+#if !HOLOLENS_BUILD
             GMSECMessage rpl = gmsec.Request(req, 10000);
+#endif
 
-            // Will be dequeued in the Update() method on the main thread.
+// Will be dequeued in the Update() method on the main thread.
+#if !HOLOLENS_BUILD
             entityResponseMessages.Enqueue(rpl);
+#endif
         });
         requestThread.Start();
 
@@ -184,7 +188,7 @@ public class SessionSlaveNode : MonoBehaviour
         }
     }
 
-    #region Helpers
+#region Helpers
     private string ConnectionTypeToString(ConnectionTypes rawConnType)
     {
         string connType = "gmsec_bolt";
@@ -226,5 +230,5 @@ public class SessionSlaveNode : MonoBehaviour
 
         return connType;
     }
-    #endregion
+#endregion
 }

@@ -25,14 +25,18 @@ public class PanelSwitcher : MonoBehaviour
     public Text displayText;
     public Dropdown sourceDropdown;
     public Dropdown miniSourceDropdown;
+#if !HOLOLENS_BUILD
     public ZenFulcrum.EmbeddedBrowser.Browser htmlBrowser;
+#endif
     public DisplayController dispControl;
     public FeedSource feedSource;
     public bool Initialized = false;
     public int value;
     public RenderTexture renderTexture;
 
+#if !HOLOLENS_BUILD
     private UniversalMediaPlayer UMP;
+#endif
     public FeedSource[] availableSources = { null };
     private float actionTime = 0.0f;
     private float period = 0.25f;
@@ -48,8 +52,9 @@ public class PanelSwitcher : MonoBehaviour
     void Start()
     {
         // cameraFlash.SetActive(false);
-
+#if !HOLOLENS_BUILD
         UMP = gameObject.GetComponent<UniversalMediaPlayer>();
+#endif
         if (dispControl.type == DisplayController.Type.miniDisplay)
         {
             sourceDropdown = miniSourceDropdown;
@@ -82,6 +87,7 @@ public class PanelSwitcher : MonoBehaviour
                         break;
 
                     case FeedSource.Type.externalFeed:
+#if !HOLOLENS_BUILD
                         //this may slow things down A LOT
                         if(UMP.IsReady && !UMP.IsPlaying)
                         {
@@ -91,7 +97,7 @@ public class PanelSwitcher : MonoBehaviour
                         {
                             feedSource.time = UMP.Time;
                         }
-
+#endif
 
                         break;
 
@@ -101,6 +107,7 @@ public class PanelSwitcher : MonoBehaviour
 
                     case FeedSource.Type.htmlFeed:
 
+#if !HOLOLENS_BUILD
                         if (htmlBrowser.Url != null)
                         {
                             if (feedSource.sourceLink != htmlBrowser.Url)
@@ -108,10 +115,11 @@ public class PanelSwitcher : MonoBehaviour
                                 feedSource.sourceLink = htmlBrowser.Url;
                             }
                         }
+#endif
                         //else
-                       // {
-                         //   htmlBrowser.Url = feedSource.sourceLink;
-                         //   htmlBrowser.LoadURL(htmlBrowser.Url, true);
+                        // {
+                        //   htmlBrowser.Url = feedSource.sourceLink;
+                        //   htmlBrowser.LoadURL(htmlBrowser.Url, true);
                         //}
                         break;
 
@@ -165,14 +173,17 @@ public class PanelSwitcher : MonoBehaviour
 
     public void SetPanelSource(FeedSource source)
     {
-
+#if !HOLOLENS_BUILD
         UMP = gameObject.GetComponent<UniversalMediaPlayer>();
+#endif
         feedSource = source;
         Initialized = true; 
 
         if (source == null)
         {
+#if !HOLOLENS_BUILD
             htmlBrowser.gameObject.SetActive(false);
+#endif
             canvasObject.SetActive(true);
             label.text = "Feed Disconnected";
             displayImage.texture = defaultTexture;
@@ -181,67 +192,96 @@ public class PanelSwitcher : MonoBehaviour
         {
 
             label.text = source.title;
+#if !HOLOLENS_BUILD
             if (UMP.IsPlaying)
             {
                 UMP.Stop();
             }
+#endif
 
             switch (source.type)
             {
                 case FeedSource.Type.virtualFeed:
                     if (dispControl.size) dispControl.size.interactable = true;
+#if !HOLOLENS_BUILD
                     htmlBrowser.gameObject.SetActive(false);
+#endif
                     canvasObject.SetActive(true);
                     displayImage.texture = source.renderTexture;
+#if !HOLOLENS_BUILD
                     htmlBrowser.EnableInput = false;
+#endif
+#if !HOLOLENS_BUILD
                     UMP.Path = null;
                     UMP.AutoPlay = false;
+#endif
                     break;
 
                 case FeedSource.Type.externalFeed:
                     if (dispControl.size)  dispControl.size.interactable = true;
+#if !HOLOLENS_BUILD
                     htmlBrowser.gameObject.SetActive(false);
+#endif
                     canvasObject.SetActive(true);
+#if !HOLOLENS_BUILD
                     htmlBrowser.EnableInput = false;
-
+#endif
+#if !HOLOLENS_BUILD
                     UMP.Path = source.sourceLink;
                     UMP.Prepare();     
                     UMP.OnPathPrepared(source.sourceLink, true);
                     UMP.Play();
                     UMP.Time = source.time;
-                    
+#endif
                     break;
 
                 case FeedSource.Type.dataFeed:
                     if (dispControl.size)  dispControl.size.interactable = true;
+#if !HOLOLENS_BUILD
                     htmlBrowser.gameObject.SetActive(false);
+#endif
                     canvasObject.SetActive(true);
 
+#if !HOLOLENS_BUILD
                     htmlBrowser.EnableInput = false;
+#endif
+#if !HOLOLENS_BUILD
                     UMP.Path = null;
                     UMP.AutoPlay = false;
+#endif
 
                     break;
 
                 case FeedSource.Type.htmlFeed:
                     if (dispControl.size)  dispControl.size.interactable = false;
+#if !HOLOLENS_BUILD
                     htmlBrowser.gameObject.SetActive(true);
+#endif
                     canvasObject.SetActive(false);
+#if !HOLOLENS_BUILD
                     htmlBrowser.Url = source.sourceLink; // for some reason taking a while to pass url, trying this
                     htmlBrowser.LoadURL(source.sourceLink, true);
                     htmlBrowser.EnableInput = true;
+#endif
+#if !HOLOLENS_BUILD
                     UMP.Path = null;
                     UMP.AutoPlay = false;
+#endif
                     break;
 
                 case FeedSource.Type.spriteFeed:
                     if (dispControl.size)  dispControl.size.interactable = true;
+#if !HOLOLENS_BUILD
                     htmlBrowser.gameObject.SetActive(false);
+#endif
                     canvasObject.SetActive(true);
+#if !HOLOLENS_BUILD
                     htmlBrowser.EnableInput = false;
+#endif
+#if !HOLOLENS_BUILD
                     UMP.Path = null;
                     UMP.AutoPlay = false;
-
+#endif
                     switch (source.spriteType)
                     {
                         case FeedSource.SpriteType.toggle:
@@ -260,9 +300,13 @@ public class PanelSwitcher : MonoBehaviour
 
                 default:
                     if (dispControl.size)  dispControl.size.interactable = true;
+#if !HOLOLENS_BUILD
                     htmlBrowser.gameObject.SetActive(false);
+#endif
                     canvasObject.SetActive(true);
+#if !HOLOLENS_BUILD
                     htmlBrowser.EnableInput = false;
+#endif
                     Debug.LogWarning("[PanelSwitcher->SetPanelSource] Unable to decipher video source type.");
 
                     break;

@@ -30,6 +30,7 @@ namespace CSPICE
         public const string META_KERNEL = "kernels.tm";
         public const string ERROR_DEVICE = "NULL";
 
+#if !HOLOLENS_BUILD
         /********************************************************************
          * CSPICE Functions
          ********************************************************************/
@@ -207,7 +208,7 @@ namespace CSPICE
 
         }
 
-        #region Angle functions
+#region Angle functions
         /*
         ======================================================================
         DegreesPerRadian()
@@ -251,9 +252,9 @@ namespace CSPICE
         {
             return (radians * I_DegreesPerRadian());
         }
-        #endregion
+#endregion
 
-        #region Error handling functions
+#region Error handling functions
         /*
         ======================================================================
         ErrorAction()
@@ -367,9 +368,9 @@ namespace CSPICE
 
             message = Encoding.ASCII.GetString(dstBytes).TrimEnd(TRIM_CHARS);
         }
-        #endregion
+#endregion
 
-        #region Time functions
+#region Time functions
         /*
         ======================================================================
         TimeOutput()
@@ -424,7 +425,7 @@ namespace CSPICE
             // Check for error
             CheckForError();
         }
-        #endregion
+#endregion
 
         /*
         ======================================================================
@@ -461,7 +462,7 @@ namespace CSPICE
             return result;
         }
 
-        #region Coordinate functions
+#region Coordinate functions
         /*
         ======================================================================
         Latitudinal2RectangularCoordinates()
@@ -509,9 +510,9 @@ namespace CSPICE
                 out longitude,
                 out latitude);
         }
-        #endregion
+#endregion
 
-        #region Matrix Functions
+#region Matrix Functions
         /*
         ======================================================================
         MatrixTimesVector()
@@ -573,9 +574,9 @@ namespace CSPICE
             // Check for error
             CheckForError();
         }
-        #endregion
+#endregion
 
-        #region Vector Functions
+#region Vector Functions
         /*
         ======================================================================
         UnitizedCrossProduct()
@@ -643,7 +644,7 @@ namespace CSPICE
                 v2,
                 vout);
         }
-        #endregion
+#endregion
 
         /*
         ======================================================================
@@ -735,7 +736,7 @@ namespace CSPICE
             // Check for error
             CheckForError();
         }
-
+#endif
     }
 
 }

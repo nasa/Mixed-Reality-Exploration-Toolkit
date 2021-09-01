@@ -1,20 +1,58 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// Copyright © 2018-2021 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
 using UnityEngine.UI;
+using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
 
 public class ObjectPanelController : MonoBehaviour
 {
     public GameObject selectedObject;
-    public Toggle physics, gravity, explode, visible;
+    public Toggle physics, explode, visible, locked; //public Toggle physics, gravity, explode, visible, locked;
     public Slider opacity;
     public Text titleText;
+    public Toggle gravity;
 
     private bool enabling = false;
+    private bool initialized = false;
+
+    public void Initialize()
+    {
+        if (selectedObject == null)
+        {
+            Debug.LogWarning("[ObjectPanelController] Selected object not set.");
+            return;
+        }
+
+        // Initialize physics toggle.
+        physics.isOn = !selectedObject.GetComponent<Rigidbody>().isKinematic;
+
+        // Initialize gravity toggle.
+        gravity.isOn = selectedObject.GetComponent<Rigidbody>().useGravity;
+
+        // Initialize explode toggle.
+        explode.isOn = selectedObject.GetComponent<InteractablePart>().isExploded;
+
+        // Initialize visibility toggle.
+        visible.isOn = selectedObject.GetComponentInChildren<MeshRenderer>().enabled;
+
+        //Initialize locked toggle
+        locked.isOn = SceneObject.GetSceneObjectForGameObject(selectedObject).locked;
+    }
 
     public void OnEnable()
     {
+        if (initialized == false)
+        {
+            return;
+        }
+
+        if (selectedObject == null)
+        {
+            Debug.LogWarning("[ObjectPanelController] No selected object.");
+            return;
+        }
+
         enabling = true;
 
         // Initialize physics toggle.
@@ -28,6 +66,9 @@ public class ObjectPanelController : MonoBehaviour
 
         // Initialize visibility toggle.
         visible.isOn = selectedObject.GetComponentInChildren<MeshRenderer>().enabled;
+
+        //Initialize locked toggle
+        locked.isOn = SceneObject.GetSceneObjectForGameObject(selectedObject).locked;
 
         enabling = false;
     }
@@ -142,6 +183,19 @@ public class ObjectPanelController : MonoBehaviour
                 {
                     rend.enabled = state;
                 }
+            }
+        }
+    }
+
+    public void ToggleLock()
+    {
+        if (!enabling)
+        {
+            bool state = locked.isOn;
+            SceneObject selectedSceneObject = SceneObject.GetSceneObjectForGameObject(selectedObject);
+            if (selectedSceneObject != null)
+            {
+                selectedSceneObject.locked = state;
             }
         }
     }

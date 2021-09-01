@@ -21,6 +21,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
     /// 17 March 2021: Removed the unused Steam VR head reference, wrapped debug log messages
     ///     in the MRET_DEBUG compiler directive, and updated UpdateNavigateState() to support
     ///     the WindowsMixedReality which makes use of the secondary 2D axis for touchpad. (J. Hosler)
+    /// 16 April 2021: Removing benign warning message if secondary 2D axis doesn't exist (as in
+    ///     non-WMR headsets. Hiding warning message for missing menu button as there is
+    ///     currently a SteamVR bug
+    ///     https://www.reddit.com/r/Unity3D/comments/mnhtko/openxr_not_detecting_primary_button_of_htc_vive/ (DZB)
+    /// 20 July 2021: SteamVR bug has been fixed, uncommenting code (DZB)
+    /// 17 August 2021: Added pointer functions.
     /// </remarks>
     /// <summary>
     /// SteamVR wrapper for the input hand.
@@ -171,6 +177,60 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
         }
         private Vector2 _navigateValue = Vector2.zero;
 
+        /// <summary>
+        /// Whether or not the pointer is currently on.
+        /// </summary>
+        public override bool pointerOn
+        {
+            get
+            {
+                if (uiPointerController.raycastLaser != null)
+                {
+                    if (uiPointerController.raycastLaser.active)
+                    {
+                        return true;
+                    }
+                }
+
+                if (teleportController.raycastLaser != null)
+                {
+                    if (teleportController.raycastLaser.active)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// The current endpoint of the pointer.
+        /// </summary>
+        public override Vector3 pointerEnd
+        {
+            get
+            {
+                if (uiPointerController.raycastLaser != null)
+                {
+                    if (uiPointerController.raycastLaser.active)
+                    {
+                        return uiPointerController.raycastLaser.hitPos;
+                    }
+                }
+
+                if (teleportController.raycastLaser != null)
+                {
+                    if (teleportController.raycastLaser.active)
+                    {
+                        return teleportController.raycastLaser.hitPos;
+                    }
+                }
+
+                return Vector3.zero;
+            }
+        }
+
         public override bool teleportBlocked
         {
             get
@@ -271,9 +331,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
         {
             // Check assertions
             if (!inputDevice.isValid) return;
-
+            
             // Trigger/Select
-            if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primaryButton, out _menuPressed))
+            if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.menuButton, out _menuPressed))
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(UpdateMenuState) + "; " + name + "] '" +
                     UnityEngine.XR.CommonUsages.primaryButton + "' does not exist.");
@@ -417,8 +477,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
             // Touchpad/Navigate Value (WMR is unique because the touchpad is stored in the secondary2DAxis)
             if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.secondary2DAxis, out _navigateValue))
             {
-                Debug.LogWarning("[" + ClassName + "->" + nameof(UpdateNavigateState) + "; " + name + "] '" +
-                    UnityEngine.XR.CommonUsages.secondary2DAxis + "' does not exist.");
+                // DZB
+                //Debug.LogWarning("[" + ClassName + "->" + nameof(UpdateNavigateState) + "; " + name + "] '" +
+                //    UnityEngine.XR.CommonUsages.secondary2DAxis + "' does not exist.");
             }
 
             // Make sure the secondary axis was valid. If zero, default to the primary

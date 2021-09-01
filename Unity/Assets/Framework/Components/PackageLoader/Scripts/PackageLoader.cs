@@ -16,10 +16,12 @@ namespace GSFC.ARVR
      */
     public class PackageLoader
     {
-        #region DLLImports
+#if !HOLOLENS_BUILD
+#region DLLImports
         [DllImport("kernel32.dll", EntryPoint = "SetDllDirectory", CharSet = CharSet.Auto, SetLastError = true)]
         private static extern bool I_SetDllDirectory(string lpPathName);
-        #endregion
+#endregion
+#endif
 
         /**
          * Adds the package plugin path to the DLL search path
@@ -67,7 +69,8 @@ namespace GSFC.ARVR
             Debug.Log("[PackageLoader] Unknown architecture. Assuming runtime player.");
 #endif
 
-            // SetDllDirectory only supports one directory, so also add the directory to the path
+// SetDllDirectory only supports one directory, so also add the directory to the path
+#if !HOLOLENS_BUILD
             string currentPath = Environment.GetEnvironmentVariable("PATH");
             if (!currentPath.Contains(dllPath))
             {
@@ -80,6 +83,7 @@ namespace GSFC.ARVR
                 Debug.Log("[PackageLoader] Plugin directory added to PATH: " + dllPath);
                 Debug.Log("[PackageLoader] Current PATH: " + Environment.GetEnvironmentVariable("PATH"));
             }
+#endif
         }
 
         /**
@@ -92,6 +96,10 @@ namespace GSFC.ARVR
          */
         public static string GetPackagePath(string dataPath, string packageName)
         {
+#if (HOLOLENS_BUILD && !UNITY_EDITOR)
+            return Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "MRET");
+#endif
+
             string[] res = Directory.GetDirectories(dataPath, packageName, System.IO.SearchOption.AllDirectories);
             if (res.Length == 0)
             {
@@ -113,6 +121,9 @@ namespace GSFC.ARVR
          */
         public static void InitializePackagePlugin(string packagePath)
         {
+#if HOLOLENS_BUILD
+            return;
+#endif
             if (string.IsNullOrEmpty(packagePath))
             {
                 Debug.LogError("[PackageLoader] Invalid package path supplied");

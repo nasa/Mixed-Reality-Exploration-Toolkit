@@ -9,6 +9,7 @@ using GSFC.ARVR.GMSEC;
  */
 public class SessionAdvertiser : MonoBehaviour
 {
+#if !HOLOLENS_BUILD
     [Tooltip("The middleware type to use.")]
     public GMSECDefs.ConnectionTypes connectionType = GMSECDefs.ConnectionTypes.bolt;
 
@@ -161,5 +162,6 @@ public class SessionAdvertiser : MonoBehaviour
 
         return connType;
     }
-    #endregion
+#endregion
+#endif
 }

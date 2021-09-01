@@ -29,23 +29,31 @@ public class CollaborationJoinMenuManager : MonoBehaviour
         {
             if (collaborationManager.engineType == CollaborationManager.EngineType.XRC)
             {
-                string[] serverParts = collaborationManager.server.Split(':');
-                if (serverParts.Length == 2)
+                int idx = collaborationManager.server.LastIndexOf(':');
+                if (idx == -1)
                 {
-                    XRCUnity.ShutDown();
-                    XRCUnity.Initialize(serverParts[0], int.Parse(serverParts[1]), XRCManager.GMSECToXRCConnType(collaborationManager.connectionType),
-                        collaborationManager.missionName, collaborationManager.satName);
-                    if (!XRCUnity.StartUp())
-                    {
-                        Debug.LogWarning("[CollaborationJoinMenuManager] XRC failed to startup.");
-                    }
+                    Debug.LogError("Invalid Server Format.");
+                    return;
                 }
+                string[] serverParts = { collaborationManager.server.Substring(0, idx),
+                collaborationManager.server.Substring(idx + 1) };
+#if !HOLOLENS_BUILD
+                XRCUnity.ShutDown();
+                XRCUnity.Initialize(serverParts[0], int.Parse(serverParts[1]), XRCManager.GMSECToXRCConnType(collaborationManager.connectionType),
+                    collaborationManager.missionName, collaborationManager.satName);
+                if (!XRCUnity.StartUp())
+                {
+                    Debug.LogWarning("[CollaborationJoinMenuManager] XRC failed to startup.");
+                }
+#endif
             }
             else
             {
+#if !HOLOLENS_BUILD
                 sessionSeeker.server = collaborationManager.server;
                 sessionSeeker.missionName = collaborationManager.missionName;
                 sessionSeeker.satName = collaborationManager.satName;
+#endif
             }
         }
         else
@@ -102,6 +110,7 @@ public class CollaborationJoinMenuManager : MonoBehaviour
                     System.IO.Path.Combine(ConfigurationManager.instance.defaultProjectDirectory,
                     availableXRCSessions[currentSelection].project), ProjectFileSchema.fileExtension), true);
 
+#if !HOLOLENS_BUILD
                 XRCUnity.JoinSession(availableXRCSessions[currentSelection].id,
                     UnityProject.instance.userUUID.ToString(), aliasInput.text,
                     (int) SynchronizedUser.UserType.VR,
@@ -110,23 +119,29 @@ public class CollaborationJoinMenuManager : MonoBehaviour
                     UnityProject.instance.rcUUID.ToString(),
                     UnityProject.instance.lpUUID.ToString(),
                     UnityProject.instance.rpUUID.ToString()); // TODO type
+#endif
             }
             else
             {
+#if !HOLOLENS_BUILD
                 collaborationManager.EnterSlaveMode(sessionSeeker.availableSessions[currentSelection], aliasInput.text);
+#endif
             }
         }
     }
 
     private void FindAvailableSessions()
     {
+#if !HOLOLENS_BUILD
         sessionSeeker.SearchForSessions();
+#endif
     }
 
     private void UpdateSessionListDisplay()
     {
         if (collaborationManager.engineType == CollaborationManager.EngineType.XRC)
         {
+#if !HOLOLENS_BUILD
             int idx = 0;
             availableXRCSessions = XRCUnity.GetRemoteSessions();
             if (availableXRCSessions != null)
@@ -144,9 +159,11 @@ public class CollaborationJoinMenuManager : MonoBehaviour
             }
 
             noSessionLabel.SetActive(idx == 0);
+#endif
         }
         else
         {
+#if !HOLOLENS_BUILD
             if (sessionSeeker.availableSessions.Count == 0)
             {
                 noSessionLabel.SetActive(true);
@@ -164,6 +181,7 @@ public class CollaborationJoinMenuManager : MonoBehaviour
                         + " " + sessionSeeker.availableSessions[i].numUsers + "Users", clickEvent);
                 }
             }
+#endif
         }
     }
 

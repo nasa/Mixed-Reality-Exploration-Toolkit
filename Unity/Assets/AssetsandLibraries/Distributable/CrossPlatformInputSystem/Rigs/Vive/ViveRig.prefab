@@ -202,6 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9ea271896f4adf9418155ff04cdc177c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  mode: 1
   head: {fileID: 8924605839945406264}
   hands:
   - {fileID: 7811045891917884471}
@@ -304,6 +305,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1867207430648378668}
+        m_TargetAssemblyTypeName: 
         m_MethodName: MenuPressEvent
         m_Mode: 0
         m_Arguments:
@@ -319,6 +321,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2946610826296145474}
+        m_TargetAssemblyTypeName: 
         m_MethodName: MenuPressEvent
         m_Mode: 0
         m_Arguments:
@@ -334,6 +337,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1867207430648378668}
+        m_TargetAssemblyTypeName: 
         m_MethodName: PrimaryPressEvent
         m_Mode: 0
         m_Arguments:
@@ -349,6 +353,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2946610826296145474}
+        m_TargetAssemblyTypeName: 
         m_MethodName: PrimaryPressEvent
         m_Mode: 0
         m_Arguments:
@@ -364,6 +369,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1867207430648378668}
+        m_TargetAssemblyTypeName: 
         m_MethodName: SecondaryPressEvent
         m_Mode: 0
         m_Arguments:
@@ -379,6 +385,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2946610826296145474}
+        m_TargetAssemblyTypeName: 
         m_MethodName: SecondaryPressEvent
         m_Mode: 0
         m_Arguments:
@@ -394,6 +401,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1867207430648378668}
+        m_TargetAssemblyTypeName: 
         m_MethodName: TouchpadPressEvent
         m_Mode: 0
         m_Arguments:
@@ -409,6 +417,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2946610826296145474}
+        m_TargetAssemblyTypeName: 
         m_MethodName: TouchpadPressEvent
         m_Mode: 0
         m_Arguments:
@@ -424,6 +433,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1867207430648378668}
+        m_TargetAssemblyTypeName: 
         m_MethodName: TouchpadTouchEvent
         m_Mode: 0
         m_Arguments:
@@ -439,6 +449,7 @@ MonoBehaviour:
   - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2946610826296145474}
+        m_TargetAssemblyTypeName: 
         m_MethodName: TouchpadTouchEvent
         m_Mode: 0
         m_Arguments:
@@ -570,7 +581,7 @@ GameObject:
   - component: {fileID: 5692763436930849705}
   - component: {fileID: 8949459861102349513}
   m_Layer: 0
-  m_Name: RightHand Controller
+  m_Name: RightHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -626,6 +637,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleMenu
         m_Mode: 1
         m_Arguments:
@@ -643,6 +655,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6104881579492507913}
+        m_TargetAssemblyTypeName: 
         m_MethodName: Select
         m_Mode: 1
         m_Arguments:
@@ -654,6 +667,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 3618039193392063895}
+        m_TargetAssemblyTypeName: 
         m_MethodName: Place
         m_Mode: 1
         m_Arguments:
@@ -665,6 +679,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnSelectBegin
         m_Mode: 2
         m_Arguments:
@@ -680,6 +695,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnSelectComplete
         m_Mode: 2
         m_Arguments:
@@ -695,6 +711,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3618039193392063895}
+        m_TargetAssemblyTypeName: 
         m_MethodName: Grab
         m_Mode: 1
         m_Arguments:
@@ -706,6 +723,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnGrabBegin
         m_Mode: 0
         m_Arguments:
@@ -717,6 +735,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: RGripPressed
         m_Mode: 1
         m_Arguments:
@@ -728,6 +747,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 8949459861102349513}
+        m_TargetAssemblyTypeName: 
         m_MethodName: HandleControllerPressed
         m_Mode: 1
         m_Arguments:
@@ -739,6 +759,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 5692763436930849705}
+        m_TargetAssemblyTypeName: 
         m_MethodName: HandleControllerPressed
         m_Mode: 1
         m_Arguments:
@@ -753,6 +774,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 3618039193392063895}
+        m_TargetAssemblyTypeName: 
         m_MethodName: Ungrab
         m_Mode: 1
         m_Arguments:
@@ -764,6 +786,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnGrabComplete
         m_Mode: 0
         m_Arguments:
@@ -775,6 +798,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 8949459861102349513}
+        m_TargetAssemblyTypeName: 
         m_MethodName: HandleControllerReleased
         m_Mode: 1
         m_Arguments:
@@ -786,6 +810,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 5692763436930849705}
+        m_TargetAssemblyTypeName: 
         m_MethodName: HandleControllerReleased
         m_Mode: 1
         m_Arguments:
@@ -800,6 +825,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnNavigateBegin
         m_Mode: 0
         m_Arguments:
@@ -814,6 +840,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnNavigateComplete
         m_Mode: 0
         m_Arguments:
@@ -828,6 +855,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: RTouchpadPressed
         m_Mode: 1
         m_Arguments:
@@ -839,6 +867,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: CreateNote
         m_Mode: 1
         m_Arguments:
@@ -853,6 +882,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: RTouchpadReleased
         m_Mode: 1
         m_Arguments:
@@ -895,18 +925,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UpdateTrackingType: 0
+  m_EnableInputTracking: 1
   m_EnableInputActions: 1
-  m_PoseProvider: {fileID: 0}
-  m_ControllerNode: 5
-  m_SelectUsage: 3
-  m_ActivateUsage: 2
-  m_UIPressUsage: 2
-  m_AxisToPressThreshold: 0.1
   m_ModelPrefab: {fileID: 0}
   m_ModelTransform: {fileID: 0}
   m_AnimateModel: 0
   m_ModelSelectTransition: 
   m_ModelDeSelectTransition: 
+  m_ControllerNode: 5
+  m_SelectUsage: 3
+  m_ActivateUsage: 2
+  m_UIPressUsage: 2
+  m_AxisToPressThreshold: 0.1
+  m_RotateAnchorLeft: 16
+  m_RotateAnchorRight: 17
+  m_MoveObjectIn: 14
+  m_MoveObjectOut: 15
+  m_PoseProvider: {fileID: 0}
 --- !u!114 &3618039193392063895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1014,7 +1049,7 @@ GameObject:
   - component: {fileID: 1219493560855917491}
   - component: {fileID: 7287501415001291428}
   m_Layer: 0
-  m_Name: LeftHand Controller
+  m_Name: LeftHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1070,6 +1105,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleMenu
         m_Mode: 1
         m_Arguments:
@@ -1087,6 +1123,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 844843841416974833}
+        m_TargetAssemblyTypeName: 
         m_MethodName: Select
         m_Mode: 1
         m_Arguments:
@@ -1098,6 +1135,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 4090746272864309180}
+        m_TargetAssemblyTypeName: 
         m_MethodName: Place
         m_Mode: 1
         m_Arguments:
@@ -1109,6 +1147,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnSelectBegin
         m_Mode: 2
         m_Arguments:
@@ -1124,6 +1163,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnSelectComplete
         m_Mode: 2
         m_Arguments:
@@ -1139,6 +1179,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4090746272864309180}
+        m_TargetAssemblyTypeName: 
         m_MethodName: Grab
         m_Mode: 1
         m_Arguments:
@@ -1150,6 +1191,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnGrabBegin
         m_Mode: 0
         m_Arguments:
@@ -1161,6 +1203,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: LGripPressed
         m_Mode: 1
         m_Arguments:
@@ -1172,6 +1215,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1219493560855917491}
+        m_TargetAssemblyTypeName: 
         m_MethodName: HandleControllerPressed
         m_Mode: 1
         m_Arguments:
@@ -1183,6 +1227,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 7287501415001291428}
+        m_TargetAssemblyTypeName: 
         m_MethodName: HandleControllerPressed
         m_Mode: 1
         m_Arguments:
@@ -1197,6 +1242,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 4090746272864309180}
+        m_TargetAssemblyTypeName: 
         m_MethodName: Ungrab
         m_Mode: 1
         m_Arguments:
@@ -1208,6 +1254,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnGrabComplete
         m_Mode: 0
         m_Arguments:
@@ -1219,6 +1266,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 1219493560855917491}
+        m_TargetAssemblyTypeName: 
         m_MethodName: HandleControllerReleased
         m_Mode: 1
         m_Arguments:
@@ -1230,6 +1278,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 7287501415001291428}
+        m_TargetAssemblyTypeName: 
         m_MethodName: HandleControllerReleased
         m_Mode: 1
         m_Arguments:
@@ -1244,6 +1293,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnNavigateBegin
         m_Mode: 0
         m_Arguments:
@@ -1258,6 +1308,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: OnNavigateComplete
         m_Mode: 0
         m_Arguments:
@@ -1272,6 +1323,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: LTouchpadPressed
         m_Mode: 1
         m_Arguments:
@@ -1283,6 +1335,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: CreateNote
         m_Mode: 1
         m_Arguments:
@@ -1297,6 +1350,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: LTouchpadReleased
         m_Mode: 1
         m_Arguments:
@@ -1339,18 +1393,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UpdateTrackingType: 0
+  m_EnableInputTracking: 1
   m_EnableInputActions: 1
-  m_PoseProvider: {fileID: 0}
-  m_ControllerNode: 4
-  m_SelectUsage: 3
-  m_ActivateUsage: 2
-  m_UIPressUsage: 2
-  m_AxisToPressThreshold: 0.1
   m_ModelPrefab: {fileID: 0}
   m_ModelTransform: {fileID: 0}
   m_AnimateModel: 0
   m_ModelSelectTransition: 
   m_ModelDeSelectTransition: 
+  m_ControllerNode: 4
+  m_SelectUsage: 3
+  m_ActivateUsage: 2
+  m_UIPressUsage: 2
+  m_AxisToPressThreshold: 0.1
+  m_RotateAnchorLeft: 16
+  m_RotateAnchorRight: 17
+  m_MoveObjectIn: 14
+  m_MoveObjectOut: 15
+  m_PoseProvider: {fileID: 0}
 --- !u!114 &4090746272864309180
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1615,6 +1674,11 @@ MonoBehaviour:
   dithering: 0
   stopNaNs: 0
   taaSharpenStrength: 0.6
+  TAAQuality: 1
+  taaHistorySharpening: 0.35
+  taaAntiFlicker: 0.5
+  taaMotionVectorRejection: 0
+  taaAntiHistoryRinging: 0
   physicalParameters:
     m_Iso: 200
     m_ShutterSpeed: 0.005
@@ -1624,6 +1688,7 @@ MonoBehaviour:
     m_BarrelClipping: 0.25
     m_Anamorphism: 0
   flipYMode: 0
+  xrRendering: 1
   fullscreenPassthrough: 0
   allowDynamicResolution: 0
   customRenderingSettings: 0
@@ -1632,6 +1697,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   hasPersistentHistory: 0
+  exposureTarget: {fileID: 0}
   m_RenderingPathCustomFrameSettings:
     bitDatas:
       data1: 70297877217101
@@ -1642,6 +1708,9 @@ MonoBehaviour:
     maximumLODLevel: 0
     maximumLODLevelMode: 0
     maximumLODLevelQualityLevel: 0
+    sssQualityMode: 0
+    sssQualityLevel: 0
+    sssCustomSampleBudget: 20
     materialQuality: 0
   renderingPathCustomFrameSettingsOverrideMask:
     mask:
@@ -1874,6 +1943,11 @@ PrefabInstance:
       objectReference: {fileID: 8081150266863168500}
     - target: {fileID: 5010612503886907130, guid: a86eab444e1701243a34693ea5281ec0,
         type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5010612503886907130, guid: a86eab444e1701243a34693ea5281ec0,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
       objectReference: {fileID: 0}
@@ -1889,6 +1963,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5010612503886907130, guid: a86eab444e1701243a34693ea5281ec0,
         type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5010612503886907130, guid: a86eab444e1701243a34693ea5281ec0,
+        type: 3}
       propertyPath: m_LocalRotation.x
       value: -0
       objectReference: {fileID: 0}
@@ -1901,16 +1980,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalRotation.z
       value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5010612503886907130, guid: a86eab444e1701243a34693ea5281ec0,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5010612503886907130, guid: a86eab444e1701243a34693ea5281ec0,
-        type: 3}
-      propertyPath: m_RootOrder
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5010612503886907130, guid: a86eab444e1701243a34693ea5281ec0,
         type: 3}

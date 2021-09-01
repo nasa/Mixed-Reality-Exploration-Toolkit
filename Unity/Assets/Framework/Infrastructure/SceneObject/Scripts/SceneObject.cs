@@ -58,11 +58,19 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject
             }
         }
 
+        public Guid uuid;
+
         protected bool selected = false;
 
         private void Start()
         {
             highlightMaterial = MRET.HighlightMaterial;
+        }
+
+        public static SceneObject Create()
+        {
+            GameObject sceneObjectGameObject = new GameObject();
+            return sceneObjectGameObject.AddComponent<SceneObject>();
         }
 
         /// <summary>
@@ -170,13 +178,17 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject
                 case TouchBehavior.Highlight:
                     if (!selected)
                     {
-                        // Alter this object's materials.
-                        if (savedMaterialInfo != null)
+                        //only highlight if unlocked
+                        if (!locked)
                         {
-                            RestoreObjectMaterials();
+                            // Alter this object's materials.
+                            if (savedMaterialInfo != null)
+                            {
+                                RestoreObjectMaterials();
+                            }
+                            SaveObjectMaterials(true);
+                            ReplaceObjectMaterials(MRET.HighlightMaterial, true);
                         }
-                        SaveObjectMaterials(true);
-                        ReplaceObjectMaterials(MRET.HighlightMaterial, true);
 
                         // Save the touching hand.
                         touchingHand = hand;
@@ -226,5 +238,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject
                     break;
             }
         }
+        public override void BeginGrab(InputHand hand)
+        {
+            if (!locked)
+            {
+                base.BeginGrab(hand);
+            }
+        }
+
     }
 }

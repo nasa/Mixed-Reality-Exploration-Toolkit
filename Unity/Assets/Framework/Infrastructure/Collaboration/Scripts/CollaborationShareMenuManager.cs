@@ -51,6 +51,7 @@ public class CollaborationShareMenuManager : MonoBehaviour
 
     public void Create()
     {
+#if !HOLOLENS_BUILD
         if (collaborationManager.engineType == CollaborationManager.EngineType.XRC)
         {
             if (projToOpen != null && System.IO.File.Exists(projectText.text))
@@ -61,12 +62,14 @@ public class CollaborationShareMenuManager : MonoBehaviour
 
                 XRCUnity.ShutDown();
 
-                string[] serverParts = collaborationManager.server.Split(':');
-                if (serverParts.Length != 2)
+                int idx = collaborationManager.server.LastIndexOf(':');
+                if (idx == -1)
                 {
                     Debug.LogError("Invalid Server Format.");
                     return;
                 }
+                string[] serverParts = { collaborationManager.server.Substring(0, idx),
+                collaborationManager.server.Substring(idx + 1) };
 
                 XRCUnity.Initialize(serverParts[0], int.Parse(serverParts[1]),
                     XRCManager.GMSECToXRCConnType(collaborationManager.connectionType),
@@ -131,5 +134,6 @@ public class CollaborationShareMenuManager : MonoBehaviour
                 }
             }
         }
+#endif
     }
 }

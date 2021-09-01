@@ -648,7 +648,7 @@ namespace GSFC.ARVR.MRET.Integrations.XRUI
             AddToToggleList(modeNavigator.fly, flyToggle);
             UnityEvent navigationToggleEnableEvent = new UnityEvent();
             Toggle navigationToggle = movementPanel.AddToggle("Navigation", navigationIcon, navigationEvent, navigationToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);
-            flyToggleEnableEvent.AddListener(() => { SetToggle(navigationToggle, (bool) DataManager.instance.FindPoint(LocomotionManager.navigateKey)); });
+            navigationToggleEnableEvent.AddListener(() => { SetToggle(navigationToggle, (bool) DataManager.instance.FindPoint(LocomotionManager.navigateKey)); });
             AddToToggleList(modeNavigator.touchpad, navigationToggle);
             UnityEvent armswingToggleEnableEvent = new UnityEvent();
             Toggle armswingToggle = movementPanel.AddToggle("Armswing", armswingIcon, armswingEvent, armswingToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);

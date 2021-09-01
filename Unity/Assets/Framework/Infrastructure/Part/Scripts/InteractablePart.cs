@@ -200,6 +200,11 @@ public class InteractablePart : SceneObject, ISelectable
         }
     }
 
+    private void OnDestroy()
+    {
+        DestroyPartPanel();
+    }
+
     public override void Use(InputHand hand)
     {
         base.Use(hand);
@@ -372,7 +377,7 @@ public class InteractablePart : SceneObject, ISelectable
 
         EndTouch();
     }
-
+    
     public void LoadPartPanel(GameObject controller, bool reinitialize)
     {
         if (!MRET.PartPanelEnabled)
@@ -398,7 +403,7 @@ public class InteractablePart : SceneObject, ISelectable
                 if (objectCollider)
                 {
                     Vector3 selectedPosition = objectCollider.ClosestPointOnBounds(controller.transform.position);
-
+                    
                     // Move panel between selected point and headset.
                     partPanel.transform.position = Vector3.Lerp(selectedPosition, headsetObject.transform.position, 0.1f);
 
@@ -448,7 +453,8 @@ public class InteractablePart : SceneObject, ISelectable
 
             // Finally, make the panel a child of its gameobject and point it at the camera.
             partPanel.transform.rotation = Quaternion.LookRotation(headsetObject.transform.forward);
-            partPanel.transform.SetParent(transform);
+            //partPanel.transform.SetParent(transform);
+            partPanel.transform.SetParent(transform.parent);
         }
     }
 
@@ -471,7 +477,7 @@ public class InteractablePart : SceneObject, ISelectable
         }
     }
 
-    #region SNAPPING
+#region SNAPPING
     private SnappingConnector connectorToSnapTo = null;
 
     public void SetCurrentSnappingConnector(SnappingConnector snappingConnector)
@@ -509,7 +515,7 @@ public class InteractablePart : SceneObject, ISelectable
         EasyBuildSystem.Features.Scripts.Core.Base.Piece.PieceBehaviour pb = gameObject.AddComponent<EasyBuildSystem.Features.Scripts.Core.Base.Piece.PieceBehaviour>();
 
         pb.ChangeState(EasyBuildSystem.Features.Scripts.Core.Base.Piece.Enums.StateType.Preview);
-
+        
         bb.ChangeMode(EasyBuildSystem.Features.Scripts.Core.Base.Builder.Enums.BuildMode.Placement);
         bb.placingObject = gameObject;
 
@@ -557,9 +563,9 @@ public class InteractablePart : SceneObject, ISelectable
             }
         }
     }
-    #endregion
+#endregion
 
-    #region PLACEMENT
+#region PLACEMENT
     private bool isPlacing = false;
     private Transform oldParent = null;
     private bool wasGrabbable = true, wasUsable = true, wasUseGravity = false, wasKinematic = false;
@@ -636,22 +642,12 @@ public class InteractablePart : SceneObject, ISelectable
         base.Place();
         StopPlacing();
     }
-    #endregion
+#endregion
 
-    #region CONTEXTAWARECONTROL
+#region CONTEXTAWARECONTROL
     private bool previousScalingState = false, previousLocomotionPauseState = false;
     private void DisableAllEnvironmentScaling()
     {
-        /*VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
-        {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                ScaleObjectTransform sot = cEvent.GetComponentInChildren<ScaleObjectTransform>(true);
-                previousScalingState = sot.enabled; // Inefficient, but it doesn't matter.
-                sot.enabled = false;
-            }
-        }*/
         foreach (InputHand hand in MRET.InputRig.hands)
         {
             ScaleObjectTransform sot = hand.GetComponentInChildren<ScaleObjectTransform>(true);
@@ -665,16 +661,6 @@ public class InteractablePart : SceneObject, ISelectable
 
     private void EnableAnyEnvironmentScaling()
     {
-        /*VRTK_ControllerEvents[] cEvents = FindObjectsOfType<VRTK_ControllerEvents>();
-        if (cEvents.Length == 2)
-        {
-            foreach (VRTK_ControllerEvents cEvent in cEvents)
-            {
-                ScaleObjectTransform sot = cEvent.GetComponentInChildren<ScaleObjectTransform>(true);
-                sot.enabled = previousScalingState;
-            }
-            previousScalingState = false;
-        }*/
         foreach (InputHand hand in MRET.InputRig.hands)
         {
             ScaleObjectTransform sot = hand.GetComponentInChildren<ScaleObjectTransform>(true);
@@ -685,9 +671,9 @@ public class InteractablePart : SceneObject, ISelectable
             previousScalingState = false;
         }
     }
-    #endregion
+#endregion
 
-    #region EXPLODE
+#region EXPLODE
 
     public float explodeFactor = 2;
     public bool isExploded = false;
@@ -759,19 +745,19 @@ public class InteractablePart : SceneObject, ISelectable
         originalRendPositions = rendPositions.ToArray();
     }
 
-    #endregion
+#endregion
 
-    #region Selection
+#region Selection
     public void Select(bool hierarchical = true)
     {
         if (selected)
         {
             return;
         }
-
+        
         selected = true;
         ISelectable[] sels = GetComponentsInParent<ISelectable>();
-        if ((sels.Length == 0 || (sels.Length == 1 && sels[0] == (ISelectable)this)) && hierarchical)
+        if ((sels.Length == 0 || ( sels.Length == 1 && sels[0] == (ISelectable) this)) && hierarchical)
         {
             foreach (ISelectable selChild in GetInteractablePartRoot(this).GetComponentsInChildren<ISelectable>(true))
             {
@@ -801,7 +787,7 @@ public class InteractablePart : SceneObject, ISelectable
 
         selected = false;
         ISelectable[] sels = GetComponentsInParent<ISelectable>();
-        if ((sels.Length == 0 || (sels.Length == 1 && sels[0] == (ISelectable)this)) && hierarchical)
+        if ((sels.Length == 0 || (sels.Length == 1 && sels[0] == (ISelectable) this)) && hierarchical)
         {
             foreach (ISelectable selChild in GetInteractablePartRoot(this).GetComponentsInChildren<ISelectable>(true))
             {
@@ -826,8 +812,8 @@ public class InteractablePart : SceneObject, ISelectable
         {
             iPartToReturn = newIPart[0];
         }
-
+        
         return iPartToReturn;
     }
-    #endregion
+#endregion
 }

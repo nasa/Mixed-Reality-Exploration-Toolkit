@@ -21,11 +21,17 @@ public class ObjectPanelsMenuController : MonoBehaviour
     public void Initialize()
     {
         SetSelectedObject();
+        objectPanelController.Initialize();
         OpenMainPanel();
     }
 
     public void Close()
     {
+        if (selectedObject == null)
+        {
+            Destroy(gameObject);
+        }
+
         InteractablePart iPart = selectedObject.GetComponent<InteractablePart>();
         if (iPart)
         {
@@ -164,6 +170,24 @@ public class ObjectPanelsMenuController : MonoBehaviour
             removeChildPanelController = removeChildPanel.GetComponent<RemoveChildPanelController>();
             removeChildPanelController.selectedObject = selectedObject;
             dataDisplayListPanelController = dataDisplayListPanel.GetComponent<DataDisplayListPanelController>();
+        }
+    }
+
+    // TODO: Cleaner solution.
+    private Vector3 relativePosition = Vector3.zero;
+    private void Update()
+    {
+        if (selectedObject != null)
+        {
+            if (selectedObject.transform.hasChanged)
+            {
+                Vector3 newPos = selectedObject.transform.TransformPoint(relativePosition);
+                transform.position = newPos;
+            }
+            else
+            {
+                relativePosition = selectedObject.transform.InverseTransformPoint(transform.position);
+            }
         }
     }
 }

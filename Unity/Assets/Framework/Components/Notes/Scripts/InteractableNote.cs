@@ -13,6 +13,12 @@ public class InteractableNote : SceneObject
     private Quaternion lastSavedRotation;
     private Note note;
 
+    public new static InteractableNote Create()
+    {
+        GameObject interactableNoteGameObject = new GameObject();
+        return interactableNoteGameObject.AddComponent<InteractableNote>();
+    }
+
     void Start()
     {
         undoManager = FindObjectOfType<UndoManager>();

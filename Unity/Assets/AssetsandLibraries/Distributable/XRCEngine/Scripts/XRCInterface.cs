@@ -102,18 +102,19 @@ namespace GSFC.ARVR.XRC
 
     public class XRCInterface
     {
+        #if !HOLOLENS_BUILD
         public const string UNDEFINED = "UNSET";
         public const int ID_LEN = 128;
         public const int NAME_LEN = 256;
         public const int DATA_LEN = 512;
         public const char NULL_CHAR = '\0';
 
-        #region Remote Session Callback Delegates
+#region Remote Session Callback Delegates
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate void RemoteSessionFunctionCallBack(string sessionId);
-        #endregion
+#endregion
 
-        #region Active Session Callback Delegates
+#region Active Session Callback Delegates
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate void ActiveSessionFunctionCallBack();
 
@@ -122,14 +123,14 @@ namespace GSFC.ARVR.XRC
 
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate void ActiveSessionParticipantFunctionCallBack(string participantId);
-        #endregion
+#endregion
 
-        #region Entity Callback delegates
+#region Entity Callback delegates
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
         public delegate void EntityFunctionCallBack(string entityId);
-        #endregion
+#endregion
 
-        #region CLI DLL Imports
+#region CLI DLL Imports
         /********************************************************************
          * STAGED ATTRIBUTE FUNCTIONS (MANAGED OBJECT BRIDGE)
          ********************************************************************/
@@ -867,9 +868,9 @@ namespace GSFC.ARVR.XRC
             [MarshalAs(UnmanagedType.LPArray)] byte[] buf,
             long bufLen);
 
-        #endregion
+#endregion
 
-        #region C# Declarations
+#region C# Declarations
 
         static void MarshalUnmanagedStrArray2ManagedStrArray(IntPtr pUnmanagedStrArray, long count, out string[] ManagedStrArray)
         {
@@ -2409,6 +2410,7 @@ namespace GSFC.ARVR.XRC
             return result;
         }
 
-        #endregion
+#endregion
+#endif
     }
 }

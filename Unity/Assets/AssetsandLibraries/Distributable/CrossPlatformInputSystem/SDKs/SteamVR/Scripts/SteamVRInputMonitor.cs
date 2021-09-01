@@ -39,7 +39,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
     /// </remarks>
     /// <summary>
     /// Input monitor for SteamVR input events.
-    /// This script exists solely because of incompatibilities
+    /// This script exists solely because of idiotic politics
     /// between Unity and Valve. As a result, SteamVR and Unity's
     /// XR Input System are incompatible when it comes to getting
     /// device input. It is my sincere hope that this script

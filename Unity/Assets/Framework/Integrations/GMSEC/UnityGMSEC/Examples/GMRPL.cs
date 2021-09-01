@@ -6,6 +6,7 @@ using GSFC.ARVR.GMSEC;
 
 public class GMRPL : MonoBehaviour
 {
+#if !HOLOLENS_BUILD
     public enum ConnectionTypes { bolt, mb, amq383, amq384, ws71, ws75, ws80 };
 
     [Tooltip("The middleware type to use.")]
@@ -138,5 +139,6 @@ public class GMRPL : MonoBehaviour
 
         return connType;
     }
-    #endregion
+#endregion
+#endif
 }

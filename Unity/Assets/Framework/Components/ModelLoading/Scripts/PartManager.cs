@@ -2,6 +2,7 @@
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using System;
+using System.IO;
 using System.Collections;
 using UnityEngine;
 using GSFC.ARVR.MRET.Common.Schemas;
@@ -69,8 +70,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject
                 Action<object> action = (object loadedPart) => {
                     OnPartLoaded((GameObject) loadedPart, null, serializedPartInfo, onLoaded, placingMode);
                 };
+#if (!UNITY_EDITOR && HOLOLENS_BUILD)
+                ModelLoading.ImportAssetBundleModelAsync(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "MRET/UWP/")
+                + serializedPartInfo.AssetBundle, assetName, action);
+#else
                 ModelLoading.ImportAssetBundleModelAsync(Application.dataPath
                 + "/StreamingAssets/Windows/" + serializedPartInfo.AssetBundle, assetName, action);
+#endif
             }
         }
 

@@ -38,7 +38,9 @@ public class DisplayController : MonoBehaviour
     public Material renderAbove;
     public Material renderHTMLAbove;
 
+#if !HOLOLENS_BUILD
     public ZenFulcrum.EmbeddedBrowser.Browser htmlBrowser;
+#endif
 
     public int displayNumber;
 
@@ -81,8 +83,10 @@ public class DisplayController : MonoBehaviour
                 gameObject.GetComponent<PanelSwitcher>().label.enabled = false;
                 canvasObject.GetComponentInChildren<RawImage>().material = renderAbove;
                 canvasObject.GetComponentInChildren<Text>().material = renderAbove;
+#if !HOLOLENS_BUILD
                 htmlBrowser.gameObject.GetComponent<MeshRenderer>().material = renderHTMLAbove;
                 htmlBrowser.gameObject.GetComponent<MeshCollider>().enabled = false;
+#endif
 
                 Destroy(gameObject.GetComponent<Interactable>());
                 Destroy(gameObject.GetComponent<Rigidbody>());
@@ -319,7 +323,9 @@ public class DisplayController : MonoBehaviour
 
     public void DimDisplay()
     {
+#if !HOLOLENS_BUILD
         htmlBrowser.EnableInput = false;
+#endif
 
         switch (type)
         {

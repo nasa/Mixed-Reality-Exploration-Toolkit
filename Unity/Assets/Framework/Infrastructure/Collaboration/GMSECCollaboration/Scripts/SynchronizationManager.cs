@@ -522,7 +522,9 @@ public class SynchronizationManager : MonoBehaviour
                     {
                         if (sessionAdvertiser)
                         {
+#if !HOLOLENS_BUILD
                             sessionAdvertiser.RespondToListRequest(msg);
+#endif
                         }
                     }
                 }
@@ -584,23 +586,25 @@ public class SynchronizationManager : MonoBehaviour
         //gmsec.Initialize();
         //Debug.Log("[SynchronizationManager] GMSEC Initialized");
 
-        //Debug.Log("[SynchronizationManager] Setting up Config");
-        //gmsec.CreateConfig();
+//Debug.Log("[SynchronizationManager] Setting up Config");
+//gmsec.CreateConfig();
 
-        //gmsec.AddToConfig("connectionType", ConnectionTypeToString(connectionType));
-        //gmsec.AddToConfig("server", server);
-        //gmsec.AddToConfig("GMSEC-REQ-RESP", "OPEN-RESP");   // Enable GMSEC open response feature.
-        //Debug.Log("[SynchronizationManager] Config Initialized");
+//gmsec.AddToConfig("connectionType", ConnectionTypeToString(connectionType));
+//gmsec.AddToConfig("server", server);
+//gmsec.AddToConfig("GMSEC-REQ-RESP", "OPEN-RESP");   // Enable GMSEC open response feature.
+//Debug.Log("[SynchronizationManager] Config Initialized");
 
-        //Debug.Log("[SynchronizationManager] Connecting");
-        //gmsec.Connect();
-        //Debug.Log("[SynchronizationManager] Connected");
+//Debug.Log("[SynchronizationManager] Connecting");
+//gmsec.Connect();
+//Debug.Log("[SynchronizationManager] Connected");
 
+#if !HOLOLENS_BUILD
         Debug.Log("[SynchronizationManager] Subscribing");
         gmsec.Subscribe("GMSEC." + missionName.ToUpper() + "." + satName.ToUpper()
             + ".MSG.ESTATE." + groupID.ToUpper() + "." + projectName.Replace(".mtproj", "").ToUpper() + ".*.*");
         subscribed = true;
         Debug.Log("[SynchronizationManager] Subscribed");
+#endif
     }
 
     public void SendPositionChange(GameObject synchronizedObject)
@@ -664,6 +668,7 @@ public class SynchronizationManager : MonoBehaviour
         string stateAttributeSubType, string entityName, System.DateTime dateTime, Transform transformToApply,
         string text, Vector3 offset3, Quaternion offset4)
     {
+#if !HOLOLENS_BUILD
         // Create Message with Header.
         gmsec.CreateNewMessage(subjectToPublish.Replace("(", "").Replace(")", "").Replace("[", "").Replace("]", ""));
         gmsec.AddF32FieldToMessage("HEADER-VERSION", 2010);
@@ -790,20 +795,25 @@ public class SynchronizationManager : MonoBehaviour
                 return;
         }
         gmsec.PublishMessage();
+#endif
     }
 
     void ReceiveMessage()
     {
+#if !HOLOLENS_BUILD
         incomingMessageQueue.Enqueue(gmsec.Receive(0));
+#endif
     }
 
     // Disconnect should be called to clean up connection resources.
     void OnDestroy()
     {
+#if !HOLOLENS_BUILD
         if (gmsec)
         {
             gmsec.Disconnect();
         }
+#endif
     }
 
 #region Helpers
@@ -862,5 +872,5 @@ public class SynchronizationManager : MonoBehaviour
 
         return fullPath;
     }
-    #endregion
+#endregion
 }

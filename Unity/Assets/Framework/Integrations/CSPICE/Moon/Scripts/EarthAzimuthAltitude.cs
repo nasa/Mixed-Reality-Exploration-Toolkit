@@ -87,6 +87,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
          */
         void CalculateEarthPosition(DateTime atTime, double lon, double lat, double el)
         {
+#if !HOLOLENS_BUILD
             double et;
             double r, az, alt;
             double[] earthvec = new double[3];
@@ -121,7 +122,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 dataManager.SaveValue(KEY_EARTH_ALTITUDE_RAD, alt);
                 dataManager.SaveValue(KEY_EARTH_ALTITUDE_DEG, LunarModel.ToDegrees(alt));
             }
-
+#endif
         }
 
         /// <seealso cref="MRETUpdateBehaviour.IntegrityCheck"/>
@@ -148,6 +149,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
             // Initialize the CSPICE DLL
             try
             {
+#if !HOLOLENS_BUILD
                 // Get the CSPICE package path
                 string cspicePath = PackageLoader.GetPackagePath(Application.dataPath, XRCSPICE_PACKAGE_NAME);
 
@@ -161,6 +163,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
 
                 // Mark as loaded
                 f_kernelsLoaded = true;
+#endif
             }
             catch (Exception e)
             {
@@ -193,7 +196,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                 var userLongitudeVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_CENTER_LONGITUDE_DEG);
 //              var userElevationVar = dataManager.FindPoint(SurfaceLocation.KEY_ELEVATION_M);
                 var userElevationVar = dataManager.FindPoint(SurfaceLocation.KEY_TERRAIN_CENTER_ELEVATION_M);
-
+#if !HOLOLENS_BUILD
                 if ((userTimeVar is DateTime) &&
                     (userLatitudeVar is double) &&
                     (userLongitudeVar is double) &&
@@ -208,6 +211,7 @@ namespace GSFC.ARVR.SOLARSYSTEM.CELESTIALBODIES.LUNAR.MODEL
                     // Set the position of the Earth light
                     CalculateEarthPosition(userTime, userLongitude, userLatitude, userElevation);
                 }
+#endif
             }
         }
     }

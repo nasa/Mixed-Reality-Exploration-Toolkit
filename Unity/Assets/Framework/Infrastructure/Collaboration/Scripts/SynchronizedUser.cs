@@ -172,6 +172,7 @@ public class SynchronizedUser : MonoBehaviour
 
     void Update()
     {
+#if !HOLOLENS_BUILD
         positionThrottleCounter++;
         rotationThrottleCounter++;
         scaleThrottleCounter++;
@@ -257,5 +258,6 @@ public class SynchronizedUser : MonoBehaviour
                 }
             }
         }
+#endif
     }
 }

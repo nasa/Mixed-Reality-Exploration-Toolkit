@@ -52,6 +52,7 @@ public class SessionMasterNode : MonoBehaviour
 
     public void StartRunning(SessionInformation sessionInfo, string alias)
     {
+#if !HOLOLENS_BUILD
         if (gmsec == null)
         {
             gmsec = gameObject.AddComponent<MonoGMSEC>();
@@ -83,10 +84,12 @@ public class SessionMasterNode : MonoBehaviour
         subscribed = true;
 
         Debug.Log("[SessionMasterNode] Node Initialized");
+#endif
     }
 
     public void SendEntityStateResponse(GMSECMessage msg)
     {
+#if !HOLOLENS_BUILD
         // Update number of users.
         currentSessionInfo.numUsers = synchronizedUsers.Count;
 
@@ -148,10 +151,12 @@ public class SessionMasterNode : MonoBehaviour
         rightPointer.lineRenderer = newUser.transform.Find("Right/Laser").GetComponent<LineRenderer>();
 
         synchronizedUsers.Add(newUser);
+#endif
     }
 
     void ReceiveMessage()
     {
+#if !HOLOLENS_BUILD
         GMSECMessage msg = gmsec.Receive(0);
         if (msg != null)
         {
@@ -160,18 +165,21 @@ public class SessionMasterNode : MonoBehaviour
                 SendEntityStateResponse(msg);
             }
         }
+#endif
     }
 
     // Disconnect should be called to clean up connection resources.
     void OnDestroy()
     {
+#if !HOLOLENS_BUILD
         if (gmsec)
         {
             gmsec.Disconnect();
         }
+#endif
     }
 
-    #region Helpers
+#region Helpers
     private string ConnectionTypeToString(ConnectionTypes rawConnType)
     {
         string connType = "gmsec_bolt";
@@ -213,5 +221,5 @@ public class SessionMasterNode : MonoBehaviour
 
         return connType;
     }
-    #endregion
+#endregion
 }

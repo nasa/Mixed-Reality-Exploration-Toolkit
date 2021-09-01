@@ -20,6 +20,12 @@ public class Animation_link : MonoBehaviour
 	float m_ForwardAmount;
 	Vector3 m_GroundNormal;
 	float m_TurnAmount;
+
+    public FakingState currentFakingState;
+
+    public RuntimeAnimatorController AstroAnimator;
+    public RuntimeAnimatorController FakingMotionAnimator;
+
 	public GameObject PlayerController;
 	public Camera cam;
 
@@ -34,11 +40,19 @@ public class Animation_link : MonoBehaviour
 	{
 		m_Animator = GetComponent<Animator>();
 
+        if(currentFakingState == FakingState.FAKE)
+        {
+            m_Animator.runtimeAnimatorController = FakingMotionAnimator;
+        }
+        else if(currentFakingState == FakingState.NOFAKE)
+        {
+            m_Animator.runtimeAnimatorController = AstroAnimator;
+        }
 	}
 
 
 
-	// Update is called once per frame
+
 	/// <summary>
 	/// This relys on the old unity input system because the values given back from activeHands[1].navigateValue isn't consistent
 	/// this results in a behavior that makes the run animation only play in one direction.
@@ -50,22 +64,88 @@ public class Animation_link : MonoBehaviour
 		
 		if(activeHands.Count > 0 && activeHands.Count <= 2)
         {
-			Vector2 input = activeHands[1].navigateValue;
-			//Added for animation
-			m_CamForward = Vector3.Scale(cam.transform.forward, new Vector3(1, 0, 1)).normalized;
-
-			//TODO: UnityStandardAssets.CrossPlatformInput.CrossPlatformInputManager.GetAxis("Mouse X") << This will need changed maybe?
-			//Will need inputrig specific function that will allow for getting whether or not the mouse is moving left or right across the screen
-			//based on a -1.0 to a 1.0 value
-
-			//TODO: Look at events for input head so that you can tie to input head event to know if head moved across it's "axis" up/down left/right
-
-			//Dicslaimer: UnityStandardAssets.CrossPlatformInput.CrossPlatformInputManager don't model after this
-			m_Move = input.y * m_CamForward + UnityStandardAssets.CrossPlatformInput.CrossPlatformInputManager.GetAxis("Mouse X") * cam.transform.right;
-			transform.forward = Vector3.Scale(cam.transform.forward, new Vector3(1, 0, 1)).normalized;
-			Move(m_Move);
+			if (currentFakingState == FakingState.FAKE)
+			{
+				FakeingUpdate(activeHands);
+			}
+			else if(currentFakingState == FakingState.NOFAKE)
+            {
+				NoFakeUpdate(activeHands);
+            }
 		}
 		
+	}
+
+    #region NO_ANIM_FAKE
+	void NoFakeUpdate(List<InputHand> activeHands)
+    {
+
+		//Update the left hand
+		SetNoFakeHandState(activeHands[0], "GestureLeft");
+
+		//Update the right hand
+		SetNoFakeHandState(activeHands[1], "GestureRight");
+
+
+
+    }
+
+	void SetNoFakeHandState(InputHand currHand, string name)
+    {
+
+		//selectPressed = Trigger
+		//navigatePressing = Joystick
+		//grabbing = grip
+		if(currHand.selectPressed && currHand.navigatePressing && currHand.grabbing)
+        {
+			m_Animator.SetInteger(name, (int)HandAnimStates.FIST);
+		}
+		else if (currHand.selectPressed && currHand.grabbing)
+        {
+			m_Animator.SetInteger(name, (int)HandAnimStates.THUMBSUP);
+		}
+		else if(currHand.navigatePressing && currHand.grabbing)
+        {
+			m_Animator.SetInteger(name, (int)HandAnimStates.POINT);
+		}
+		else if(currHand.selectPressed && currHand.navigatePressing)
+        {
+			m_Animator.SetInteger(name, (int)HandAnimStates.ROCKNROLL);
+        }
+		else if(currHand.grabbing)
+        {
+			m_Animator.SetInteger(name, (int)HandAnimStates.POINT);
+        }
+        else if(currHand.navigatePressing)
+        {
+            m_Animator.SetInteger(name, (int)HandAnimStates.OPEN);
+        }
+		else
+        {
+			m_Animator.SetInteger(name, 0); //Default State
+        }
+		
+
+	}
+    #endregion
+
+    #region ANIM_FAKE
+    void FakeingUpdate(List<InputHand> activeHands)
+    {
+		Vector2 input = activeHands[1].navigateValue;
+		//Added for animation
+		m_CamForward = Vector3.Scale(cam.transform.forward, new Vector3(1, 0, 1)).normalized;
+
+		//TODO: UnityStandardAssets.CrossPlatformInput.CrossPlatformInputManager.GetAxis("Mouse X") << This will need changed maybe?
+		//Will need inputrig specific function that will allow for getting whether or not the mouse is moving left or right across the screen
+		//based on a -1.0 to a 1.0 value
+
+		//TODO: Look at events for input head so that you can tie to input head event to know if head moved across it's "axis" up/down left/right
+
+		//Dicslaimer: UnityStandardAssets.CrossPlatformInput.CrossPlatformInputManager don't model after this
+		m_Move = input.y * m_CamForward + UnityStandardAssets.CrossPlatformInput.CrossPlatformInputManager.GetAxis("Mouse X") * cam.transform.right;
+		transform.forward = Vector3.Scale(cam.transform.forward, new Vector3(1, 0, 1)).normalized;
+		FakingMove(m_Move);
 	}
 
 
@@ -75,7 +155,7 @@ public class Animation_link : MonoBehaviour
 	/// <param name="move"></param>
 	/// <param name="grounded"></param>
 	/// <param name="crouch"></param>
-	public void Move(Vector3 move, bool grounded = true, bool crouch = false)
+	public void FakingMove(Vector3 move, bool grounded = true, bool crouch = false)
 	{
 
 		m_IsGrounded = grounded;
@@ -95,7 +175,7 @@ public class Animation_link : MonoBehaviour
 
 
 		// send input and other state parameters to the animator
-		UpdateAnimator(move);
+		UpdateFakingAnimator(move);
 	}
 
 
@@ -103,7 +183,7 @@ public class Animation_link : MonoBehaviour
 	/// This function takes the move values and then proceedes to drive the animator with them with a basic set. 
 	/// </summary>
 	/// <param name="move"></param>
-	public void UpdateAnimator(Vector3 move)
+	public void UpdateFakingAnimator(Vector3 move)
 	{
 		// update the animator parameters
 		m_Animator.SetFloat("Forward", m_ForwardAmount, 0.05f, Time.deltaTime);
@@ -128,5 +208,27 @@ public class Animation_link : MonoBehaviour
 		}
 
 	}
+    #endregion
+
+    /// <summary>
+    /// This is the enumeration that handles the current faking state. 
+    /// </summary>
+    public enum FakingState
+    {
+        NOFAKE,
+        FAKE
+    }
+
+    /// <summary>
+    /// These coorispond to the hand animator states in the AstroAnimator
+    /// </summary>
+	public enum HandAnimStates
+    {
+		FIST = 1,
+		OPEN = 2,
+		POINT = 3,
+		ROCKNROLL = 4,
+		THUMBSUP = 5
+    }
 }
 

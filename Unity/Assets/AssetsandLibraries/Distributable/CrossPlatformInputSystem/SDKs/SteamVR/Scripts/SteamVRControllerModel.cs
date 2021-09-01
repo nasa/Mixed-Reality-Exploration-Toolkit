@@ -78,9 +78,16 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
         [Tooltip("Name of the controller.")]
         public string controllerName;
 
-        void Start()
+        int numWaited = 0;
+        void Update()
         {
-            ReadJSON();
+            if (numWaited < 30)
+            {
+                if (++numWaited >= 30)
+                {
+                    ReadJSON();
+                }
+            }
         }
 
         /// <summary>
