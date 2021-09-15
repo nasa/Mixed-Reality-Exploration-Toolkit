@@ -60,6 +60,9 @@ Now navigate in Unity to `Project > Assets > Framework > Scenes > MainScene` and
 ### Additional Configuration
 Ensure that Project Settings->Player->Other Settings->Active Input Handling is set to "Both".
 
+## Known Issues
+* Controllers Not Showing with SteamVR 1.18: A change was made in SteamVR 1.18 that causes controllers to no longer appear in MRET. This will be resolved in an upcoming MRET 21.2.1 patch, as well as 21.3. MRET 21.2.1 is expected to be released by the end of September 2021.
+
 ## Contributing
 
 Pull requests are welcome. For more information on contributing, please see [Contributing.md](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/blob/master/CONTRIBUTING.md).
