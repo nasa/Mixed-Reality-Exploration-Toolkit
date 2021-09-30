@@ -14,6 +14,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
     /// <remarks>
     /// History:
     /// 27 October 2020: Created
+    /// 9 September 2021: Supporting fix to previously invalid JSON syntax in SteamVR.
     /// </remarks>
     /// <summary>
     /// Loads controller models from SteamVR render model folder.
@@ -21,7 +22,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
     /// </summary>
     public class SteamVRControllerModel : MonoBehaviour
     {
-#region JSON
+        #region JSON
         private class SteamVRControllerModelInfo
         {
             public class SteamVRControllerModelComponentLocal
@@ -70,7 +71,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
             public string thumbnail;
             public Dictionary<string, SteamVRControllerModelComponentInfo> components;
         }
-#endregion
+        #endregion
 
         /// <summary>
         /// Name of the controller.
@@ -119,8 +120,22 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
                 }
 
                 string rawJSON = File.ReadAllText(jsonPath);
-                rawJSON = rawJSON.Remove(rawJSON.LastIndexOf("}"), 1);
-                SetUpControllerModel(JsonConvert.DeserializeObject<SteamVRControllerModelInfo>(rawJSON));
+                try
+                {
+                    SetUpControllerModel(JsonConvert.DeserializeObject<SteamVRControllerModelInfo>(rawJSON));
+                }
+                catch (Exception)
+                {
+                    Debug.Log("[SteamVRControllerModel->ReadJSON] Failed to deserialize raw JSON file, attempting to correct.");
+                    try
+                    {
+                        SetUpControllerModel(JsonConvert.DeserializeObject<SteamVRControllerModelInfo>(rawJSON.Remove(rawJSON.LastIndexOf("}"), 1)));
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError("[SteamVRControllerModel->ReadJSON] Failed to deserialize raw JSON file: " + e.ToString());
+                    }
+                }
             }
         }
 

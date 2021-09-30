@@ -566,6 +566,19 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
             timeManager.Initialize();
             Debug.Log("[MRET] Time Manager ready.");
 
+            Debug.Log("[MRET] Initializing Configuration Manager...");
+            if (configurationManager == null)
+            {
+                configurationManager = FindObjectOfType<ConfigurationManager>();
+                if (configurationManager == null)
+                {
+                    Debug.LogError("[MRET] Fatal Error. Unable to initialize configuration manager. Aborting...");
+                    Application.Quit();
+                }
+            }
+            configurationManager.Initialize();
+            Debug.Log("[MRET] Configuration Manager initialized.");
+
             Debug.Log("[MRET] Setting up input rig...");
             if (inputRig == null)
             {
@@ -621,19 +634,6 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
                 // Not our script, can't control initialization.
             }
             Debug.Log("[MRET] Point Cloud Manager ready.");
-
-            Debug.Log("[MRET] Initializing Configuration Manager...");
-            if (configurationManager == null)
-            {
-                configurationManager = FindObjectOfType<ConfigurationManager>();
-                if (configurationManager == null)
-                {
-                    Debug.LogError("[MRET] Fatal Error. Unable to initialize configuration manager. Aborting...");
-                    Application.Quit();
-                }
-            }
-            configurationManager.Initialize();
-            Debug.Log("[MRET] Configuration Manager initialized.");
 
             Debug.Log("[MRET] Initializing Control Mode...");
             if (controlMode == null)

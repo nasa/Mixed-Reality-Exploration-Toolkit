@@ -12,6 +12,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
     /// 27 October 2020: Created
     /// 03 February 2021: Added ArmSwing locomotion (J. Hosler)
     /// 17 August 2021: Added pointer functions.
+    //  29 September 2021: Checking for teleport blocking when performing
+    //  a teleport complete (D Baker)
     /// </remarks>
     /// <summary>
     /// InputHand is a class that contains references
@@ -434,9 +436,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             navigateCompleteEvent.Invoke(this);
         }
 
-#region Locomotion
+        #region Locomotion
 
-#region Locomotion [Teleport]
+        #region Locomotion [Teleport]
 
         /// <summary>
         /// The maximum distance for teleporting (meters).
@@ -498,7 +500,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// </summary>
         public void CompleteTeleport()
         {
-            inputHandSDK.CompleteTeleport();
+            if (inputHandSDK.teleportBlocked == false)
+            {
+                inputHandSDK.CompleteTeleport();
+            }
         }
 
         /// <summary>
@@ -517,9 +522,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             inputHandSDK.UnblockTeleport();
         }
 
-#endregion // Locomotion [Teleport]
+        #endregion // Locomotion [Teleport]
 
-#region Locomotion [Armswing]
+        #region Locomotion [Armswing]
 
         /// <summary>
         /// Enables armswing for this hand.
@@ -537,9 +542,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             inputHandSDK.DisableArmswing();
         }
 
-#endregion // Locomotion [Armswing]
+        #endregion // Locomotion [Armswing]
 
-#region Locomotion [Fly]
+        #region Locomotion [Fly]
 
         /// <summary>
         /// Enables flying for this hand.
@@ -557,9 +562,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             inputHandSDK.DisableFly();
         }
 
-#endregion // Locomotion [Fly]
+        #endregion // Locomotion [Fly]
 
-#region Locomotion [Navigate]
+        #region Locomotion [Navigate]
 
         /// <summary>
         /// Enables navigation for this hand.
@@ -577,11 +582,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             inputHandSDK.DisableNavigate();
         }
 
-#endregion // Locomotion [Navigate]
+        #endregion // Locomotion [Navigate]
 
-#endregion // Locomotion
+        #endregion // Locomotion
 
-#region UI Handling
+        #region UI Handling
         /// <summary>
         /// Turns the UI laser on.
         /// </summary>
@@ -610,7 +615,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         {
             inputHandSDK.UIPointerSelect();
         }
-#endregion
+        #endregion
     }
 
     /// <summary>
