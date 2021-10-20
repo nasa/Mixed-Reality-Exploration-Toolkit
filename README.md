@@ -28,7 +28,7 @@ Hence import all these assets first into the project under [Unity/Assets/Assetsa
 
 * [SteamVR](https://github.com/ValveSoftware/steamvr_unity_plugin/releases/tag/2.6.1) Version 2.6.1
 * [VR Capture](https://assetstore.unity.com/packages/tools/video/vr-capture-75654) Version 11.6
-* [MRTK](https://github.com/microsoft/MixedRealityToolkit-Unity) Version 2.6.1
+* [MRTK](https://github.com/microsoft/MixedRealityToolkit-Unity/releases/download/v2.7.2/Microsoft.MixedReality.Toolkit.Unity.Foundation.2.7.2.unitypackage) Version 2.7.2
 
 ### Paid assets:
 
@@ -57,11 +57,13 @@ Now navigate in Unity to `Project > Assets > Framework > Scenes > MainScene` and
 
 (you will still need the MRET Components to be placed, where they need to be placed to..)
 
+* For Siccity GLTF, Git must be installed and in the PATH. After installing Git, relaunch your user account to reinitialize the environment variables for Unity.
+
 ### Additional Configuration
-Ensure that Project Settings->Player->Other Settings->Active Input Handling is set to "Both".
+Ensure that Project Settings->Player->Other Settings->Active Input Handling is set to "Both". Define "MRET_2021_OR_LATER" in the project settings.
 
 ## Known Issues
-* Controllers Not Showing with SteamVR 1.18: A change was made in SteamVR 1.18 that causes controllers to no longer appear in MRET. This will be resolved in an upcoming MRET 21.2.1 patch, as well as 21.3. MRET 21.2.1 is expected to be released by the end of September 2021.
+Easy Build System 5.2.5 is no longer available from the Unity Asset Store. Contacting the developer might work. MRET 21.3 will support the latest version of Easy Build System.
 
 ## Contributing
 
