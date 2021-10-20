@@ -48,7 +48,7 @@ Prices give a ballpark estimate for building MRET as of 2021.03.30. The prices o
 
 * [Pointcloud viewer and tools](https://assetstore.unity.com/packages/tools/utilities/point-cloud-viewer-and-tools-16019) Version 2.40 - $100 When importing this one, uncheck the “Editor” folder (otherwise MRET will run in Unity but not compile).
 * [Runtime OBJ Importer](https://assetstore.unity.com/packages/tools/modeling/runtime-obj-importer-49547) Version 2.02 - Free
-After importing this asset, modify the string in "Shader.Find" on line 160 of MTLLoader.cs to "Standard" (i.e. Shader.Find("Standard")).
+After importing this asset, modify the string in "Shader.Find" on line 160 of MTLLoader.cs to "Standard" (i.e. Shader.Find("HDRP/Lit")).
 
 ### Unity Packages
 * If the OpenVR Unity XR package doesn't install correctly using the Package Manager, it can also be downloaded from [GitHub](https://github.com/ValveSoftware/unity-xr-plugin). Note, you will need to remove the reference to the OpenVR Unity XR package from the package.manifest if going this route.
