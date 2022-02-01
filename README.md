@@ -26,7 +26,6 @@ Hence import all these assets first into the project under [Unity/Assets/Assetsa
 
 ### Free assets:
 
-* [SteamVR](https://github.com/ValveSoftware/steamvr_unity_plugin/releases/tag/2.6.1) Version 2.6.1
 * [VR Capture](https://assetstore.unity.com/packages/tools/video/vr-capture-75654) Version 11.6
 * [MRTK](https://github.com/microsoft/MixedRealityToolkit-Unity/releases/download/v2.7.2/Microsoft.MixedReality.Toolkit.Unity.Foundation.2.7.2.unitypackage) Version 2.7.2
 
@@ -51,7 +50,7 @@ Prices give a ballpark estimate for building MRET as of 2021.03.30. The prices o
 After importing this asset, modify the string in "Shader.Find" on line 160 of MTLLoader.cs to "Standard" (i.e. Shader.Find("HDRP/Lit")).
 
 ### Unity Packages
-* If the OpenVR Unity XR package doesn't install correctly using the Package Manager, it can also be downloaded from [GitHub](https://github.com/ValveSoftware/unity-xr-plugin). Note, you will need to remove the reference to the OpenVR Unity XR package from the package.manifest if going this route.
+* If the OpenXR Unity XR package doesn't install correctly using the Package Manager, it can also be downloaded from [GitHub](https://github.com/ValveSoftware/unity-xr-plugin). Note, you will need to remove the reference to the OpenVR Unity XR package from the package.manifest if going this route.
 
 Now navigate in Unity to `Project > Assets > Framework > Scenes > MainScene` and open either VR or Desktop scene.
 
