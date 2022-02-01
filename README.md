@@ -18,7 +18,7 @@ Download the release package from the [release page](https://github.com/nasa/Mix
 
 ## Installation (Development Environment)
 
-`git clone https://github.com/nasa/Mixed-Reality-Exploration-Toolkit` into the folder you would like the MRET project to be for your Unity **2019.4.17f1**. Yes, that specific Unity version is important!
+`git clone https://github.com/nasa/Mixed-Reality-Exploration-Toolkit` into the folder you would like the MRET project to be for your Unity **2020.3.2f1**. Yes, that specific Unity version is important!
 
 In Unity Hub “ADD” the MRET project from the folder where you cloned it to.
 Once Unity opens, **DO NOT** change the scene to MRET scene, because you want the necessary assets to be included in the project before. 
