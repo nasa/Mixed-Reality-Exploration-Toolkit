@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 09afb60101de44641a1315f6ec040f65
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - thisMeshRend: {instanceID: 0}
+  - originalMat: {instanceID: 0}
+  - partStatusMat: {fileID: 2100000, guid: 3fb0bb03c8a357e4d82efd0c90e2e3e5, type: 2}
+  - wireframeMat: {fileID: 2100000, guid: ecb6a1c1dc624f74f88918c3af5822de, type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

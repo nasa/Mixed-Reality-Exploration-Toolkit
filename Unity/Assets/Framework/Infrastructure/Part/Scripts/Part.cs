@@ -99,6 +99,8 @@ namespace GSFC.ARVR.MRET.Common.Schemas
 
         private string versionField;
 
+        private ROSConnectionType rosConnectionField;
+
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Vendor")]
         public string[] Vendor
@@ -600,6 +602,20 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             set
             {
                 this.versionField = value;
+            }
+        }
+
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("ROSConnectionType")]
+        public ROSConnectionType ROSConnectionType
+        {
+            get
+            {
+                return this.rosConnectionField;
+            }
+            set
+            {
+                this.rosConnectionField = value;
             }
         }
     }
@@ -1175,6 +1191,136 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                 this.wField = value;
             }
         }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
+    [System.SerializableAttribute()]
+    [System.Diagnostics.DebuggerStepThroughAttribute()]
+    [System.ComponentModel.DesignerCategoryAttribute("code")]
+    [System.Xml.Serialization.XmlTypeAttribute(Namespace = "http://www.example.org/MRET")]
+    public partial class ROSConnectionType
+    {
+
+        private string rOSBridgeServerURLField;
+
+        private ROSConnectionTypeProtocol protocolField;
+
+        private ROSConnectionTypeSerializer serializerField;
+
+        private float timeoutField;
+
+        private string jointStateSubscriberTopic;
+
+        private string jointStatePublisherTopic;
+
+        private string urdfPath;
+
+        /// <remarks/>
+        public string ROSBridgeServerURL
+        {
+            get
+            {
+                return this.rOSBridgeServerURLField;
+            }
+            set
+            {
+                this.rOSBridgeServerURLField = value;
+            }
+        }
+
+        /// <remarks/>
+        public ROSConnectionTypeProtocol Protocol
+        {
+            get
+            {
+                return this.protocolField;
+            }
+            set
+            {
+                this.protocolField = value;
+            }
+        }
+
+        /// <remarks/>
+        public ROSConnectionTypeSerializer Serializer
+        {
+            get
+            {
+                return this.serializerField;
+            }
+            set
+            {
+                this.serializerField = value;
+            }
+        }
+
+        public string JointStateSubscriberTopic
+        {
+            get
+            {
+                return this.jointStateSubscriberTopic;
+            }
+            set
+            {
+                this.jointStateSubscriberTopic = value;
+            }
+        }
+
+        public string JointStatePublisherTopic
+        {
+            get
+            {
+                return this.jointStatePublisherTopic;
+            }
+            set
+            {
+                this.jointStatePublisherTopic = value;
+            }
+        }
+
+        public string UrdfPath
+        {
+            get
+            {
+                return this.urdfPath;
+            }
+            set
+            {
+                this.urdfPath = value;
+            }
+        }
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.example.org/MRET")]
+    public enum ROSConnectionTypeProtocol
+    {
+
+        /// <remarks/>
+        WebSocketSharp,
+
+        /// <remarks/>
+        WebSocketDotNET,
+    }
+
+    /// <remarks/>
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("xsd", "4.8.3928.0")]
+    [System.SerializableAttribute()]
+    [System.Xml.Serialization.XmlTypeAttribute(AnonymousType = true, Namespace = "http://www.example.org/MRET")]
+    public enum ROSConnectionTypeSerializer
+    {
+
+        /// <remarks/>
+        Microsoft,
+
+        /// <remarks/>
+        NewtonSoft_JSON,
+
+        /// <remarks/>
+        NewtonSoft_BSON,
     }
 
     /// <remarks/>

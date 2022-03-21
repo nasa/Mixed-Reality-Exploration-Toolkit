@@ -1,8 +1,14 @@
-﻿using System;
+﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 using GSFC.ARVR.MRET.Common.Schemas;
 using GSFC.ARVR.MRET.Components.Notes;
 using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
+using GSFC.ARVR.MRET.Components.LineDrawing;
+using GSFC.ARVR.MRET.Infrastructure.Framework;
 
 public class ProjectAction : BaseAction
 {
@@ -124,10 +130,40 @@ public class ProjectAction : BaseAction
 
     public static ProjectAction AddDrawingAction(DrawingType drawing)
     {
+        //foreach (GSFC.ARVR.MRET.Components.LineDrawing.LineDrawing ld in MRET.SceneObjectManager.lineDrawings)
+        {
+            //if (ld.uuid.ToString() == drawing.GUID)
+            {
+                return new ProjectAction()
+                {
+                    actionType = ProjectActionType.AddDrawing,
+                    drawingOfInterest = drawing,
+                    guidOfInterest = drawing.GUID
+                };
+            }
+        }
+    }
+
+    public static ProjectAction AddDrawingAction(GSFC.ARVR.MRET.Components.LineDrawing.LineDrawing drawing)
+    {
+        List<Vector3> pts = new List<Vector3>();
+        foreach (Vector3 pt in drawing.points)
+        {
+            pts.Add(drawing.transform.TransformPoint(pt));
+        }
         return new ProjectAction()
         {
             actionType = ProjectActionType.AddDrawing,
-            drawingOfInterest = drawing
+            drawingOfInterest = new DrawingType()
+            {
+                DesiredUnits = LineDrawingUnitsType.meters,
+                GUID = drawing.uuid.ToString(),
+                Name = drawing.name,
+                Points = SerializeVector3Array_s(pts.ToArray()),
+                RenderType = drawing is VolumetricDrawing ? "cable" : "drawing",
+                Width = drawing.GetWidth()
+            },
+            guidOfInterest = drawing.uuid.ToString()
         };
     }
 
@@ -493,7 +529,7 @@ public class ProjectAction : BaseAction
             case ProjectActionType.AddDrawing:
                 if (drawingOfInterest != null)
                 {
-                    DrawLineManager dlm = FindObjectOfType<DrawLineManager>();
+                    /*DrawLineManager dlm = FindObjectOfType<DrawLineManager>();
                     if (dlm)
                     {
                         GameObject drawing = GameObject.Find("LoadedProject/Drawings/" + drawingOfInterest.Name);
@@ -512,7 +548,38 @@ public class ProjectAction : BaseAction
                             (LineDrawing.RenderTypes)Enum.Parse(typeof(LineDrawing.RenderTypes),
                             drawingOfInterest.RenderType.ToString()), (LineDrawing.unit)Enum.Parse(typeof(LineDrawing.unit),
                             drawingOfInterest.DesiredUnits.ToString()), drawingOfInterest.Name, new Guid(drawingOfInterest.GUID));
+                    }*/
+                    //GameObject drawing = GameObject.Find("LoadedProject/Parts/LineDrawing-" + drawingOfInterest.Name);
+                    //    UnityProject proj = FindObjectOfType<UnityProject>();
+
+                    GSFC.ARVR.MRET.Components.LineDrawing.LineDrawing drawing = null;
+                    foreach (SceneObject so in FindObjectsOfType<SceneObject>())
+                    {
+                        if (so.uuid == Guid.Parse(guidOfInterest))
+                        {
+                            if (so is GSFC.ARVR.MRET.Components.LineDrawing.LineDrawing)
+                            {
+                                drawing = (GSFC.ARVR.MRET.Components.LineDrawing.LineDrawing) so;
+                            }
+                        }
                     }
+
+                    // Check for duplicates.
+                    if (MRET.Project != null && !allowDuplicates && drawing != null)
+                    {
+                        if (drawing.transform.parent == MRET.Project.projectDrawingContainer.transform)
+                        {
+                            break;
+                        }
+                    }
+
+                    MRET.SceneObjectManager.CreateLineDrawing(drawingOfInterest.Name, null,
+                        Vector3.zero, Quaternion.identity, Vector3.one,
+                        drawingOfInterest.RenderType == "cable" ?
+                        GSFC.ARVR.MRET.Infrastructure.Framework.LineDrawing.LineDrawingManager.DrawingType.Volumetric :
+                        GSFC.ARVR.MRET.Infrastructure.Framework.LineDrawing.LineDrawingManager.DrawingType.Basic,
+                        drawingOfInterest.Width, Color.green, DeserializeVector3Array_s(drawingOfInterest.Points),
+                        Guid.Parse(drawingOfInterest.GUID));
                 }
                 break;
 
@@ -522,11 +589,19 @@ public class ProjectAction : BaseAction
                     Guid guidToCheck = Guid.NewGuid();
                     if (Guid.TryParse(guidOfInterest, out guidToCheck))
                     {
-                        foreach (LineDrawing drw in UnityProject.instance.projectDrawingContainer.GetComponentsInChildren<LineDrawing>())
+                        /*foreach (LineDrawing drw in UnityProject.instance.projectDrawingContainer.GetComponentsInChildren<LineDrawing>())
                         {
                             if (drw.guid == guidToCheck)
                             {
                                 Destroy(drw.meshModel.gameObject);
+                            }
+                        }*/
+                        foreach (GSFC.ARVR.MRET.Components.LineDrawing.LineDrawing drawing in
+                            FindObjectsOfType<GSFC.ARVR.MRET.Components.LineDrawing.LineDrawing>())
+                        {
+                            if (drawing.uuid == guidToCheck)
+                            {
+                                MRET.SceneObjectManager.DestroySceneObject(guidToCheck);
                             }
                         }
                     }

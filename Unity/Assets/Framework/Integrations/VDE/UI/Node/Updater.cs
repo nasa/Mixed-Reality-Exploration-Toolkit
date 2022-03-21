@@ -53,7 +53,8 @@ namespace Assets.VDE.UI.Node
             {
                 if (Time.deltaTime > owner.data.UI.maxTimeForUpdatePerFrame)
                 {
-                    yield return owner.data.UI.Sleep(owner.data.UI.timeToWaitInUpdatePerFrame);
+                    //yield return owner.data.UI.Sleep(owner.data.UI.timeToWaitInUpdatePerFrame);
+                    yield return new WaitForSeconds(owner.data.UI.timeToWaitInUpdatePerFrame / 100);
                 }
                 link.UpdatePosition(owner);
             }
@@ -61,7 +62,8 @@ namespace Assets.VDE.UI.Node
             {
                 if (Time.deltaTime > owner.data.UI.maxTimeForUpdatePerFrame)
                 {
-                    yield return owner.data.UI.Sleep(owner.data.UI.timeToWaitInUpdatePerFrame);
+                    //yield return owner.data.UI.Sleep(owner.data.UI.timeToWaitInUpdatePerFrame);
+                    yield return new WaitForSeconds(owner.data.UI.timeToWaitInUpdatePerFrame / 100);
                 }
                 link.UpdatePosition(owner);
             }

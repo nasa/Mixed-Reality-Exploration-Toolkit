@@ -42,13 +42,16 @@ namespace Assets.VDE
             ReceiveSibling,
             ChangeLayout,
             NewEntity,
-            ReNewEntity
+            ReNewEntity,
+            GotFocus
         }
 
         public struct ExportEntity
         {
             public string name { get; set; }
+            public List<int> children { get; set; }
             public int id { get; set; }
+            public int type { get; set; }
             public float[] position { get; set; }
             public float[] rotation { get; set; }
             public float[] scale { get; set; }
@@ -97,31 +100,79 @@ namespace Assets.VDE
                 }
                 if (UnityEngine.Time.deltaTime > data.UI.maxTimeForUpdatePerFrame)
                 {
-                    yield return data.UI.Sleep(20);
+                    yield return new WaitForSeconds(data.UI.timeToWaitInUpdatePerFrame / 100);
+                    //yield return data.UI.Sleep(20);
                 }
             }
         }
 
         internal void ExportShapesAndPositions()
         {
-            if (!(data.VDE.connection is null))
+            log.Entry("ExportShapesAndPositions");
+            List<ExportEntity> exportEntities = new List<ExportEntity> { };
+            foreach (Entity entity in entities.Values)
             {
-                List<ExportEntity> exportEntities = new List<ExportEntity> { };
-                foreach (Entity entity in entities.Values)
+                try
                 {
                     Shape entityShape = entity.containers.GetCurrentShape();
                     Color colour = entityShape.GetColor();
+                    float scaler = 1F, positioner = 1F;
+                    int taip = (int)entity.type;
+                    if (
+                            entity.type == Entity.Type.Node &&
+                            !entity.parent.name.Equals("Unknown") &&
+                            System.Net.IPAddress.TryParse(entity.name, out System.Net.IPAddress ipp) &&
+                            ipp.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork
+                    ){
+                        byte[] pait = ipp.GetAddressBytes();
+                        if (
+                                ipp.GetAddressBytes()[3] > 100 &&
+                                ipp.GetAddressBytes()[3] < 200
+                        )
+                        {
+                            taip = 42;
+                        } 
+                        else if (ipp.GetAddressBytes()[3] > 253)
+                        {
+                            taip = 24;
+                        }
+                    }
+
                     exportEntities.Add(new ExportEntity()
                     {
                         id = entity.id,
                         name = entity.name,
+                        type = taip,
+                        children = entity.relations.Where(rel => rel.Value == Entity.Relation.Child).Select(rel => rel.Key).ToList(),
                         colour = new float[4] { colour.r, colour.g, colour.b, Math.Max(colour.a, entity.a) },
-                        position = new float[3] { entityShape.transform.position.x, entityShape.transform.position.y, entityShape.transform.position.z },
+                        position = new float[3] { 
+                            entityShape.transform.position.x * positioner, 
+                            entityShape.transform.position.y * positioner, 
+                            entityShape.transform.position.z * positioner
+                        },
                         rotation = new float[3] { entityShape.transform.eulerAngles.x, entityShape.transform.eulerAngles.y, entityShape.transform.eulerAngles.z },
-                        scale = new float[3] { entityShape.transform.localScale.x, entityShape.transform.localScale.y, entityShape.transform.localScale.z }
+                        scale = new float[3] { 
+                            entityShape.transform.localScale.x * scaler, 
+                            entityShape.transform.localScale.y * scaler, 
+                            entityShape.transform.localScale.z * scaler
+                        }
                     });
                 }
-                data.VDE.connection.SendEntities(exportEntities);
+                catch (Exception)
+                {
+                    log.Entry("Seems that " + entity.name + " has vanished.");
+                }
+            }
+
+            if(!(data.VDE.signalRConnection is null))
+            {
+                data.VDE.signalRConnection.SendEntities(exportEntities);
+                log.Entry("positions sent to.. a server.");
+            }
+            if (data.VDE.cacheResponseFromServer)
+            {
+                System.IO.File.WriteAllText("c:\\data\\positions.json", JsonConvert.SerializeObject(exportEntities));
+                log.Entry("positions shaved to c:\\data\\positions.json");
             }
         }
 
@@ -277,7 +328,6 @@ namespace Assets.VDE
         {
             try
             {
-                int trand = data.random.Next(1, 99);
                 if (entities.TryAdd(entity.id, entity))
                 {
                     entities[entity.id].Init(data);
@@ -340,10 +390,96 @@ namespace Assets.VDE
             log.Entry("done processing entities", Log.Event.ToServer);
         }
 
-        async void MonitorEntitiesCreationProgress(Data data)
+        internal async void ImportWithShapesAndPositions(string entities, string importEntities)
+        {
+            log.Entry("processing ImportShapesAndPositions: " + importEntities.Length + " bytes.");
+            _ = System.Threading.Tasks.Task.Run(() => MonitorEntitiesCreationProgress(data));
+            List<ExportEntity> importedEntities = JsonConvert.DeserializeObject<List<ExportEntity>>(importEntities);
+            /*
+            foreach (KeyValuePair<int, ExportEntity> importEntity in JsonConvert.DeserializeObject<Dictionary<int, ExportEntity>>(importEntities).OrderByDescending(ent => ent.Value.id))
+            {
+                Entity entity;
+                while(!entities.TryGetValue(importEntity.Key, out entity))
+                { 
+                    await data.UI.Sleep(20);
+                }
+                Shape shape = entity.containers.GetCurrentShape();
+                if (shape is null)
+                {
+                    entity.presetPosition = new Vector3(importEntity.Value.position[0], importEntity.Value.position[1], importEntity.Value.position[2]);
+                    entity.presetScale = new Vector3(importEntity.Value.scale[0], importEntity.Value.scale[1], importEntity.Value.scale[2]);
+                    entity.presetRotation = new Vector3(importEntity.Value.scale[0], importEntity.Value.scale[1], importEntity.Value.scale[2]);
+                    entity.presetColour = new Color(importEntity.Value.colour[0], importEntity.Value.colour[1], importEntity.Value.colour[2], importEntity.Value.colour[3]);
+                    entity.doJoints = false;
+                } 
+                else
+                {
+                    shape.SetPositionAndScale(
+                        new Vector3(importEntity.Value.position[0], importEntity.Value.position[1], importEntity.Value.position[2]),
+                        new Vector3(importEntity.Value.scale[0], importEntity.Value.scale[1], importEntity.Value.scale[2]));
+                    shape.SetColor(new Color(importEntity.Value.colour[0], importEntity.Value.colour[1], importEntity.Value.colour[2], importEntity.Value.colour[3]));
+                    shape.SetRotation(new Vector3(importEntity.Value.scale[0], importEntity.Value.scale[1], importEntity.Value.scale[2]));
+                }
+                //entity.containers.GetCurrentShape().transform.eulerAngles = new Vector3(importEntity.Value.rotation[0], importEntity.Value.rotation[1], importEntity.Value.rotation[2]);
+            }
+            */
+            foreach (KeyValuePair<int, Entity> entity in JsonConvert.DeserializeObject<Dictionary<int, Entity>>(entities).OrderByDescending(ent => ent.Value.gm))
+            {
+                if (importedEntities.Exists(ent => ent.id == entity.Value.id))
+                {
+                    ExportEntity importedEntity = importedEntities.FirstOrDefault(ent => ent.id == entity.Value.id);
+                    entity.Value.presetPosition = new Vector3(importedEntity.position[0], importedEntity.position[1], importedEntity.position[2]);
+                    entity.Value.presetScale = new Vector3(importedEntity.scale[0], importedEntity.scale[1], importedEntity.scale[2]);
+                    entity.Value.presetRotation = new Vector3(importedEntity.scale[0], importedEntity.scale[1], importedEntity.scale[2]);
+                    entity.Value.presetColour = new Color(importedEntity.colour[0], importedEntity.colour[1], importedEntity.colour[2], importedEntity.colour[3]);
+                    entity.Value.doJoints = false;
+                }
+                AddOrUpdate(entity.Value);
+            }
+            log.Entry("done processing ImportShapesAndPositions: " + importEntities.Length + " bytes.");
+        }
+        internal async void MonitorEntitiesCreationProgress(Data data, int expected = 0)
         {
             await data.UI.Sleep(2345, 123);
-            while (data.forrestIsRunning && data.messenger.CheckLoad() > 0)
+            if (expected > 0)
+            {
+                //while (data.forrestIsRunning && data.messenger.CheckLoad() > 0)
+                while (data.forrestIsRunning && data.entities.entities.Count < expected)
+                {
+                    float progress = (float)data.entities.entities.Count() / (float)expected;
+
+                    data.messenger.Post(new Communication.Message()
+                    {
+                        HUDEvent = UI.HUD.HUD.Event.Progress,
+                        number = 1,
+                        floats = new List<float> { progress, 1 },
+                        message = "Creating entities", //: " + data.entities.entities.Where(ent => ent.Value.ready).Count() + "/" + data.entities.Count() + " = " + progress,
+                        from = data.layouts.current.GetGroot()
+                    });
+
+                    // while not done yet, sleep on it.
+                    if (progress < 1 || data.entities.entities.Count == 0)
+                    {
+                        await data.UI.Sleep(1234, 765);
+                    }
+                    // once done, flee
+                    else
+                    {
+                        break;
+                    }
+                }
+                data.messenger.Post(new Communication.Message()
+                {
+                    HUDEvent = UI.HUD.HUD.Event.Progress,
+                    number = 1,
+                    floats = new List<float> { 1, 1 },
+                    message = "Creating entities", //: " + data.entities.entities.Where(ent => ent.Value.ready).Count() + "/" + data.entities.Count() + " = " + progress,
+                    from = data.layouts.current.GetGroot()
+                });
+
+            }
+            //while (data.forrestIsRunning && data.messenger.CheckLoad() > 0)
+            while (data.forrestIsRunning && data.entities.entities.Where(ent => !ent.Value.ready).Any())
             {
                 float progress = (float) data.entities.entities.Where(ent => ent.Value.ready).Count() / (float) data.entities.Count();
 
@@ -355,15 +491,32 @@ namespace Assets.VDE
                     message = "Preparing entities", //: " + data.entities.entities.Where(ent => ent.Value.ready).Count() + "/" + data.entities.Count() + " = " + progress,
                     from = data.layouts.current.GetGroot()
                 });
-                if (progress < 1)
+
+                // while not done yet, sleep on it.
+                if (progress < 1 || data.entities.entities.Count == 0)
                 {
-                    await data.UI.Sleep(2345);
+                    await data.UI.Sleep(1234,765);
                 } 
+                // once done, flee
                 else
                 {
                     break;
                 }
             }
+            data.messenger.Post(new Communication.Message()
+            {
+                HUDEvent = UI.HUD.HUD.Event.Progress,
+                number = 0,
+                floats = new List<float> { 1, 1 },
+                message = "Preparing entities", //: " + data.entities.entities.Where(ent => ent.Value.ready).Count() + "/" + data.entities.Count() + " = " + progress,
+                from = data.layouts.current.GetGroot()
+            });
+            data.messenger.Post(new Message()
+            {
+                LayoutEvent = Layouts.Layouts.LayoutEvent.EntitiesReady,
+                number = 0,
+                from = data.layouts.current.GetGroot()
+            });
         }
 
         internal void SetShapesCollidersToTriggers(bool setTo = true)

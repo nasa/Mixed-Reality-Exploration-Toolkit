@@ -3,6 +3,7 @@
 
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace GSFC.ARVR.MRET.Selection
 {
@@ -23,6 +24,7 @@ namespace GSFC.ARVR.MRET.Selection
         public Material laserMat;
         public ControllerSelectionManager otherControllerSelectionManager;
         public GameObject selectionRaycastRoot;
+        public Text distanceText;
 
         private float maxRaycast = 1000f, laserWidth = 0.01f;
         private ISelectable currentlySelected = null;
@@ -222,6 +224,8 @@ namespace GSFC.ARVR.MRET.Selection
         {
             Ray laserRaycast = new Ray(selectionRaycastRoot.transform.position, selectionRaycastRoot.transform.forward);
             RaycastHit hit;
+            float distance = 0; // EDITED BY NATE
+            bool enableDistance = true; // EDITED BY NATE -- This value would be linked to the Settings boolean, possibly through a static variable
 
             laserRenderer.SetPosition(0, selectionRaycastRoot.transform.position);
             if (Physics.Raycast(laserRaycast, out hit, maxRaycast))
@@ -231,6 +235,7 @@ namespace GSFC.ARVR.MRET.Selection
                 {
                     currentlySelected = raycastSelectable;
                     laserRenderer.SetPosition(1, hit.point);
+                    distance = hit.distance; // EDITED BY NATE
                 }
                 else
                 {
@@ -239,11 +244,14 @@ namespace GSFC.ARVR.MRET.Selection
                     {
                         currentlySelected = raycastSelectable;
                         laserRenderer.SetPosition(1, hit.point);
+                        distance = hit.distance; // EDITED BY NATE
                     }
                     else
                     {
                         currentlySelected = null;
                         laserRenderer.SetPosition(1, selectionRaycastRoot.transform.position + selectionRaycastRoot.transform.forward * maxRaycast);
+                        distance = 0; // EDITED BY NATE
+                        enableDistance = false; // EDITED BY NATE
                     }
                 }
             }
@@ -251,7 +259,10 @@ namespace GSFC.ARVR.MRET.Selection
             {
                 currentlySelected = null;
                 laserRenderer.SetPosition(1, selectionRaycastRoot.transform.position + selectionRaycastRoot.transform.forward * maxRaycast);
+                distance = 0; // EDITED BY NATE
+                enableDistance = false; // EDITED BY NATE
             }
+            UpdateDistanceText(enableDistance, distance); // EDITED BY NATE
         }
 
         private void TryEnter(GameObject touchingObject)
@@ -272,6 +283,39 @@ namespace GSFC.ARVR.MRET.Selection
                 {
                     currentlySelected = null;
                 }
+            }
+        }
+
+        // EDITED BY NATE ******------------------------------------
+        public void UpdateDistanceText(bool enable, float distance)
+        {
+            float MAX_DISTANCE = 10f;
+            float OFFSET = 2f; // Value used to shift text off of line
+            Vector3 verticalVector = Vector3.down; // Vector used to get cross product
+
+            if (!enable)
+            {
+                distanceText.text = ""; // Removes text, appearing invisible
+                return; // exit method
+            }
+            else
+            {
+                Vector3 startPosition = laserRenderer.GetPosition(0);
+                Vector3 endPosition = laserRenderer.GetPosition(1);
+                Vector3 difference = Vector3.Normalize(endPosition - startPosition); // Unit vector of magnitude 1 in direction of laser renderer
+                Vector3 offsetVector = Vector3.Cross(difference, verticalVector).normalized; // unit vector perpendicular to the difference vector
+
+                if (distance > MAX_DISTANCE) // distance is greater than 10 meters
+                {
+                    distanceText.gameObject.transform.position = Vector3.Lerp(startPosition, endPosition,
+                        MAX_DISTANCE * System.Math.Abs(Vector3.Distance(startPosition, endPosition))); //startPosition + (difference * MAX_DISTANCE) + (offsetVector * OFFSET); // set text at 10 meters
+                }
+                else // distance is less than or equal to 10 meters
+                {
+                    distanceText.gameObject.transform.position = Vector3.Lerp(startPosition, endPosition, 0.5f); //startPosition + (difference * (distance / 2)) + (offsetVector * OFFSET); // set text at halfway point
+                }
+
+                distanceText.text = distance.ToString("#.000") + " m"; // Update text to reflect the distance to the rig after it has been moved
             }
         }
     }

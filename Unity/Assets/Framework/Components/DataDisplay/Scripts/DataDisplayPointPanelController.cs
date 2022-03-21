@@ -42,35 +42,34 @@ public class DataDisplayPointPanelController : MonoBehaviour
                 if (pointValue != null)
                 {
                     // Handle state settings.
-                    PointState pointState = DeterminePointState(pointValue);
-                    switch (pointState)
+                    switch (pointValue.limitState)
                     {
-                        case PointState.green:
+                        case DataManager.DataValue.LimitState.Nominal:
                             stateLabel.color = valueLabel.color = greenConditionColor;
                             stateLabel.text = "Green (Nominal)";
                             break;
 
-                        case PointState.yellowHigh:
+                        case DataManager.DataValue.LimitState.YellowHigh:
                             stateLabel.color = valueLabel.color = yellowConditionColor;
                             stateLabel.text = "Yellow (High)";
                             break;
 
-                        case PointState.yellowLow:
+                        case DataManager.DataValue.LimitState.YellowLow:
                             stateLabel.color = valueLabel.color = yellowConditionColor;
                             stateLabel.text = "Yellow (Low)";
                             break;
 
-                        case PointState.redHigh:
+                        case DataManager.DataValue.LimitState.RedHigh:
                             stateLabel.color = valueLabel.color = redConditionColor;
                             stateLabel.text = "Red (High)";
                             break;
 
-                        case PointState.redLow:
+                        case DataManager.DataValue.LimitState.RedLow:
                             stateLabel.color = valueLabel.color = redConditionColor;
                             stateLabel.text = "Red (Low)";
                             break;
 
-                        case PointState.unknown:
+                        case DataManager.DataValue.LimitState.Undefined:
                         default:
                             stateLabel.color = valueLabel.color = unknownConditionColor;
                             stateLabel.text = "Unknown Limits";
@@ -139,38 +138,6 @@ public class DataDisplayPointPanelController : MonoBehaviour
 #endregion
 
 #region Helpers
-    private PointState DeterminePointState(DataManager.DataValue pointValue)
-    {
-        if (pointValue != null)
-        {
-            if (pointValue.redHigh != null && pointValue.yellowHigh != null
-                        && pointValue.yellowLow != null && pointValue.redLow != null)
-            {
-                if ((double)pointValue.value >= (double)pointValue.redHigh)
-                {
-                    return PointState.redHigh;
-                }
-                else if ((double)pointValue.value >= (double)pointValue.yellowHigh)
-                {
-                    return PointState.yellowHigh;
-                }
-                else if ((double)pointValue.value >= (double)pointValue.yellowLow)
-                {
-                    return PointState.green;
-                }
-                else if ((double)pointValue.value >= (double)pointValue.redLow)
-                {
-                    return PointState.yellowLow;
-                }
-                else
-                {
-                    return PointState.redLow;
-                }
-            }
-        }
-        return PointState.unknown;
-    }
-
     private object FindMinimumValue(DataManager.DataValue pointValue)
     {
         object minimumValue = pointValue.value;

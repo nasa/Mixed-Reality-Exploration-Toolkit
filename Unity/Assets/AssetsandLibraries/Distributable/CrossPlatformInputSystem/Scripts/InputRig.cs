@@ -494,7 +494,99 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             inputRigSDK.DisableNavigation();
         }
 
-#endregion // Locomotion [Navigation]
+        #endregion // Locomotion [Navigation]
+
+#region Locomotion [Climbing]
+
+        /// <summary>
+        /// The multiplier to be applied to the normal motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingNormalMotionConstraintMultiplier
+        {
+            set
+            {
+                inputRigSDK.ClimbingNormalMotionConstraintMultiplier = value;
+            }
+            get
+            {
+                return inputRigSDK.ClimbingNormalMotionConstraintMultiplier;
+            }
+        }
+
+        /// <summary>
+        /// The multiplier to be applied to the slow motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingSlowMotionConstraintMultiplier
+        {
+            set
+            {
+                inputRigSDK.ClimbingSlowMotionConstraintMultiplier = value;
+            }
+            get
+            {
+                return inputRigSDK.ClimbingSlowMotionConstraintMultiplier;
+            }
+        }
+
+        /// <summary>
+        /// The multiplier to be applied to the fast motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingFastMotionConstraintMultiplier
+        {
+            set
+            {
+                inputRigSDK.ClimbingFastMotionConstraintMultiplier = value;
+            }
+            get
+            {
+                return inputRigSDK.ClimbingFastMotionConstraintMultiplier;
+            }
+        }
+
+        /// <summary>
+        /// The gravity constraint for climbing locomotion.
+        /// </summary>
+        public GravityConstraint ClimbingGravityConstraint
+        {
+            set
+            {
+                inputRigSDK.ClimbingGravityConstraint = value;
+            }
+            get
+            {
+                return inputRigSDK.ClimbingGravityConstraint;
+            }
+        }
+
+        /// <summary>
+        /// Indicates if climbing is enabled for this rig.
+        /// </summary>
+        /// <returns>A boolean value indicating whether or not climbing is enabled</returns>
+        public bool ClimbingEnabled
+        {
+            get
+            {
+                return inputRigSDK.ClimbingEnabled;
+            }
+        }
+
+        /// <summary>
+        /// Enables climbing for this rig.
+        /// </summary>
+        public void EnableClimbing()
+        {
+            inputRigSDK.EnableClimbing();
+        }
+
+        /// <summary>
+        /// Disables climbing for this rig.
+        /// </summary>
+        public void DisableClimbing()
+        {
+            inputRigSDK.DisableClimbing();
+        }
+
+        #endregion // Locomotion [Climbing]
 
 #endregion // Locomotion
 

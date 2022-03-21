@@ -16,6 +16,37 @@ namespace Assets.VDE.UI
         public int s { get; set; }
         public int d { get; set; }
         public int w { get; set; }
+        public Status status;
+        public enum Status
+        {
+            None,
+            GotSrc,
+            GotSrcAndDst,
+            BeingCreated,
+            Faulty,
+            Done,
+            Unnatural,
+            Duplicate
+        }
+        public int CompareTo(object obj)
+        {
+            if (obj == null) return 1;
+            ImportLink nodeToCompare = (ImportLink)obj;
+            return s.CompareTo(nodeToCompare.s) + d.CompareTo(nodeToCompare.d) + w.CompareTo(nodeToCompare.w);
+        }
+    }
+    /// <summary>
+    /// used by VDE server to send in links
+    /// </summary>
+    public class ExportLink : System.IComparable
+    {
+        public int s { get; set; }
+        public int d { get; set; }
+        public int w { get; set; }
+        public float r { get; set; }
+        public float g { get; set; }
+        public float b { get; set; }
+        public float a { get; set; }
 
         public int CompareTo(object obj)
         {
@@ -32,14 +63,14 @@ namespace Assets.VDE.UI
     {
         Log log;
         Data data;
-        Color colour;
+        internal Color colour;
         BoxCollider collie;
         internal enum Event
         {
             None = 0,
             Create,
             Delete,
-            Initialize,
+            Ready,
             Highlight
         }
 
@@ -50,7 +81,7 @@ namespace Assets.VDE.UI
         internal float alpha, defaultWidth, lineWidth, defaultScale, currentScale;
         internal bool visibleOnCreation, highlightedOnCreation, highlighted;
         internal string materialColourName = "_TintColor"; //_TintColor being the default for pre-HDRP materials.
-        internal bool ready { get; private set; }
+        internal bool ready = false;
 
         /// <summary>
         /// this cannot be done via ProcessContainer, as then the target entity might not yet exist,
@@ -150,12 +181,11 @@ namespace Assets.VDE.UI
                 CreateLine();
                 source.AddOrUpdateLink(this);
                 destination.AddOrUpdateLink(this);
-            } 
+            }
         }
 
         private void CreateLine()
         {
-            //alpha *= 1.33F;
             gameObject.transform.SetParent(sourceContainer.transform);
             gameObject.transform.localPosition = Vector3.zero;
 
@@ -163,9 +193,10 @@ namespace Assets.VDE.UI
             lineRenderer.startWidth = lineRenderer.endWidth = lineWidth;
             lineRenderer.SetPosition(lineRenderer.positionCount - 1, destinationContainer.transform.position);
             lineRenderer.SetPosition(0, sourceContainer.transform.position);
-            colour = lineRenderer.material.GetColor(materialColourName);
+            colour = lineRenderer.endColor;
+            //colour = lineRenderer.material.GetColor(materialColourName);
             SetColour(alpha);
-            lineRenderer.material.EnableKeyword("_EmissiveExposureWeight");
+            //lineRenderer.material.EnableKeyword("_EmissiveExposureWeight");
             sourceContainer.hasLinksToUpdate = destinationContainer.hasLinksToUpdate = true;
 
             if (!sourceContainer.gameObject.TryGetComponent<Assets.VDE.UI.Node.Updater>(out _))
@@ -188,12 +219,29 @@ namespace Assets.VDE.UI
             SetCollie(data.layouts.current.variables.flags["edgeCollidersEnabled"]);
             ResizeSelf();
 
-            gameObject.SetActive(visibleOnCreation || highlightedOnCreation);
+            if (!data.links.linksReady && (visibleOnCreation || highlightedOnCreation))
+            {
+                gameObject.SetActive(true);
+            }
+            else
+            {
+                gameObject.SetActive(false);
+            }
+            
             if (highlightedOnCreation)
             {
                 SetHighlightedColour(true);
             }
             ready = true;
+            Announce();
+        }
+
+        private void Announce()
+        {
+            data.messenger.Post(new Communication.Message() { 
+                LinkEvent = Event.Ready,
+                obj = new object[] { source.id, destination.id }
+            });
         }
 
         private void SetHighlightedColour(bool setTo)
@@ -233,8 +281,8 @@ namespace Assets.VDE.UI
             {
                 transform.position = lineRenderer.GetPosition(0) + (lineRenderer.GetPosition(1) - lineRenderer.GetPosition(0)) / 2;
                 transform.LookAt(lineRenderer.GetPosition(0));
-                //transform.localScale = new Vector3(lineWidth, lineWidth, (lineRenderer.GetPosition(1) - lineRenderer.GetPosition(0)).magnitude / defaultScale);
-                transform.localScale = new Vector3(0.2F, 0.2F, (lineRenderer.GetPosition(1) - lineRenderer.GetPosition(0)).magnitude / defaultScale);
+                transform.localScale = new Vector3(lineWidth, lineWidth, (lineRenderer.GetPosition(1) - lineRenderer.GetPosition(0)).magnitude / defaultScale);
+                //transform.localScale = new Vector3(0.2F, 0.2F, (lineRenderer.GetPosition(1) - lineRenderer.GetPosition(0)).magnitude / defaultScale);
             }
         }
 
@@ -290,11 +338,23 @@ namespace Assets.VDE.UI
                 alpha = alphaville;
 #endif
                 colour = new Color(colour.r, colour.g, colour.b, alpha);
-
             }
             if (!(lineRenderer is null))
             {
-                lineRenderer.material.SetColor(materialColourName, new Color(colour.r, colour.g, colour.b, alphaville));
+                lineRenderer.startColor = lineRenderer.endColor = colour;
+                if (!(destination.c is null) && ColorUtility.TryParseHtmlString(destination.c, out Color dstColour))
+                {
+                    lineRenderer.endColor = dstColour;
+                }
+                if (!(source.c is null) && ColorUtility.TryParseHtmlString(source.c, out Color srcColour))
+                {
+                    lineRenderer.startColor = srcColour;
+                }
+#if HDRP
+                lineRenderer.material.SetColor(materialColourName, new Color(1, 1, 1, alphaville * 2));
+#else
+                lineRenderer.material.SetColor(materialColourName, new Color(1, 1, 1, alphaville));
+#endif
             }
         }
 

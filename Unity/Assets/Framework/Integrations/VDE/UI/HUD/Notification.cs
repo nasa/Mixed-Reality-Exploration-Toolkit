@@ -16,7 +16,7 @@ namespace Assets.VDE.UI.HUD
         internal Camera activeCamera;
         internal string text;
         internal Font fontForRenderer;
-        internal float timeToLive, notificationOffset;
+        internal float timeToLive, notificationOffset, notificationScale;
         private int positionInPreviousFrame; // not a vector, but sequential position amongst hud notifications.
         private LineRenderer lineRenderer;
         private Vector3
@@ -47,6 +47,7 @@ namespace Assets.VDE.UI.HUD
             HUD.upperNotificationBarContents.Add(this);
             positionInPreviousFrame = HUD.upperNotificationBarContents.IndexOf(this);
             notificationOffset = data.layouts.current.variables.floats["notificationOffset"];
+            notificationScale = data.layouts.current.variables.floats["notificationScale"];
             thisGlazer = new GameObject("HUDnotification_" + target.GetInstanceID().ToString());
             thisGlazer.transform.parent = HUD.transform;
             thisGlazer.transform.localPosition = notificationsDesiredPosition = NotificationsDesiredPosition();
@@ -56,13 +57,13 @@ namespace Assets.VDE.UI.HUD
             canvas.renderMode = RenderMode.WorldSpace;
 
             UnityEngine.UI.CanvasScaler cs = thisGlazer.AddComponent<UnityEngine.UI.CanvasScaler>();
-            cs.scaleFactor = 0.3f;
+            cs.scaleFactor = notificationScale;
             cs.dynamicPixelsPerUnit = 10f;
             cs.referencePixelsPerUnit = 1f;
 
             thisGlazer.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Horizontal, 3.0f);
             thisGlazer.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, 3.0f);
-            thisGlazer.GetComponent<RectTransform>().localScale = new Vector3(0.3f, 0.3f, 0.3f);
+            thisGlazer.GetComponent<RectTransform>().localScale = notificationScale * Vector3.one;// new Vector3(0.3f, 0.3f, 0.3f);
 
             UnityEngine.UI.Text t = thisGlazer.AddComponent<UnityEngine.UI.Text>();
             t.alignment = TextAnchor.MiddleCenter;

@@ -4,9 +4,11 @@
 using System;
 using UnityEngine;
 using GSFC.ARVR.MRET.Infrastructure.Framework;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 
 public class DualAxisRotationControl : MonoBehaviour
 {
+    public InputHand hand;
     public DualAxisRotatableObject rotatingObject;
     public DualAxisRotationControl otherControl;
 
@@ -18,10 +20,15 @@ public class DualAxisRotationControl : MonoBehaviour
     {
         if (isTouching && rotatingObject)
         {
+            currentX = hand.navigateValue.x;
+            currentY = hand.navigateValue.y;
+            Debug.Log(currentX + " " + currentY);
             if (Math.Abs(currentX) > 0.3f)
             {
+                Debug.Log("1");
                 if (rotatingObject.horizontalObject != null)
                 {
+                    Debug.Log("2");
                     if (rotatingObject.horizontalTransformItem == DualAxisRotatableObject.ControlAttribute.Position)
                     {   // Slide object.
                         Vector3 currentPos = rotatingObject.horizontalObject.transform.localPosition;
@@ -48,7 +55,9 @@ public class DualAxisRotationControl : MonoBehaviour
                         }
                     }
                     else
-                    {   // Rotate Object.
+                    {
+                        Debug.Log("3");
+                        // Rotate Object.
                         switch (rotatingObject.horizontalObjectAxis)
                         {
                             case DualAxisRotatableObject.RotationAxis.X:
@@ -188,12 +197,12 @@ public class DualAxisRotationControl : MonoBehaviour
         currentY = 0.0f;
     }
 
-    private void DoTouchpadTouchStart()
+    public void DoTouchpadTouchStart()
     {
         isTouching = true;
     }
 
-    private void DoTouchpadTouchEnd()
+    public void DoTouchpadTouchEnd()
     {
         isTouching = false;
     }

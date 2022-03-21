@@ -2,11 +2,15 @@
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
+using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
+using GSFC.ARVR.MRET.Infrastructure.Framework.Interactable;
+using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+using GSFC.ARVR.MRET.Infrastructure.Framework.Part;
 
-public class ObjectPanelsMenuController : MonoBehaviour
+public class ObjectPanelsMenuController : Interactable
 {
     public GameObject objectPanel, descriptionPanel, hierarchyPanel, changeParentPanel,
-        addChildPanel, removeChildPanel, dataDisplayListPanel;
+        addChildPanel, removeChildPanel, dataDisplayListPanel, deletePanel, partTelemetryPanel;
     public GameObject selectedObject;
 
     private ObjectPanelController objectPanelController;
@@ -16,13 +20,18 @@ public class ObjectPanelsMenuController : MonoBehaviour
     private AddChildPanelController addChildPanelController;
     private RemoveChildPanelController removeChildPanelController;
     private DataDisplayListPanelController dataDisplayListPanelController;
+    private DeletePanelController deletePanelController;
+    private PartTelemetryPanelController partTelemetryPanelController;
     private string objectTitle;
 
+    private bool initialized = false;
     public void Initialize()
     {
         SetSelectedObject();
         objectPanelController.Initialize();
+        deletePanelController.Initialize(selectedObject);
         OpenMainPanel();
+        initialized = true;
     }
 
     public void Close()
@@ -53,6 +62,8 @@ public class ObjectPanelsMenuController : MonoBehaviour
         addChildPanel.SetActive(false);
         removeChildPanel.SetActive(false);
         dataDisplayListPanel.SetActive(false);
+        deletePanel.SetActive(false);
+        partTelemetryPanel.SetActive(false);
 
         if (objectPanelController)
         {
@@ -69,6 +80,8 @@ public class ObjectPanelsMenuController : MonoBehaviour
         addChildPanel.SetActive(false);
         removeChildPanel.SetActive(false);
         dataDisplayListPanel.SetActive(false);
+        deletePanel.SetActive(false);
+        partTelemetryPanel.SetActive(false);
 
         if (descriptionPanelController)
         {
@@ -86,6 +99,8 @@ public class ObjectPanelsMenuController : MonoBehaviour
         addChildPanel.SetActive(false);
         removeChildPanel.SetActive(false);
         dataDisplayListPanel.SetActive(false);
+        deletePanel.SetActive(false);
+        partTelemetryPanel.SetActive(false);
 
         if (hierarchyPanelController)
         {
@@ -103,6 +118,8 @@ public class ObjectPanelsMenuController : MonoBehaviour
         addChildPanel.SetActive(false);
         removeChildPanel.SetActive(false);
         dataDisplayListPanel.SetActive(false);
+        deletePanel.SetActive(false);
+        partTelemetryPanel.SetActive(false);
 
         if (changeParentPanelController)
         {
@@ -119,6 +136,8 @@ public class ObjectPanelsMenuController : MonoBehaviour
         addChildPanel.SetActive(true);
         removeChildPanel.SetActive(false);
         dataDisplayListPanel.SetActive(false);
+        deletePanel.SetActive(false);
+        partTelemetryPanel.SetActive(false);
 
         if (addChildPanelController)
         {
@@ -135,6 +154,8 @@ public class ObjectPanelsMenuController : MonoBehaviour
         addChildPanel.SetActive(false);
         removeChildPanel.SetActive(true);
         dataDisplayListPanel.SetActive(false);
+        deletePanel.SetActive(false);
+        partTelemetryPanel.SetActive(false);
 
         if (removeChildPanelController)
         {
@@ -151,6 +172,58 @@ public class ObjectPanelsMenuController : MonoBehaviour
         addChildPanel.SetActive(false);
         removeChildPanel.SetActive(false);
         dataDisplayListPanel.SetActive(true);
+        deletePanel.SetActive(false);
+        partTelemetryPanel.SetActive(false);
+    }
+
+    public void OpenDeletePanel()
+    {
+        objectPanel.SetActive(false);
+        descriptionPanel.SetActive(false);
+        hierarchyPanel.SetActive(false);
+        changeParentPanel.SetActive(false);
+        addChildPanel.SetActive(false);
+        removeChildPanel.SetActive(false);
+        dataDisplayListPanel.SetActive(false);
+        deletePanel.SetActive(true);
+        partTelemetryPanel.SetActive(false);
+
+        if (deletePanelController)
+        {
+            deletePanelController.Initialize(selectedObject);
+        }
+    }
+
+    public void OpenPartTelemetryPanel()
+    {
+        objectPanel.SetActive(false);
+        descriptionPanel.SetActive(false);
+        hierarchyPanel.SetActive(false);
+        changeParentPanel.SetActive(false);
+        addChildPanel.SetActive(false);
+        removeChildPanel.SetActive(false);
+        dataDisplayListPanel.SetActive(false);
+        deletePanel.SetActive(false);
+        partTelemetryPanel.SetActive(true);
+
+        if (deletePanelController)
+        {
+            deletePanelController.Initialize(selectedObject);
+        }
+    }
+
+    public override void BeginGrab(InputHand hand)
+    {
+        positionFollowingSuspended = true;
+        base.BeginGrab(hand);
+    }
+
+    public override void EndGrab(InputHand hand)
+    {
+        positionFollowingSuspended = false;
+        relativePosition = selectedObject.transform.InverseTransformPoint(transform.position);
+        relativePositionSet = true;
+        base.EndGrab(hand);
     }
 
     private void SetSelectedObject()
@@ -170,16 +243,20 @@ public class ObjectPanelsMenuController : MonoBehaviour
             removeChildPanelController = removeChildPanel.GetComponent<RemoveChildPanelController>();
             removeChildPanelController.selectedObject = selectedObject;
             dataDisplayListPanelController = dataDisplayListPanel.GetComponent<DataDisplayListPanelController>();
+            deletePanelController = deletePanel.GetComponent<DeletePanelController>();
+            partTelemetryPanelController = partTelemetryPanel.GetComponent<PartTelemetryPanelController>();
         }
     }
 
     // TODO: Cleaner solution.
     private Vector3 relativePosition = Vector3.zero;
+    private bool relativePositionSet = false;
+    private bool positionFollowingSuspended = false;
     private void Update()
     {
-        if (selectedObject != null)
+        if (initialized && !positionFollowingSuspended && selectedObject != null)
         {
-            if (selectedObject.transform.hasChanged)
+            if (relativePositionSet && selectedObject.transform.hasChanged)
             {
                 Vector3 newPos = selectedObject.transform.TransformPoint(relativePosition);
                 transform.position = newPos;
@@ -187,6 +264,7 @@ public class ObjectPanelsMenuController : MonoBehaviour
             else
             {
                 relativePosition = selectedObject.transform.InverseTransformPoint(transform.position);
+                relativePositionSet = true;
             }
         }
     }

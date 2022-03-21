@@ -91,6 +91,7 @@ namespace Assets.VDE.UI.Input
                 case Event.Function.Select:
                     if (!(data.entities.NodeInFocus is null))
                     {
+                        data.links.SetAllLinkStatusTo(false);
                         data.entities.NodeInFocus.Select();
                     } 
                     break;
@@ -105,7 +106,14 @@ namespace Assets.VDE.UI.Input
                     }
                     break;
                 case Event.Function.GazingAt:
-                    hud.CreateLabel(inputEvent.Entity);
+                    {
+                        data.messenger.Post(new Communication.Message()
+                        {
+                            EntityEvent = Entities.Event.GotFocus,
+                            from = inputEvent.Entity,
+                            to = inputEvent.Entity
+                        });
+                    }                    
                     break;
                 case Event.Function.GazePoint:
                     break;
@@ -113,9 +121,29 @@ namespace Assets.VDE.UI.Input
                     break;
                 case Event.Function.ExportObjectWithCoordinates:
                     data.entities.ExportShapesAndPositions();
+                    data.links.Export();
                     break;
                 case Event.Function.ToggleEdges:
                     data.links.SetAllLinkStatusTo(inputEvent.Bool);
+                    break;
+                case Event.Function.PositionVDE:
+                    data.VDE.SetPositionAndScale(inputEvent.Vector3, data.VDE.localScaleInPreviousFrame);
+                    break;
+                case Event.Function.ScaleVDE:
+                    data.VDE.SetPositionAndScale(data.VDE.transform.position, inputEvent.Vector3);
+                    break;
+                case Event.Function.ToggleLabels:
+                    data.layouts.current.labelsVisible = inputEvent.Bool;
+                    foreach (Entity entity in data.entities.entities.Values)
+                    {
+                        if (entity.containers.GetContainer(out Container container) && !(container.label is null))
+                        {
+                            container.SetLabelState(inputEvent.Bool);
+                        }
+                    }
+                    break;
+                case Event.Function.ToggleNotifications:
+                    data.VDE.hud.ToggleNotifications();
                     break;
                 case Event.Function.ToggleHUD:
                     data.VDE.hud.Toggle();

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 
 namespace Assets.VDE.Layouts
 {
+    [System.Serializable]
     public class Config
     {
         public string name;

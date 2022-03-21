@@ -1,0 +1,30 @@
+# Climbing Locomotion Controller and Climbing Hands Controller Classes
+
+The climbing locomotion mode allows for the user to grab GameObjects with tag "Rung" using the grip button and move the rig in a climbing motion relative to the controllers.
+
+## Features
+
+-Implemented in the Locomotion Manager and thus can be toggled on and off in the user locomotion menu
+-Stacks on top of other locomotion modes (other modes take priority while in use)
+-Integrates the motion multiplier feature of MRET
+-A climbable wall can be created if the wall is given the "Rung" tag
+-Supports ladders that are not vertical or don't have uniformly spaced rungs (ex. a rock climbing wall)
+-Two hands can climb continuously. If one stops gripping, climbing continuous. The hand that grabbed the most recently will dictate the locomotion of the rig.
+
+## Requirements
+
+-InputHand must have a collider with isTrigger enabled
+-Any usable ladder rung/climbing point must have the "Rung" tag AND a collider
+
+## How it works
+
+When climbing locomotion is enabled within the base Locomotion Manager, climbing movement is calculated and carried out so long as there is an active hand grabbing a rung. The Climbing Hand Controller class detects when the InputHand collider trigger collides with a rung with a "Rung" tag and adds it to an ArrayList of rungs. When the InputHand trigger exits a rung, that rung is removed from the rungs ArrayList. Within the InputHand events list, OnGrabBegin will call a method in the Climbing Hands Controller that searches for the closest rung and sets that hand as the current climbing hand. Here, with the current climbing hand defined, the Climbing Locomotion Controller takes the negative velocity of the hand and applies that transformation to the rig. When the grip button is released (assuming the other InputHand is not active), the current hand is cleared and and climbing locomotion stops.
+
+## Limitations and Solutions
+
+-Priority issues with other locomotion modes: can be changed directly in the locomotion manager
+	(ex. when climb is enabled, turn off x mode of locomotion)
+-Dismounting from the ladder: 
+	-potential snap point at the top of the ladder snapping the user to a designated platform
+	-inertia carrying the user up above the ladder
+-Creation of multiple rungs can be tedious: Perhaps using a climbable wall (listed in Features) or giving the ladder a climable plane so the user doesn't necessarily have to grab the rungs.

@@ -13,6 +13,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
     ///     motion constraints in the input rig SDK. Removed the armswing implementations, and
     ///     updated to reflect use of the controller interface. (J. Hosler)
     /// 5 April 2021: Removed redundant character controller property (D. Baker)
+    /// 17 November 2021: Added implementation for flying locomotion (DZB)
     /// </remarks>
     /// <summary>
     /// Desktop wrapper for the input rig.
@@ -113,21 +114,20 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
         {
             get
             {
-                // TODO: implement flying?
-                return false;
+                return _flyingController.GetControlActive();
             }
         }
 
         /// <seealso cref="InputRigSDK.EnableFlying"/>
         public override void EnableFlying()
         {
-            Debug.Log("[InputRigDesktop->EnableFlying] Flying not implemented for desktop.");
+            _flyingController.SetControlActive(true);
         }
 
         /// <seealso cref="InputRigSDK.DisableFlying"/>
         public override void DisableFlying()
         {
-            Debug.Log("[InputRigDesktop->EnableFlying] Flying not implemented for desktop.");
+            _flyingController.SetControlActive(false);
         }
 
 #endregion // Locomotion [Flying]

@@ -9,6 +9,19 @@ TagManager:
   - minimappanel
   - leftcontroller
   - rightcontroller
+  - Fire
+  - Loose Objects
+  - Tool
+  - Rung
+  - Floor
+  - edge
+  - node
+  - nodeGroup
+  - blade
+  - bladeText
+  - gazable
+  - indexFingerTip
+  - middleFingerTip
   layers:
   - Default
   - TransparentFX
@@ -20,13 +33,13 @@ TagManager:
   - 
   - Socket
   - Interaction
-  - 
-  - 
-  - 
-  - 
-  - 
+  - User
+  - blade
+  - suusapoks
+  - pointable
+  - grabbable
   - RaycastCollider
-  - 
+  - gazable
   - 
   - 
   - 
@@ -41,7 +54,7 @@ TagManager:
   - 
   - 
   - 
-  - 
+  - HideInVRCam
   m_SortingLayers:
   - name: Default
     uniqueID: 0

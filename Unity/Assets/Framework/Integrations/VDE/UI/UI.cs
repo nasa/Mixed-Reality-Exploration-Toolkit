@@ -13,6 +13,7 @@ namespace Assets.VDE.UI
     internal class UI
     {
         Data data;
+        Log log;
         internal HUD.HUD hud;
         int currentMaterialIndex = 0;
         internal FramesPerSecond fps { get; private set; }
@@ -38,8 +39,61 @@ namespace Assets.VDE.UI
         {
             this.data = data;
             hud = data.VDE.hud;
+            log = new Log("UI");
+#if PLATFORM_LUMIN
+            StartTheMagic();
+#endif
         }
-
+#if PLATFORM_LUMIN
+        private void StartTheMagic()
+        {
+            try
+            {
+                UnityEngine.XR.MagicLeap.MLInput.Start();
+                UnityEngine.XR.MagicLeap.MLResult resultingFailure = UnityEngine.XR.MagicLeap.MLHandTracking.Start();
+                UnityEngine.XR.MagicLeap.MLHandTracking.KeyPoseManager.SetKeyPointsFilterLevel(UnityEngine.XR.MagicLeap.MLHandTracking.KeyPointFilterLevel.ExtraSmoothed);
+                /*
+                MagicLeap.Core.StarterKit.MLHandTrackingStarterKit.Start();
+                //Debug.Log("resultingFailure: " + resultingFailure.Result.ToString());
+                UnityEngine.XR.MagicLeap.MLResult LeapingMagic = UnityEngine.XR.MagicLeap.MLPrivileges.Start();
+                if (LeapingMagic.IsOk)
+                {
+                    UnityEngine.XR.MagicLeap.MLResult result = UnityEngine.XR.MagicLeap.MLPrivileges.CheckPrivilege(UnityEngine.XR.MagicLeap.MLPrivileges.Id.HandMesh);
+                    if (result.Result == UnityEngine.XR.MagicLeap.MLResult.Code.PrivilegeGranted)
+                    {
+                        log.Entry("got HandMesh.");
+                    } else
+                    {
+                        log.Entry("!! HandMesh: " + result.Result.ToString());
+                    }
+                    result = UnityEngine.XR.MagicLeap.MLPrivileges.CheckPrivilege(UnityEngine.XR.MagicLeap.MLPrivileges.Id.GesturesConfig);
+                    if (result.Result == UnityEngine.XR.MagicLeap.MLResult.Code.PrivilegeGranted)
+                    {
+                        log.Entry("got GesturesConfig.");
+                    }
+                    else
+                    {
+                        log.Entry("!! GesturesConfig: " + result.Result.ToString());
+                    }
+                    result = UnityEngine.XR.MagicLeap.MLPrivileges.CheckPrivilege(UnityEngine.XR.MagicLeap.MLPrivileges.Id.GesturesSubscribe);
+                    if (result.Result == UnityEngine.XR.MagicLeap.MLResult.Code.PrivilegeGranted)
+                    {
+                        log.Entry("got GesturesSubscribe.");
+                    }
+                    else
+                    {
+                        log.Entry("!! GesturesSubscribe: " + result.Result.ToString());
+                    }
+                }
+                */
+            }
+            catch (Exception exe)
+            {
+                log.Entry("No magic: " + exe.StackTrace);
+            }
+ 
+        }
+#endif
         internal void SetNF(Factory nodeFactory)
         {
             this.nodeFactory = nodeFactory;

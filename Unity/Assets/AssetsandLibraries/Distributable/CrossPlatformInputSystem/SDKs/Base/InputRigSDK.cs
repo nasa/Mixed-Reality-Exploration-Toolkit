@@ -19,6 +19,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
     /// 17 March 2021: Added the motion constraint properties and multipliers to support fast, normal
     ///     and slow motion to centralize the logic for locomotion controllers across input rig
     ///     implementations (J. Hosler)
+    /// 24 July 2021: Added Climbing locomotion (C. Lian)
+    /// 17 November 2021: Removed RequireInterface for FlyingController reference, does not seem to
+    ///     be assignable from inspector (DZB)
     /// </remarks>
     /// <summary>
     /// SDK wrapper for the input rig.
@@ -59,9 +62,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         /// </summary>
         [Tooltip("Flying Controller for the input rig.")]
 #if UNITY_EDITOR
-        [RequireInterface(typeof(IInputRigLocomotionControl))]
+        //[RequireInterface(typeof(IInputRigLocomotionControl))]
 #endif
-        public Object flyingController;
+        public Components.Locomotion.FlyingLocomotionController flyingController;
         protected IInputRigLocomotionControl _flyingController => flyingController as IInputRigLocomotionControl;
 
         /// <summary>
@@ -73,6 +76,16 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
 #endif
         public Object navigationController;
         protected IInputRigLocomotionControl _navigationController => navigationController as IInputRigLocomotionControl;
+
+        /// <summary>
+        /// Climbing Controller for this input rig.
+        /// </summary>
+        [Tooltip("Climbing Controller for the input rig.")]
+#if UNITY_EDITOR
+        [RequireInterface(typeof(IInputRigLocomotionControl))]
+#endif
+        public Object climbingController;
+        protected IInputRigLocomotionControl _climbingController => climbingController as IInputRigLocomotionControl;
 
         /// <summary>
         /// The hand used for placing.
@@ -541,9 +554,134 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
             Debug.LogWarning("DisableNavigation() not implemented for InputRigSDK.");
         }
 
-#endregion // Locomotion [Navigation]
+        #endregion // Locomotion [Navigation]
 
-#endregion // Locomotion
+#region Locomotion [Climbing]
+
+        /// <summary>
+        /// The multiplier to be applied to the normal motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingNormalMotionConstraintMultiplier
+        {
+            set
+            {
+                // Set the controller motion multiplier if assigned
+                if (climbingController != null)
+                {
+                    _climbingController.SetMotionConstraintMultiplier(MotionConstraint.Normal, value);
+                }
+                else
+                {
+                    Debug.LogWarning(nameof(IInputRigLocomotionControl) + " for Climbing not defined for " + nameof(InputRigSDK));
+                }
+            }
+            get
+            {
+                return (climbingController != null) ? _climbingController.GetMotionConstraintMultiplier(MotionConstraint.Normal) : 0f;
+            }
+        }
+
+        /// <summary>
+        /// The multiplier to be applied to the slow motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingSlowMotionConstraintMultiplier
+        {
+            set
+            {
+                // Set the controller motion multiplier if assigned
+                if (climbingController != null)
+                {
+                    _climbingController.SetMotionConstraintMultiplier(MotionConstraint.Slow, value);
+                }
+                else
+                {
+                    Debug.LogWarning(nameof(IInputRigLocomotionControl) + " for Climbing not defined for " + nameof(InputRigSDK));
+                }
+            }
+            get
+            {
+                return (climbingController != null) ? _climbingController.GetMotionConstraintMultiplier(MotionConstraint.Slow) : 0f;
+            }
+        }
+
+        /// <summary>
+        /// The multiplier to be applied to the fast motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingFastMotionConstraintMultiplier
+        {
+            set
+            {
+                // Set the controller motion multiplier if assigned
+                if (climbingController != null)
+                {
+                    _climbingController.SetMotionConstraintMultiplier(MotionConstraint.Fast, value);
+                }
+                else
+                {
+                    Debug.LogWarning(nameof(IInputRigLocomotionControl) + " for Climbing not defined for " + nameof(InputRigSDK));
+                }
+            }
+            get
+            {
+                return (climbingController != null) ? _climbingController.GetMotionConstraintMultiplier(MotionConstraint.Fast) : 0f;
+            }
+        }
+
+        /// <summary>
+        /// The gravity constraint to be applied to the climbing motion.
+        /// </summary>
+        public GravityConstraint ClimbingGravityConstraint
+        {
+            set
+            {
+                // Set the controller gravity constraint if assigned
+                if (climbingController != null)
+                {
+                    _climbingController.SetGravityConstraint(value);
+                }
+                else
+                {
+                    Debug.LogWarning(nameof(IInputRigLocomotionControl) + " for Climbing not defined for " + nameof(InputRigSDK));
+                }
+            }
+            get
+            {
+                return (climbingController != null) ? _climbingController.GetGravityConstraint() : GravityConstraint.Allowed;
+            }
+        }
+
+        /// <summary>
+        /// Indicates if climbing is enabled for this rig.
+        /// </summary>
+        /// <returns>A boolean value indicating whether or not climbing is enabled</returns>
+        public virtual bool ClimbingEnabled
+        {
+            get
+            {
+                Debug.LogWarning("ClimbingEnabled not implemented for InputRigSDK.");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Enables climbing for this rig.
+        /// </summary>
+        public virtual void EnableClimbing()
+        {
+            Debug.LogWarning("EnableClimbing() not implemented for InputRigSDK.");
+        }
+
+        /// <summary>
+        /// Disables climbing for this rig.
+        /// </summary>
+        public virtual void DisableClimbing()
+        {
+            Debug.LogWarning("DisableClimbing() not implemented for InputRigSDK.");
+        }
+
+        #endregion // Locomotion [Climbing]
+
+        #endregion // Locomotion
 
     }
 }

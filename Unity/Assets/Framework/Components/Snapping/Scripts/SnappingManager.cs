@@ -33,7 +33,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Integrations.Snapping
 
                 BuilderBehaviour.Instance.CurrentMode = BuildMode.Placement;
                 BuilderBehaviour.Instance.SelectPrefab(pb);
-                BuilderBehaviour.Instance.SelectedPrefab = pb;
+                BuilderBehaviour.Instance.SelectPrefab(pb);
                 // Update Offsets.
             }
         }

@@ -30,20 +30,22 @@ namespace GSFC.ARVR.MRET.Common.Schemas
         {
             public bool standalone;
             public bool renderInCloud;
-            public string serverURL;
+            public string serverAddress;
             public string nameOfBakedConfigResource;
             public string nameOfBakedEntitiesResource;
             public string nameOfBakedLinksResource;
+            public Assets.VDE.VDE.ConnectionType connectionType;
 
-            public VDESettings(bool _standalone, bool _renderInCloud, string _serverURL,
-                string _bakedConfig, string _bakedEntities, string _bakedLinks)
+            public VDESettings(bool _standalone, bool _renderInCloud, string _serverAddress,
+                string _bakedConfig, string _bakedEntities, string _bakedLinks, Assets.VDE.VDE.ConnectionType _connectionType)
             {
                 standalone = _standalone;
                 renderInCloud = _renderInCloud;
-                serverURL = _serverURL;
+                serverAddress = _serverAddress;
                 nameOfBakedConfigResource = _bakedConfig;
                 nameOfBakedEntitiesResource = _bakedEntities;
                 nameOfBakedLinksResource = _bakedLinks;
+                connectionType = _connectionType;
             }
         }
 
@@ -83,6 +85,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
         public VDESettings vdeSettings;
 
         // Loaded Project Information.
+        private ProjectType currentProject = null;
         private ViewType loadedProject_currentView = null;
         private string loadedProject_description = null;
         private VirtualEnvironmentType loadedProject_environment = null;
@@ -231,6 +234,8 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                 lobbyArea.SetActive(true);
             }
 
+            currentProject = null;
+
             loadingIndicatorManager.StopLoadingIndicator();
         }
 
@@ -288,11 +293,35 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                 List<DrawingType> drawingList = new List<DrawingType>();
                 List<int> idList = new List<int>();
                 int i = 0;
-                foreach (MeshLineRenderer projectDrawing in projectDrawingContainer.GetComponentsInChildren<MeshLineRenderer>())
+                foreach (Components.LineDrawing.LineDrawing lineDrawing in Infrastructure.Framework.MRET.SceneObjectManager.lineDrawings)
+                {
+                    List<Vector3Type> points = new List<Vector3Type>();
+                    foreach (Vector3 point in lineDrawing.points)
+                    {
+                        Vector3 pt = lineDrawing.transform.TransformPoint(point);
+                        points.Add(new Vector3Type()
+                        {
+                            X = pt.x,
+                            Y = pt.y,
+                            Z = pt.z
+                        });
+                    }
+                    drawingList.Add(new DrawingType()
+                    {
+                        DesiredUnits = LineDrawingUnitsType.meters,
+                        GUID = lineDrawing.uuid.ToString(),
+                        Name = lineDrawing.name,
+                        Points = points.ToArray(),
+                        RenderType = lineDrawing is Components.LineDrawing.VolumetricDrawing ? "cable" : "drawing",
+                        Width = lineDrawing.GetWidth()
+                    });
+                    idList.Add(++i);
+                }
+                /*foreach (MeshLineRenderer projectDrawing in projectDrawingContainer.GetComponentsInChildren<MeshLineRenderer>())
                 {
                     drawingList.Add(projectDrawing.drawingScript.Serialize());
                     idList.Add(++i);
-                }
+                }*/
                 DrawingsType drawings = new DrawingsType();
                 drawings.Drawings = drawingList.ToArray();
                 drawings.ID = idList.ToArray();
@@ -422,6 +451,8 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             // Indicate that the project is loading.
             loadingIndicatorManager.ShowLoadingIndicator("Loading Project...");
 
+            currentProject = serializedProject;
+
             loadedProject_gmsecSources = new List<GMSECSourceType>();
 
             try
@@ -516,6 +547,12 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                                     {
                                         Infrastructure.Framework.MRET.LocomotionManager.NavigationNormalMotionConstraintMultiplier
                                             = loadedProject_environment.LocomotionSettings.TouchpadSpeed;
+                                    }
+
+                                    if (loadedProject_environment.LocomotionSettings.ClimbSpeed > 0)
+                                    {
+                                        Infrastructure.Framework.MRET.LocomotionManager.ClimbingNormalMotionConstraintMultiplier
+                                            = loadedProject_environment.LocomotionSettings.ClimbSpeed;
                                     }
                                 }
                                     
@@ -629,10 +666,17 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                                 {
                                     foreach (DrawingType drawing in drawings.Drawings)
                                     {
-                                        drawLineManager.AddPredefinedDrawing(DeserializeVector3ArrayToList(drawing.Points),
-                                            (LineDrawing.RenderTypes)Enum.Parse(typeof(LineDrawing.RenderTypes), drawing.RenderType.ToString()),
-                                            (LineDrawing.unit)Enum.Parse(typeof(LineDrawing.unit), drawing.DesiredUnits.ToString()),
-                                            drawing.Name, new Guid(drawing.GUID));
+                                        Infrastructure.Framework.MRET.SceneObjectManager.CreateLineDrawing(drawing.Name, null,
+                                            Vector3.zero, Quaternion.identity, Vector3.one,
+                                            drawing.RenderType.ToLower() == "drawing" || drawing.RenderType == "measurement"
+                                            ? Infrastructure.Framework.LineDrawing.LineDrawingManager.DrawingType.Basic
+                                            : Infrastructure.Framework.LineDrawing.LineDrawingManager.DrawingType.Volumetric,
+                                            drawing.Width, Color.green, DeserializeVector3ArrayToList(drawing.Points).ToArray(),
+                                            Guid.Parse(drawing.GUID));
+                                        //drawLineManager.AddPredefinedDrawing(DeserializeVector3ArrayToList(drawing.Points),
+                                        //    (LineDrawing.RenderTypes)Enum.Parse(typeof(LineDrawing.RenderTypes), drawing.RenderType.ToString()),
+                                        //    (LineDrawing.unit)Enum.Parse(typeof(LineDrawing.unit), drawing.DesiredUnits.ToString()),
+                                        //    drawing.Name, new Guid(drawing.GUID));
                                     }
                                 }
                                 break;
@@ -796,12 +840,12 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                                 break;
 
                             case ItemsChoiceType.VDEConnection:
-                                VDEConnectionType vct = (VDEConnectionType) serializedProject.Items[i];
+                                VDEConnectionType vct = (VDEConnectionType)serializedProject.Items[i];
                                 if (vct != null)
                                 {
-                                    if (string.IsNullOrEmpty(vct.serverURL))
+                                    if (string.IsNullOrEmpty(vct.serverAddress))
                                     {
-                                        vct.serverURL = "https://vde.coda.ee/VDE";
+                                        vct.serverAddress = "http://127.0.0.1/VDE";
                                     }
 
                                     if (string.IsNullOrEmpty(vct.bakedConfigResource))
@@ -820,9 +864,11 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                                     }
 
                                     vdeSettings = new VDESettings(vct.standalone, vct.renderInCloud,
-                                        vct.serverURL, vct.bakedConfigResource,
-                                        vct.bakedEntitiesResource, vct.bakedLinksResource);
+                                        vct.serverAddress, vct.bakedConfigResource,
+                                        vct.bakedEntitiesResource, vct.bakedLinksResource, vct.connectionType);
                                 }
+
+                                StartCoroutine(InitializeVDE(vct));
                                 break;
 
                             default:
@@ -850,6 +896,40 @@ namespace GSFC.ARVR.MRET.Common.Schemas
 
             // Indicate that project is done loading.
             loadingIndicatorManager.StopLoadingIndicator();
+        }
+
+        public void ReloadProject()
+        {
+            if (currentProject != null)
+            {
+                ProjectType projectToLoad = currentProject;
+                Unload();
+                Deserialize(projectToLoad);
+            }
+            else
+            {
+                Debug.LogError("[UnityProject->ReloadProject] No project to reload.");
+            }
+        }
+
+        public void ResetUser()
+        {
+            if (loadedProject_environment != null)
+            {
+                // Place the user.
+                float yOffset = 0f;
+                Transform transformToSet = Infrastructure.Framework.MRET.InputRig.transform;
+                transformToSet.position = new Vector3(loadedProject_environment.DefaultUserTransform.Position.X,
+                    loadedProject_environment.DefaultUserTransform.Position.Y + yOffset, loadedProject_environment.DefaultUserTransform.Position.Z);
+                transformToSet.rotation = Quaternion.Euler(loadedProject_environment.DefaultUserTransform.Rotation.X,
+                    loadedProject_environment.DefaultUserTransform.Rotation.Y, loadedProject_environment.DefaultUserTransform.Rotation.Z);
+                transformToSet.localScale = new Vector3(loadedProject_environment.DefaultUserTransform.Scale.X,
+                    loadedProject_environment.DefaultUserTransform.Scale.Y, loadedProject_environment.DefaultUserTransform.Scale.Z);
+            }
+            else
+            {
+                Debug.LogError("[UnityProject->ResetUser] No environment settings.");
+            }
         }
 
         // TODO: The parts should be indexed into a dictionary to enable efficient searching. Move to part manager.
@@ -977,6 +1057,16 @@ namespace GSFC.ARVR.MRET.Common.Schemas
                 {
                     control.enabled = false;
                     control.enabled = true;
+                }
+            }
+
+            // Reinitialize all renderers (Unity bug).
+            foreach (Renderer renderer in projectObjectContainer.GetComponentsInChildren<Renderer>())
+            {
+                if (renderer.enabled)
+                {
+                    renderer.enabled = false;
+                    renderer.enabled = true;
                 }
             }
 
@@ -1119,6 +1209,29 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             }
 
             return;
+        }
+
+        private IEnumerator InitializeVDE(VDEConnectionType vct)
+        {
+            float timeout = UnityEngine.Time.realtimeSinceStartup + 60;
+            while (timeout > UnityEngine.Time.realtimeSinceStartup)
+            {
+                Assets.VDE.VDE[] vde = FindObjectsOfType<Assets.VDE.VDE>();
+                if (!(vde is null) && vde.Length > 0)
+                {
+                    Debug.Log("VDE found, initializing.");
+                    vde[0].Init(vdeSettings.standalone, vdeSettings.renderInCloud,
+                        vdeSettings.serverAddress, vdeSettings.nameOfBakedConfigResource,
+                        vdeSettings.nameOfBakedEntitiesResource, vdeSettings.nameOfBakedLinksResource, Assets.VDE.VDE.InputSource.MRET, vdeSettings.connectionType);
+                    break;
+                }
+                else
+                {
+                    Debug.Log("No VDE found yet.");
+                }
+                yield return new WaitForSeconds(1f);
+            }
+            yield return true;
         }
 
         private void UngrabAllObjects()

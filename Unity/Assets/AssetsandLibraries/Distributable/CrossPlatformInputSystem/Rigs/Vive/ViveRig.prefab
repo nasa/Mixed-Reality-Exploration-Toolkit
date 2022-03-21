@@ -53,6 +53,54 @@ MonoBehaviour:
   onStopPointing:
     m_PersistentCalls:
       m_Calls: []
+--- !u!1 &1450239594993985587
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6699961196688278406}
+  - component: {fileID: 8646470471533122281}
+  m_Layer: 0
+  m_Name: Drawing
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6699961196688278406
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450239594993985587}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4634661660762493893}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8646470471533122281
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450239594993985587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8641bda9dd2efdd49a9aa1f84fce999d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hand: {fileID: 7811045891917884471}
+  laserMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  maxDistance: 100
 --- !u!1 &2452666574202625607
 GameObject:
   m_ObjectHideFlags: 0
@@ -99,7 +147,7 @@ MonoBehaviour:
   hand: {fileID: 7811045891917884471}
   laserMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2148663063
   maxDistance: 100
 --- !u!1 &2613683436478540812
 GameObject:
@@ -147,7 +195,7 @@ MonoBehaviour:
   hand: {fileID: 4879489227874274683}
   laserMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 2148663063
   maxDistance: 100
 --- !u!1 &3074668537685518669
 GameObject:
@@ -228,6 +276,7 @@ MonoBehaviour:
   armswingController: {fileID: 9051776075383355664}
   flyingController: {fileID: 7665255661147232681}
   navigationController: {fileID: 7469518572850294209}
+  climbingController: {fileID: 0}
 --- !u!114 &3074668537685518658
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -243,9 +292,10 @@ MonoBehaviour:
   m_RigBaseGameObject: {fileID: 3074668537685518669}
   m_CameraFloorOffsetObject: {fileID: 3074668538728289096}
   m_CameraGameObject: {fileID: 3074668539131014226}
-  m_TrackingOriginMode: 2
-  m_TrackingSpace: 3
+  m_RequestedTrackingOriginMode: 2
   m_CameraYOffset: 1.36144
+  m_TrackingSpace: 3
+  m_TrackingOriginMode: -2147483648
 --- !u!136 &6885850424622874971
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -564,7 +614,9 @@ MonoBehaviour:
   motionFastMultiplier: 2
   handsMutuallyExclusive: 0
   gravityConstraint: 2
+  flyingMechanism: 0
   reverseMotion: 0
+  directionalMultiplier: 10
 --- !u!1 &3074668538635940622
 GameObject:
   m_ObjectHideFlags: 0
@@ -580,6 +632,8 @@ GameObject:
   - component: {fileID: 3618039193392063895}
   - component: {fileID: 5692763436930849705}
   - component: {fileID: 8949459861102349513}
+  - component: {fileID: 3969086916114975693}
+  - component: {fileID: 2779081276353563965}
   m_Layer: 0
   m_Name: RightHand
   m_TagString: Untagged
@@ -620,14 +674,22 @@ MonoBehaviour:
   teleportationLaserMaterial: {fileID: 2100000, guid: 82e8b5a69bd8c72478d53559f8480685,
     type: 2}
   uiLaserMaterial: {fileID: 2100000, guid: 4f25a2fcafb2bc64089f5db31802315f, type: 2}
+  drawingLaserMaterial: {fileID: 2100000, guid: cda7d6bc46864a446bcd441c4e922cff,
+    type: 2}
   invalidLaserMaterial: {fileID: 2100000, guid: c541792bfc2e505468790e723f3603ab,
     type: 2}
   teleportationCursor: {fileID: 6637446449998357695, guid: 31e06af260ae57e4ca0fe30eb0808b30,
     type: 3}
   uiCursor: {fileID: 6637446449998357695, guid: 31e06af260ae57e4ca0fe30eb0808b30,
     type: 3}
+  drawingCursor: {fileID: 8597891590748596962, guid: 371aeeb862793514db76d6543dc61085,
+    type: 3}
   teleportationCursorScale: {x: 0.1, y: 0.1, z: 0.1}
   uiCursorScale: {x: 0.01, y: 0.01, z: 0.01}
+  drawingCursorScale: {x: 0.01, y: 0.01, z: 0.01}
+  holdThreshold: 0.5
+  doublePressMinHold: 0.025
+  doublePressMaxTime: 0.5
   handedness: 1
   inputHandSDK: {fileID: 2946610826296145474}
   controllerPrefab: {fileID: 4075390056512215687, guid: e1da5867c56eb1444a91c6f79783a2de,
@@ -649,6 +711,18 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   menuReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  menuHoldEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  menuHoldReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  menuDoublePressEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  menuExclusivePressEvent:
     m_PersistentCalls:
       m_Calls: []
   selectBeginEvent:
@@ -707,6 +781,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  selectHoldEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  selectHoldReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  selectDoublePressEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  selectExclusivePressEvent:
+    m_PersistentCalls:
+      m_Calls: []
   grabBeginEvent:
     m_PersistentCalls:
       m_Calls:
@@ -821,6 +907,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  grabHoldEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  grabHoldReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  grabDoublePressEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  grabExclusivePressEvent:
+    m_PersistentCalls:
+      m_Calls: []
   navigateBeginEvent:
     m_PersistentCalls:
       m_Calls:
@@ -881,9 +979,74 @@ MonoBehaviour:
   navigatePressCompleteEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: RTouchpadReleased
+      - m_Target: {fileID: 3969086916114975693}
+        m_TargetAssemblyTypeName: GSFC.ARVR.MRET.Components.LineDrawing.LineDrawingController,
+          Assembly-CSharp
+        m_MethodName: OnPossibleSelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  navigatePressHoldEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3969086916114975693}
+        m_TargetAssemblyTypeName: GSFC.ARVR.MRET.Components.LineDrawing.LineDrawingController,
+          Assembly-CSharp
+        m_MethodName: OnHold
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  navigatePressHoldReleaseEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3969086916114975693}
+        m_TargetAssemblyTypeName: GSFC.ARVR.MRET.Components.LineDrawing.LineDrawingController,
+          Assembly-CSharp
+        m_MethodName: OnUnhold
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  navigatePressDoublePressEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3969086916114975693}
+        m_TargetAssemblyTypeName: GSFC.ARVR.MRET.Components.LineDrawing.LineDrawingController,
+          Assembly-CSharp
+        m_MethodName: OnDoubleSelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  navigatePressExclusivePressEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 3969086916114975693}
+        m_TargetAssemblyTypeName: GSFC.ARVR.MRET.Components.LineDrawing.LineDrawingController,
+          Assembly-CSharp
+        m_MethodName: OnSelect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -910,7 +1073,9 @@ MonoBehaviour:
   armswingController: {fileID: 9051776075383355664}
   flyingController: {fileID: 7665255661147232681}
   navigationController: {fileID: 7469518572850294209}
+  climbingController: {fileID: 0}
   uiPointerController: {fileID: 6104881579492507913}
+  drawingPointerController: {fileID: 7048317538186083356}
   updateRateModulo: 1
 --- !u!114 &3074668538635940611
 MonoBehaviour:
@@ -928,7 +1093,8 @@ MonoBehaviour:
   m_EnableInputTracking: 1
   m_EnableInputActions: 1
   m_ModelPrefab: {fileID: 0}
-  m_ModelTransform: {fileID: 0}
+  m_ModelParent: {fileID: 0}
+  m_Model: {fileID: 0}
   m_AnimateModel: 0
   m_ModelSelectTransition: 
   m_ModelDeSelectTransition: 
@@ -1000,6 +1166,45 @@ MonoBehaviour:
   yEnabled: 0
   zEnabled: 0
   stepMultiplier: 1
+--- !u!114 &3969086916114975693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3074668538635940622}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38f6ac3157de6e34a9cf6aadc39066a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateRate: 1
+  customRate: 0
+  _drawingMode: 0
+  drawingType: 0
+  hand: {fileID: 4879489227874274683}
+  drawingWidth: 0.01
+  drawingColor:
+    serializedVersion: 2
+    rgba: 4279828224
+  drawingCutoff: -1
+  touchingVisual: {fileID: 0}
+--- !u!54 &2779081276353563965
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3074668538635940622}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3074668538728289096
 GameObject:
   m_ObjectHideFlags: 0
@@ -1048,6 +1253,8 @@ GameObject:
   - component: {fileID: 4090746272864309180}
   - component: {fileID: 1219493560855917491}
   - component: {fileID: 7287501415001291428}
+  - component: {fileID: 5458995327858651010}
+  - component: {fileID: 643643291933321100}
   m_Layer: 0
   m_Name: LeftHand
   m_TagString: Untagged
@@ -1088,14 +1295,22 @@ MonoBehaviour:
   teleportationLaserMaterial: {fileID: 2100000, guid: 82e8b5a69bd8c72478d53559f8480685,
     type: 2}
   uiLaserMaterial: {fileID: 2100000, guid: 4f25a2fcafb2bc64089f5db31802315f, type: 2}
+  drawingLaserMaterial: {fileID: 2100000, guid: cda7d6bc46864a446bcd441c4e922cff,
+    type: 2}
   invalidLaserMaterial: {fileID: 2100000, guid: c541792bfc2e505468790e723f3603ab,
     type: 2}
   teleportationCursor: {fileID: 6637446449998357695, guid: 31e06af260ae57e4ca0fe30eb0808b30,
     type: 3}
   uiCursor: {fileID: 6637446449998357695, guid: 31e06af260ae57e4ca0fe30eb0808b30,
     type: 3}
+  drawingCursor: {fileID: 8597891590748596962, guid: 371aeeb862793514db76d6543dc61085,
+    type: 3}
   teleportationCursorScale: {x: 0.1, y: 0.1, z: 0.1}
   uiCursorScale: {x: 0.01, y: 0.01, z: 0.01}
+  drawingCursorScale: {x: 0.01, y: 0.01, z: 0.01}
+  holdThreshold: 0.5
+  doublePressMinHold: 0.025
+  doublePressMaxTime: 0.5
   handedness: 0
   inputHandSDK: {fileID: 1867207430648378668}
   controllerPrefab: {fileID: 4075390056512215687, guid: e1da5867c56eb1444a91c6f79783a2de,
@@ -1117,6 +1332,18 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   menuReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  menuHoldEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  menuHoldReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  menuDoublePressEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  menuExclusivePressEvent:
     m_PersistentCalls:
       m_Calls: []
   selectBeginEvent:
@@ -1175,6 +1402,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  selectHoldEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  selectHoldReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  selectDoublePressEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  selectExclusivePressEvent:
+    m_PersistentCalls:
+      m_Calls: []
   grabBeginEvent:
     m_PersistentCalls:
       m_Calls:
@@ -1289,6 +1528,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  grabHoldEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  grabHoldReleaseEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  grabDoublePressEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  grabExclusivePressEvent:
+    m_PersistentCalls:
+      m_Calls: []
   navigateBeginEvent:
     m_PersistentCalls:
       m_Calls:
@@ -1322,9 +1573,9 @@ MonoBehaviour:
   navigatePressBeginEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 3074668538890444992}
         m_TargetAssemblyTypeName: 
-        m_MethodName: LTouchpadPressed
+        m_MethodName: 
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1349,9 +1600,74 @@ MonoBehaviour:
   navigatePressCompleteEvent:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: 
-        m_MethodName: LTouchpadReleased
+      - m_Target: {fileID: 5458995327858651010}
+        m_TargetAssemblyTypeName: GSFC.ARVR.MRET.Components.LineDrawing.LineDrawingController,
+          Assembly-CSharp
+        m_MethodName: OnPossibleSelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  navigatePressHoldEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5458995327858651010}
+        m_TargetAssemblyTypeName: GSFC.ARVR.MRET.Components.LineDrawing.LineDrawingController,
+          Assembly-CSharp
+        m_MethodName: OnHold
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  navigatePressHoldReleaseEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5458995327858651010}
+        m_TargetAssemblyTypeName: GSFC.ARVR.MRET.Components.LineDrawing.LineDrawingController,
+          Assembly-CSharp
+        m_MethodName: OnUnhold
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  navigatePressDoublePressEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5458995327858651010}
+        m_TargetAssemblyTypeName: GSFC.ARVR.MRET.Components.LineDrawing.LineDrawingController,
+          Assembly-CSharp
+        m_MethodName: OnDoubleSelect
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  navigatePressExclusivePressEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5458995327858651010}
+        m_TargetAssemblyTypeName: GSFC.ARVR.MRET.Components.LineDrawing.LineDrawingController,
+          Assembly-CSharp
+        m_MethodName: OnSelect
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1378,7 +1694,9 @@ MonoBehaviour:
   armswingController: {fileID: 9051776075383355664}
   flyingController: {fileID: 7665255661147232681}
   navigationController: {fileID: 7469518572850294209}
+  climbingController: {fileID: 0}
   uiPointerController: {fileID: 844843841416974833}
+  drawingPointerController: {fileID: 8646470471533122281}
   updateRateModulo: 1
 --- !u!114 &3074668538890444997
 MonoBehaviour:
@@ -1396,7 +1714,8 @@ MonoBehaviour:
   m_EnableInputTracking: 1
   m_EnableInputActions: 1
   m_ModelPrefab: {fileID: 0}
-  m_ModelTransform: {fileID: 0}
+  m_ModelParent: {fileID: 0}
+  m_Model: {fileID: 0}
   m_AnimateModel: 0
   m_ModelSelectTransition: 
   m_ModelDeSelectTransition: 
@@ -1468,6 +1787,45 @@ MonoBehaviour:
   relativePositionIndicator: {fileID: 0}
   stepMultiplier: 1
   maxScaleLimit: 1
+--- !u!114 &5458995327858651010
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3074668538890444992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 38f6ac3157de6e34a9cf6aadc39066a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateRate: 1
+  customRate: 0
+  _drawingMode: 0
+  drawingType: 0
+  hand: {fileID: 7811045891917884471}
+  drawingWidth: 0.01
+  drawingColor:
+    serializedVersion: 2
+    rgba: 4279762688
+  drawingCutoff: -1
+  touchingVisual: {fileID: 0}
+--- !u!54 &643643291933321100
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3074668538890444992}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!1 &3074668539131014226
 GameObject:
   m_ObjectHideFlags: 0
@@ -1717,6 +2075,54 @@ MonoBehaviour:
       data1: 0
       data2: 0
   defaultFrameSettings: 0
+--- !u!1 &4360843896603078094
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6158292207505572863}
+  - component: {fileID: 7048317538186083356}
+  m_Layer: 0
+  m_Name: Drawing
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6158292207505572863
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4360843896603078094}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 7353965314627084427}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7048317538186083356
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4360843896603078094}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8641bda9dd2efdd49a9aa1f84fce999d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hand: {fileID: 4879489227874274683}
+  laserMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  maxDistance: 100
 --- !u!1 &4670497883778900319
 GameObject:
   m_ObjectHideFlags: 0
@@ -1746,6 +2152,7 @@ Transform:
   m_Children:
   - {fileID: 8135800935181086441}
   - {fileID: 8910898020898484687}
+  - {fileID: 6158292207505572863}
   m_Father: {fileID: 3074668538635940623}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1808,6 +2215,7 @@ Transform:
   m_Children:
   - {fileID: 6773439299948035997}
   - {fileID: 3461839269546757444}
+  - {fileID: 6699961196688278406}
   m_Father: {fileID: 3074668538890444993}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1941,6 +2349,11 @@ PrefabInstance:
       propertyPath: solver.rightArm.target
       value: 
       objectReference: {fileID: 8081150266863168500}
+    - target: {fileID: 3099398242796563328, guid: a86eab444e1701243a34693ea5281ec0,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 0}
     - target: {fileID: 5010612503886907130, guid: a86eab444e1701243a34693ea5281ec0,
         type: 3}
       propertyPath: m_RootOrder
@@ -2003,15 +2416,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a86eab444e1701243a34693ea5281ec0, type: 3}
---- !u!4 &8955270147169644666 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5010612503886907130, guid: a86eab444e1701243a34693ea5281ec0,
-    type: 3}
-  m_PrefabInstance: {fileID: 4165485809177966208}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5340384156866183785 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8345764251920086249, guid: a86eab444e1701243a34693ea5281ec0,
+    type: 3}
+  m_PrefabInstance: {fileID: 4165485809177966208}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8955270147169644666 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5010612503886907130, guid: a86eab444e1701243a34693ea5281ec0,
     type: 3}
   m_PrefabInstance: {fileID: 4165485809177966208}
   m_PrefabAsset: {fileID: 0}

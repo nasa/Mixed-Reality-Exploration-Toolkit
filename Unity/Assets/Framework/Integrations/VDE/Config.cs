@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace Assets.VDE
 {
+    [System.Serializable]
     public class Config
     {
         public Dictionary<string, Layouts.Config> layouts = new Dictionary<string, Layouts.Config> { };

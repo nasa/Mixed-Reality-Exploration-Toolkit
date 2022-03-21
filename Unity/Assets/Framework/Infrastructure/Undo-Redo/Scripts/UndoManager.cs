@@ -79,7 +79,7 @@ public class UndoManager : MonoBehaviour
         }
     }
 
-	void Start()
+	public void Initialize()
     {
         animationManager = FindObjectOfType<MRETAnimationManager>();
         xrcManager = FindObjectOfType<XRCManager>();

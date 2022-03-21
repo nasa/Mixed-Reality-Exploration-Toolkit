@@ -1,6 +1,7 @@
 ﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
+using System;
 using UnityEngine;
 using System.Collections.Generic;
 using GSFC.ARVR.MRET.Selection;
@@ -9,6 +10,7 @@ using GSFC.ARVR.MRET.Common.Schemas;
 using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
 using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 using GSFC.ARVR.MRET.Infrastructure.Framework;
+using GSFC.ARVR.MRET.Infrastructure.Components.ModelLoading;
 
 public class InteractablePart : SceneObject, ISelectable
 {
@@ -34,11 +36,15 @@ public class InteractablePart : SceneObject, ISelectable
         }
     }
 
+    public enum PartShadingMode { MeshDefault, MeshLimits }
+
     [Tooltip("Configuration Panel")]
     public GameObject partPanelPrefab;
     public GameObject grabCube, enclosure;
     public Transform headsetObject;
     public Color highlightColor;
+    public PartShadingMode shadingMode = PartShadingMode.MeshDefault;
+    public bool shadeForLimitViolations = false;
 
     private GameObject partPanel;
     private GameObject partPanelInfo = null;
@@ -48,10 +54,11 @@ public class InteractablePart : SceneObject, ISelectable
     private MeshRenderer[] objectRenderers;
     public Material[] objectMaterials;
     private bool hasBeenPlaced = false;
-    private UndoManager undoManager;
     private Vector3 lastSavedPosition;
     private Quaternion lastSavedRotation;
     private Vector3[] originalRendPositions;
+
+    private DataManager.DataValueEvent dataPointChangeEvent;
 
     // Part information.
     public string assetBundle = "";
@@ -72,14 +79,35 @@ public class InteractablePart : SceneObject, ISelectable
     public float idlePower = 0, averagePower = 0, peakPower = 0;
     public float powerContingency = 0;
     public Vector3 dimensions = Vector3.zero;
-    public List<string> dataPoints = new List<string>();
     public bool randomizeTexture = false;
     public System.Guid guid = System.Guid.NewGuid();
 
     public new static InteractablePart Create()
     {
         GameObject interactablePartGameObject = new GameObject();
-        return interactablePartGameObject.AddComponent<InteractablePart>();
+        InteractablePart interactablePart = interactablePartGameObject.AddComponent<InteractablePart>();
+        return interactablePart;
+    }
+
+    public static InteractablePart Create(string partName, string AssetBundle, SceneObject parent,
+        Vector3 size, Guid? uuid = null)
+    {
+        GameObject interactablePartGameObject = new GameObject();
+        InteractablePart interactablePart = interactablePartGameObject.AddComponent<InteractablePart>();
+
+        // Load from asset bundle.
+        Action<object> action = (object loadedPart) => {
+            ApplyModelToPart(interactablePart, (GameObject) loadedPart, size);
+        };
+#if (!UNITY_EDITOR && HOLOLENS_BUILD)
+                ModelLoading.ImportAssetBundleModelAsync(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "MRET/UWP/")
+                + AssetBundle, partName, action);
+#else
+        ModelLoading.ImportAssetBundleModelAsync(Application.dataPath
+        + "/StreamingAssets/Windows/" + AssetBundle, partName, action);
+#endif
+
+        return interactablePart;
     }
 
     // TODO: Don't look at me! I'm too ugly for human eyes.
@@ -155,7 +183,7 @@ public class InteractablePart : SceneObject, ISelectable
         return serializedPart;
     }
 
-    public void Start()
+    protected override void MRETStart()
     {
         // Preserve information about original materials.
         objectRenderers = GetComponentsInChildren<MeshRenderer>();
@@ -172,16 +200,16 @@ public class InteractablePart : SceneObject, ISelectable
         }
         objectMaterials = objMatList.ToArray();
 
-        undoManager = FindObjectOfType<UndoManager>();
-
         lastSavedPosition = transform.position;
         lastSavedRotation = transform.rotation;
 
         EnableColliders();
     }
 
-    private void Update()
+    protected override void MRETUpdate()
     {
+        base.MRETUpdate();
+
         if (clicked)
         {
             if (clickTimer < 0)
@@ -262,21 +290,6 @@ public class InteractablePart : SceneObject, ISelectable
         {
             return;
         }
-
-        /*if (!selected)
-        {
-            // Highlight the entire part.
-            foreach (MeshRenderer rend in GetComponentsInChildren<MeshRenderer>())
-            {
-                int rendMatCount = rend.materials.Length;
-                Material[] rendMats = new Material[rendMatCount];
-                for (int j = 0; j < rendMatCount; j++)
-                {
-                    rendMats[j] = highlightMaterial;
-                }
-                rend.materials = rendMats;
-            }
-        }*/
     }
 
     protected override void EndTouch()
@@ -287,15 +300,6 @@ public class InteractablePart : SceneObject, ISelectable
         {
             return;
         }
-
-        /*if (!selected)
-        {
-            ResetMyTextures();
-            foreach (InteractablePart iPart in GetComponentsInChildren<InteractablePart>())
-            {
-                iPart.ResetMyTextures();
-            }
-        }*/
     }
 
     public override void BeginGrab(InputHand hand)
@@ -351,7 +355,7 @@ public class InteractablePart : SceneObject, ISelectable
         {
             if (transform.position != lastSavedPosition && transform.rotation != lastSavedRotation)
             {
-                undoManager.AddAction(ProjectAction.MoveObjectAction(transform.name, transform.position, transform.rotation, guid.ToString()),
+                MRET.UndoManager.AddAction(ProjectAction.MoveObjectAction(transform.name, transform.position, transform.rotation, guid.ToString()),
                     ProjectAction.MoveObjectAction(transform.name, lastSavedPosition, lastSavedRotation));
                 lastSavedPosition = transform.position;
                 lastSavedRotation = transform.rotation;
@@ -388,13 +392,6 @@ public class InteractablePart : SceneObject, ISelectable
         if (!partPanel)
         {
             partPanel = Instantiate(partPanelPrefab);
-            ObjectPanelsMenuController panelsController = partPanel.GetComponent<ObjectPanelsMenuController>();
-            if (panelsController)
-            {
-                panelsController.selectedObject = gameObject;
-                panelsController.SetTitle(transform.name);
-                panelsController.Initialize();
-            }
 
             // If position hasn't been set or reinitializing, initialize panel position.
             if ((partPanelInfo == null) || reinitialize)
@@ -402,16 +399,16 @@ public class InteractablePart : SceneObject, ISelectable
                 Collider objectCollider = GetComponent<Collider>();
                 if (objectCollider)
                 {
-                    Vector3 selectedPosition = objectCollider.ClosestPointOnBounds(controller.transform.position);
+                    //Vector3 selectedPosition = objectCollider.ClosestPointOnBounds(controller.transform.position);
                     
                     // Move panel between selected point and headset.
-                    partPanel.transform.position = Vector3.Lerp(selectedPosition, headsetObject.transform.position, 0.1f);
+                    partPanel.transform.position = Vector3.Lerp(controller.transform.position, headsetObject.transform.position, 0.1f);
 
                     // Try to move panel outside of object. If the headset is in the object, there is
                     // nothing we can do.
                     if (!objectCollider.bounds.Contains(headsetObject.transform.position))
                     {
-                        while (objectCollider.bounds.Contains(partPanel.transform.position))
+                        while (ExistsWithinPart(partPanel.transform.position))
                         {
                             partPanel.transform.position = Vector3.Lerp(partPanel.transform.position,
                                 headsetObject.transform.position, 0.1f);
@@ -433,13 +430,13 @@ public class InteractablePart : SceneObject, ISelectable
                 Collider objectCollider = GetComponent<Collider>();
                 if (objectCollider)
                 {
-                    if (objectCollider.bounds.Contains(partPanel.transform.position))
+                    if (ExistsWithinPart(partPanel.transform.position))
                     {
                         // Try to move panel outside of object. If the headset is in the object, there is
                         // nothing we can do.
                         if (!objectCollider.bounds.Contains(headsetObject.transform.position))
                         {
-                            while (objectCollider.bounds.Contains(partPanel.transform.position))
+                            while (ExistsWithinPart(partPanel.transform.position))
                             {
                                 partPanel.transform.position = Vector3.Lerp(partPanel.transform.position,
                                     headsetObject.transform.position, 0.1f);
@@ -454,7 +451,15 @@ public class InteractablePart : SceneObject, ISelectable
             // Finally, make the panel a child of its gameobject and point it at the camera.
             partPanel.transform.rotation = Quaternion.LookRotation(headsetObject.transform.forward);
             //partPanel.transform.SetParent(transform);
-            partPanel.transform.SetParent(transform.parent);
+            partPanel.transform.SetParent(null);
+
+            ObjectPanelsMenuController panelsController = partPanel.GetComponent<ObjectPanelsMenuController>();
+            if (panelsController)
+            {
+                panelsController.selectedObject = gameObject;
+                panelsController.SetTitle(transform.name);
+                panelsController.Initialize();
+            }
         }
     }
 
@@ -466,6 +471,41 @@ public class InteractablePart : SceneObject, ISelectable
         }
     }
 
+    private bool ExistsWithinPart(Vector3 pos)
+    {
+        Bounds bou = new Bounds();
+        foreach (Collider coll in GetComponentsInChildren<Collider>())
+        {
+            bou.Encapsulate(coll.bounds);
+        }
+        return bou.Contains(pos);
+    }
+
+    private bool ExistsWithinAssembly(Vector3 pos)
+    {
+        InteractablePart ipt = this;
+        foreach (InteractablePart ip in GetComponentsInParent<InteractablePart>())
+        {
+            if (ip != this)
+            {
+                ipt = ip;
+                break;
+            }
+        }
+
+        if (ipt)
+        {
+            Bounds bou = new Bounds();
+            foreach (Collider coll in ipt.GetComponentsInChildren<Collider>())
+            {
+                bou.Encapsulate(coll.bounds);
+            }
+            return bou.Contains(pos);
+        }
+
+        return false;
+    }
+
     /// <summary>
     /// Temporary fix for a bug occurring with colliders being disabled.
     /// </summary>
@@ -474,6 +514,106 @@ public class InteractablePart : SceneObject, ISelectable
         foreach (Collider coll in GetComponentsInChildren<Collider>())
         {
             coll.enabled = true;
+        }
+    }
+
+    private static void ApplyModelToPart(InteractablePart part, GameObject model, Vector3? partSize = null)
+    {
+        Quaternion originalRotation = part.transform.rotation;
+        model.transform.SetParent(part.transform);
+        model.transform.localPosition = Vector3.zero;
+        model.transform.localRotation = Quaternion.identity;
+        model.transform.localScale = Vector3.one;
+
+        Bounds bou;
+
+        if (partSize != null)
+        {
+            // Reset object rotation (for accurate render bounds).
+            part.transform.eulerAngles = Vector3.zero;
+
+            bou = new Bounds(part.transform.position, Vector3.zero);
+
+            // TODO: hierarchical scaling is currently incorrect.
+            // Create new bounds and add the bounds of all child objects together.
+            foreach (Renderer ren in part.GetComponentsInChildren<Renderer>())
+            {
+                bou.Encapsulate(ren.bounds);
+            }
+
+            Vector3 size = bou.size;
+            Vector3 rescale = part.transform.localScale;
+            Vector3 dimensions = new Vector3(
+                partSize.Value.x, partSize.Value.y, partSize.Value.z);
+
+            rescale.x = dimensions.x * rescale.x / size.x;
+            rescale.y = dimensions.y * rescale.y / size.y;
+            rescale.z = dimensions.z * rescale.z / size.z;
+
+            part.transform.localScale = rescale;
+            part.transform.rotation = originalRotation;
+        }
+
+        Collider collider = part.GetComponent<Collider>();
+        if (collider == null)
+        {
+            switch (MRET.ConfigurationManager.colliderMode)
+            {
+                case ConfigurationManager.ColliderMode.Box:
+                    Debug.Log("[SceneObjectManager->ApplyModelToPart] No collider detected. Generating box collder...");
+                    // Recalculate the bounds.
+                    bou = new Bounds(part.transform.position, Vector3.zero);
+                    foreach (Renderer ren in part.GetComponentsInChildren<Renderer>())
+                    {
+                        bou.Encapsulate(ren.bounds);
+                    }
+
+                    collider = part.gameObject.AddComponent<BoxCollider>();
+                    ((BoxCollider)collider).size = Vector3.Scale(bou.size,
+                        new Vector3(1 / part.transform.localScale.x,
+                        1 / part.transform.localScale.y,
+                        1 / part.transform.localScale.z));
+                    ((BoxCollider)collider).center = part.transform.InverseTransformPoint(bou.center);
+                    part.gameObject.layer = MRET.previewLayer;
+                    break;
+
+                case ConfigurationManager.ColliderMode.NonConvex:
+                    Debug.Log("[SceneObjectManager->ApplyModelToPart] No collider detected. Generating non-convex colliders...");
+                    foreach (MeshFilter mesh in part.gameObject.GetComponentsInChildren<MeshFilter>())
+                    {
+                        NonConvexMeshCollider ncmc = mesh.gameObject.AddComponent<NonConvexMeshCollider>();
+                        ncmc.boxesPerEdge = 20;
+                        ncmc.Calculate();
+                        mesh.gameObject.layer = MRET.previewLayer;
+                    }
+                    break;
+
+                case ConfigurationManager.ColliderMode.None:
+                default:
+                    Debug.Log("[SceneObjectManager->ApplyModelToPart] No collider detected. Not generating collider.");
+                    break;
+            }
+        }
+        else
+        {
+            Debug.Log("[SceneObjectManager->ApplyModelToPart] Collider already found.");
+            foreach (Collider coll in part.GetComponents<Collider>())
+            {
+                coll.enabled = true;
+            }
+        }
+
+        // TODO: Randomize textures.
+
+        Rigidbody rBody = part.gameObject.GetComponent<Rigidbody>();
+        if (rBody == null)
+        {
+            rBody = part.gameObject.AddComponent<Rigidbody>();
+            rBody.mass = 1;
+            rBody.angularDrag = 0.99f;
+            rBody.drag = 0.99f;
+            rBody.useGravity = false;
+            rBody.isKinematic = false;
         }
     }
 
@@ -625,7 +765,7 @@ public class InteractablePart : SceneObject, ISelectable
 
             // If this is the root object, add an undo action.
             PartType part = Serialize();
-            undoManager.AddAction(
+            MRET.UndoManager.AddAction(
                 ProjectAction.AddObjectAction(part, transform.position, transform.rotation,
                 new Vector3(part.PartTransform.Scale.X, part.PartTransform.Scale.Y, part.PartTransform.Scale.Z),
                 new InteractablePartSettings(grabbable, !rBody.isKinematic, rBody.useGravity),
@@ -815,5 +955,167 @@ public class InteractablePart : SceneObject, ISelectable
         
         return iPartToReturn;
     }
+#endregion
+
+#region DATA POINTS
+    /* private List<string> _dataPoints = new List<string>();
+    public List<string> dataPoints
+    {
+        get
+        {
+            return _dataPoints;
+        }
+        
+        private set
+        {
+            _dataPoints = value;
+        }
+    }*/
+    public List<string> dataPoints = new List<string>();
+
+    public bool AddDataPoint(string dataPoint)
+    {
+        if (dataPoints.Contains(dataPoint))
+        {
+            Debug.LogWarning("[InteractablePart->AddDataPoint] Point "
+                + dataPoint + " already exists on " + partName + ".");
+            return false;
+        }
+
+        // TODO MRETStart is not being called in time.
+        if (dataPointChangeEvent == null)
+        {
+            dataPointChangeEvent = new DataManager.DataValueEvent();
+            dataPointChangeEvent.AddListener(HandleDataPointChange);
+        }
+
+        dataPoints.Add(dataPoint);
+        MRET.DataManager.SubscribeToPoint(dataPoint, dataPointChangeEvent);
+        return true;
+    }
+
+    public bool RemoveDataPoint(string dataPoint)
+    {
+        if (dataPoints.Contains(dataPoint))
+        {
+            dataPoints.Remove(dataPoint);
+            MRET.DataManager.UnsubscribeFromPoint(dataPoint, dataPointChangeEvent);
+            return true;
+        }
+
+        Debug.LogWarning("[InteractablePart->RemoveDataPoint] Point "
+            + dataPoint + " does not exist on " + partName + ".");
+        return false;
+    }
+
+    public void HandleDataPointChange(DataManager.DataValue dataValue)
+    {
+        DataManager.DataValue.LimitState limitState = dataValue.limitState;
+        if (limitState == DataManager.DataValue.LimitState.Undefined)
+        {
+            HandleUndefinedLimitState();
+        }
+        else if (limitState == DataManager.DataValue.LimitState.Nominal)
+        {
+            HandleNominalLimitState();
+        }
+        else
+        {
+            HandleLimitViolation(limitState);
+        }
+    }
+
+    private void HandleLimitViolation(DataManager.DataValue.LimitState limitState)
+    {
+        if (shadeForLimitViolations)
+        {
+            if (shadingMode == PartShadingMode.MeshLimits)
+            {
+                RevertMeshLimitShader();
+            }
+            shadingMode = PartShadingMode.MeshLimits;
+            ApplyMeshLimitShader(limitState);
+        }
+    }
+
+    private void HandleNominalLimitState()
+    {
+        if (shadingMode == PartShadingMode.MeshLimits)
+        {
+            shadingMode = PartShadingMode.MeshDefault;
+            RevertMeshLimitShader();
+        }
+    }
+
+    private void HandleUndefinedLimitState()
+    {
+        if (shadingMode == PartShadingMode.MeshLimits)
+        {
+            shadingMode = PartShadingMode.MeshDefault;
+            RevertMeshLimitShader();
+        }
+    }
+
+    private Dictionary<MeshRenderer, Material[]> revertMaterials = null;
+    private void ApplyMeshLimitShader(DataManager.DataValue.LimitState limitType)
+    {
+        if (revertMaterials != null)
+        {
+            Debug.LogError("[InteractablePart->ApplyMeshLimitShader] Revert materials not empty. " +
+                "Will not apply mesh limit shader.");
+            return;
+        }
+
+        RestoreObjectMaterials();
+        SaveObjectMaterials();
+        revertMaterials = new Dictionary<MeshRenderer, Material[]>();
+        foreach (MeshRenderer rend in gameObject.GetComponentsInChildren<MeshRenderer>())
+        {
+            revertMaterials.Add(rend, rend.materials);
+
+            rend.materials = new Material[] { MRET.LimitMaterial };
+            switch (limitType)
+            {
+                case DataManager.DataValue.LimitState.RedHigh:
+                case DataManager.DataValue.LimitState.RedLow:
+                    rend.materials[0].SetFloat("_redLimitsExceeded", 1);
+                    rend.materials[0].SetFloat("_yellowLimitsExceeded", 0);
+                    rend.materials[0].SetFloat("_noLimitsExceeded", 0);
+                    break;
+
+                case DataManager.DataValue.LimitState.YellowHigh:
+                case DataManager.DataValue.LimitState.YellowLow:
+                    rend.materials[0].SetFloat("_redLimitsExceeded", 0);
+                    rend.materials[0].SetFloat("_yellowLimitsExceeded", 1);
+                    rend.materials[0].SetFloat("_noLimitsExceeded", 0);
+                    break;
+
+                case DataManager.DataValue.LimitState.Nominal:
+                    rend.materials[0].SetFloat("_redLimitsExceeded", 0);
+                    rend.materials[0].SetFloat("_yellowLimitsExceeded", 0);
+                    rend.materials[0].SetFloat("_noLimitsExceeded", 1);
+                    break;
+            }
+        }
+    }
+
+    private void RevertMeshLimitShader()
+    {
+        if (revertMaterials == null)
+        {
+            Debug.LogError("[InteractablePart->RevertMeshLimitShader] No revert materials. " +
+                "Will not revert materials.");
+            return;
+        }
+
+        RestoreObjectMaterials();
+        //foreach (KeyValuePair<MeshRenderer, Material[]> rendMat in revertMaterials)
+        //{
+        //    rendMat.Key.materials = rendMat.Value;
+        //}
+
+        revertMaterials = null;
+    }
+
 #endregion
 }

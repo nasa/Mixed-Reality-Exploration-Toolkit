@@ -29,7 +29,7 @@ namespace Assets.VDE.Layouts.CSV
 
             if (container.immediateSiblings.Count() > 0)
             {
-                toReturn = GetContainerPositionOnSiblingsRing(container, GetRigidJointValueFromConf(UI.Joint.Type.MemberGroot, "JointMaxDistance") * 2);
+                toReturn = GetTier1ContainerPosition(container, GetRigidJointValueFromConf(UI.Joint.Type.MemberGroot, "JointMaxDistance") * 2);
 
                 // this is set only for the tier1 groups so, that their positions wouldnt be reset to zero, when the group is being repositioned because their shapes change.
                 container.resetToPosition = toReturn;

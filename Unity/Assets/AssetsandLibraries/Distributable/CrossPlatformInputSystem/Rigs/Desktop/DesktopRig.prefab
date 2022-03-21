@@ -255,8 +255,9 @@ MonoBehaviour:
   inputHand: {fileID: 7897614795792183967}
   teleportController: {fileID: 0}
   armswingController: {fileID: 0}
-  flyingController: {fileID: 0}
+  flyingController: {fileID: 6146023070613669698}
   navigationController: {fileID: 1278345011329967619}
+  climbingController: {fileID: 0}
   uiPointerController: {fileID: 0}
   inputHeadDesktop: {fileID: 1601938468301582288}
   dynamic: 1
@@ -410,6 +411,7 @@ MonoBehaviour:
   armswingController: {fileID: 0}
   flyingController: {fileID: 0}
   navigationController: {fileID: 0}
+  climbingController: {fileID: 0}
   uiPointerController: {fileID: 0}
   inputHeadDesktop: {fileID: 1601938468301582288}
   dynamic: 0
@@ -626,6 +628,7 @@ GameObject:
   - component: {fileID: 2384353452219223614}
   - component: {fileID: 2247218730922611995}
   - component: {fileID: 1278345011329967619}
+  - component: {fileID: 6146023070613669698}
   m_Layer: 0
   m_Name: DesktopRig
   m_TagString: Untagged
@@ -685,8 +688,9 @@ MonoBehaviour:
   physics: {fileID: 2384353452219223614}
   characterController: {fileID: 5314989998336425967}
   armswingController: {fileID: 0}
-  flyingController: {fileID: 0}
+  flyingController: {fileID: 6146023070613669698}
   navigationController: {fileID: 1278345011329967619}
+  climbingController: {fileID: 0}
   head: {fileID: 7540977940880487350}
 --- !u!143 &5314989998336425967
 CharacterController:
@@ -960,6 +964,27 @@ MonoBehaviour:
   motionFastMultiplier: 3.35
   handsMutuallyExclusive: 0
   gravityConstraint: 0
+--- !u!114 &6146023070613669698
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3357607536138086798}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 16b36da269181e240b5ee6421e4e7d1a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  updateRate: 30
+  customRate: 0
+  motionNormalMultiplier: 1
+  motionSlowMultiplier: 0.5
+  motionFastMultiplier: 1.5
+  handsMutuallyExclusive: 0
+  gravityConstraint: 0
+  flyingMechanism: 1
+  reverseMotion: 1
 --- !u!1 &8827527632314170213
 GameObject:
   m_ObjectHideFlags: 0
@@ -1100,6 +1125,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: DESKTOP_ASTRO
+      objectReference: {fileID: 0}
+    - target: {fileID: 6936486433067437552, guid: 0550ff1f68a6f114eb35a1e4eccde615,
+        type: 3}
+      propertyPath: m_Controller
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0550ff1f68a6f114eb35a1e4eccde615, type: 3}

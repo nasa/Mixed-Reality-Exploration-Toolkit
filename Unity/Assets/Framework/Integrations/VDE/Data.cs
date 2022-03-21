@@ -55,19 +55,56 @@ namespace Assets.VDE
 
         internal void LoadLocalConfigAndData()
         {
+            Debug.Log("LoadLocalConfigAndData");
             TextAsset configRaw = (TextAsset) Resources.Load(VDE.nameOfBakedConfigResource);
             TextAsset entityRaw = (TextAsset) Resources.Load(VDE.nameOfBakedEntitiesResource);
             TextAsset linkRaw = (TextAsset) Resources.Load(VDE.nameOfBakedLinksResource);
-
-            config = Newtonsoft.Json.JsonConvert.DeserializeObject<Config>(configRaw.text);
-            if (config.VDE.ContainsKey("server"))
+            TextAsset positionsRaw = (TextAsset) Resources.Load(VDE.nameOfBakedPositionsResource);
+            if (!(configRaw is null) && !(configRaw.text is null) && configRaw.text.Length > 0)
             {
-                VDE.serverURL = config.VDE["server"];
-            }
-            layouts.InitializeLayouts();
+                config = Newtonsoft.Json.JsonConvert.DeserializeObject<Config>(configRaw.text);
 
-            entities.Import(entityRaw.text);
-            links.Import(linkRaw.text);
+                if (config.VDE.ContainsKey("server"))
+                {
+                    VDE.serverAddress = config.VDE["server"];
+                }
+                layouts.InitializeLayouts();
+                /*
+                            if (positionsRaw is null)
+                            {
+                                entities.Import(entityRaw.text);
+                            } 
+                            else
+                            {
+                                entities.ImportWithShapesAndPositions(entityRaw.text, positionsRaw.text);
+                            }
+                */
+                if (!(entityRaw is null) && !(entityRaw.text is null) && entityRaw.text.Length > 0)
+                {
+                    entities.Import(entityRaw.text);
+                }
+                else
+                {
+                    messenger.Post(new Message()
+                    {
+                        HUDEvent = Assets.VDE.UI.HUD.HUD.Event.SetText,
+                        message = "No entities found at: " + VDE.nameOfBakedEntitiesResource
+                    });
+                }
+
+                if (!(linkRaw is null) && !(linkRaw.text is null) && linkRaw.text.Length > 0)
+                {
+                    links.Import(linkRaw.text);
+                }
+            }
+            else
+            {
+                messenger.Post(new Message()
+                {
+                    HUDEvent = Assets.VDE.UI.HUD.HUD.Event.SetText,
+                    message = "No configuration found at: " + VDE.nameOfBakedConfigResource
+                });
+            }
         }
 
         internal void DestroyDestroyables()

@@ -17,6 +17,11 @@ public class DataManager : MonoBehaviour
 
     public class DataValue
     {
+        /// <summary>
+        /// A state for data point limits.
+        /// </summary>
+        public enum LimitState { Undefined, RedLow, YellowLow, Nominal, YellowHigh, RedHigh }
+
         public string key;
         public object value;
         public object minimum, maximum;
@@ -25,6 +30,47 @@ public class DataManager : MonoBehaviour
         public object redLow, yellowLow, yellowHigh, redHigh;
 
         public List<DataValue> previousValues;
+
+        /// <summary>
+        /// The current limit state corresponding to the data point's value.
+        /// </summary>
+        public LimitState limitState
+        {
+            get
+            {
+                if (IsNumber() == false)
+                {
+                    return LimitState.Undefined;
+                }
+
+                if (redHigh == null || yellowHigh == null ||
+                    yellowLow == null || redLow == null)
+                {
+                    return LimitState.Undefined;
+                }
+
+                if (Convert.ToDouble(value) >= Convert.ToDouble(redHigh))
+                {
+                    return LimitState.RedHigh;
+                }
+                else if (Convert.ToDouble(value) >= Convert.ToDouble(yellowHigh))
+                {
+                    return LimitState.YellowHigh;
+                }
+                else if (Convert.ToDouble(value) <= Convert.ToDouble(redLow))
+                {
+                    return LimitState.RedLow;
+                }
+                else if (Convert.ToDouble(value) <= Convert.ToDouble(yellowLow))
+                {
+                    return LimitState.YellowLow;
+                }
+                else
+                {
+                    return LimitState.Nominal;
+                }
+            }
+        }
 
         public DataValue(string _key, object _value, string _category = "none", DateTime? _time = null,
             object _redLow = null, object _yellowLow = null, object _yellowHigh = null, object _redHigh = null,

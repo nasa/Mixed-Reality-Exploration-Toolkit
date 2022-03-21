@@ -26,7 +26,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
     ///     currently a SteamVR bug
     ///     https://www.reddit.com/r/Unity3D/comments/mnhtko/openxr_not_detecting_primary_button_of_htc_vive/ (DZB)
     /// 20 July 2021: SteamVR bug has been fixed, uncommenting code (DZB)
+    /// 24 July 2021: Added Climbing locomotion (C. Lian)
+    /// 28 July 2021: Adding support for velocity (DZB)
     /// 17 August 2021: Added pointer functions.
+    /// 23 December 2021: Adding Drawing Laser (DZB)
     /// </remarks>
     /// <summary>
     /// SteamVR wrapper for the input hand.
@@ -42,6 +45,24 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
             get
             {
                 return nameof(InputHandSteamVR);
+            }
+        }
+        
+        /// <summary>
+        /// Velocity of the hand.
+        /// </summary>
+        public override Vector3 velocity
+        {
+            get
+            {
+                Vector3 vel = Vector3.zero;
+                if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.deviceVelocity, out vel))
+                {
+                    Debug.LogWarning("[" + ClassName + "->" + nameof(velocity) + "; " + name + "] '" +
+                    UnityEngine.XR.CommonUsages.deviceVelocity + "' does not exist.");
+                    return Vector3.zero;
+                }
+                return vel;
             }
         }
 
@@ -200,6 +221,14 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
                     }
                 }
 
+                if (drawingPointerController.raycastLaser != null)
+                {
+                    if (drawingPointerController.raycastLaser.active)
+                    {
+                        return true;
+                    }
+                }
+
                 return false;
             }
         }
@@ -211,6 +240,15 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
         {
             get
             {
+                // TODO: May need to support multiple pointers.
+                if (drawingPointerController.raycastLaser != null)
+                {
+                    if (drawingPointerController.raycastLaser.active)
+                    {
+                        return drawingPointerController.raycastLaser.hitPos;
+                    }
+                }
+
                 if (uiPointerController.raycastLaser != null)
                 {
                     if (uiPointerController.raycastLaser.active)
@@ -826,6 +864,24 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
 
 #endregion // Locomotion [Navigate]
 
+#region Locomotion [Climb]
+
+        /// <seealso cref="InputHandSDK.EnableClimb"/>
+        public override void EnableClimb()
+        {
+            // Notify the locomotion controller that we are enabled
+            if (_climbingController != null) _climbingController.SetHandActiveState(this.inputHand, true);
+        }
+
+        /// <seealso cref="InputHandSDK.DisableClimb"/>
+        public override void DisableClimb()
+        {
+            // Notify the locomotion controller that we are disabled
+            if (_climbingController != null) _climbingController.SetHandActiveState(this.inputHand, false);
+        }
+
+        #endregion // Locomotion [Climb]
+
 #endregion // Locomotion
 
 #region UI Handling
@@ -855,6 +911,20 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
                 uiPointerController.Select();
             }
         }
-    }
 #endregion
+
+#region Drawing
+        public override void ToggleDrawingPointerOn()
+        {
+            drawingPointerController.EnterMode();
+            drawingPointerController.TogglePointingOn();
+        }
+
+        public override void ToggleDrawingPointerOff()
+        {
+            drawingPointerController.TogglePointingOff();
+            drawingPointerController.ExitMode();
+        }
+#endregion
+    }
 }

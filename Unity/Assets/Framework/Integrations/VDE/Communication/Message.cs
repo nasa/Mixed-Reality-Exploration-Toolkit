@@ -6,6 +6,7 @@ using Assets.VDE.Layouts;
 using System;
 using System.Collections.Generic;
 using Assets.VDE.UI;
+using UnityEngine;
 
 namespace Assets.VDE.Communication
 {
@@ -14,7 +15,7 @@ namespace Assets.VDE.Communication
     {
         internal Link.Event LinkEvent;
         internal Log.Event LogingEvent;
-        internal Joint.Event JointEvent;
+        internal UI.Joint.Event JointEvent;
         internal UI.HUD.HUD.Event HUDEvent;
         internal Telemetry.Type TelemetryType;
         internal Layouts.Layouts.LayoutEvent LayoutEvent;
@@ -26,6 +27,7 @@ namespace Assets.VDE.Communication
             OK,
             XRdeviceNotFound,
             MissingDispatcher,
+            ErrorDecodingJson,
             ErrorAddingLayersAndTags,
             ErrorLoadingConfiguration,
             ErrorLoadingValueFromConfiguration
@@ -39,6 +41,7 @@ namespace Assets.VDE.Communication
         internal Entities.Event EntityEvent;
         internal Telemetry telemetry;
         internal List<float> floats = new List<float>() { };
+        internal Color color;
 
         internal Message() { }
     }

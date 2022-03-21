@@ -56,7 +56,11 @@ namespace Assets.VDE.UI.Input
             Exit,
             ToggleEdges,
             DestroyTheMirror,
-            ExportObjectWithCoordinates
+            ExportObjectWithCoordinates,
+            ToggleNotifications,
+            ToggleLabels,
+            ScaleVDE,
+            PositionVDE
         }
     }
 }

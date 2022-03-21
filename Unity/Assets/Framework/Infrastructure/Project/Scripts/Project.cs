@@ -1434,13 +1434,15 @@ namespace GSFC.ARVR.MRET.Common.Schemas
 
         private bool renderInCloudField;
 
-        private string serverURLField;
+        private string serverAddressField;
 
         private string bakedConfigResourceField;
 
         private string bakedEntitiesResourceField;
 
         private string bakedLinksResourceField;
+
+        private string connectionTypeField;
 
         /// <remarks/>
         [System.Xml.Serialization.XmlElementAttribute("Standalone")]
@@ -1471,19 +1473,21 @@ namespace GSFC.ARVR.MRET.Common.Schemas
         }
 
         /// <remarks/>
-        public string serverURL
+        [System.Xml.Serialization.XmlElementAttribute("ServerAddress")]
+        public string serverAddress
         {
             get
             {
-                return this.serverURLField;
+                return this.serverAddressField;
             }
             set
             {
-                this.serverURLField = value;
+                this.serverAddressField = value;
             }
         }
 
         /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("BakedConfigResource")]
         public string bakedConfigResource
         {
             get
@@ -1497,6 +1501,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
         }
 
         /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("BakedEntitiesResource")]
         public string bakedEntitiesResource
         {
             get
@@ -1510,6 +1515,7 @@ namespace GSFC.ARVR.MRET.Common.Schemas
         }
 
         /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("BakedLinkResource")]
         public string bakedLinksResource
         {
             get
@@ -1519,6 +1525,19 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             set
             {
                 this.bakedLinksResourceField = value;
+            }
+        }
+        /// <remarks/>
+        [System.Xml.Serialization.XmlElementAttribute("ConnectionType")]
+        public Assets.VDE.VDE.ConnectionType connectionType
+        {
+            get
+            {
+                return (this.connectionTypeField == "SIGNALR") ? Assets.VDE.VDE.ConnectionType.SIGNALR : Assets.VDE.VDE.ConnectionType.GMSEC;
+            }
+            set
+            {
+                this.connectionTypeField = value.ToString();
             }
         }
     }
@@ -2009,6 +2028,8 @@ namespace GSFC.ARVR.MRET.Common.Schemas
 
         private float armswingSpeedField;
 
+        private float climbSpeedField;
+
         /// <remarks/>
         public float TeleportDistance
         {
@@ -2058,6 +2079,19 @@ namespace GSFC.ARVR.MRET.Common.Schemas
             set
             {
                 this.armswingSpeedField = value;
+            }
+        }
+
+        /// <remarks/>
+        public float ClimbSpeed
+        {
+            get
+            {
+                return this.climbSpeedField;
+            }
+            set
+            {
+                this.climbSpeedField = value;
             }
         }
     }

@@ -4,6 +4,7 @@
  */
 using Assets.VDE.Communication;
 using Assets.VDE.Layouts;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -57,12 +58,26 @@ namespace Assets.VDE.UI
                 layout = container.layout;
             }
 
-            if (!(container.joints is null) && !(container.joints.joints is null))
+            if (entity.doJoints && !(container.joints is null) && !(container.joints.joints is null))
             {
                 foreach (Joint joint in container.joints.joints.Where(joint => joint.src == entity))
                 {
                     joint.ReceiveCreaturesForSRC(new object[] { entity, container, this });
                 }
+            }
+
+            if (entity.presetPosition != Vector3.zero)
+            {
+                SetPositionAndScale(
+                    entity.presetPosition,
+                    entity.presetScale);
+                SetRotation(entity.presetRotation);
+            }
+
+            // Color is not nullabel, hence checking the c here.
+            if (!(entity.c is null))
+            {
+                SetColor(entity.c);
             }
 
             messenger.Post(new Message()
@@ -110,50 +125,51 @@ namespace Assets.VDE.UI
         {
             return GetComponent<MeshRenderer>().material.color;
         }
+        internal void SetColor(string c)
+        {
+            if (!(c is null))
+            {
+                ColorUtility.TryParseHtmlString(entity.c, out entity.presetColour);
+                SetColor(entity.presetColour);
+            }
+        }
         internal void SetColor(Color colour)
         {
             MeshRenderer render = GetComponent<MeshRenderer>();
             // depending on the material used by the shape, colour variables may have various names inside the material. hence this brute force.
             render.material.color = colour;
-            render.material.SetColor("_Color", colour);
-            render.material.SetColor("MainColor", colour);
-            render.material.SetColor("_MainColor", colour);
-            render.material.SetColor("_UnlitColor", colour);
+
+            // for non-URP shaders. just in any case.
             render.material.SetColor("_TintColor", colour);
-            render.material.SetColor("_Albedo", colour);
-            render.material.SetColor("Albedo", colour);
-            
-            render.material.SetFloat("_EmissiveExposureWeight", 0.8F - colour.a);
-            
-        }
-        /*
-         * if MRTK will finally be usable some fine day, this might be useful.
-         * 
-        public void OnFocusEnter(FocusEventData eventData)
-        {
-            GotFocus();
-        }
 
-        public void OnFocusExit(FocusEventData eventData)
-        {
-            LostFocus();
-        }        
+            // _BaseColor alpha controls intensity, while _EmissiveColor controls color. go figure the logic..
 
-        public void OnTouchStarted(HandTrackingInputEventData eventData)
-        {
-            GotFocus();
+            // if the colour is not white, adjust the
+            if (colour.r + colour.g + colour.b < 3)
+            {
+                render.material.SetColor("_EmissiveColor", colour);
+                render.material.SetColor("_BaseColor", new Color(1,1,1,colour.a));
+                render.material.SetFloat("_EmissiveExposureWeight", 0);
+                
+            }
+            // in case of HDRP / URP and HDRP/Lit shader, _EmissiveExposureWeight is brighter (colourless) white, if < 0.6
+            // but darker with colour, if > 0.7 while < 1.1
+            // and void black if > 1.1
+            // hence we need to substract the alpha from the value, in case the colour is white.
+            else
+            {
+                render.material.SetColor("_EmissiveColor", Color.white);
+                render.material.SetColor("_BaseColor", new Color(1, 1, 1, colour.a));
+                if (colour.a > 0.8)
+                {
+                    render.material.SetFloat("_EmissiveExposureWeight", 0 - colour.a);
+                }
+                else
+                {
+                    render.material.SetFloat("_EmissiveExposureWeight", 0);
+                }
+            }            
         }
-
-        public void OnTouchCompleted(HandTrackingInputEventData eventData)
-        {
-            GotFocus();
-        }
-
-        public void OnTouchUpdated(HandTrackingInputEventData eventData)
-        {
-            log.Entry("touch: " + eventData.selectedObject.name);
-        }
-        */
         private void OnTriggerEnter(Collider other)
         {
             CheckIfToSetVisibility(other.gameObject, false);
@@ -164,5 +180,10 @@ namespace Assets.VDE.UI
         }
         virtual internal void CheckIfToSetVisibility(GameObject other, bool setTo) { }
         virtual internal void SetVisibility(bool setTo) { }
+
+        internal void SetRotation(Vector3 vector3)
+        {
+            transform.eulerAngles = vector3;
+        }
     }
 }

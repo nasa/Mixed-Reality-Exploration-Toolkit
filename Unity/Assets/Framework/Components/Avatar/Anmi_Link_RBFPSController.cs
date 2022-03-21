@@ -4,8 +4,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityStandardAssets.CrossPlatformInput;
-using UnityStandardAssets.Characters.FirstPerson;
+//using UnityStandardAssets.CrossPlatformInput;
+//using UnityStandardAssets.Characters.FirstPerson;
 
 public class Anmi_Link_RBFPSController : MonoBehaviour
 {
@@ -21,10 +21,10 @@ public class Anmi_Link_RBFPSController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Vector2 input = GetInput();
+        //Vector2 input = GetInput();
         //Added for animation
-        m_CamForward = Vector3.Scale(cam.transform.forward, new Vector3(1, 0, 1)).normalized;
-        m_Move = input.y * m_CamForward + CrossPlatformInputManager.GetAxis("Mouse X") * cam.transform.right;
+        //m_CamForward = Vector3.Scale(cam.transform.forward, new Vector3(1, 0, 1)).normalized;
+        //m_Move = input.y * m_CamForward + CrossPlatformInputManager.GetAxis("Mouse X") * cam.transform.right;
         //m_AnimationLink.Move(m_Move, m_controllerLink.Grounded);
     }
 
@@ -34,8 +34,8 @@ public class Anmi_Link_RBFPSController : MonoBehaviour
 
         Vector2 input = new Vector2
         {
-            x = CrossPlatformInputManager.GetAxis("Horizontal"),
-            y = CrossPlatformInputManager.GetAxis("Vertical")
+            //x = CrossPlatformInputManager.GetAxis("Horizontal"),
+            //y = CrossPlatformInputManager.GetAxis("Vertical")
         };
         return input;
     }

@@ -13,13 +13,13 @@ namespace Assets.VDE
     {   
         ConcurrentDictionary<string, ConcurrentQueue<Callback>> callbacks = new ConcurrentDictionary<string, ConcurrentQueue<Callback>> { };
         /// <summary>
-        /// to request another an entity, shape, whatever to call back in case of gameObject, collision, rigidbody, etc. events.
+        /// Use this to request another entity, shape, whatever to call back in case of gameObject, collision, rigidbody, etc. events.
         /// usually anObject[0] is an entity, 1 is a shape, container, link, etc of that entity and 2 is a gameObject/rigidBody/joint/covfefetable, thats being sent along.
         /// </summary>
         /// <param name="anObject"></param>
         internal delegate IEnumerator Callback(object[] anObject);
         /// <summary>
-        /// request this shape to call back, once "task" is done
+        /// request this shape to call back, once a "task" is done
         /// </summary>
         /// <param name="task"></param>
         /// <param name="callback"></param>

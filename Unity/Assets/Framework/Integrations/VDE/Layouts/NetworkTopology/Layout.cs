@@ -42,7 +42,7 @@ namespace Assets.VDE.Layouts.NetworkTopology
                 from = data.layouts.current.GetGroot()
             });
         }
-        override internal Vector3 GetContainerPositionOnSiblingsRing(Container container, float diameter)
+        override internal Vector3 GetTier1ContainerPosition(Container container, float diameter)
         {
             //float anger = (container.entity.pos + 1) * Mathf.PI * 2 / (container.entity.siblings.Count() - 1);
             float anger = container.entity.siblings.Where(sib => sib.pos < container.entity.pos).Count() * Mathf.PI * 2 / (container.entity.siblings.Count());
@@ -63,7 +63,7 @@ namespace Assets.VDE.Layouts.NetworkTopology
             }
             while (data.messenger.CheckLoad() > 0)
             {
-                yield return data.UI.Sleep(1234);
+                yield return new WaitForSeconds(data.random.Next(123, 234) / 100);
             }
             foreach (KeyValuePair<Container,Quaternion> shallowGroup in toReturnTo)
             {
@@ -92,7 +92,10 @@ namespace Assets.VDE.Layouts.NetworkTopology
                 item.gameObject.transform.LookAt(grootsContainer.transform);
                 item.gameObject.transform.Rotate(new Vector3(0, 180, 0));
             }*/
-            data.links.SetAllLinkStatusTo(true);
+
+            // 20220222: after the rewrite of link creation procession, this is not needed anymore.
+            // and would conflict with lines that are created hidden.
+            //data.links.SetAllLinkStatusTo(true);
             data.entities.SetShapesCollidersToTriggers(true);
 
             data.messenger.Post(new Message()
@@ -114,7 +117,7 @@ namespace Assets.VDE.Layouts.NetworkTopology
                 from = data.layouts.current.GetGroot()
             });
 
-            log.Entry("LayoutReady");
+            log.Entry("LayoutReady: " + data.entities.Count() + " & " + data.links.links.Count);
             try
             {
                 data.VDE.startupScreen.SetActive(false);
@@ -126,7 +129,7 @@ namespace Assets.VDE.Layouts.NetworkTopology
         {
             Vector3 toReturn;
             container.SetPositionCorrection(Container.PositionCorrectionDirection.freeze);
-            toReturn = GetContainerPositionOnSiblingsRing(container, GetRigidJointValueFromConf(UI.Joint.Type.MemberGroot, "JointMaxDistance") * 20);
+            toReturn = GetTier1ContainerPosition(container, GetRigidJointValueFromConf(UI.Joint.Type.MemberGroot, "JointMaxDistance") * 20);
             if (!shapesOnRing.Contains(container))
             {
                 shapesOnRing.Add(container);

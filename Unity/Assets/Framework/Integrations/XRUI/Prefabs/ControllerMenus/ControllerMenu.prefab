@@ -82,6 +82,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &892790067886213048
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -185,6 +186,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931974628717026}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -196,6 +198,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -211,6 +214,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931974834643858}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -222,6 +226,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -237,6 +242,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931976252573327}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -248,6 +254,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -258,12 +265,21 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  reloadProjectIcon: {fileID: 21300000, guid: 1e011b20d76e04540adcb89e956190c9, type: 3}
+  reloadProjectEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  reloadUserIcon: {fileID: 21300000, guid: 3eee969b08c2d4043b1e99b637d21c87, type: 3}
+  reloadUserEvent:
+    m_PersistentCalls:
+      m_Calls: []
   collaborationJoinIcon: {fileID: 21300000, guid: a9f7df6f30c7098419e63cc9663ab10c,
     type: 3}
   collaborationJoinEvent:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931974884962563}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -275,6 +291,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -291,6 +308,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931976055091398}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -302,6 +320,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -318,6 +337,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931975715193237}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -329,6 +349,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -343,6 +364,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931974806567653}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -354,6 +376,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -369,6 +392,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -384,6 +408,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: Redo
         m_Mode: 1
         m_Arguments:
@@ -423,6 +448,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931976295592191}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -434,6 +460,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -449,6 +476,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleTeleport
         m_Mode: 6
         m_Arguments:
@@ -464,6 +492,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleFlying
         m_Mode: 6
         m_Arguments:
@@ -483,6 +512,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleArmswing
         m_Mode: 6
         m_Arguments:
@@ -493,11 +523,28 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  climbIcon: {fileID: 21300000, guid: ac6f44b4b243f4444973a4e1b83ff3ef, type: 3}
+  climbEvent:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
+        m_MethodName: 
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: 
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
   rotateXIcon: {fileID: 21300000, guid: e4e689db2aa882a499f7486028b4918a, type: 3}
   rotateXEvent:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleXRotation
         m_Mode: 6
         m_Arguments:
@@ -513,6 +560,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleYRotation
         m_Mode: 6
         m_Arguments:
@@ -528,6 +576,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleZRotation
         m_Mode: 6
         m_Arguments:
@@ -543,6 +592,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleScaling
         m_Mode: 6
         m_Arguments:
@@ -558,6 +608,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931976107517980}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -569,6 +620,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -584,6 +636,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931976012670903}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -595,6 +648,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -610,6 +664,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931974975298473}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleImageCamera
         m_Mode: 1
         m_Arguments:
@@ -625,6 +680,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931974975298473}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleVideoCamera
         m_Mode: 1
         m_Arguments:
@@ -640,6 +696,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931974975298473}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleCamerasOff
         m_Mode: 1
         m_Arguments:
@@ -655,6 +712,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931974975298473}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleBodyCamera
         m_Mode: 1
         m_Arguments:
@@ -670,6 +728,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931975681198074}
+        m_TargetAssemblyTypeName: 
         m_MethodName: EnableSIRuler
         m_Mode: 1
         m_Arguments:
@@ -685,6 +744,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931975681198074}
+        m_TargetAssemblyTypeName: 
         m_MethodName: EnableImperialRuler
         m_Mode: 1
         m_Arguments:
@@ -700,6 +760,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931975681198074}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DisableAllRulers
         m_Mode: 1
         m_Arguments:
@@ -715,6 +776,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931974989491258}
+        m_TargetAssemblyTypeName: 
         m_MethodName: SwitchLeftScreen
         m_Mode: 6
         m_Arguments:
@@ -730,6 +792,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931974989491258}
+        m_TargetAssemblyTypeName: 
         m_MethodName: SwitchRightScreen
         m_Mode: 6
         m_Arguments:
@@ -745,6 +808,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931975715325387}
+        m_TargetAssemblyTypeName: 
         m_MethodName: SwitchNotes
         m_Mode: 6
         m_Arguments:
@@ -759,6 +823,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931975627903443}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -770,6 +835,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -791,6 +857,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931976214834050}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -802,6 +869,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -817,6 +885,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931976251479588}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -828,6 +897,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -843,6 +913,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931976179705030}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -854,6 +925,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -871,6 +943,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931976377702316}
+        m_TargetAssemblyTypeName: 
         m_MethodName: SwitchEraser
         m_Mode: 6
         m_Arguments:
@@ -886,6 +959,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931975918695019}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -897,6 +971,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -912,6 +987,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931975830306737}
+        m_TargetAssemblyTypeName: 
         m_MethodName: InstantiateMenu
         m_Mode: 1
         m_Arguments:
@@ -923,6 +999,7 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
       - m_Target: {fileID: 6921862116118706407}
+        m_TargetAssemblyTypeName: 
         m_MethodName: DimMenu
         m_Mode: 1
         m_Arguments:
@@ -937,6 +1014,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1036931974869888047}
+        m_TargetAssemblyTypeName: 
         m_MethodName: ToggleSelection
         m_Mode: 6
         m_Arguments:
@@ -947,6 +1025,9 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  motionConstraintsEvent:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &1005300903541395408
 GameObject:
   m_ObjectHideFlags: 0
@@ -1213,6 +1294,8 @@ MonoBehaviour:
   laserRenderer: {fileID: 0}
   laserMat: {fileID: 2100000, guid: b3ca51fe66686864fafc5e0a2218cc33, type: 2}
   otherControllerSelectionManager: {fileID: 0}
+  selectionRaycastRoot: {fileID: 0}
+  distanceText: {fileID: 0}
 --- !u!1 &1036931974884962565
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,7 +1394,6 @@ MonoBehaviour:
   imageCameraManager: {fileID: 0}
   videoCameraManager: {fileID: 0}
   bodyCameraManager: {fileID: 0}
-  spectatorManager: {fileID: 0}
   hand: {fileID: 0}
   imageCameraPosition: {x: 0, y: -0.012, z: 0.118}
   videoCameraPosition: {x: 0, y: -0.006, z: 0.111}
@@ -2154,6 +2236,7 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!223 &7165305892773552206
 Canvas:
   m_ObjectHideFlags: 0
@@ -2197,6 +2280,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &7140292391968093821
 MonoBehaviour:
   m_ObjectHideFlags: 0

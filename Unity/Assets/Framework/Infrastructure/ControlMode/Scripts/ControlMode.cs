@@ -14,7 +14,7 @@ public class ControlMode : MonoBehaviour
 
     public ControlType activeControlType = ControlType.None;
     public CameraMenuController leftCameraMenuController, rightCameraMenuController;
-    public DrawLineManager drawLineManager;
+    //public DrawLineManager drawLineManager;
     public RulerMenuController leftRulerMenuController, rightRulerMenuController;
     public DualAxisRotationControl leftDualAxisRotationControl, rightDualAxisRotationControl;
     public IKInteractionManager leftIKManager, rightIKManager;
@@ -73,7 +73,7 @@ public class ControlMode : MonoBehaviour
         activeControlType = ControlType.None;
         leftCameraMenuController.ExitMode();
         if (rightCameraMenuController) rightCameraMenuController.ExitMode();
-        drawLineManager.ExitMode();
+        //drawLineManager.ExitMode();
         leftRulerMenuController.ExitMode();
         if (rightRulerMenuController) rightRulerMenuController.ExitMode();
         if (leftDualAxisRotationControl) leftDualAxisRotationControl.ExitMode();
@@ -96,7 +96,7 @@ public class ControlMode : MonoBehaviour
 
         if (modeToKeep != ControlType.Drawing)
         {
-            drawLineManager.ExitMode();
+            //drawLineManager.ExitMode();
         }
 
         if (modeToKeep != ControlType.Ruler)

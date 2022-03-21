@@ -22,10 +22,12 @@ namespace Assets.VDE.Layouts
         
         // to be deprecated
         internal bool
+            labelsVisible = true,
             initializing = false,
             initialized = false,
             populated = false,
             active = false,
+            frozen = false,
             ready = false;
 
         internal State state;
@@ -78,14 +80,16 @@ namespace Assets.VDE.Layouts
                     data.burnOnDestruction.Add(data.VDE.controller.cameraCollider);
                 }
                 data.VDE.controller.cameraCollider.radius = variables.floats["cameraColliderRadius"];
+
+                data.VDE.hud.notificationAreaOffset = variables.vectors["notificationPosition"];
+                data.VDE.hud.HUDPosition = variables.vectors["HUDPosition"];
+
             }
             catch (Exception exe)
             {
                 log.Entry("Wrong error: " + exe.StackTrace);
             }
 
-            data.VDE.hud.notificationAreaOffset = variables.vectors["notificationPosition"];
-            data.VDE.hud.HUDPosition = variables.vectors["HUDPosition"];
 
             initialized = (!initialized) || true;
             log = new Log("Layout " + name, data.messenger); 
@@ -129,62 +133,58 @@ namespace Assets.VDE.Layouts
             yield return true;
         }
         /// <summary>
-        /// this triggers prior to layoutSPECIFIC finalization of the view: this.LayoutReady() will do that and THEN send message to Ready(), to (again) optimize the view.
+        /// this triggers prior to layoutSPECIFIC finalization of the view.
+        /// layoutSPECIFIC tasks shall be done by this.LayoutReady() called in Ready(), to (again) optimize the view.
         /// </summary>
         /// <param name="anObject"></param>
         /// <returns></returns>
         private IEnumerator Populated(object[] anObject)
         {
+            int sz = 1;
             if (!populated && anObject[0] as Layout == this && data.layouts.current == this)
             {
                 populated = true;
-                //data.messenger.SubscribeToEvent(Ready, Layouts.LayoutEvent.LayoutReady.ToString(), 0);
                 data.VDE.SetPositionAndScale(variables.vectors["dashboardCenter"], variables.vectors["defaultScale"]);
 
                 WiggleJoints();
-                yield return data.UI.Sleep(2345,1234);
+                yield return new WaitForSeconds(data.random.Next(100, 200) / 100);
                 ContractJointsAndUpdateShapes();
 
                 int load = data.messenger.CheckLoad();
-                while (load > 0 || !CheckForOutOfLineGroups())
+                while (load > 0 || !CheckForOutOfLineGroups() || !data.links.linksReady)
                 {
                     data.messenger.Post(new Communication.Message()
                     {
                         HUDEvent = UI.HUD.HUD.Event.Progress,
                         number = 2,
                         floats = new List<float> { data.entities.entities.Where(ent => ent.Value.ready && ent.Value.containers.GetContainer().state == Container.State.ready).Count() / data.entities.Count(), 1F },
-                        message = "Loading layout " + name,
                         from = data.layouts.current.GetGroot()
                     });
-                    yield return data.UI.Sleep(2345);
-                    
+                    yield return new WaitForSeconds(data.random.Next(123, 234) / 100);
+
                     load = data.messenger.CheckLoad();
                     data.messenger.Post(new Communication.Message()
                     {
                         HUDEvent = UI.HUD.HUD.Event.Progress,
                         number = 1,
                         floats = new List<float> { load / data.messenger.maxLoad, 1F },
-                        message = "Loading layout " + name,
                         from = data.layouts.current.GetGroot()
                     });
                 }
 
-                data.messenger.Post(new Communication.Message()
+                Communication.Message mess = new Communication.Message()
                 {
                     HUDEvent = UI.HUD.HUD.Event.Progress,
                     number = 2,
                     floats = new List<float> { 1, 1F },
                     message = "",
                     from = data.layouts.current.GetGroot()
-                });
-                data.messenger.Post(new Communication.Message()
-                {
-                    HUDEvent = UI.HUD.HUD.Event.Progress,
-                    number = 1,
-                    floats = new List<float> { 1, 1F },
-                    message = "",
-                    from = data.layouts.current.GetGroot()
-                });
+                };
+                data.messenger.Post(mess);
+                mess.number = 1;
+                data.messenger.Post(mess);
+                mess.number = 0;
+                data.messenger.Post(mess);
 
                 Ready();
                 data.messenger.Post(new Communication.Message()
@@ -276,12 +276,14 @@ namespace Assets.VDE.Layouts
         internal void AdjustJointsToScale(float scale)
         {
             // -2 will get to us into the tier 3 groups.
-            int maxDepth = GetGroot().distanceFromGroot - 2;
+            //int maxDepth = GetGroot().distanceFromGroot - 2;
+            // changed on 20211003: groot is now 3 and nodes >4
+            int maxDepth = GetGroot().distanceFromGroot + 2;
 
             // iterate over groups, that directly do NOT contain entities (e.g. only groups of groups), starting with deepest leafs
             foreach (UI.Group.Shape item in data.entities.entities.Where(ent => 
                 ent.Value.type == Entity.Type.Group && 
-                ent.Value.distanceFromGroot > 1).OrderBy(ent => 
+                ent.Value.distanceFromGroot > 1).OrderByDescending(ent => 
                     ent.Value.distanceFromGroot).Select(ent => 
                         ent.Value.containers.GetGroupShape(this)
                     )
@@ -311,6 +313,7 @@ namespace Assets.VDE.Layouts
 
         private void Ready()
         {
+            //TrimGroupShapes();
             this.LayoutReady();
             ready = true;
             state = State.ready;
@@ -327,6 +330,24 @@ namespace Assets.VDE.Layouts
                     },
                 }
             });
+        }
+
+        private void TrimGroupShapes()
+        {
+            // iterate over groups, that directly do NOT contain entities (e.g. only groups of groups), starting with deepest leafs
+            foreach (UI.Group.Shape item in data.entities.entities.Where(ent =>
+                ent.Value.type == Entity.Type.Group &&
+                ent.Value.distanceFromGroot > 1).OrderByDescending(ent =>
+                    ent.Value.distanceFromGroot).Select(ent =>
+                        ent.Value.containers.GetGroupShape(this)
+                    )
+                )
+            {
+                if (!(item is null))
+                {
+                    item.UpdateShape();
+                }
+            }
         }
 
         internal void CompactJoints()
@@ -365,7 +386,7 @@ namespace Assets.VDE.Layouts
         }
 
         /// <summary>
-        /// looks for the falue from layout config; if undefined there, tries the default conf; if that fails too, returns 0F;
+        /// looks for the falue from layout config; if undefined there, tries the default conf; if that fails too, returns 0F.
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
@@ -408,6 +429,16 @@ namespace Assets.VDE.Layouts
             }
             return 0F;
         }
+
+        internal void FreezeAll()
+        {
+            frozen = true;
+            foreach (UI.Group.Container group in data.entities.entities.Where(ent => ent.Value.type == Entity.Type.Group).Select(ent => ent.Value.containers.GetCurrentGroup()).OrderByDescending(grp => grp.entity.distanceFromGroot))
+            {
+                group.FreezeGroupsMembers();
+            }
+        }
+
         protected virtual void LayoutReady() { }
         internal virtual IEnumerator Reinitialize() { yield return true; }
         /// <summary>
@@ -471,8 +502,11 @@ namespace Assets.VDE.Layouts
 
         virtual internal Vector3 PositionShallowGroupNode(Container container)
         {
-            float nodeOffset = 0.2F;
+            float nodeOffset = variables.floats["shallowNodeOffset"];
             Entity entity = container.entity;
+            /*
+             * hmm..
+             * off on 20220216
             if (
                 container.defaultPosition.magnitude > 0 || 
                 container.transform.localPosition.magnitude > 0 || 
@@ -482,16 +516,14 @@ namespace Assets.VDE.Layouts
             {
                 return container.transform.localPosition;
             }
-            // at this point entity members' viewis not accessible yet, hence we need to estimated size of the datashape based on its (current) member count
+            */
+            // at this point entity members' viewis are not accessible yet,
+            // hence we need to estimated size of the datashape based on its (current) member count
             int nodesInShape = entity.parent.relations.Where(rel => rel.Value == Entity.Relation.Child).Count();
 
             if (nodesInShape > variables.indrek["maxNodesInShape"])
             {
-                nodeOffset = variables.floats["nodeOffset"] / 2;
-            }
-            else
-            {
-                nodeOffset = variables.floats["nodeOffset"];
+                nodeOffset /= 2;
             }
             int dataShapeWidth = Mathf.Max((int)Mathf.Sqrt(nodesInShape), variables.indrek["minNodesInRow"]);
 
@@ -556,7 +588,7 @@ namespace Assets.VDE.Layouts
             return Vector3.zero; 
         }
 
-        internal virtual Vector3 GetContainerPositionOnSiblingsRing(Container container, float diameter)
+        internal virtual Vector3 GetTier1ContainerPosition(Container container, float diameter)
         {
             //float circumference = Mathf.PI * diameter;
             float anger = (container.entity.pos - 1) * Mathf.PI * 2 / (container.entity.siblings.Count() - 1);

@@ -1,6 +1,7 @@
 ﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
+using System.Collections.Generic;
 using UnityEngine;
 using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
 
@@ -10,9 +11,21 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
     {
         public InputHand hand;
 
+        public Interactable[] touchedObjects
+        {
+            get
+            {
+                return currentTouching.ToArray();
+            }
+        }
+
+        private List<Interactable> currentTouching = new List<Interactable>();
+
         private Interactable currentInteractable;
 
         private bool grabbing = false;
+
+        private bool stillTouching = false; // if hand is still touching the currentInteractable while grabbing
 
         public void Grab()
         {
@@ -25,22 +38,32 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
 
             if (currentInteractable != null)
             {
-                MRET.LocomotionManager.PauseRequest();
-                currentInteractable.BeginGrab(hand);
-                grabbing = true;
+                if (currentInteractable.grabbable)
+                {
+                    MRET.LocomotionManager.PauseRequest();
+                    currentInteractable.BeginGrab(hand);
+                    grabbing = true;
+                    stillTouching = true;
+                }
             }
         }
 
         public void Ungrab()
         {
-            if (currentInteractable != null
-                && currentInteractable.transform.IsChildOf(transform))
+            if (currentInteractable != null && currentInteractable.IsGrabbedBy(hand))
             {
                 currentInteractable.EndGrab(hand);
+                
+                // fixed issue when grab ends in constrained motion mode
+                if(!stillTouching)
+                {
+                    currentInteractable = null;
+                }
             }
 
             MRET.LocomotionManager.PauseRelease();
             grabbing = false;
+            stillTouching = false;
         }
 
         public void Place()
@@ -62,12 +85,24 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
             {
                 currentInteractable.Use(inputHand);
             }
+            else
+            {
+                foreach (Interactable usedInteractable in FindObjectsOfType<Interactable>())
+                {
+                    usedInteractable.Unuse(inputHand);
+                }
+            }
         }
 
         private void OnTriggerEnter(Collider other)
         {
             if (grabbing)
             {
+                // check if the hand has re-entered the object it is grabbing
+                if(other != null && other.attachedRigidbody != null && other.attachedRigidbody.GetComponent<Interactable>() == currentInteractable)
+                {
+                    stillTouching = true;
+                }
                 return;
             }
 
@@ -86,6 +121,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
             if (touchingInteractable != null)
             {
                 currentInteractable = touchingInteractable;
+                if (!currentTouching.Contains(touchingInteractable))
+                {
+                    currentTouching.Add(touchingInteractable);
+                }
             }
         }
 
@@ -93,6 +132,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
         {
             if (grabbing)
             {
+                // check if the hand has exited the object it is grabbing
+                if(other != null && other.attachedRigidbody != null && other.attachedRigidbody.GetComponent<Interactable>() == currentInteractable)
+                {
+                    stillTouching = false;
+                }
                 return;
             }
 
@@ -111,12 +155,16 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
             if (touchingInteractable == currentInteractable)
             {
                 currentInteractable = null;
+                if (currentTouching.Contains(touchingInteractable))
+                {
+                    currentTouching.Add(touchingInteractable);
+                }
             }
         }
 
         private bool CanPerformInteraction()
         {
-            return !((bool) MRET.DataManager.FindPoint(DrawLineManager.ISDRAWINGFLAGKEY));
+            return true; //!((bool) MRET.DataManager.FindPoint(DrawLineManager.ISDRAWINGFLAGKEY));
         }
     }
 }

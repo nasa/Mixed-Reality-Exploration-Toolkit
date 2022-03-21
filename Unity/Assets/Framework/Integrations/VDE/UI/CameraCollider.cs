@@ -40,6 +40,7 @@ namespace Assets.VDE.UI
                     }
                     else
                     {
+                        otherShape.data.UI.ShapeIsInView(otherShape);
                         otherShape.SetVisibility(false);
                     }
                 }
@@ -62,6 +63,7 @@ namespace Assets.VDE.UI
                     }
                     else
                     {
+                        otherShape.data.UI.ShapeIsNotInView(otherShape);
                         otherShape.SetVisibility(true);
                     }
                 }

@@ -9,11 +9,13 @@ namespace Assets.VDE.UI.Hands
     internal class ColliderBehaviour : MonoBehaviour
     {
         internal Hand hand;
-        internal Mode mode;
+        public Mode mode;
         internal enum Mode
         {
+            GrippingPoint,
             Select,
-            Grab
+            Grab,
+            None
         }
         private void OnTriggerEnter(Collider other)
         {

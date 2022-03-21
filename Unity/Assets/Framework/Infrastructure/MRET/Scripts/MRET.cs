@@ -18,6 +18,7 @@ using GSFC.ARVR.MRET.Components.Keyboard;
 using GSFC.ARVR.MRET.Components.Notes;
 using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
 using GSFC.ARVR.MRET.Components.IK;
+using GSFC.ARVR.MRET.Infrastructure.Framework.LineDrawing;
 
 namespace GSFC.ARVR.MRET.Infrastructure.Framework
 {
@@ -195,6 +196,17 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
         }
 
         /// <summary>
+        /// Instance of the Line Drawing Manager.
+        /// </summary>
+        public static LineDrawingManager LineDrawingManager
+        {
+            get
+            {
+                return instance.lineDrawingManager;
+            }
+        }
+
+        /// <summary>
         /// Instance of the Project Manager.
         /// </summary>
         public static UnityProject Project
@@ -250,6 +262,28 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
         }
 
         /// <summary>
+        /// Instance of the Scene Object Manager.
+        /// </summary>
+        public static SceneObjectManager SceneObjectManager
+        {
+            get
+            {
+                return instance.sceneObjectManager;
+            }
+        }
+
+        /// <summary>
+        /// Instance of the Undo Object Manager.
+        /// </summary>
+        public static UndoManager UndoManager
+        {
+            get
+            {
+                return instance.undoManager;
+            }
+        }
+
+        /// <summary>
         /// List of materials to select from to apply to parts by default.
         /// </summary>
         public static List<Material> DefaultPartMaterials
@@ -290,6 +324,28 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
             get
             {
                 return instance.selectMaterial;
+            }
+        }
+
+        /// <summary>
+        /// Material used for showing limit states.
+        /// </summary>
+        public static Material LimitMaterial
+        {
+            get
+            {
+                return instance.limitMaterial;
+            }
+        }    
+
+        /// <summary>
+        /// Material used for line drawings.
+        /// </summary>
+        public static Material LineDrawingMaterial
+        {
+            get
+            {
+                return instance.lineDrawingMaterial;
             }
         }
 
@@ -414,6 +470,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
         public NoteManager noteManager;
 
         /// <summary>
+        /// Instance of the Line Drawing Manager.
+        /// </summary>
+        [Tooltip("Instance of the Line Drawing Manager.")]
+        public LineDrawingManager lineDrawingManager;
+
+        /// <summary>
         /// Instance of the Project Manager.
         /// </summary>
         [Tooltip("Instance of the Project Manager.")]
@@ -450,10 +512,22 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
         public ControlMode controlMode;
 
         /// <summary>
+        /// Instance of the Scene Object Manager.
+        /// </summary>
+        [Tooltip("Instance of the Scene Object Manager.")]
+        public SceneObjectManager sceneObjectManager;
+
+        /// <summary>
         /// Instance of the Kiosk Mode Loader.
         /// </summary>
         [Tooltip("Instance of the Kiosk Mode Loader.")]
         public KioskLoader kioskLoader;
+
+        /// <summary>
+        /// Instance of the Undo Manager.
+        /// </summary>
+        [Tooltip("Instance of the Undo Manager.")]
+        public UndoManager undoManager;
 
         /// <summary>
         /// List of materials to select from to apply to parts by default.
@@ -478,6 +552,18 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
         /// </summary>
         [Tooltip("Material used to indicate selection.")]
         public Material selectMaterial;
+
+        /// <summary>
+        /// Material used for showing limit states.
+        /// </summary>
+        [Tooltip("Material used for showing limit states.")]
+        public Material limitMaterial;
+
+        /// <summary>
+        /// Material used for line drawings.
+        /// </summary>
+        [Tooltip("Material used for line drawings.")]
+        public Material lineDrawingMaterial;
 
         /// <summary>
         /// Audio clip used to indicate collision.
@@ -566,6 +652,32 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
             timeManager.Initialize();
             Debug.Log("[MRET] Time Manager ready.");
 
+            Debug.Log("[MRET] Starting Scene Object Manager...");
+            if (sceneObjectManager == null)
+            {
+                sceneObjectManager = FindObjectOfType<SceneObjectManager>();
+                if (sceneObjectManager == null)
+                {
+                    Debug.LogError("[MRET] Fatal Error. Unable to start scene object manager. Aborting...");
+                    Application.Quit();
+                }
+            }
+            sceneObjectManager.Initialize();
+            Debug.Log("[MRET] Scene Object Manager ready.");
+
+            Debug.Log("[MRET] Initializing Configuration Manager...");
+            if (configurationManager == null)
+            {
+                configurationManager = FindObjectOfType<ConfigurationManager>();
+                if (configurationManager == null)
+                {
+                    Debug.LogError("[MRET] Fatal Error. Unable to initialize configuration manager. Aborting...");
+                    Application.Quit();
+                }
+            }
+            configurationManager.Initialize();
+            Debug.Log("[MRET] Configuration Manager initialized.");
+
             Debug.Log("[MRET] Setting up input rig...");
             if (inputRig == null)
             {
@@ -621,19 +733,6 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
                 // Not our script, can't control initialization.
             }
             Debug.Log("[MRET] Point Cloud Manager ready.");
-
-            Debug.Log("[MRET] Initializing Configuration Manager...");
-            if (configurationManager == null)
-            {
-                configurationManager = FindObjectOfType<ConfigurationManager>();
-                if (configurationManager == null)
-                {
-                    Debug.LogError("[MRET] Fatal Error. Unable to initialize configuration manager. Aborting...");
-                    Application.Quit();
-                }
-            }
-            configurationManager.Initialize();
-            Debug.Log("[MRET] Configuration Manager initialized.");
 
             Debug.Log("[MRET] Initializing Control Mode...");
             if (controlMode == null)
@@ -713,6 +812,19 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
             noteManager.Initialize();
             Debug.Log("[MRET] Note Manager initialized.");
 
+            Debug.Log("[MRET] Initializing Line Drawing Manager...");
+            if (lineDrawingManager == null)
+            {
+                lineDrawingManager = FindObjectOfType<LineDrawingManager>();
+                if (lineDrawingManager == null)
+                {
+                    Debug.LogError("[MRET] Fatal Error. Unable to initialize line drawing manager. Aborting...");
+                    Application.Quit();
+                }
+            }
+            lineDrawingManager.Initialize();
+            Debug.Log("[MRET] Line Drawing Manager initialized.");
+
             Debug.Log("[MRET] Initializing Project Manager...");
             if (project == null)
             {
@@ -751,6 +863,19 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework
             }
             ikManager.Initialize();
             Debug.Log("[MRET] IK Manager initialized.");
+
+            Debug.Log("[MRET] Initializing Undo Manager...");
+            if (undoManager == null)
+            {
+                undoManager = FindObjectOfType<UndoManager>();
+                if (ikManager == null)
+                {
+                    Debug.LogError("[MRET] Fatal Error. Unable to initialize undo manager. Aborting...");
+                    Application.Quit();
+                }
+            }
+            undoManager.Initialize();
+            Debug.Log("[MRET] Undo Manager initialized.");
 
             Debug.Log("[MRET] Initializing Kiosk Loader...");
             if (kioskLoader == null)

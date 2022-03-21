@@ -42,7 +42,8 @@ namespace Assets.VDE.UI.Node
         {
             while (entity.parent is null || entity.parent.containers.GetGroup(entity.waitingForNodeInLayout) is null)
             {
-                yield return data.UI.Sleep(123);
+                yield return new WaitForSeconds(123 / 100);
+                //yield return data.UI.Sleep(123);
             }
             gameObject.transform.SetParent(entity.parent.containers.GetGroup(entity.waitingForNodeInLayout).transform);
             Init(entity, entity.waitingForNodeInLayout);

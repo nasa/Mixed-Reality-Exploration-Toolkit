@@ -17,6 +17,8 @@ namespace Assets.VDE.UI
     internal class Container : MonoBehaviour
 #endif
     {
+        public int posse;
+
         internal Log log;
         internal Data data;
         internal Entity entity;
@@ -49,6 +51,8 @@ namespace Assets.VDE.UI
         internal bool isGrabbed;
         internal Vector3 localPositionPriorToGrab, worldPositionPriorToGrab, defaultPosition;
         internal Quaternion localRotationPriorToGrab, worldRotationPriorToGrab, defaultRotation;
+        private bool labelsLastKnownState;
+
         internal enum State
         {
             @fresh = 0,
@@ -90,13 +94,15 @@ namespace Assets.VDE.UI
             shapes = new Shapes(this);
             joints = new Joints(this);
             log = new Log(entity.name + " container", messenger);
-
+            posse = entity.pos;
             if (
                 !(label is null) &&
                 entity.distanceFromGroot <= layout.GetValueFromConf("showLabelsMaxDepth") &&
                 entity.distanceFromGroot >= layout.GetValueFromConf("showLabelsMinDepth") &&
+                layout.labelsVisible &&
                 // this may cause problems, if shapes have 0 children in the beginning but get populated later
-                entity.relations.Where(rel => rel.Value == Entity.Relation.Child).Count() > 0)
+                entity.relations.Where(rel => rel.Value == Entity.Relation.Child).Count() > 0
+                )
             {
                 label.SetActive(true);
             }
@@ -161,7 +167,18 @@ namespace Assets.VDE.UI
         {
             if (!(label is null))
             {
-                label.SetActive(setTo);
+                // 20220111
+                //label.SetActive(setTo);
+                //return;
+                if (label.activeSelf && !setTo)
+                {
+                    labelsLastKnownState = label.activeSelf;
+                    label.SetActive(setTo);
+                }
+                else if (!label.activeSelf && layout.labelsVisible && setTo)
+                {
+                    label.SetActive(setTo);
+                }
             }
         }
         internal Joint JoinWith(Entity target, Container destinationContainer, Joint.Type flavor)
@@ -185,7 +202,8 @@ namespace Assets.VDE.UI
             {
                 if (Time.deltaTime > data.UI.maxTimeForUpdatePerFrame)
                 {
-                    yield return data.UI.Sleep(data.UI.timeToWaitInUpdatePerFrame);
+                    yield return new WaitForSeconds(data.UI.timeToWaitInUpdatePerFrame / 100);
+                    //yield return data.UI.Sleep(data.UI.timeToWaitInUpdatePerFrame);
                 }
                 link.UpdatePosition(this);
             }
@@ -193,7 +211,8 @@ namespace Assets.VDE.UI
             {
                 if (Time.deltaTime > data.UI.maxTimeForUpdatePerFrame)
                 {
-                    yield return data.UI.Sleep(data.UI.timeToWaitInUpdatePerFrame);
+                    yield return new WaitForSeconds(data.UI.timeToWaitInUpdatePerFrame / 100);
+                    //yield return data.UI.Sleep(data.UI.timeToWaitInUpdatePerFrame);
                 }
                 link.UpdatePosition(this);
             }
@@ -258,6 +277,9 @@ namespace Assets.VDE.UI
             transform.SetParent(grabber.transform);
             transform.localRotation = Quaternion.Euler(0, 0, 0);
             transform.localPosition = layout.variables.vectors["grabOffsetFromHand"];
+#if MRET_2021_OR_LATER
+            gameObject.AddComponent<InteractablePart>();
+#endif
         }
         internal virtual void Released(Hands.Hand hand)
         {
@@ -274,7 +296,7 @@ namespace Assets.VDE.UI
         /// <param name="container">And it's container</param>
         internal void AdoptParent(Entity parent, Group.Container container, Joint.Type jointType = Joint.Type.MemberParent)
         {
-            if (CheckIfFirstInGroup() || jointType == Joint.Type.MemberGroot)
+            if (entity.doJoints && (CheckIfFirstInGroup() || jointType == Joint.Type.MemberGroot))
             {
                 JoinWith(parent, container, jointType);
             }

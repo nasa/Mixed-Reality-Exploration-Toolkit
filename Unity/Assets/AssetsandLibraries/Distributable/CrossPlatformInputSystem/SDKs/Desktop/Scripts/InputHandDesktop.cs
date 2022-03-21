@@ -4,6 +4,10 @@
 using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+//using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+//using GSFC.ARVR.MRET.Components.UI;
+
 
 namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
 {
@@ -16,7 +20,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
     ///     since the motion constraints are now contained within the rig SDK. Lastly, the shift key press
     ///     is now exposed as a navigation press event so that the locomotion manager can attach an event
     ///     handler to use the event to trigger motion constraint changes. (J. Hosler)
+    /// 28 July 2021: Adding support for velocity (DZB)
     /// 17 August 2021: Added pointer functions.
+    /// 17 November 2021: Added implementation for flying locomotion (DZB)
+    /// 23 December 2021: Adding Drawing Laser (DZB)
     /// </remarks>
     /// <summary>
     /// Desktop wrapper for the input hand.
@@ -35,6 +42,17 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
         /// </summary>
         [Tooltip("Whether or not the hand is dynamic.")]
         public bool dynamic;
+
+        /// <summary>
+        /// Velocity of the hand.
+        /// </summary>
+        public override Vector3 velocity
+        {
+            get
+            {
+                return Vector3.zero;
+            }
+        }
 
         /// <summary>
         /// Used to poll navigating.
@@ -138,11 +156,31 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
         }
 
         /// <summary>
+        /// Determines if a VR_InputField (a text box) has focus.  Use this function to disable menu and navigation keys while typing in a text box
+        /// </summary>
+		public static bool IsUIElementActive()
+		{
+			if (EventSystem.current.currentSelectedGameObject != null)
+			{
+				GSFC.ARVR.MRET.Components.UI.VR_InputField IF = EventSystem.current.currentSelectedGameObject.GetComponent<GSFC.ARVR.MRET.Components.UI.VR_InputField>();
+
+				if (IF != null)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+		
+        /// <summary>
         /// Handler for menu press event.
         /// </summary>
         /// <param name="callbackContext">InputSystem callback context.</param>
         public void MenuPressEvent(InputAction.CallbackContext callbackContext)
         {
+			// if GUI text control has focus, do nothing
+			if (IsUIElementActive()) return;
+
             inputHand.MenuPressed(transform);
         }
 
@@ -150,7 +188,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
         /// Handler for shift press event.
         /// </summary>
         /// <param name="callbackContext">InputSystem callback context.</param>
-        public void ShiftPressEvent(InputAction.CallbackContext callbackContext)
+        /*public void ShiftPressEvent(InputAction.CallbackContext callbackContext)
         {
             if (callbackContext.performed)
             {
@@ -162,7 +200,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
                 inputHand.NavigatePressComplete();
                 _navigatePressing = false;
             }
-        }
+        }*/
 
         /// <summary>
         /// Handler for rotation lock press event.
@@ -174,7 +212,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
         }
 
         /// <summary>
-        /// Handler for primary press event.
+        /// Handler for primary press event, e.g., equivalent to trigger on a controller or left mouse press in desktop mode
         /// </summary>
         /// <param name="callbackContext">InputSystem callback context.</param>
         public void PrimaryPressEvent(InputAction.CallbackContext callbackContext)
@@ -190,7 +228,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
         }
 
         /// <summary>
-        /// Handler for secondary press event.
+        /// Handler for secondary press event, e.g., equivalent to grip on a controller or right mouse press in desktop mode
         /// </summary>
         /// <param name="callbackContext">InputSystem callback context.</param>
         public void SecondaryPressEvent(InputAction.CallbackContext callbackContext)
@@ -206,18 +244,23 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
         }
 
         /// <summary>
-        /// Handler for tertiary press event.
+        /// Handler for tertiary press event, e.g., equivalent to touchpad/stick on a controller or middle mouse press in desktop mode
         /// </summary>
         /// <param name="callbackContext">InputSystem callback context.</param>
         public void TertiaryPressEvent(InputAction.CallbackContext callbackContext)
         {
+			// if GUI text control has focus, do nothing
+            // since "E" key is mapped to middle mouse button, we need to check here as well
+			if (IsUIElementActive()) return;
             if (callbackContext.phase == InputActionPhase.Started)
             {
+                _navigatePressing = true;
                 inputHand.NavigatePressBegin();
             }
             else if (callbackContext.phase == InputActionPhase.Canceled)
             {
                 inputHand.NavigatePressComplete();
+                _navigatePressing = false;
             }
         }
 
@@ -274,6 +317,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
         /// <param name="callbackContext">InputSystem callback context.</param>
         public void MoveAction(InputAction.CallbackContext callbackContext)
         {
+			// if GUI text control has focus, do nothing
+			if (IsUIElementActive()) return;
             // Set the amount to move on a 2d plane.
             Vector2 move = callbackContext.ReadValue<Vector2>();
             if (move != null)
@@ -357,16 +402,18 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
         /// <seealso cref="InputHandSDK.EnableFly"/>
         public override void EnableFly()
         {
-            
+            // Notify the locomotion controller that we are enabled
+            if (_flyingController != null) _flyingController.SetHandActiveState(this.inputHand, true);
         }
 
         /// <seealso cref="InputHandSDK.DisableFly"/>
         public override void DisableFly()
         {
-            
+            // Notify the locomotion controller that we are disabled
+            if (_flyingController != null) _flyingController.SetHandActiveState(this.inputHand, false);
         }
 
-        #endregion // Locomotion [Fly]
+#endregion // Locomotion [Fly]
 
 #region Locomotion [Navigate]
 
@@ -423,6 +470,30 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
             uiPointerController.Select();
         }
 
+#endregion
+
+#region Drawing
+        public override void ToggleDrawingPointerOn()
+        {
+            if (drawingPointerController == null)
+            {
+                return;
+            }
+
+            drawingPointerController.EnterMode();
+            drawingPointerController.TogglePointingOn();
+        }
+
+        public override void ToggleDrawingPointerOff()
+        {
+            if (drawingPointerController == null)
+            {
+                return;
+            }
+
+            drawingPointerController.TogglePointingOff();
+            drawingPointerController.ExitMode();
+        }
 #endregion
 
     }

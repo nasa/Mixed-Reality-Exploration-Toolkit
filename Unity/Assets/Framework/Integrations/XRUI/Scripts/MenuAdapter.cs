@@ -14,6 +14,7 @@ using GSFC.ARVR.MRET.Components.FeedPanels;
 using GSFC.ARVR.MRET.Components.Notes;
 using GSFC.ARVR.MRET.Components.Eraser;
 using GSFC.ARVR.MRET.Selection;
+using GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject;
 
 namespace GSFC.ARVR.MRET.Integrations.XRUI
 {
@@ -89,6 +90,30 @@ namespace GSFC.ARVR.MRET.Integrations.XRUI
         /// </summary>
         [Tooltip("Event for the save project button.")]
         public UnityEvent saveProjectEvent;
+
+        /// <summary>
+        /// Icon for the reload project button.
+        /// </summary>
+        [Tooltip("Icon for the reload project button.")]
+        public Sprite reloadProjectIcon;
+
+        /// <summary>
+        /// Event for the reload project button.
+        /// </summary>
+        [Tooltip("Event for the reload project button.")]
+        public UnityEvent reloadProjectEvent;
+
+        /// <summary>
+        /// Icon for the reload user button.
+        /// </summary>
+        [Tooltip("Icon for the reload user button.")]
+        public Sprite reloadUserIcon;
+
+        /// <summary>
+        /// Event for the reload user button.
+        /// </summary>
+        [Tooltip("Event for the reload user button.")]
+        public UnityEvent reloadUserEvent;
 
         /// <summary>
         /// Icon for the collaboration join button.
@@ -301,6 +326,18 @@ namespace GSFC.ARVR.MRET.Integrations.XRUI
         /// </summary>
         [Tooltip("Event for the armswing toggle.")]
         public ToggleEvent armswingEvent;
+
+        /// <summary>
+        /// Icon for the climb toggle.
+        /// </summary>
+        [Tooltip("Icon for the climb toggle.")]
+        public Sprite climbIcon;
+
+        /// <summary>
+        /// Event for the climb toggle.
+        /// </summary>
+        [Tooltip("Event for the climb toggle.")]
+        public ToggleEvent climbEvent;
 
         /// <summary>
         /// Icon for the rotate x toggle.
@@ -600,6 +637,12 @@ namespace GSFC.ARVR.MRET.Integrations.XRUI
         /// </summary>
         [Tooltip("Event for the selection button.")]
         public ToggleEvent selectionEvent;
+
+        /// <summary>
+        /// Event for the motion constraints toggle.
+        /// </summary>
+        [Tooltip("Event for the motion constraints toggle.")]
+        public ToggleEvent motionConstraintsEvent;
 #endregion
 
         public void Initialize()
@@ -613,6 +656,8 @@ namespace GSFC.ARVR.MRET.Integrations.XRUI
             AddToButtonList(modeNavigator.newProj, filePanel.AddButton("Create", createProjectIcon, createProjectEvent, new Vector2(50, 50), ControllerMenuPanel.ButtonSize.Small));
             AddToButtonList(modeNavigator.openProj, filePanel.AddButton("Open", openProjectIcon, openProjectEvent, new Vector2(70, 70), ControllerMenuPanel.ButtonSize.Small));
             AddToButtonList(modeNavigator.saveProj, filePanel.AddButton("Save", saveProjectIcon, saveProjectEvent, new Vector2(70, 70), ControllerMenuPanel.ButtonSize.Small));
+            AddToButtonList(modeNavigator.reloadProj, filePanel.AddButton("Reload", reloadProjectIcon, reloadProjectEvent, new Vector2(70, 70), ControllerMenuPanel.ButtonSize.Small));
+            AddToButtonList(modeNavigator.reloadUser, filePanel.AddButton("Reset", reloadUserIcon, reloadUserEvent, new Vector2(70, 70), ControllerMenuPanel.ButtonSize.Small));
 
             ControllerMenuPanel collaborationPanel = menu.AddMenuPanel("Collaboration", false, true, true);
             collaborationPanel.AddLabel("Collaboration:");
@@ -654,26 +699,40 @@ namespace GSFC.ARVR.MRET.Integrations.XRUI
             Toggle armswingToggle = movementPanel.AddToggle("Armswing", armswingIcon, armswingEvent, armswingToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);
             armswingToggleEnableEvent.AddListener(() => { SetToggle(armswingToggle, (bool) DataManager.instance.FindPoint(LocomotionManager.armswingKey)); });
             AddToToggleList(modeNavigator.armswing, armswingToggle);
-            movementPanel.AddLabel("Rotate/Scale:");
+            UnityEvent climbToggleEnableEvent = new UnityEvent();
+            Toggle climbToggle = movementPanel.AddToggle("Climb", climbIcon, climbEvent, climbToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);
+            climbToggleEnableEvent.AddListener(() => { SetToggle(climbToggle, (bool)DataManager.instance.FindPoint(LocomotionManager.climbKey)); });
+            AddToToggleList(modeNavigator.climb, climbToggle);
+
+            ControllerMenuPanel interfacePanel = menu.AddMenuPanel("Interface", false, true, true);
+            interfacePanel.AddLabel("Rotate/Scale:");
             UnityEvent rotateXToggleEnableEvent = new UnityEvent();
-            Toggle rotateXToggle = movementPanel.AddToggle("RotX", rotateXIcon, rotateXEvent, rotateXToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);
+            Toggle rotateXToggle = interfacePanel.AddToggle("RotX", rotateXIcon, rotateXEvent, rotateXToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);
             rotateXToggleEnableEvent.AddListener(() => { SetToggle(rotateXToggle, (bool) DataManager.instance.FindPoint(LocomotionManager.rotateXKey)); });
             AddToToggleList(modeNavigator.rotX, rotateXToggle);
             UnityEvent rotateYToggleEnableEvent = new UnityEvent();
-            Toggle rotateYToggle = movementPanel.AddToggle("RotY", rotateYIcon, rotateYEvent, rotateYToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);
+            Toggle rotateYToggle = interfacePanel.AddToggle("RotY", rotateYIcon, rotateYEvent, rotateYToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);
             rotateYToggleEnableEvent.AddListener(() => { SetToggle(rotateYToggle, (bool) DataManager.instance.FindPoint(LocomotionManager.rotateYKey)); });
             AddToToggleList(modeNavigator.rotY, rotateYToggle);
             UnityEvent rotateZToggleEnableEvent = new UnityEvent();
-            Toggle rotateZToggle = movementPanel.AddToggle("RotZ", rotateZIcon, rotateZEvent, rotateZToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);
+            Toggle rotateZToggle = interfacePanel.AddToggle("RotZ", rotateZIcon, rotateZEvent, rotateZToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);
             rotateZToggleEnableEvent.AddListener(() => { SetToggle(rotateZToggle, (bool) DataManager.instance.FindPoint(LocomotionManager.rotateZKey)); });
             AddToToggleList(modeNavigator.rotZ, rotateZToggle);
             UnityEvent scaleToggleEnableEvent = new UnityEvent();
-            Toggle scaleToggle = movementPanel.AddToggle("Scale", scaleIcon, scaleEvent, scaleToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);
+            Toggle scaleToggle = interfacePanel.AddToggle("Scale", scaleIcon, scaleEvent, scaleToggleEnableEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small);
             scaleToggleEnableEvent.AddListener(() => { SetToggle(scaleToggle, (bool) DataManager.instance.FindPoint(LocomotionManager.scaleKey)); });
             AddToToggleList(modeNavigator.scale, scaleToggle);
-            movementPanel.AddLabel("User Interface:");
-            AddToButtonList(modeNavigator.hud, movementPanel.AddButton("HUD", hudIcon, hudEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small));
-            AddToButtonList(modeNavigator.displays, movementPanel.AddButton("Display", displayIcon, displayEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small));
+            interfacePanel.AddLabel("User Interface:");
+            AddToButtonList(modeNavigator.hud, interfacePanel.AddButton("HUD", hudIcon, hudEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small));
+            AddToButtonList(modeNavigator.displays, interfacePanel.AddButton("Display", displayIcon, displayEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small));
+            UnityEvent motionConstraintsToggleEnableEvent = new UnityEvent();
+            interfacePanel.AddLabel("Motion:");
+            Toggle motionConstraintsToggle = interfacePanel.AddToggle("Motion Constraints",
+                motionConstraintsToggleEnableEvent, motionConstraintsEvent, ControllerMenuPanel.ButtonSize.Small);
+            motionConstraintsToggleEnableEvent.AddListener(() => {
+                SetToggle(motionConstraintsToggle, (bool) DataManager.instance.FindPoint(SceneObject.motionConstraintsKey));
+            });
+            AddToToggleList(modeNavigator.motionConstraints, motionConstraintsToggle);
 
             ControllerMenuPanel controlsPanel = menu.AddMenuPanel("Controls", false, true, true);
             controlsPanel.AddLabel("Camera:");
@@ -784,7 +843,7 @@ namespace GSFC.ARVR.MRET.Integrations.XRUI
             Toggle eraserToggle = toolsPanel.AddToggle("Eraser Tool", eraserIcon, eraserEvent,
                 eraserToggleEnableEvent, new Vector2(80, 80), ControllerMenuPanel.ButtonSize.Small);
             eraserToggleEnableEvent.AddListener(() => {
-                SetToggle(noteToggle, (bool) DataManager.instance.FindPoint(EraserMenuController.eraserKey));
+                SetToggle(eraserToggle, (bool) DataManager.instance.FindPoint(EraserMenuController.eraserKey));
             });
             AddToToggleList(modeNavigator.eraser, eraserToggle);
             AddToButtonList(modeNavigator.timeSimulation, toolsPanel.AddButton("Time Simulation", timeSimulationIcon, timeSimulationEvent, new Vector2(60, 60), ControllerMenuPanel.ButtonSize.Small));

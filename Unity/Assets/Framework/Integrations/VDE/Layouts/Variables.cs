@@ -86,7 +86,8 @@ namespace Assets.VDE.Layouts
 
             floats.Add("timeToGazeFocus", owner.GetValueFromConf("timeToGazeFocus"));
             floats.Add("timeToGazeFocusOut", owner.GetValueFromConf("timeToGazeFocusOut"));
-            floats.Add("notificationOffset", owner.GetValueFromConf("notificationOffset"));
+            floats.Add("notificationScale", owner.GetValueFromConf("notificationScale"));  
+            floats.Add("notificationOffset", owner.GetValueFromConf("notificationOffset"));          
             floats.Add("notificationConnectorWidth", owner.GetValueFromConf("notificationConnectorWidth"));
             indrek.Add("notificationConnectorPositions", (int)owner.GetValueFromConf("notificationConnectorPositions"));
             indrek.Add("showNotificationsOnDashboard", (int)owner.GetValueFromConf("showNotificationsOnDashboard"));
@@ -103,10 +104,13 @@ namespace Assets.VDE.Layouts
 
             floats.Add("dashboardSize", owner.GetValueFromConf("dashboardSize"));
             floats.Add("dashboardAngle",owner.GetValueFromConf("dashboardAngle"));
-            floats.Add("nodeOffset",    owner.GetValueFromConf("nodeOffset"));
+            floats.Add("shallowNodeOffset", owner.GetValueFromConf("shallowNodeOffset"));
+            floats.Add("nodeOffset", owner.GetValueFromConf("nodeOffset"));
 
+            indrek.Add("showLabelsMaxDepth", (int)owner.GetValueFromConf("showLabelsMaxDepth"));
             indrek.Add("maxNodesInShape", (int)owner.GetValueFromConf("maxNodesInShape"));
             indrek.Add("minNodesInRow", (int)owner.GetValueFromConf("minNodesInRow"));
+            indrek.Add("maxEdgesInView", (int)owner.GetValueFromConf("maxEdgesInView"));            
             indrek.Add("targetFPS", ((int)owner.GetValueFromConf("targetFPS") > 0) ? (int)owner.GetValueFromConf("targetFPS") : 69);
 
             moarVectors.Add("dashboardCorners", new Vector3[]

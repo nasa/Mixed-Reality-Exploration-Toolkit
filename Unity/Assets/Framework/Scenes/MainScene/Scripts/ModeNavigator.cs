@@ -14,7 +14,7 @@ public class ModeNavigator : MonoBehaviour
     public static ModeNavigator instance;
     
     public UnityProject projectManager;
-    public List<Button> newProj, openProj, saveProj, home,
+    public List<Button> newProj, openProj, saveProj, reloadProj, reloadUser, home,
         joinSess, shareSess, config, about,
         undo, redo,
         cut, copy, paste,
@@ -23,9 +23,9 @@ public class ModeNavigator : MonoBehaviour
         drawing, annotations, objects, outlineView,
         ik, remoteControl, minimap, dataDoc, animations,
         timeSimulation;
-    public List<Toggle> teleport, fly, touchpad, armswing,
+    public List<Toggle> teleport, fly, touchpad, armswing, climb,
         rotX, rotY, rotZ, scale,
-        notes, eraser, selection,
+        notes, eraser, selection, motionConstraints,
         cameras, rulers, screens;
 
     public UnityEvent lobbyModeInitializationEvents;
@@ -164,6 +164,16 @@ public class ModeNavigator : MonoBehaviour
             btn.interactable = true;
         }
 
+        foreach (Button btn in reloadProj)
+        {
+            btn.interactable = true;
+        }
+
+        foreach (Button btn in reloadUser)
+        {
+            btn.interactable = true;
+        }
+
         foreach (Button btn in home)
         {
             btn.interactable = true;
@@ -259,6 +269,11 @@ public class ModeNavigator : MonoBehaviour
             tgl.interactable = true;
         }
 
+        foreach (Toggle tgl in climb)
+        {
+            tgl.interactable = true;
+        }
+
         foreach (Toggle tgl in rotX)
         {
             tgl.interactable = true;
@@ -310,6 +325,11 @@ public class ModeNavigator : MonoBehaviour
         }
 
         foreach (Toggle tgl in selection)
+        {
+            tgl.interactable = true;
+        }
+
+        foreach(Toggle tgl in motionConstraints)
         {
             tgl.interactable = true;
         }
@@ -394,7 +414,21 @@ public class ModeNavigator : MonoBehaviour
                     btn.interactable = enabled;
                 }
                 break;
-                
+
+            case "ReloadProject":
+                foreach (Button btn in reloadProj)
+                {
+                    btn.interactable = enabled;
+                }
+                break;
+
+            case "Reload":
+                foreach (Button btn in reloadUser)
+                {
+                    btn.interactable = enabled;
+                }
+                break;
+
             case "Home":
                 foreach (Button btn in home)
                 {
@@ -528,6 +562,13 @@ public class ModeNavigator : MonoBehaviour
                 }
                 break;
 
+            case "Climb":
+                foreach (Toggle tgl in climb)
+                {
+                    tgl.interactable = enabled;
+                }
+                break;
+
             case "RotateX":
                 foreach (Toggle tgl in rotX)
                 {
@@ -600,6 +641,13 @@ public class ModeNavigator : MonoBehaviour
 
             case "Selection":
                 foreach (Toggle tgl in selection)
+                {
+                    tgl.interactable = enabled;
+                }
+                break;
+
+            case "MotionConstraints":
+                foreach(Toggle tgl in motionConstraints)
                 {
                     tgl.interactable = enabled;
                 }
@@ -712,6 +760,16 @@ public class ModeNavigator : MonoBehaviour
             btn.interactable = false;
         }
 
+        foreach (Button btn in reloadProj)
+        {
+            btn.interactable = false;
+        }
+
+        foreach (Button btn in reloadUser)
+        {
+            btn.interactable = false;
+        }
+
         foreach (Button btn in home)
         {
             btn.interactable = false;
@@ -807,6 +865,11 @@ public class ModeNavigator : MonoBehaviour
             tgl.interactable = false;
         }
 
+        foreach (Toggle tgl in climb)
+        {
+            tgl.interactable = false;
+        }
+
         foreach (Toggle tgl in rotX)
         {
             tgl.interactable = false;
@@ -858,6 +921,11 @@ public class ModeNavigator : MonoBehaviour
         }
 
         foreach (Toggle tgl in selection)
+        {
+            tgl.interactable = false;
+        }
+
+        foreach (Toggle tgl in motionConstraints)
         {
             tgl.interactable = false;
         }

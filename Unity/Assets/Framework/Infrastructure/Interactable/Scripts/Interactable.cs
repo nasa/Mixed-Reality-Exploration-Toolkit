@@ -11,22 +11,33 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
     /// <remarks>
     /// History:
     /// 18 November 2020: Created
+    /// 6 January 2022: Added touch hold (DZB)
+    /// 26 January 2022: Made trigger methods overridable (DZB)
     /// </remarks>
     /// <summary>
     /// Base class for all MRET interactable objects.
     /// Author: Dylan Z. Baker
     /// </summary>
-    public class Interactable : MonoBehaviour
+    public class Interactable : MRETUpdateBehaviour
     {
+        /// <seealso cref="MRETBehaviour.ClassName"/>
+        public override string ClassName
+        {
+            get
+            {
+                return nameof(MRETUpdateBehaviour);
+            }
+        }
+
         /// <summary>
         /// Behavior to use on touch.
         /// </summary>
-        public enum TouchBehavior { Highlight, Custom }
+        public enum TouchBehavior { Highlight, Hold, Custom }
 
         /// <summary>
         /// Behavior to use on grab.
         /// </summary>
-        public enum GrabBehavior { Attach, Custom }
+        public enum GrabBehavior { Attach, Constrained, Custom }
 
         [Tooltip("Behavior to use on touch.")]
         public TouchBehavior touchBehavior = TouchBehavior.Highlight;
@@ -34,8 +45,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
         [Tooltip("Behavior to use on grab.")]
         public GrabBehavior grabBehavior = GrabBehavior.Attach;
 
-        [Tooltip("Material to use for highlighting (only if touchBehavior is set to highlight).")]
-        public Material highlightMaterial;
+        /// <summary>
+        /// Threshold when in touch hold behavior after which a
+        /// touch hold is considered to have occurred.
+        /// </summary>
+        public float touchHoldThreshold = 1f;
 
         protected bool lockStatus = false;
         /// <summary>
@@ -89,11 +103,6 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
             }
         }
 
-        private void Start()
-        {
-            highlightMaterial = MRET.HighlightMaterial;
-        }
-
         /// <summary>
         /// Finds the SceneObject that the provided GameObject is part of.
         /// </summary>
@@ -116,7 +125,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
             return null;
         }
 
-        private void OnTriggerEnter(Collider other)
+        protected virtual void OnTriggerEnter(Collider other)
         {
             InputHand inputHand = other.GetComponent<InputHand>();
             if (inputHand != null)
@@ -125,7 +134,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
             }
         }
 
-        private void OnTriggerExit(Collider other)
+        protected virtual void OnTriggerExit(Collider other)
         {
             InputHand inputHand = other.GetComponent<InputHand>();
             if (inputHand != null)
@@ -146,6 +155,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
         {
             switch (touchBehavior)
             {
+                case TouchBehavior.Hold:
+                    lastTime = DateTime.UtcNow;
+                    holdCount = 0;
+                    goto case TouchBehavior.Highlight;
+
                 case TouchBehavior.Highlight:
                     // Alter this object's materials.
                     if (savedMaterialInfo != null)
@@ -153,7 +167,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
                         RestoreObjectMaterials();
                     }
                     SaveObjectMaterials(false);
-                    ReplaceObjectMaterials(highlightMaterial, false);
+                    ReplaceObjectMaterials(MRET.HighlightMaterial, false);
 
                     // Save the touching hand.
                     touchingHand = hand;
@@ -161,7 +175,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
 
                 case TouchBehavior.Custom:
                 default:
-                    Debug.LogWarning("BeginTouch() not implemented for SceneObject.");
+                    Debug.LogWarning("BeginTouch() not implemented for Interactable.");
                     break;
             }
         }
@@ -174,6 +188,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
         {
             switch (touchBehavior)
             {
+                case TouchBehavior.Hold:
+                    holdCount = -1;
+                    touchHolding = false;
+                    goto case TouchBehavior.Highlight;
+
                 case TouchBehavior.Highlight:
                     // Restore this object's materials.
                     RestoreObjectMaterials();
@@ -181,9 +200,17 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
 
                 case TouchBehavior.Custom:
                 default:
-                    Debug.LogWarning("EndTouch() not implemented for SceneObject.");
+                    Debug.LogWarning("EndTouch() not implemented for Interactable.");
                     break;
             }
+        }
+
+        /// <summary>
+        /// Begin to touch hold the provided hand.
+        /// </summary>
+        protected virtual void BeginTouchHold(InputHand hand)
+        {
+            
         }
 
         public virtual void BeginGrab(InputHand hand)
@@ -201,7 +228,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
 
                 case GrabBehavior.Custom:
                 default:
-                    Debug.LogWarning("BeginGrab() not implemented for SceneObject.");
+                    Debug.LogWarning("BeginGrab() not implemented for Interactable.");
                     break;
             }
         }
@@ -229,6 +256,15 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
         public virtual void Use(InputHand hand)
         {
             Debug.LogWarning("Use() not implemented for Interactable.");
+        }
+
+        /// <summary>
+        /// Unuse performed on the provided hand.
+        /// </summary>
+        /// <param name="hand">Hand that performed the unuse.</param>
+        public virtual void Unuse(InputHand hand)
+        {
+            
         }
 
         /// <summary>
@@ -283,6 +319,42 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
             return rtnObjects.ToArray();
         }
 
+        /// <summary>
+        /// Count of how long touch hold has been active.
+        /// </summary>
+        protected float holdCount = -1;
+
+        /// <summary>
+        /// Last time hold was counted.
+        /// </summary>
+        protected DateTime lastTime;
+
+        /// <summary>
+        /// Whether or not touch holding is occurring.
+        /// </summary>
+        protected bool touchHolding = false;
+
+        protected override void MRETUpdate()
+        {
+            base.MRETUpdate();
+
+            if (touchBehavior == TouchBehavior.Hold)
+            {
+                if (holdCount >= 0)
+                {
+                    DateTime time = DateTime.UtcNow;
+                    TimeSpan span = time - lastTime;
+                    holdCount += (float) span.TotalSeconds;
+                    if (holdCount > touchHoldThreshold && !touchHolding)
+                    {
+                        touchHolding = true;
+                        BeginTouchHold(touchingHand);
+                    }
+                    lastTime = time;
+                }
+            }
+        }
+
 #region Placement
 
         public virtual void Place()
@@ -298,11 +370,28 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
         /// </summary>
         protected Transform originalParent;
 
+        // This is the new method that should be used for all checks of grabbing
+        // Works for both Regular grabbing, and for Constrained grabbing
+        /// <summary>
+        /// Checks whether this object is being grabbed by the given InputHand.
+        /// </summary>
+        /// <param name="hand"> The hand to check for grabbing.</param>
+        /// <returns>True if is being grabbed, false if not.</returns>
+        public virtual bool IsGrabbedBy(InputHand hand)
+        {
+            if (hand == null || hand.transform == null) return false;
+            if (transform.IsChildOf(hand.transform))
+            {
+                return true;
+            }
+            return false;
+        }
+
         /// <summary>
         /// Attach to the given object.
         /// </summary>
         /// <param name="attachToTransform">Object to attach to.</param>
-        protected void AttachTo(Transform attachToTransform)
+        protected virtual void AttachTo(Transform attachToTransform)
         {
             originalParent = transform.parent;
             transform.SetParent(attachToTransform);
@@ -311,7 +400,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
         /// <summary>
         /// Attach to original parent.
         /// </summary>
-        protected void Detach()
+        protected virtual void Detach()
         {
             Vector3 origPos = transform.position;
             Quaternion origRot = transform.rotation;
@@ -353,7 +442,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Interactable
 
             foreach (Tuple<MeshRenderer, Material[]> rendMatInfo in savedMaterialInfo)
             {
-                rendMatInfo.Item1.materials = rendMatInfo.Item2;
+                if (rendMatInfo != null && rendMatInfo.Item1 != null && rendMatInfo.Item2 != null)
+                {
+                    rendMatInfo.Item1.materials = rendMatInfo.Item2;
+                }
             }
 
             savedMaterialInfo = null;

@@ -56,10 +56,10 @@ public class SynchronizedController : MonoBehaviour
                     {
                         if (!rBody.IsSleeping())
                         {
-                            return;
+                            //return;
                         }
                     }
-
+                    
                     // Position.
                     if (transform.position != lastRecordedPosition && positionThrottleCounter >= throttleFactor)
                     //Vector3 currPos = UnityProject.instance.GlobalToLocalPosition(transform.position);

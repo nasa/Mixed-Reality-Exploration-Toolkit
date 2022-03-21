@@ -15,6 +15,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.Components.Locomotion
     ///     the MRET_DEBUG compiler directive (J. Hosler)
     /// 17 March 2021: Removed speed references to use the motion contraints in the base
     ///     class. (J. Hosler)
+    /// 8 November 2021: Separated flying into its own method. Script will need to be refactored to
+    ///     separate hand based flying from generic flying (DZB)
     /// </remarks>
     ///
     /// <summary>
@@ -27,6 +29,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.Components.Locomotion
     /// 
     public class FlyingLocomotionController : LocomotionController
     {
+        /// <summary>
+        /// Flying mechanism type.
+        /// </summary>
+        public enum FlyingMechanism { Positional, DirectionalInput }
+
         /// <seealso cref="MRETBehaviour.ClassName"/>
         public override string ClassName
         {
@@ -36,10 +43,18 @@ namespace GSFC.ARVR.MRET.Infrastructure.Components.Locomotion
             }
         }
 
+        /// <summary>
+        /// Flying mechanism type to use.
+        /// </summary>
+        public FlyingMechanism flyingMechanism = FlyingMechanism.Positional;
+
         Vector3? lastHandPosition = null;
 
         [Tooltip("Reverses the camera motion relative to controller motion")]
         public bool reverseMotion = false;
+
+        [Tooltip("Multiplier for directional motion.")]
+        public float directionalMultiplier = 10;
 
         /// <seealso cref="LocomotionController.HandActiveStateChanged"/>
         protected override void HandActiveStateChanged(InputHand hand)
@@ -76,6 +91,23 @@ namespace GSFC.ARVR.MRET.Infrastructure.Components.Locomotion
         }
 
         /// <summary>
+        /// Perform one frame of flying motion.
+        /// </summary>
+        /// <param name="amount">Amount to fly.</param>
+        /// <param name="reversed">Whether or not the motion is reversed.</param>
+        public void Fly(Vector3 amount, bool reversed)
+        {
+            if (reversed)
+            {
+                rig.transform.position += amount;
+            }
+            else
+            {
+                rig.transform.position -= amount;
+            }
+        }
+
+        /// <summary>
         /// SetRigTransform
         /// 
         /// Sets the new Rig transform based upon the movement that has occured since the last time this method was called
@@ -83,48 +115,65 @@ namespace GSFC.ARVR.MRET.Infrastructure.Components.Locomotion
         /// <param name="hand">The hand used to perform the calculation</param>
         private void SetRigTransform(InputHand hand)
         {
-            if (lastHandPosition.HasValue)
+            switch (flyingMechanism)
             {
-                // Obtain the new hand position
-                Vector3 newPosition = hand.transform.position;
+                case FlyingMechanism.Positional:
+                    if (lastHandPosition.HasValue)
+                    {
+                        // Obtain the new hand position
+                        Vector3 newPosition = hand.transform.position;
 
-                float sensitivity = 0.0f;
-                Vector3 positionDelta = newPosition - (Vector3)lastHandPosition;
-                //print ("positionDelta.magnitude:" + positionDelta.magnitude);
+                        float sensitivity = 0.0f;
+                        Vector3 positionDelta = newPosition - (Vector3)lastHandPosition;
+                        //print ("positionDelta.magnitude:" + positionDelta.magnitude);
 
-                // Guard against tracking errors or teleporting while in motion errors
-                if (positionDelta.magnitude < 1.5f)
-                {
-                    // Sensitivity is variable based on magnitude of controller motion.
-                    sensitivity = positionDelta.magnitude;
-                }
+                        // Guard against tracking errors or teleporting while in motion errors
+                        if (positionDelta.magnitude < 1.5f)
+                        {
+                            // Sensitivity is variable based on magnitude of controller motion.
+                            sensitivity = positionDelta.magnitude;
+                        }
 
-                // Apply property setting
-                sensitivity *= GetMotionMultiplier();
+                        // Apply property setting
+                        sensitivity *= GetMotionMultiplier();
 
-                // Update camera rig position
-                if (reverseMotion)
-                {
-                    // Offset the rig position and the las hand position by equivalent amounts
-                    rig.transform.position += positionDelta * sensitivity;
-                    lastHandPosition += positionDelta * sensitivity;
-                }
-                else
-                {
-                    // Offset the rig position and the las hand position by equivalent amounts
-                    rig.transform.position -= positionDelta * sensitivity;
-                    lastHandPosition -= positionDelta * sensitivity;
-                }
+                        // Update camera rig position
+                        if (reverseMotion)
+                        {
+                            // Offset the rig position and the las hand position by equivalent amounts
+                            Fly(positionDelta * sensitivity, true);
+                            lastHandPosition += positionDelta * sensitivity;
+                        }
+                        else
+                        {
+                            // Offset the rig position and the las hand position by equivalent amounts
+                            Fly(positionDelta * sensitivity, false);
+                            lastHandPosition -= positionDelta * sensitivity;
+                        }
 
 #if MRET_DEBUG
-                Debug.Log("[" + ClassName + "->" + nameof(SetRigTransform) + "] New rig position: " + rig.transform.position);
-                Debug.Log("[" + ClassName + "->" + nameof(SetRigTransform) + "] New hand position: " + lastHandPosition);
+                        Debug.Log("[" + ClassName + "->" + nameof(SetRigTransform) + "] New rig position: " + rig.transform.position);
+                        Debug.Log("[" + ClassName + "->" + nameof(SetRigTransform) + "] New hand position: " + lastHandPosition);
 #endif
-            }
-            else
-            {
-                // We are in an odd state so reset the last position
-                ResetLastPosition();
+                    }
+                    else
+                    {
+                        // We are in an odd state so reset the last position
+                        ResetLastPosition();
+                    }
+                    break;
+
+                case FlyingMechanism.DirectionalInput:
+                    Vector2 navigateValue = hand.navigateValue;
+                    Vector3 movementAmount = ((Framework.MRET.InputRig.head.transform.right * navigateValue.x)
+                        + (Framework.MRET.InputRig.head.transform.forward * navigateValue.y))
+                        * UnityEngine.Time.deltaTime * GetMotionMultiplier() * directionalMultiplier;
+                    Fly(movementAmount, reverseMotion);
+                    break;
+
+                default:
+                    Debug.LogError("[" + ClassName + "->" + nameof(SetRigTransform) + "] flying mechanism not set.");
+                    break;
             }
         }
 

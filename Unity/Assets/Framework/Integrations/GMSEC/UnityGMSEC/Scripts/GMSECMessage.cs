@@ -11,9 +11,9 @@ namespace GSFC.ARVR.GMSEC
     {
         public enum MessageKind { UNSET, PUBLISH, REQUEST, REPLY }
 
-        string subject = "UNSET";
-        MessageKind kind = MessageKind.UNSET;
-        List<Field> fields = new List<Field>();
+        public string subject = "UNSET";
+        public MessageKind kind = MessageKind.UNSET;
+        public List<Field> fields = new List<Field>();
 
 #region FIELD
         public class Field
@@ -332,7 +332,7 @@ namespace GSFC.ARVR.GMSEC
                 return "FIELD|NAME:" + name + " TYPE:" + type.ToString() + " VALUE:" + GetValueAsString();
             }
 
-            private FieldType StringToFieldType(string type)
+            public FieldType StringToFieldType(string type)
             {
                 if (type.Equals("BIN"))
                 {
@@ -438,6 +438,11 @@ namespace GSFC.ARVR.GMSEC
                         else if (rawElements[i + 1].Equals("NAME") && rawElements[i + 3].Equals("TYPE") && rawElements[i + 7].Equals("VALUE"))
                         {
                             fields.Add(new Field(rawElements[i + 2], rawElements[i + 4], rawElements[i + 8]));
+                            i += 8;
+                        }
+                        else if (rawElements[i + 1].Equals("NAME") && rawElements[i + 5].Equals("TYPE") && rawElements[i + 7].Equals("VALUE"))
+                        {
+                            fields.Add(new Field(rawElements[i + 2], rawElements[i + 6], rawElements[i + 8]));
                             i += 8;
                         }
                         else
@@ -801,7 +806,7 @@ namespace GSFC.ARVR.GMSEC
         }
 
 #region Helpers
-        private List<string> JSONMessageToList(string jsonMessage)
+        public List<string> JSONMessageToList(string jsonMessage)
         {
             string csvMessage = jsonMessage.Replace("}", "").Replace("]", "");
             string[] rawElements = csvMessage.Split(',', '"', '{', '[');
@@ -818,7 +823,7 @@ namespace GSFC.ARVR.GMSEC
             return result;
         }
 
-        private MessageKind StringToMessageKind(string kind)
+        public MessageKind StringToMessageKind(string kind)
         {
             if (kind.Equals("PUBLISH"))
             {

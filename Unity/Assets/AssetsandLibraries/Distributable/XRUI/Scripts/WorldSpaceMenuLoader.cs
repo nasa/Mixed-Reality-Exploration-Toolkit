@@ -43,6 +43,10 @@ public class WorldSpaceMenuLoader : MonoBehaviour
         else if (instantiatedMenu && !instantiatedMenu.activeSelf)
         {
             instantiatedMenu.SetActive(true);
+            instantiatedMenu.transform.position = transform.position + new Vector3(0, 0.25f, 0.1f); // TODO: Hacky, fix.
+            instantiatedMenu.transform.rotation =
+                Quaternion.LookRotation((MRET.InputRig.head.transform.position
+                - instantiatedMenu.transform.position) * -1, Vector3.up);
         }
 
         return instantiatedMenu;

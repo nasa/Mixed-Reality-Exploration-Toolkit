@@ -39,6 +39,13 @@ namespace GSFC.ARVR.MRET.Part
             if (selectedFile is PartType)
             {
                 Infrastructure.Framework.MRET.PartManager.InstantiatePart((PartType) selectedFile, null);
+                /*PartType partFile = (PartType) selectedFile;
+                InteractablePart part = Infrastructure.Framework.MRET.SceneObjectManager.CreateInteractablePartWithSize(
+                    partFile.Name, partFile.AssetBundle, null, Vector3.zero, Quaternion.identity,
+                    new Vector3(partFile.PartTransform.Scale.X, partFile.PartTransform.Scale.Y, partFile.PartTransform.Scale.Z));
+                part.highlightColor = Infrastructure.Framework.MRET.PartManager.partTouchHighlightColor;
+                GameObject controller = Infrastructure.Framework.MRET.InputRig.placingHand.gameObject;
+                part.transform.GetComponent<InteractablePart>().StartPlacing(controller.transform);*/
             }
         }
 

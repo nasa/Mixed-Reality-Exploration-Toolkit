@@ -131,8 +131,6 @@ public class AssemblyGrabber : Interactable, ISelectable
             }
         }
         objectMaterials = objMatList.ToArray();
-
-        highlightMaterial = MRET.HighlightMaterial;
     }
 
     public override void BeginGrab(InputHand hand)

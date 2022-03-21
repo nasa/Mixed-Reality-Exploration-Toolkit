@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mt:Project xmlns:mt="http://www.example.org/MRET" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/MRET Project.xsd ">
+  <mt:Environment>
+    <mt:Label>emptyscene</mt:Label>
+    <mt:Description>Empty scene to check ROS connector project set up</mt:Description>
+    <mt:AssetBundle>emptyscene</mt:AssetBundle>
+    <mt:Name>Empty</mt:Name>
+    <mt:DefaultUserTransform>
+      <mt:Position>
+        <mt:X>0</mt:X>
+        <mt:Y>0</mt:Y>
+        <mt:Z>0</mt:Z>
+      </mt:Position>
+      <mt:Rotation>
+        <mt:X>0</mt:X>
+        <mt:Y>0</mt:Y>
+        <mt:Z>0</mt:Z>
+      </mt:Rotation>
+      <mt:Scale>
+        <mt:X>1</mt:X>
+        <mt:Y>1</mt:Y>
+        <mt:Z>1</mt:Z>
+      </mt:Scale>
+    </mt:DefaultUserTransform>
+    <mt:Skybox>
+      <mt:AssetBundle>none</mt:AssetBundle>
+      <mt:MaterialName>SkyboxMilkyWay</mt:MaterialName>
+    </mt:Skybox>
+    <mt:ClippingPlanes>
+      <mt:Near>0.05</mt:Near>
+      <mt:Far>100000</mt:Far>
+    </mt:ClippingPlanes>
+  </mt:Environment>
+  <mt:Parts>
+        <mt:Parts Name="robot" ID="robot">
+          <mt:Vendor>Vendor</mt:Vendor>
+          <mt:Description>Description.</mt:Description>
+          <mt:AssetBundle>NULL</mt:AssetBundle>
+          <mt:PartName>robot</mt:PartName>
+          <mt:EnableCollisions>false</mt:EnableCollisions>
+          <mt:EnableGravity>false</mt:EnableGravity>
+          <mt:EnableInteraction>true</mt:EnableInteraction>
+          <mt:MinMass>1</mt:MinMass>
+          <mt:MaxMass>1</mt:MaxMass>
+          <mt:PartType>Chassis</mt:PartType>
+          <mt:ROSConnectionType>
+            <mt:ROSBridgeServerURL>ws://192.168.56.101:9090</mt:ROSBridgeServerURL>
+            <mt:Protocol>WebSocketDotNET</mt:Protocol>
+            <mt:Serializer>Microsoft</mt:Serializer>
+            <!-- <mt:JointStateSubscriberTopic>/joint_states</mt:JointStateSubscriberTopic> -->
+            <!-- Change the path to the full path to the urdf file! -->
+            <mt:UrdfPath>Standard_MRET_Content\Content\Robots\Sample\nbv\robot_description.urdf</mt:UrdfPath>
+            <mt:JointStatePublisherTopic>/joint_states</mt:JointStatePublisherTopic>
+          </mt:ROSConnectionType>
+            <mt:ChildParts>
+          </mt:ChildParts>
+        </mt:Parts>
+  </mt:Parts>
+</mt:Project>

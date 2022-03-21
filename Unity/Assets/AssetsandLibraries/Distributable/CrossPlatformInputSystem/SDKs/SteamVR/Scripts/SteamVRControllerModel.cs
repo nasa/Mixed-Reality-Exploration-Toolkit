@@ -14,6 +14,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
     /// <remarks>
     /// History:
     /// 27 October 2020: Created
+    /// 9 September 2021: Supporting fix to previously invalid JSON syntax in SteamVR
+    /// 20 October 2021: Supporting non-default SteamVR installs, courtesy of Kaur Kullman, UMBC
     /// </remarks>
     /// <summary>
     /// Loads controller models from SteamVR render model folder.
@@ -97,14 +99,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {   // Windows.
-                string x86Path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-                if (string.IsNullOrEmpty(x86Path))
-                {
-                    Debug.LogError("[SteamVRControllerModel->ReadJSON] Unable to find x86 path.");
-                    return;
-                }
-
-                string steamVRPath = Path.Combine(x86Path, "Steam/steamapps/common/SteamVR");
+                string steamVRPath = GetSteamVRPath();
                 if (!Directory.Exists(steamVRPath))
                 {
                     Debug.LogError("[SteamVRControllerModel->ReadJSON] Unable to find SteamVR path.");
@@ -119,9 +114,63 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
                 }
 
                 string rawJSON = File.ReadAllText(jsonPath);
-                rawJSON = rawJSON.Remove(rawJSON.LastIndexOf("}"), 1);
-                SetUpControllerModel(JsonConvert.DeserializeObject<SteamVRControllerModelInfo>(rawJSON));
+                try
+                {
+                    SetUpControllerModel(JsonConvert.DeserializeObject<SteamVRControllerModelInfo>(rawJSON));
+                }
+                catch (Exception)
+                {
+                    Debug.Log("[SteamVRControllerModel->ReadJSON] Failed to deserialize raw JSON file, attempting to correct.");
+                    try
+                    {
+                        SetUpControllerModel(JsonConvert.DeserializeObject<SteamVRControllerModelInfo>(rawJSON.Remove(rawJSON.LastIndexOf("}"), 1)));
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogError("[SteamVRControllerModel->ReadJSON] Failed to deserialize raw JSON file: " + e.ToString());
+                    }
+                }
             }
+        }
+
+        /// <summary>
+        /// Find SteamVR path from registry.
+        /// </summary>
+        /// <returns>A path to SteamVR's registry entry, or NaN.</returns>
+        private string GetSteamVRPath()
+        {
+            string steamingPath = "NaN";
+            if (Environment.Is64BitOperatingSystem)
+            {
+                steamingPath = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Valve\\Steam", "InstallPath", "NaN").ToString();
+            }
+            else
+            {
+                steamingPath = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Valve\\Steam", "InstallPath", "NaN").ToString();
+            }
+
+            //string x86Path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            if (string.IsNullOrEmpty(steamingPath))
+            {
+                Debug.LogError("[SteamVRControllerModel->GetSteamVRPath] Unable to find path to Steam: " + steamingPath);
+                return null;
+            }
+
+            string steamVRPath = Path.Combine(steamingPath, "steamapps\\common\\SteamVR");
+            if (!Directory.Exists(steamVRPath))
+            {
+                steamVRPath = Microsoft.Win32.Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\Classes\\steamvr\\Shell\\Open\\Command", "(Default)", "NaN").ToString();
+                if (steamVRPath.Contains("bin"))
+                {
+                    steamVRPath = steamVRPath.Substring(0, steamVRPath.IndexOf("bin"));
+                }
+            }
+            if (!Directory.Exists(steamVRPath))
+            {
+                Debug.LogError("[SteamVRControllerModel->GetSteamVRPath] Unable to find SteamVR path: " + steamVRPath + "(" + steamingPath + ")");
+                return null;
+            }
+            return steamVRPath;
         }
 
         /// <summary>

@@ -46,15 +46,19 @@ namespace Assets.VDE
         public string v { get; set; }
         public string info { get; set; }
         public string name { get; set; }
-
+        public string uuid { get; set; }
         /// <summary>
         /// server allocated ID, not persistent over sessions
         /// </summary>
         public int id { get; set; } = 0;
         /// <summary>
-        /// max known depth of geni
+        /// distance from groot
         /// </summary>
         public int gm { get; set; }
+        /// <summary>
+        /// max known depth of the branch where this entity resides in
+        /// </summary>
+        public int md { get; set; } = 0;
         /// <summary>
         /// position amongst its group
         /// </summary>
@@ -67,6 +71,10 @@ namespace Assets.VDE
         /// will be manually parsed to the alfa of the node's color
         /// </summary>
         public float a { get; set; } = 0.009F;
+        /// <summary>
+        /// will be manually parsed to the colour of the node's color
+        /// </summary>
+        public string c { get; set; }
         public Type type { get; set; }
         /// <summary>
         /// for example in case of network layout, variables are passed on like this:
@@ -141,6 +149,11 @@ namespace Assets.VDE
         internal int stateOfMind = 0;
         internal Func<IEnumerator> trigger;
         internal bool enlightened;
+        internal Vector3 presetPosition;
+        internal Vector3 presetScale;
+        internal Vector3 presetRotation;
+        internal Color presetColour;
+        internal bool doJoints = true;
 
         public void Init(Data data)
         {
@@ -164,7 +177,6 @@ namespace Assets.VDE
                 // alpha
                 if (a != newerEntity.a)
                 {
-                    //log.Entry("incoming: " + name + "[" + id + "] diff alpha: " + a + " vs " + newerEntity.a);
                     a = newerEntity.a;
                     if (type == Type.Node && containers.GetCurrentNodeShape(out UI.Node.Shape ns))
                     {
@@ -174,8 +186,6 @@ namespace Assets.VDE
                 // relations
                 if (r != newerEntity.r)
                 {
-                    //log.Entry("incoming: " + name + "[" + id + "] diff relakas: " + r + " vs " + newerEntity.r);
-
                     r = newerEntity.r;
                     Dictionary<int,Relation> novelRelations = JsonConvert.DeserializeObject<Dictionary<int, Relation>>(r);
 
@@ -433,7 +443,7 @@ namespace Assets.VDE
                 }
             }
         }
-        async Task GetMembersAndSiblings()
+        internal async Task GetMembersAndSiblings()
         {
             void GMAS()
             {
@@ -561,6 +571,13 @@ namespace Assets.VDE
                 else if (message.EntityEvent == Entities.Event.NewEntity || message.EntityEvent == Entities.Event.ReNewEntity)
                 {
                     ReceiveEntity(message.obj);
+                }
+                else if (type != Type.Node && message.EntityEvent == Entities.Event.GotFocus)
+                {
+                    if (distanceFromGroot > 0 && distanceFromGroot < 3)
+                    {
+                        data.VDE.hud.CreateLabel(this);
+                    }
                 }
                 else if (message.LayoutEvent == Layouts.Layouts.LayoutEvent.HasSettled)
                 {

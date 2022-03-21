@@ -434,16 +434,16 @@ namespace GSFC.ARVR.MRET.Components.Notes
         }
 
         #region Selection
-        private bool selected = false;
+        private bool isSelected = false;
 
         public void Select(bool hierarchical = true)
         {
-            if (selected)
+            if (isSelected)
             {
                 return;
             }
 
-            selected = true;
+            isSelected = true;
 
             // Highlight the entire note.
             Highlight();
@@ -451,12 +451,12 @@ namespace GSFC.ARVR.MRET.Components.Notes
 
         public void Deselect(bool hierarchical = true)
         {
-            if (!selected)
+            if (!isSelected)
             {
                 return;
             }
 
-            selected = false;
+            isSelected = false;
 
             // Unhighlight the entire note.
             Unhiglight();

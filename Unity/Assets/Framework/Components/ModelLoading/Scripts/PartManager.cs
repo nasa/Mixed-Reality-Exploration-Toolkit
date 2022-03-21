@@ -117,7 +117,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject
             }
             
             part.transform = loadedPart.transform;
-            loadedPart.AddComponent<InteractablePart>();
+            InteractablePart newPart = loadedPart.AddComponent<InteractablePart>();
+            if (newPart != null)
+            {
+                MRET.SceneObjectManager.RegisterSceneObject(newPart, newPart.guid);
+                newPart.updateRate = UpdateFrequency.Hz20;
+                newPart.grabBehavior = MRET.SceneObjectManager.grabBehavior;
+            }
 
             GameObject grabCube = null;
 
@@ -276,6 +282,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject
             {
                 iPart.guid = new Guid(part.GUID);
             }
+            iPart.grabBehavior = MRET.SceneObjectManager.grabBehavior;
+
+            // Temporary.
+            iPart.shadeForLimitViolations = true;
+            iPart.AddDataPoint("MRET.TELEMETRYSHADINGDEMO." + iPart.name.ToUpper());
+            // /Temporary.
 
             if (placingMode == false)
             {
@@ -457,6 +469,14 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject
             }
 
             part.transform = obj.transform;
+
+            // If there is a ROSConnectionType specified in the Part XML, call the ROS manager to initialize the objects and components
+            // to set up the desired ROS connection.
+            if (part.ROSConnectionType != null)
+            {
+                RosManager.AddRosConnection(obj, part.ROSConnectionType);
+            }
+
             part.loaded = true;
         }
 

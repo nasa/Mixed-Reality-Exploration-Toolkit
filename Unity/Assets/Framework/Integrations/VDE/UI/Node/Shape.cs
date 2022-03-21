@@ -20,7 +20,6 @@ namespace Assets.VDE.UI.Node
             GetComponent<Collider>().enabled = true;
 
             MeshRenderer render = GetComponent<MeshRenderer>();
-            render.material.EnableKeyword("_EmissiveExposureWeight");
 
             SetColor();
             render.enabled = true;
@@ -30,7 +29,14 @@ namespace Assets.VDE.UI.Node
         }
         internal void SetColor()
         {
-            SetColor(layout.variables.colours["nodeColour"] * new Color(1, 1, 1, entity.a));
+            if (entity.c is null)
+            {
+                SetColor(layout.variables.colours["nodeColour"] * new Color(1, 1, 1, entity.a));
+            }
+            else
+            {
+                SetColor(entity.c);
+            }
         }
         internal override void GotFocus()
         {
@@ -65,6 +71,7 @@ namespace Assets.VDE.UI.Node
         internal override void Relax()
         {
             data.links.SetColliderStateFor(this, false);
+            container.SetLabelState(false);
             cameraIsClose = false;
         }
     }

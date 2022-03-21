@@ -44,6 +44,18 @@ namespace Assets.VDE.UI.Input
             }
             return false;
         }
+        internal bool CastRay(Vector3 rot, Vector3 pos, out RaycastHit hit, LayerMask mask)
+        {
+            if (Physics.Raycast(pos, rot, out hit, 130F))
+            {
+                return true;
+            }
+            if (Physics.Raycast(pos, rot, out hit, 130F, mask, QueryTriggerInteraction.Collide))
+            {
+                return true;
+            }
+            return false;
+        }
         internal bool CastSphere(Vector3 pos, out RaycastHit hit, LayerMask mask, float range = 0.5F)
         {
             if (Physics.SphereCast(pos, range, transform.forward, out hit, 0, mask, QueryTriggerInteraction.Collide))

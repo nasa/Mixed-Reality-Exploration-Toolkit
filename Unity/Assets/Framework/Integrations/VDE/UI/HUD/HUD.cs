@@ -17,6 +17,7 @@ namespace Assets.VDE.UI.HUD
         public Camera activeCamera;
         public CameraController cameraController;
         public Material notificationLineMaterial;
+        public GameObject target;
 
         internal enum Event
         {
@@ -34,12 +35,17 @@ namespace Assets.VDE.UI.HUD
             HUDPosition = Vector3.zero;
         internal Dictionary<int, UnityEngine.UI.Image> progress = new Dictionary<int, UnityEngine.UI.Image>() { };
         private bool fadingAway;
+        internal bool notificationsEnabled = true;
 
         private void Start()
         {
             if (activeCamera is null)
             {
                 activeCamera = vde.usableCamera;
+            }
+            if (activeCamera is null)
+            {
+                activeCamera = UnityEngine.Camera.main;
             }
 
             foreach (UnityEngine.UI.Image progressor in GetComponentsInChildren<UnityEngine.UI.Image>())
@@ -67,6 +73,15 @@ namespace Assets.VDE.UI.HUD
                 transform.SetPositionAndRotation(
                     Vector3.SmoothDamp(
                         transform.position,
+#if DOTNETWINRT_PRESENT
+                        Vector3.MoveTowards(
+                            transform.position,
+                            target.transform.position,
+                            2F
+                        ),                        
+                        ref velocity,
+                        0.6F, 3F
+#else
                         Vector3.MoveTowards(
                             transform.position,
                             (activeCamera.transform.forward * HUDPosition.z) + activeCamera.transform.position,
@@ -74,6 +89,7 @@ namespace Assets.VDE.UI.HUD
                         ),
                         ref velocity,
                         0.6F
+#endif
                     ),
                     Quaternion.Slerp(
                         transform.rotation,
@@ -98,7 +114,8 @@ namespace Assets.VDE.UI.HUD
                 !(vde.data.layouts is null) &&
                 !(vde.data.layouts.current is null) &&
                 !(vde.data.layouts.current.variables is null) &&
-                !(vde.data.layouts.current.variables.vectors is null))
+                !(vde.data.layouts.current.variables.vectors is null)
+                )
             {
                 notificationAreaOffset = vde.data.layouts.current.variables.vectors["notificationPosition"];
                 HUDPosition = vde.data.layouts.current.variables.vectors["HUDPosition"];
@@ -137,12 +154,31 @@ namespace Assets.VDE.UI.HUD
                 image.gameObject.SetActive(setTo);
             }
         }
+        internal void ToggleNotifications()
+        {
+            if (notificationsEnabled)
+            {
+                notificationsEnabled = false;
+                foreach (Notification notification in upperNotificationBarContents)
+                {
+                    notification.timeToLive = 0;
+                }
+            }
+            else
+            {
+                notificationsEnabled = true;
+            }
+        }
         internal void CreateLabel(Entity target)
         {
-            if (target.data.layouts.current.variables.indrek["showNotificationsOnDashboard"] > 0 && !upperNotificationBarContents.Exists(note => note.entity == target))
+            if (
+                notificationsEnabled &&
+                target.data.layouts.current.variables.indrek["showNotificationsOnDashboard"] > 0 && 
+                !upperNotificationBarContents.Where(note => note.entity == target).Any()
+                //!upperNotificationBarContents.Exists(note => note.entity == target)
+                )
             {
-                Shape targetShape = target.containers.GetCurrentShape();
-                if (!(targetShape is null))
+                if(target.containers.GetCurrentShape(out Shape targetShape))
                 {
                     Notification notification = gameObject.AddComponent<Notification>();
                     notification.HUD = this;

@@ -13,25 +13,15 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-
 namespace Assets.VDE
 {
-    /// <summary>
-    /// i would love to use "Project Settings > XR Plugin Management > Oculus > Stereo Rendering Mode: Single Pass Instantiated"
-    /// but no: because in that case the text would only be rendered for the left eye, as there are no shaders for fonts that would work correctly, if using the textMessPro.    
-    /// 20200626
-    /// 
-    /// thats still an issue as of 20200801. 
-    /// even worse - the last version thats able to build with multipass is 2020.1.0b16, as in the release, "SPI" wont render anything to the right eye.
-    /// 
-    /// </summary>
 #if MRET_2021_OR_LATER
     public class VDE : GSFC.ARVR.MRET.Infrastructure.Framework.SceneObject.SceneObject
 #else
     public class VDE : MonoBehaviour
 #endif
     {
-#if DUH
+#if DO_STEAM
         public Valve.VR.SteamVR_ActionSet activateActionSetOnAttach = Valve.VR.SteamVR_Input.GetActionSet("/actions/VDE", false);
 #endif
 
@@ -39,10 +29,13 @@ namespace Assets.VDE
         /// if this is checked in the gameobject, VDE will not try to connect to the VDE server, but rather load conf AND demo dataset using Resources.LoadAsync
         /// </summary>
         public bool standalone;
-        public string serverURL = "https://vde.coda.ee/VDE";
+        [Tooltip("The URI for VDES (https://vde.coda.ee/VDE) or address and port number for GMSEC (localhost:9100)")]
+        public string serverAddress = "https://vde.coda.ee/VDE";
+        public ConnectionType connectionType = ConnectionType.GMSEC;
         public string nameOfBakedConfigResource = "config";
         public string nameOfBakedEntitiesResource = "entities";
         public string nameOfBakedLinksResource = "links";
+        public string nameOfBakedPositionsResource = "positions";
 
 #if !MRET_2021_OR_LATER
         public bool renderInCloud = true;
@@ -76,7 +69,9 @@ namespace Assets.VDE
         public GameObject edgeTemplate;
         public GameObject nodeShapeTemplate;
         public GameObject groupShapeTemplate;
-
+#if DOTNETWINRT_PRESENT
+        public GameObject RightHand;
+#endif
         public Material[] node, group, edge;
 
         public enum InputSource
@@ -85,20 +80,28 @@ namespace Assets.VDE
             RiftPseudoHands,
             MagicalLeapingHands,
             SteamingPseudoHands,
-            MRET
+            MRET,
+            HoloLens
+        }
+        public enum ConnectionType
+        {
+            SIGNALR,
+            GMSEC
         }
 
         internal Data data;
         internal Controller controller;
         internal System.Random rando = new System.Random();
-        internal Connection connection;
-
+        internal SignalRConnection signalRConnection;
+#if MRET_2021_OR_LATER
+        internal GMSECConnection gmsecConnection;
+#endif
         private Log log = new Log("VDE");
 #pragma warning disable IDE0052 // Remove unread private members
         private bool showingStartupMessage;
 #pragma warning restore IDE0052 // Remove unread private members
 #pragma warning disable CS0414
-        private bool awakened, started;
+        private bool awakened, initialized, started;
         private string expectedNameOfParent = "Parts";// "GameObjects";
         private string tryingToStartUnder = "";
 #pragma warning restore CS0414
@@ -111,7 +114,8 @@ namespace Assets.VDE
             "bladeText",
             "gazable",
             "indexFingerTip",
-            "middleFingerTip"
+            "middleFingerTip",
+            "wrist"
         };
         private Dictionary<string, int> layers = new Dictionary<string, int> {
             { "grabbable", 14 },
@@ -120,37 +124,68 @@ namespace Assets.VDE
             { "suusapoks", 12 },
             { "pointable", 13 }
         };
-        private Vector3 localScaleInPreviousFrame;
-
+        internal Dictionary<string, shaderKeywordType> shaderKeywordsToEnable = new Dictionary<string, shaderKeywordType> {
+            { "_EmissiveExposureWeight", shaderKeywordType.floater },
+            { "_Color", shaderKeywordType.colour },
+            { "Color", shaderKeywordType.colour },
+            { "_MainColor", shaderKeywordType.colour },
+            { "MainColor", shaderKeywordType.colour },
+            { "_UnlitColor", shaderKeywordType.colour },
+            { "UnlitColor", shaderKeywordType.colour },
+            { "_TintColor", shaderKeywordType.colour },
+            { "TintColor", shaderKeywordType.colour },
+            { "_Albedo", shaderKeywordType.colour },
+            { "Albedo", shaderKeywordType.colour },
+            { "_BaseColor", shaderKeywordType.colour },
+            { "BaseColor", shaderKeywordType.colour },
+            { "_EmissiveColor", shaderKeywordType.colour },
+            { "EmissiveColor", shaderKeywordType.colour },
+            { "_EmissionColor", shaderKeywordType.colour },
+        };
+        internal enum shaderKeywordType
+        {
+            colour,
+            floater
+        }
+        internal Vector3 localScaleInPreviousFrame;
 
         private void OnApplicationQuit()
         {
             data.forrestIsRunning = false;
         }
+
 #if MRET_2021_OR_LATER
         public void Init(
-            bool standalone = true,
+            bool standalone = false,
             bool renderInCloud = false,
-            string serverURL = "https://vde.coda.ee/VDE",
+            string serverAddress = "https://vde.coda.ee/VDE",
             string nameOfBakedConfigResource = "config",
             string nameOfBakedEntitiesResource = "entities",
-            string nameOfBakedLinksResource = "links"            
+            string nameOfBakedLinksResource = "links",
+            InputSource inputSource = InputSource.MRET,
+            ConnectionType connectionType = ConnectionType.GMSEC
             )
         {
             this.standalone = standalone;
             this.renderInCloud = renderInCloud;
-            this.serverURL = serverURL;
+            this.serverAddress = serverAddress;
             this.nameOfBakedConfigResource = nameOfBakedConfigResource;
             this.nameOfBakedEntitiesResource = nameOfBakedEntitiesResource;
             this.nameOfBakedLinksResource = nameOfBakedLinksResource;
+            this.inputSource = InputSource.MRET;
+            this.connectionType = connectionType;
+            initialized = true;
         }
 #endif
         private void Awake()
         {
-#if UNITY_2019_4_17
-            Init(false, false, "https://a.whitest.house/VDE");
-#endif
+            //UnityEditor.PlayerSettings.SetManagedStrippingLevel(UnityEditor.BuildTargetGroup.Lumin, UnityEditor.ManagedStrippingLevel.Disabled);
 #if MRET_2021_OR_LATER
+            GameObject deplorable = GameObject.Find("Directional Light From Below");
+            if (!(deplorable is null))
+            {
+                deplorable.SetActive(false);
+            }
             inputSource = InputSource.MRET;
             if (!(transform.parent is null) && transform.parent.name != expectedNameOfParent)
             {
@@ -164,6 +199,8 @@ namespace Assets.VDE
             {
                 SetPositionAndScale(transform.localPosition + new Vector3(0, 33, 0), transform.localScale);
             }
+#else
+            initialized = true;
 #endif
 
 #if STEAM_VR
@@ -183,11 +220,17 @@ namespace Assets.VDE
             controller = gameObject.AddComponent<Controller>(); 
             controller.Init(this);
 
+#if !MRET_2021_OR_LATER
             GetParameters();
+#endif
             Tools.CreateTagsAndLayers(tags,layers);
             localScaleInPreviousFrame = transform.lossyScale;
-
+#if DOTNETWINRT_PRESENT
+            //startupMessage.text = "Virtual Data Explorer\nYou have a choice now: either enjoy the baked in demo dataset or connect to a VDE Server that’s serving your data.\nWould you choose to connect to a server, press the Connect button.Otherwise: Load Demo.";
+            showingStartupMessage = true;
+#endif
             awakened = true;
+            DontDestroyOnLoad(this.gameObject);
             log.Entry("VDE has Awakend!");
         }
         /// <summary>
@@ -195,7 +238,7 @@ namespace Assets.VDE
         /// </summary>
         private void CheckAssignments()
         {
-            // this would fail miserably. even if usableCamera IS indeed null, this comparison still thinks, its not. hence the "try" hack below.
+            // that IF would fail miserably: even if usableCamera IS indeed null, this comparison still thinks, its not. hence the "try" hack below.
             //if (usableCamera is null)
             try
             {
@@ -220,22 +263,31 @@ namespace Assets.VDE
                 {
                     if (!(usableCamera is null))
                     {
-                        if(!VDEHUD.TryGetComponent(out hud))
+                        if (!(VDEHUD is null))
                         {
-                            log.Entry("Unable to create VDE.HUD, because instantiated VDEHUD doesnt contain the Hud script.. ?");
+                            if (!VDEHUD.TryGetComponent(out hud))
+                            {
+                                log.Entry("Unable to create VDE.HUD, because instantiated VDEHUD doesnt contain the Hud script.. ?");
+                            }
+                            else if (!usableCamera.GetComponentInChildren<HUD>())
+                            {
+                                VDEHUD.transform.SetParent(usableCamera.transform.parent);
+                                hud.vde = this;
+                                VDEHUD.SetActive(true);
+#if !DOTNETWINRT_PRESENT
+                                hud.SetBoardTextTo("VDE is loading..");
+#endif
+                                data.burnOnDestruction.Add(VDEHUD);
+                                log.Entry("Set VDEHUD parent to: " + usableCamera.name);
+                            }
+                            else
+                            {
+                                log.Entry(usableCamera.name + " already seems to have VDEHUD.. ?");
+                            }
                         }
-                        else if (!usableCamera.GetComponentInChildren<HUD>())
-                        {
-                            VDEHUD.transform.SetParent(usableCamera.transform.parent);
-                            hud.vde = this;
-                            VDEHUD.gameObject.SetActive(true);
-                            hud.SetBoardTextTo("VDE is loading..");
-                            data.burnOnDestruction.Add(VDEHUD);
-                            log.Entry("Set VDEHUD parent to: " + usableCamera.name);
-                        } 
                         else
                         {
-                            log.Entry(usableCamera.name + " already seems to have VDEHUD.. ?");
+                            log.Entry("VDEHUD is undefined.");
                         }
                     } 
                     else
@@ -321,13 +373,22 @@ namespace Assets.VDE
 
                 edgeTemplate.SetActive(false);
             }
+
+
+            Renderer nodeShapeTemplateRenderer = nodeShapeTemplate.GetComponent<Renderer>();
+            Renderer edgeTemplateRenderer = edgeTemplate.GetComponent<Renderer>();
+            foreach (KeyValuePair<string, shaderKeywordType> wordkey in shaderKeywordsToEnable)
+            {
+                nodeShapeTemplateRenderer.material.EnableKeyword(wordkey.Key);
+                edgeTemplateRenderer.material.EnableKeyword(wordkey.Key);
+            }
         }
         private void GetParameters()
         {
             string[] arguments = Environment.GetCommandLineArgs();
             if (arguments.Length > 2 && (arguments[1] == "--server" || arguments[1] == "-server" || arguments[1] == "-s"))
             {
-                serverURL = arguments[2];
+                serverAddress = arguments[2];
             }
             if (arguments.Length > 1 && (arguments[1] == "--local" || arguments[1] == "-local" || arguments[1] == "-l"))
             {
@@ -342,10 +403,10 @@ namespace Assets.VDE
 
         internal void SetPositionAndScale(Vector3 dashboardCenter, Vector3 defaultScale)
         {
-            log.Entry("setPositionAndScale: changing scale from " + transform.localScale.ToString() + " to " + defaultScale.ToString());
+            log.Entry("setPositionAndScale: changing scale from " + (transform.localScale * 100).ToString() + " to " + (defaultScale * 100).ToString());
             transform.localScale = defaultScale;
             transform.localPosition = dashboardCenter;
-            log.Entry("setPositionAndScale: scale now " + transform.localScale.ToString());
+            log.Entry("setPositionAndScale: scale now " + (transform.localScale * 100).ToString());
         }
 
         private void Update()
@@ -377,19 +438,20 @@ namespace Assets.VDE
                 rigiid.mass = 0;
                 rigiid.isKinematic = false;
             }
-            if (!started && awakened && (transform.parent is null || transform.parent.name == expectedNameOfParent))
+            if (!started && awakened && initialized && (transform.parent is null || transform.parent.name == expectedNameOfParent))
             {
                 if (standalone || backendWithBakedData)
                 {
+                    log.Entry("Loading baked in config (" + standalone + "/" + backendWithBakedData + ")");
                     data.LoadLocalConfigAndData();
                     if (backendWithBakedData)
                     {
-                        connection = new Connection(data);
+                        Connect();
                     }
                 }
                 else
                 {
-                    connection = new Connection(data);
+                    Connect();
                 }
                 transform.rotation = Quaternion.LookRotation(Vector3.zero, Vector3.up);
                 started = true;
@@ -426,18 +488,46 @@ namespace Assets.VDE
             }
             else if (standalone || backendWithBakedData)
             {
-                data.LoadLocalConfigAndData();
+                LoadLocalConfigAndDemoData();
                 if (backendWithBakedData)
                 {
-                    connection = new Connection(data);
+                    Connect();
                 }
             }
             else
             {
-                connection = new Connection(data);
+                Connect();
             }
         }
 #endif
+
+        public void LoadLocalConfigAndDemoData()
+        {
+            data.LoadLocalConfigAndData();
+        }
+        public void LoadLocalLargeConfigAndDemoData()
+        {
+            nameOfBakedEntitiesResource = "entities.default";
+            nameOfBakedLinksResource = "links.default";
+            data.LoadLocalConfigAndData();
+        }
+        public void Connect()
+        {
+            switch (connectionType)
+            {
+                case ConnectionType.SIGNALR:
+                    signalRConnection = new SignalRConnection(data);
+                    break;
+                case ConnectionType.GMSEC:
+#if MRET_2021_OR_LATER
+                    gmsecConnection = new GMSECConnection(data);
+#endif
+                    break;
+                default:
+                    signalRConnection = new SignalRConnection(data);
+                    break;
+            }
+        }
         private void OnDestroy()
         {
             data.forrestIsRunning = false;
@@ -453,15 +543,48 @@ namespace Assets.VDE
             }
         }
 
-        internal void Quit()
+        public void Quit()
         {
             data.forrestIsRunning = false;
-            if (!(connection is null))
+            if (!(signalRConnection is null))
             {
-                connection.Disconnect();
+                signalRConnection.Disconnect();
             }
-#if UNITY_STANDALONE
+            // if left without standalone ifdef, this WILL destroy (parts of) the unity project.
+#if !UNITY_EDITOR
             Application.Quit(0);
+            Application.Quit();
+            Application.Unload();
+            Environment.Exit(1);
+
+            try
+            {
+	            foreach (System.Diagnostics.Process proc in System.Diagnostics.Process.GetProcessesByName("Virtual Data Explorer.exe"))
+                {
+                    data.messenger.Post(new Message()
+                    {
+                        HUDEvent = HUD.Event.SetText,
+                        message = "killing: " + proc.Id
+                    });
+                    proc.Kill();
+                }
+                foreach (System.Diagnostics.Process proc in System.Diagnostics.Process.GetProcesses())
+                {
+                    data.messenger.Post(new Message()
+                    {
+                        HUDEvent = HUD.Event.SetText,
+                        message = "found: " + proc.ProcessName + "(" + proc.Id + "); "
+                    });
+                }
+            }
+            catch(Exception ex) 
+            {
+                data.messenger.Post(new Message()
+                {
+                    HUDEvent = HUD.Event.SetText,
+                    message = "Theres no escape from here!"
+                });
+            }
 #endif
 #if UNITY_EDITOR
             //UnityEditor.EditorApplication.Exit(0);

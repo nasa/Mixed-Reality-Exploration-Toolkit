@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.VDE.UI
 {
@@ -288,41 +289,81 @@ namespace Assets.VDE.UI
 
             return group;
         }
+
         private GameObject ActivateLabel(Container container, Shape shape, Entity.Type type)
         {
             Transform trafo = container.gameObject.transform.Find("Label");
-            if (!(trafo is null) && trafo.TryGetComponent(out TextMeshPro tmp))
+
+            // workaround for non-textmessbro labels.
+            if (trafo is null)
+            {
+                trafo = container.gameObject.transform.Find("LabelCanvas");
+                trafo = trafo.Find("Label");
+            }
+
+            // the "out Text _" is to please the compiler, as it cant understand the two tries in || clause.
+            if (!(trafo is null) && (trafo.TryGetComponent(out TextMeshPro tmp) || trafo.TryGetComponent(out Text _)))
             {
                 Facer facer;
-                tmp.text = container.name;
+                if (!(tmp is null))
+                {
+                    tmp.text = container.name;
+                } 
+                else if(trafo.TryGetComponent(out Text text)) 
+                {
+                    text.text = container.name;
+                }
                 trafo.name = container.name + " visible label";
 
-                if (type == Entity.Type.Group)
+                if (type == Entity.Type.Group && shape.entity.distanceFromGroot > shape.layout.variables.indrek["showLabelsMaxDepth"])
                 {
                     if (!trafo.gameObject.TryGetComponent(out facer))
                     {
                         facer = trafo.gameObject.AddComponent<Group.GroupFacer>();
                     }
-                    facer.visibleMaxDistanceFromCamera = shape.layout.variables.floats["groupLabelVisibleMaxDistanceFromCamera"];
-                    facer.visibleMinDistanceFromCamera = shape.layout.variables.floats["groupLabelVisibleMinDistanceFromCamera"];
+                    //facer.visibleMaxDistanceFromCamera = shape.layout.variables.floats["groupLabelVisibleMaxDistanceFromCamera"];
+                    //facer.visibleMinDistanceFromCamera = shape.layout.variables.floats["groupLabelVisibleMinDistanceFromCamera"];
+
+                    // groupLabelVisibleMaxDistanceFromCamera = groot + 2
+                    // groupLabelVisibleMinDistanceFromCamera = container.entity.md 
+
+                    int labelsVisibleForGroupsThatAreFartherFromGrootThan = 0;// shape.layout.variables.indrek["showLabelsMaxDepth"];
+                    float totalDistanceWhereLabelCouldBeVisible =
+                        shape.layout.variables.floats["groupLabelVisibleMaxDistanceFromCamera"] -
+                        shape.layout.variables.floats["groupLabelVisibleMinDistanceFromCamera"];
+                    int numberOfGroupsThatWantToShowLabels = Math.Max(1, shape.entity.md - labelsVisibleForGroupsThatAreFartherFromGrootThan - 1); // 1 from nodes.
+                    float widthOfVisibilityLayerForGroup = totalDistanceWhereLabelCouldBeVisible / numberOfGroupsThatWantToShowLabels;
+                    facer.visibleOnceCameraIsCloserThan =
+                        shape.layout.variables.floats["groupLabelVisibleMinDistanceFromCamera"] +
+                        ((shape.entity.md - shape.entity.distanceFromGroot - labelsVisibleForGroupsThatAreFartherFromGrootThan) * widthOfVisibilityLayerForGroup);
+                    facer.visibleUntilCameraIsFartherThan =
+                        shape.layout.variables.floats["groupLabelVisibleMinDistanceFromCamera"] +
+                        ((shape.entity.md - shape.entity.distanceFromGroot - labelsVisibleForGroupsThatAreFartherFromGrootThan - 1) * widthOfVisibilityLayerForGroup);
+
+                    SetFacerDefaults(ref shape, ref facer);
                 }
-                else 
+                else if (type == Entity.Type.Node)
                 {
                     if (!trafo.gameObject.TryGetComponent(out facer))
                     {
                         facer = trafo.gameObject.AddComponent<Node.NodeFacer>();
                     }
-                    facer.visibleMaxDistanceFromCamera = shape.layout.variables.floats["nodeLabelVisibleSinceDistanceFromCamera"];
+                    facer.visibleOnceCameraIsCloserThan = shape.layout.variables.floats["nodeLabelVisibleSinceDistanceFromCamera"];
+                    SetFacerDefaults(ref shape, ref facer);
                 }
 
-                facer.maxTextSize =                 shape.layout.variables.floats["maxTextSize"];
-                facer.maxTextSizeDistance =         shape.layout.variables.floats["maxTextSizeDistance"];
-                facer.minTextSize =                 shape.layout.variables.floats["minTextSize"];
-                facer.minTextSizeDistance =         shape.layout.variables.floats["minTextSizeDistance"];
-                facer.referenceShape =              shape.gameObject;
                 trafo.gameObject.SetActive(true);
             }
             return trafo.gameObject;
+
+            static void SetFacerDefaults(ref Shape shape, ref Facer facer)
+            {
+                facer.maxTextSize = shape.layout.variables.floats["maxTextSize"];
+                facer.maxTextSizeDistance = shape.layout.variables.floats["maxTextSizeDistance"];
+                facer.minTextSize = shape.layout.variables.floats["minTextSize"];
+                facer.minTextSizeDistance = shape.layout.variables.floats["minTextSizeDistance"];
+                facer.referenceShape = shape.gameObject;
+            }
         }
 
         private Node.Container CreateNode(Entity entity)
@@ -350,7 +391,7 @@ namespace Assets.VDE.UI
             }
             node.shapes.Add(shape);
             node.label = ActivateLabel(node, shape, Entity.Type.Node);
-            node.label.SetActive(false);
+            node.SetLabelState(false);
 
             AddCreature(entity.id, node);
             AddCreature(entity.id, shape);

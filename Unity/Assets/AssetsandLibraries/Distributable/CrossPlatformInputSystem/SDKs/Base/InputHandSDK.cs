@@ -4,6 +4,7 @@
 using UnityEngine;
 using GSFC.ARVR.MRET.Infrastructure.Components.UIInteraction;
 using GSFC.ARVR.MRET.Infrastructure.Components.Locomotion;
+using GSFC.ARVR.MRET.Infrastructure.Framework.LineDrawing;
 
 namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
 {
@@ -19,7 +20,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
     ///     begin isolating the cross platform input system from the MRET application. May have to
     ///     revisit the use of interfaces since they require custom property handling in order to
     ///     make them work in the editor. (J. Hosler)
+    /// 24 July 2021: Added Climbing locomotion (C. Lian)
+    /// 28 July 2021: Adding support for velocity (DZB)
     /// 17 August 2021: Added pointer functions.
+    /// 17 November 2021: Removed RequireInterface for FlyingController reference, does not seem to
+    ///     be assignable from Inspector (DZB)
+    /// 23 December 2021: Adding Drawing Laser (DZB)
     /// </remarks>
     /// <summary>
     /// SDK wrapper for the input hand.
@@ -54,10 +60,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         /// </summary>
         [Tooltip("Flying Controller for the hand.")]
 #if UNITY_EDITOR
-        [RequireInterface(typeof(IInputRigLocomotionControl))]
+        //[RequireInterface(typeof(IInputRigLocomotionControl))]
 #endif
-        public Object flyingController;
-        protected IInputRigLocomotionControl _flyingController => flyingController as IInputRigLocomotionControl;
+        public FlyingLocomotionController flyingController;
+        protected FlyingLocomotionController _flyingController => flyingController as FlyingLocomotionController;
 
         /// <summary>
         /// ArmSwing Controller for this hand.
@@ -70,10 +76,26 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         protected IInputRigLocomotionControl _navigationController => navigationController as IInputRigLocomotionControl;
 
         /// <summary>
+        /// Climbing Controller for this hand.
+        /// </summary>
+        [Tooltip("Climbing Controller for the hand.")]
+#if UNITY_EDITOR
+        [RequireInterface(typeof(IInputRigLocomotionControl))]
+#endif
+        public Object climbingController;
+        protected IInputRigLocomotionControl _climbingController => climbingController as IInputRigLocomotionControl;
+
+        /// <summary>
         /// UI Pointer Controller for the hand.
         /// </summary>
         [Tooltip("UI Pointer Controller for the hand.")]
         public UIPointerController uiPointerController;
+
+        /// <summary>
+        /// Drawing Pointer Controller for the hand.
+        /// </summary>
+        [Tooltip("Drawing Pointer Controller for the hand.")]
+        public DrawingPointerController drawingPointerController;
 
         /// <summary>
         /// Whether or not the pointer is currently on.
@@ -90,6 +112,17 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         /// The current endpoint of the pointer.
         /// </summary>
         public virtual Vector3 pointerEnd
+        {
+            get
+            {
+                return Vector3.zero;
+            }
+        }
+        
+        /// <summary>
+        /// Velocity of the hand.
+        /// </summary>
+        public virtual Vector3 velocity
         {
             get
             {
@@ -435,6 +468,26 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
 
         #endregion // Locomotion [Navigate]
 
+#region Locomotion [Climb]
+
+        /// <summary>
+        /// Enables climbing for this hand.
+        /// </summary>
+        public virtual void EnableClimb()
+        {
+            Debug.LogWarning("EnableClimb() not implemented for InputHandSDK.");
+        }
+
+        /// <summary>
+        /// Disables climbing for this hand.
+        /// </summary>
+        public virtual void DisableClimb()
+        {
+            Debug.LogWarning("DisableClimb() not implemented for InputHandSDK.");
+        }
+
+        #endregion // Locomotion [Climb]
+
 #endregion // Locomotion
 
         /// <summary>
@@ -464,6 +517,22 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         public virtual void UIPointerSelect()
         {
             Debug.LogWarning("UIPointerSelect() not implemented for InputHandSDK.");
+        }
+
+        /// <summary>
+        /// Turns the Drawing laser on.
+        /// </summary>
+        public virtual void ToggleDrawingPointerOn()
+        {
+            Debug.LogWarning("ToggleDrawingPointerOn() not implemented for InputHandSDK.");
+        }
+
+        /// <summary>
+        /// Turns the Drawing laser off.
+        /// </summary>
+        public virtual void ToggleDrawingPointerOff()
+        {
+            Debug.LogWarning("ToggleDrawingPointerOff() not implemented for InputHandSDK.");
         }
     }
 }

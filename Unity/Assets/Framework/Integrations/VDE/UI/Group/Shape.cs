@@ -8,9 +8,16 @@ using UnityEngine;
 
 namespace Assets.VDE.UI.Group
 {
+#if DOTNETWINRT_PRESENT
+    internal class Shape : Assets.VDE.UI.Shape, Microsoft.MixedReality.Toolkit.Input.IMixedRealityFocusHandler
+#else
     internal class Shape : Assets.VDE.UI.Shape
+#endif
     {
-        IEnumerable<Assets.VDE.UI.Shape> membersWithShapes;
+        IEnumerable<Assets.VDE.UI.Shape> membersWithShapes; 
+#if DOTNETWINRT_PRESENT
+        Microsoft.MixedReality.Toolkit.Input.EyeTrackingTarget et;
+#endif
         internal new void Init(Entity entity, Group.Container group)
         {
             base.Init(entity, group);
@@ -25,8 +32,13 @@ namespace Assets.VDE.UI.Group
         private void MembersWithShapes(Entity entity)
         {
             membersWithShapes = entity.members.
-                Where(mem =>
-                    mem.containers.containers.Where(cont => cont.shapes.IsReady() && cont.layout == layout).Count() > 0).
+                Where(mem => 
+                    !(mem.containers is null) && 
+                    !(mem.containers.containers is null) &&
+                    mem.containers.containers.Where(cont =>
+                        !(cont.shapes is null) &&
+                        cont.shapes.IsReady() && 
+                        cont.layout == layout).Any()).
                 Select(mem => mem.containers.GetShape(layout)).
                 Where(member => member.gameObject.TryGetComponent(out Renderer _));
         }
@@ -36,10 +48,50 @@ namespace Assets.VDE.UI.Group
             SetColor(layout.variables.colours["groupColour"]);
             GetComponent<MeshRenderer>().enabled = !entity.shapeless;
             GetComponent<MeshRenderer>().material.EnableKeyword("_EmissiveExposureWeight");
+#if DOTNETWINRT_PRESENT
+            //et = gameObject.AddComponent<Microsoft.MixedReality.Toolkit.Input.EyeTrackingTarget>();
+            //StartCoroutine(ETwantsHOME());
+#endif
         }
+
+#if DOTNETWINRT_PRESENT
+        internal System.Collections.IEnumerator ETwantsHOME()
+        {
+            bool ETgotHome = false;
+            if (et is null || et.OnLookAtStart is null)
+            {
+                yield return data.UI.Sleep(1234);
+            }
+            while (!ETgotHome)
+            {
+                try
+                {
+                    et.OnLookAtStart.AddListener(ETgoesHome);
+                    ETgotHome = true;
+                }
+                catch (System.Exception) { }
+                yield return data.UI.Sleep(1234);
+            }
+            if (ETgotHome)
+            {
+                yield return true;
+            }
+        }
+        public void ETgoesHome()
+        {
+            GotFocus();
+        }
+#endif
+
         internal override void GotFocus()
         {
-            data.VDE.hud.CreateLabel(entity);
+            data.messenger.Post(new Communication.Message()
+            {
+                EntityEvent = Entities.Event.GotFocus,
+                from = entity,
+                to = entity
+            });
+            //data.VDE.hud.CreateLabel(entity);
         }
         /// <summary>
         /// this shall be called ONLY from main thread via trunk scheduling.
@@ -118,10 +170,6 @@ namespace Assets.VDE.UI.Group
                     to = entity.parent,
                     from = entity
                 });
-            }
-            //else
-            {
-            //    Debug.LogError(name + " NOT reporting change, because: " + ready + ":" + (membersWithShapes.Count() == entity.members.Count()));
             }
         }
         /// <summary>
@@ -254,10 +302,32 @@ namespace Assets.VDE.UI.Group
                     Node.Container ns = member.containers.GetCurrentNode();
                     if (!(ns is null) && !(ns.label is null))
                     {
-                        ns.label.SetActive(!setTo);
+                        ns.SetLabelState(!setTo);
                     }
                 }
             }
         }
+        internal override void BePresentable()
+        {
+            container.SetLabelState(true);
+            cameraIsClose = true;
+        }
+        internal override void Relax()
+        {
+            container.SetLabelState(false);
+            cameraIsClose = false;
+        }
+
+#if DOTNETWINRT_PRESENT
+        public void OnFocusEnter(Microsoft.MixedReality.Toolkit.Input.FocusEventData eventData)
+        {
+            GotFocus();
+        }
+
+        public void OnFocusExit(Microsoft.MixedReality.Toolkit.Input.FocusEventData eventData)
+        {
+            //throw new System.NotImplementedException();
+        }
+#endif
     }
 }

@@ -4,14 +4,15 @@
  */
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.VDE.UI
 {
     internal class Facer : MonoBehaviour
     {
         internal float 
-            visibleMaxDistanceFromCamera = 1F, 
-            visibleMinDistanceFromCamera = 0.2F,
+            visibleOnceCameraIsCloserThan = 1F, 
+            visibleUntilCameraIsFartherThan = 0.2F,
             maxTextSize = 0.12F,
             maxTextSizeDistance = 10,
             minTextSize = 0.1F,
@@ -19,20 +20,55 @@ namespace Assets.VDE.UI
         internal bool withOutline;
         internal bool grabbed = false;
         internal GameObject referenceShape;
-        internal TextMeshPro text;
+        internal TextMeshPro textMess;
+        internal Text text;
         internal MeshRenderer mehRenderer;
 
         void Awake()
         {
-            text = GetComponent<TextMeshPro>();
-            if (withOutline)
+            TryGetComponent<TextMeshPro>(out textMess);
+            TryGetComponent<MeshRenderer>(out mehRenderer);
+            //textMess = GetComponent<TextMeshPro>();
+            if (withOutline && !(textMess is null))
             {
-                text.outlineWidth = 0.2F;
+                textMess.outlineWidth = 0.2F;
             }
-            mehRenderer = GetComponent<MeshRenderer>();
+            //mehRenderer = GetComponent<MeshRenderer>();
         }
 
-        internal void Resize(float distance)
+        /// <summary>
+        /// resize for textmess.
+        /// </summary>
+        /// <param name="distance"></param>
+        internal void ResizeTextMess(float distance)
+        {
+            if (distance > maxTextSizeDistance)
+            {
+                textMess.transform.localScale = Vector3.one * maxTextSize;
+            }
+            else if (distance < minTextSizeDistance)
+            {
+                textMess.transform.localScale = Vector3.one * minTextSize;
+            }
+            else
+            {
+                float scaledToDistance = (((distance - minTextSizeDistance) / (maxTextSizeDistance - minTextSizeDistance)) + 1) * minTextSize;
+                if (scaledToDistance < minTextSize)
+                {
+                    textMess.transform.localScale = Vector3.one * minTextSize;
+                }
+                else
+                {
+                    textMess.transform.localScale = Vector3.one * scaledToDistance;
+                }
+            }
+        }
+
+        /// <summary>
+        /// resize for UI.text.
+        /// </summary>
+        /// <param name="distance"></param>
+        internal void ResizeText(float distance)
         {
             if (distance > maxTextSizeDistance)
             {
@@ -57,26 +93,44 @@ namespace Assets.VDE.UI
         }
 
         private void Update()
-        {            
-            Vector3 fwd = Camera.main.transform.forward;
-            float distance = Vector3.Distance(Camera.main.transform.position, transform.position);
-            if (distance < visibleMaxDistanceFromCamera && distance > visibleMinDistanceFromCamera)
+        {
+            if (!(referenceShape is null) && referenceShape.activeSelf && gameObject.activeSelf)
             {
-                if (!text.enabled)
+                Vector3 fwd = Camera.main.transform.forward;
+                float distance = Vector3.Distance(Camera.main.transform.position, transform.position);
+                if (distance < visibleOnceCameraIsCloserThan && distance > visibleUntilCameraIsFartherThan)
                 {
-                    text.enabled = true;
-                    mehRenderer.enabled = true;
-                }
-                fwd.y = 0.0F;
+                    if (!(textMess is null) && !textMess.enabled)
+                    {
+                        textMess.enabled = true;
+                        mehRenderer.enabled = true;
+                    }
+                    else if (!(text is null) && !text.enabled)
+                    {
+                        text.enabled = true;
+                    }
+                    fwd.y = 0.0F;
 
-                transform.rotation = Quaternion.LookRotation(fwd);
-                transform.localPosition = new Vector3(referenceShape.transform.localScale.x / 2, referenceShape.transform.localScale.y, referenceShape.transform.localScale.z / 2);
-                Resize(distance);
-            } 
-            else if (text.enabled || mehRenderer.enabled)
-            {
-                text.enabled = false;
-                mehRenderer.enabled = false;
+                    transform.rotation = Quaternion.LookRotation(fwd);
+                    transform.localPosition = new Vector3(referenceShape.transform.localScale.x / 2, referenceShape.transform.localScale.y, referenceShape.transform.localScale.z / 2);
+                    if (!(textMess is null))
+                    {
+                        ResizeTextMess(distance);
+                    }
+                    else if (!(text is null))
+                    {
+                        ResizeText(distance);
+                    }
+                }
+                else if (!(textMess is null) && textMess.enabled)
+                {
+                    textMess.enabled = false;
+                    mehRenderer.enabled = false;
+                }
+                else if (!(text is null) && text.enabled)
+                {
+                    text.enabled = false;
+                }
             }
         }
     }

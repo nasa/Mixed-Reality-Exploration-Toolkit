@@ -143,7 +143,7 @@ public class Animation_link : MonoBehaviour
 		//TODO: Look at events for input head so that you can tie to input head event to know if head moved across it's "axis" up/down left/right
 
 		//Dicslaimer: UnityStandardAssets.CrossPlatformInput.CrossPlatformInputManager don't model after this
-		m_Move = input.y * m_CamForward + UnityStandardAssets.CrossPlatformInput.CrossPlatformInputManager.GetAxis("Mouse X") * cam.transform.right;
+		m_Move = input.y * m_CamForward + Input.GetAxis("Mouse X") * cam.transform.right;
 		transform.forward = Vector3.Scale(cam.transform.forward, new Vector3(1, 0, 1)).normalized;
 		FakingMove(m_Move);
 	}

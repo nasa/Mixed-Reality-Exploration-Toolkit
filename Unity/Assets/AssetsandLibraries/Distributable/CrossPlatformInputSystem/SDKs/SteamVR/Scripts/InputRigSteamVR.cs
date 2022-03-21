@@ -16,6 +16,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
     ///     enabled. (J. Hosler)
     /// 17 March 2021: Fixed gravity by making sure kinematic is turned off when gravity is enabled,
     ///     and updated to reflect the use of the controller interface. (J. Hosler)
+    /// 24 July 2021: Added Climbing locomotion (C. Lian)
     /// </remarks>
     /// <summary>
     /// SteamVR wrapper for the input rig.
@@ -146,7 +147,32 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
             _navigationController.SetControlActive(false);
         }
 
-#endregion // Locomotion [Navigation]
+        #endregion // Locomotion [Navigation]
+
+#region Locomotion [Climbing]
+
+        /// <seealso cref="InputRigSDK.ClimbingEnabled"/>
+        public override bool ClimbingEnabled
+        {
+            get
+            {
+                return _climbingController.GetControlActive();
+            }
+        }
+
+        /// <seealso cref="InputRigSDK.EnableClimbing"/>
+        public override void EnableClimbing()
+        {
+            _climbingController.SetControlActive(true);
+        }
+
+        /// <seealso cref="InputRigSDK.DisableClimbing"/>
+        public override void DisableClimbing()
+        {
+            _climbingController.SetControlActive(false);
+        }
+
+#endregion // Locomotion [Climbing]
 
 #endregion // Locomotion
 

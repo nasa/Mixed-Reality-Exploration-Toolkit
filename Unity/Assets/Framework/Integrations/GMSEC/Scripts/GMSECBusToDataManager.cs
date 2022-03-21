@@ -91,10 +91,70 @@ public class GMSECBusToDataManager : MonoBehaviour
                             valueField = msg.GetField("MNEMONIC." + fieldNum + ".SAMPLE.1.TEXT-VALUE");
                         }
                     }
+                    object value = valueField.GetValue();
+
+                    object redHighValue = null, redLowValue = null, yellowHighValue = null, yellowLowValue = null;
+                    bool redHigh = false, redLow = false;
+                    GMSECMessage.Field redHighField = msg.GetField("MNEMONIC." + fieldNum + ".SAMPLE.1.RED-HIGH");
+                    if (redHighField != null)
+                    {
+                        redHigh = (bool) redHighField.GetValue();
+                        if (redHigh)
+                        {
+                            redHighValue = (float) value - 1;
+                        }
+                        else
+                        {
+                            redHighValue = (float) value + 1;
+                        }
+                    }
+
+                    GMSECMessage.Field redLowField = msg.GetField("MNEMONIC." + fieldNum + ".SAMPLE.1.RED-LOW");
+                    if (redLowField != null)
+                    {
+                        redLow = (bool) redLowField.GetValue();
+                        if (redLow)
+                        {
+                            redLowValue = (float) value + 1;
+                        }
+                        else
+                        {
+                            redLowValue = (float) value - 1;
+                        }
+                    }
+
+                    GMSECMessage.Field yellowHighField = msg.GetField("MNEMONIC." + fieldNum + ".SAMPLE.1.YELLOW-HIGH");
+                    if (yellowHighField != null)
+                    {
+                        bool yellowHigh = (bool) yellowHighField.GetValue();
+                        if (yellowHigh && (redHigh == false))
+                        {
+                            yellowHighValue = (float) value - 1;
+                        }
+                        else
+                        {
+                            yellowHighValue = (float) value + 1;
+                        }
+                    }
+
+                    GMSECMessage.Field yellowLowField = msg.GetField("MNEMONIC." + fieldNum + ".SAMPLE.1.YELLOW-LOW");
+                    if (yellowLowField != null)
+                    {
+                        bool yellowLow = (bool) yellowLowField.GetValue();
+                        if (yellowLow && (redLow == false))
+                        {
+                            yellowLowValue = (float) value + 1;
+                        }
+                        else
+                        {
+                            yellowLowValue = (float) value - 1;
+                        }
+                    }
 
                     if (valueField != null)
                     {
-                        dataManager.SaveValue(nameField.GetValueAsString(), valueField.GetValue());
+                        dataManager.SaveValue(nameField.GetValueAsString(), value,
+                            "none", null, redLowValue, yellowLowValue, yellowHighValue, redHighValue);
                     }
                     else
                     {

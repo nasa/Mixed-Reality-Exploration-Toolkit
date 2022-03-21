@@ -12,6 +12,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Components.UIInteraction
     /// <remarks>
     /// History:
     /// 22 January 2021: Created
+    /// 14 September 2021: Fixing minor bug where a null hitObj could be accessed.
     /// </remarks>
     /// <summary>
     /// UIPointerController is a controller class that
@@ -241,18 +242,21 @@ namespace GSFC.ARVR.MRET.Infrastructure.Components.UIInteraction
                 if (isScrolling)
                 {
                     // Get ScrollRect.
-                    ScrollRect scrollRect = raycastLaser.hitObj.GetComponentInParent<ScrollRect>();
-                    if (scrollRect == null)
+                    if (raycastLaser.hitObj != null)
                     {
-                        isScrolling = false;
-                    }
-                    else
-                    {
-                        Vector2 currentHit = raycastLaser.hitObj.transform.InverseTransformPoint(raycastLaser.hitPos);
-                        // Save the current position relative to the scroll rect.
-                        if (hitPoint != null)
+                        ScrollRect scrollRect = raycastLaser.hitObj.GetComponentInParent<ScrollRect>();
+                        if (scrollRect == null)
                         {
-                            scrollRect.velocity += new Vector2(currentHit.x - hitPoint.x, currentHit.y - hitPoint.y);
+                            isScrolling = false;
+                        }
+                        else
+                        {
+                            Vector2 currentHit = raycastLaser.hitObj.transform.InverseTransformPoint(raycastLaser.hitPos);
+                            // Save the current position relative to the scroll rect.
+                            if (hitPoint != null)
+                            {
+                                scrollRect.velocity += new Vector2(currentHit.x - hitPoint.x, currentHit.y - hitPoint.y);
+                            }
                         }
                     }
                 }

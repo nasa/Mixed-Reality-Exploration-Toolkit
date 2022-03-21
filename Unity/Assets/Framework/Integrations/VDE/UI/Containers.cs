@@ -170,6 +170,15 @@ namespace Assets.VDE.UI
         {
             return GetShape(entity.data.layouts.current, entity.type);
         }
+        internal bool GetCurrentShape(out Shape shape)
+        {
+            shape = GetCurrentShape();
+            if (!(shape is null))
+            {
+                return true;
+            }
+            return false;
+        }
         internal bool GetCurrentGroupShape(out Group.Shape shape)
         {
             shape = GetCurrentGroupShape();

@@ -15,9 +15,11 @@ namespace Assets.VDE.UI.Group
     internal class Container : Assets.VDE.UI.Container
     {
         internal bool groupHasSettled;
+        /*
         IEnumerable<Container> membersReady, siblingsReady;
         IEnumerable<Assets.VDE.UI.Container> membersWithShapes;
         IOrderedEnumerable<Container> membersAsGroupsWithShapes;
+        */
         Action triggerTask;
 
         internal new void Init(Entity entity, Layout layout)
@@ -36,20 +38,45 @@ namespace Assets.VDE.UI.Group
                 message = "from Group"
             });
         }
-
+        
         private void FindSiblingsAndMembers(Entity entity)
         {
-            membersReady = entity.members.Where(member => member.containers.IsReady()).Select(member => member.containers.GetCurrentShape().container);
-            siblingsReady = entity.siblings.Where(sibling => sibling.containers.IsReady()).Select(sibling => sibling.containers.GetCurrentShape().container);
-            membersWithShapes = entity.members.Select(member => member.containers.GetContainer());
+            /*
+            membersReady = entity.members.Where(member => !(member.containers is null) && member.containers.IsReady()).Select(member => member.containers.GetCurrentShape().container);
+            siblingsReady = entity.siblings.Where(sibling => !(sibling.containers is null) && sibling.containers.IsReady()).Select(sibling => sibling.containers.GetCurrentShape().container);
+            membersWithShapes = entity.members.Where(member => !(member.containers is null)).Select(member => member.containers.GetContainer());
             membersAsGroupsWithShapes = membersWithShapes.Where(member =>
                 !(member is null) &&
                 !(member.entity is null) &&
                 member.type == Entity.Type.Group).Select(member =>
                     member as Container).OrderBy(member =>
                         member.entity.pos);
+            */
         }
-
+        
+        #region methods
+        private IEnumerable<Container> MembersReady()
+        {
+            return entity.members.Where(member => !(member.containers is null) && member.containers.IsReady()).Select(member => member.containers.GetCurrentShape().container);
+        }
+        private IEnumerable<Container> SiblingsReady()
+        {
+            return entity.siblings.Where(sibling => !(sibling.containers is null) && sibling.containers.IsReady()).Select(sibling => sibling.containers.GetCurrentShape().container);
+        }
+        private IEnumerable<Assets.VDE.UI.Container> MembersWithShapes()
+        {
+            return entity.members.Where(member => !(member.containers is null)).Select(member => member.containers.GetContainer());
+        }
+        private IOrderedEnumerable<Container> MembersAsGroupsWithShapes()
+        {
+            return MembersWithShapes().Where(member =>
+                !(member is null) &&
+                !(member.entity is null) &&
+                member.type == Entity.Type.Group).Select(member =>
+                    member as Container).OrderBy(member =>
+                        member.entity.pos);
+        }
+        #endregion
         private void CheckIfToRelaxLastMember()
         {
             if (CheckIfMemberShapesAreReady())
@@ -76,19 +103,24 @@ namespace Assets.VDE.UI.Group
         internal IEnumerator Trigger()
         {
             state = State.triggering;
+            int groupSettlmentIteration = 0;
             while (!CheckIfAllMembersHaveShapes())
             {
-                yield return data.UI.Sleep(2345);
+                yield return new WaitForSeconds(data.random.Next(8, 16) / 100);
+                //yield return data.UI.Sleep(2345);
             }
             while (!TryToRelaxGroupMembers())
             {
-                yield return data.UI.Sleep(2345);
+                yield return new WaitForSeconds(data.random.Next(8, 16) / 100);
+                //yield return data.UI.Sleep(2345);
             }
-            while (!CheckIfGroupHasSettled(30F, 0.001F))
+            while (groupSettlmentIteration++ < 10 && !CheckIfGroupHasSettled(30F, 0.001F))
             {
-                yield return data.UI.Sleep(2345);
+                yield return new WaitForSeconds(data.random.Next(8, 16) / 100);
+                //yield return data.UI.Sleep(2345,1234);
             }
-            yield return data.UI.Sleep(2345,1234);
+            yield return new WaitForSeconds(data.random.Next(12, 23) / 100);
+            //yield return data.UI.Sleep(2345,1234);
             GroupHasSettled();
             entity.YieldTrigger();
             state = State.ready;
@@ -97,10 +129,11 @@ namespace Assets.VDE.UI.Group
 
         /// <summary>
         /// called from the main thread via trunk triggerers AFTER the metashape has been rendered, to trim the excess spacing between groups.
+        /// has issues. as of 20220216
         /// </summary>
         internal IEnumerator Postprocess()
         {
-            if (membersAsGroupsWithShapes.Count() > 0)
+            if (MembersAsGroupsWithShapes().Any())
             {
                 // set the collider of the group to NOT collide but trigger (so that members wouldnt collide with it)
                 SetColliderToTrigger(true);
@@ -116,10 +149,12 @@ namespace Assets.VDE.UI.Group
                 bool triggersTo = false;
                 SetGroupMembersCollidersTriggers(triggersTo);
                 // need to give the members time to start moving before we check their readiness
-                yield return data.UI.Sleep(3456, 2345);
+                yield return new WaitForSeconds(data.random.Next(123, 234) / 100);
+                //yield return data.UI.Sleep(3456, 2345);
                 while (!CheckIfGroupHasSettled(1F, 0.01F, false))
                 {
-                    yield return data.UI.Sleep(2345, 1234);
+                    yield return new WaitForSeconds(data.random.Next(123, 234) / 100);
+                    //yield return data.UI.Sleep(2345, 1234);
                     triggersTo = !triggersTo;
                     SetGroupMembersCollidersTriggers(triggersTo);
                 }
@@ -131,13 +166,13 @@ namespace Assets.VDE.UI.Group
 
         internal void SetUpdaters(bool setu, bool siblingsToo)
         {
-            foreach (var member in membersReady)
+            foreach (var member in MembersReady())
             {
                 SetUpdater(member, setu);
             }
             if (siblingsToo)
             {
-                foreach (var member in siblingsReady)
+                foreach (var member in SiblingsReady())
                 {
                     SetUpdater(member, setu);
                 }
@@ -191,7 +226,7 @@ namespace Assets.VDE.UI.Group
 
         /// <summary>
         /// siblings may get misplaced in the group (joints will then restrict their movment back to correct sequence).
-        /// PositionAhead will reset SIBLINGS' positions according to entity.siblings.*.pos and margins+padding set in layout conf.
+        /// PositionSelfAmongstSiblings will reset SIBLINGS' positions according to entity.siblings.*.pos and margins+padding set in layout conf.
         /// - this will NOT alter the members of this group.
         /// - should not be called directly, but via PositionGroupMembersAhead()
         /// </summary>
@@ -199,6 +234,7 @@ namespace Assets.VDE.UI.Group
         {
             Vector3 targetPosition = resetToPosition;
 
+            _ = entity.GetMembersAndSiblings();
             foreach (Shape sibling in entity.siblings.
                 Where(sibling => !(sibling.containers.GetCurrentShape() is null) && sibling.pos < entity.pos).
                 Select(sibling => sibling.containers.GetCurrentShape()))
@@ -259,19 +295,19 @@ namespace Assets.VDE.UI.Group
 
         private bool CheckIfAllMembersHaveShapes()
         {
-            return membersWithShapes.Count() == entity.members.Count();
+            return MembersWithShapes().Count() == entity.members.Count();
         }
 
         private bool CheckIfGroupHasSettled(float relaxationPrecision = 1F, float maxSpeed = 0.01F, bool positionAhead = true)
         {
-            if (membersAsGroupsWithShapes.Any())
+            if (MembersAsGroupsWithShapes().Any() && !layout.frozen)
             {
-                int groupsToCheck = membersAsGroupsWithShapes.Count() - 1;
-                Container lastMember = membersAsGroupsWithShapes.Last();
+                int groupsToCheck = MembersAsGroupsWithShapes().Count() - 1;
+                Container lastMember = MembersAsGroupsWithShapes().Last();
                 Rigidbody rigidBodyOfLastMember = lastMember.gameObject.GetComponent<Rigidbody>();
                 float speed = rigidBodyOfLastMember.velocity.magnitude;
 
-                foreach (Container member in membersAsGroupsWithShapes.Where(member => !member.CheckIfFirstInGroup()))
+                foreach (Container member in MembersAsGroupsWithShapes().Where(member => !member.CheckIfFirstInGroup()))
                 {
                     bool colliding = member.collidingSiblings.Any();
                     bool relaxed = member.joints.Relaxed(relaxationPrecision);
@@ -306,29 +342,34 @@ namespace Assets.VDE.UI.Group
 
         internal bool CheckIfOutOfLine()
         {
-            switch (positionCorrectionDirection)
+            if (immediateSiblings.Any())
             {
-                case PositionCorrectionDirection.up:
-                    return immediateSiblings.First().containers.GetContainer().transform.localPosition.y >= transform.localPosition.y || transform.localPosition.y < 0;
-                case PositionCorrectionDirection.down:
-                    return immediateSiblings.First().containers.GetContainer().transform.localPosition.y <= transform.localPosition.y;
-                case PositionCorrectionDirection.closer:
-                    return immediateSiblings.First().containers.GetContainer().transform.localPosition.z <= transform.localPosition.z;
-                case PositionCorrectionDirection.farther:
-                    return immediateSiblings.First().containers.GetContainer().transform.localPosition.z >= transform.localPosition.z || transform.localPosition.z < 0;
-                case PositionCorrectionDirection.right:
-                    return immediateSiblings.First().containers.GetContainer().transform.localPosition.x >= transform.localPosition.x || transform.localPosition.x < 0;
-                case PositionCorrectionDirection.left:
-                    return immediateSiblings.First().containers.GetContainer().transform.localPosition.x <= transform.localPosition.x;
-                default:
-                    return false;
+                Entity sibling = immediateSiblings.First();
+                if (!(sibling is null))
+                {
+                    Assets.VDE.UI.Container siblingContainer = sibling.containers.GetContainer();
+                    if (!(siblingContainer is null))
+                    {
+                        return positionCorrectionDirection switch
+                        {
+                            PositionCorrectionDirection.up => immediateSiblings.First().containers.GetContainer().transform.localPosition.y >= transform.localPosition.y || transform.localPosition.y < 0,
+                            PositionCorrectionDirection.down => immediateSiblings.First().containers.GetContainer().transform.localPosition.y <= transform.localPosition.y || transform.localPosition.y > 0,
+                            PositionCorrectionDirection.closer => immediateSiblings.First().containers.GetContainer().transform.localPosition.z <= transform.localPosition.z || transform.localPosition.z > 0,
+                            PositionCorrectionDirection.farther => immediateSiblings.First().containers.GetContainer().transform.localPosition.z >= transform.localPosition.z || transform.localPosition.z < 0,
+                            PositionCorrectionDirection.right => immediateSiblings.First().containers.GetContainer().transform.localPosition.x >= transform.localPosition.x || transform.localPosition.x < 0,
+                            PositionCorrectionDirection.left => immediateSiblings.First().containers.GetContainer().transform.localPosition.x <= transform.localPosition.x || transform.localPosition.x > 0,
+                            _ => false,
+                        };
+                    }
+                }
             }
+            return false;
         }
 
         internal void PositionGroupMembersAhead()
         {
             SetGroupMembersCollidersTriggers(true);
-            foreach (var item in membersAsGroupsWithShapes.Where(mem => !mem.CheckIfFirstInGroup()).OrderBy(mem => mem.entity.pos))
+            foreach (var item in MembersAsGroupsWithShapes().Where(mem => !mem.CheckIfFirstInGroup()).OrderBy(mem => mem.entity.pos))
             {
                 item.PositionSelfAmongstSiblings();
             }
@@ -338,9 +379,9 @@ namespace Assets.VDE.UI.Group
         /// <summary>
         /// restricts the movement directions of all members of this group
         /// </summary>
-        private void FreezeGroupsMembers()
+        internal void FreezeGroupsMembers()
         {
-            foreach (var member in membersAsGroupsWithShapes)
+            foreach (var member in MembersAsGroupsWithShapes())
             {
                 member.SetPositionCorrection(PositionCorrectionDirection.freeze, true);
                 member.SetUpdaters(false, false);
@@ -351,7 +392,7 @@ namespace Assets.VDE.UI.Group
         /// </summary>
         private void UnFreezeGroupsMembers()
         {
-            foreach (var member in membersAsGroupsWithShapes.Where(member => !member.CheckIfFirstInGroup()))
+            foreach (var member in MembersAsGroupsWithShapes().Where(member => !member.CheckIfFirstInGroup()))
             {
                 member.SetPositionCorrection();
                 member.SetUpdaters(true, false);
@@ -363,7 +404,7 @@ namespace Assets.VDE.UI.Group
         /// <param name="message"></param>
         internal void AdoptMember(Assets.VDE.UI.Container newMemberContainer)
         {
-            if (membersReady.Contains(newMemberContainer) || newMemberContainer.state == State.beingAdopded || newMemberContainer.state == State.adopted)
+            if (MembersReady().Contains(newMemberContainer) || newMemberContainer.state == State.beingAdopded || newMemberContainer.state == State.adopted)
             {
                 return;
             }
@@ -380,19 +421,17 @@ namespace Assets.VDE.UI.Group
 
             if (CheckIfAllMembersHaveShapes())
             {
-                if (state == State.ready)// layout.state == Layout.State.active)
+                if (state == State.ready)
                 {
                     if (!(entity.parent is null) && entity.parent.containers.GetCurrentGroup(out Container parentsContainer))
                     {
-                        parentsContainer.SetGroupMembersCollidersTriggers(true);//.SetColliderToTrigger(true);
+                        parentsContainer.SetGroupMembersCollidersTriggers(true);
                         if (!(parentsContainer.entity.parent is null) && parentsContainer.entity.parent.containers.GetCurrentGroup(out Container grandParentsContainer))
                         {
-                            //log.Entry("limpa: " + grandParentsContainer.name);
                             grandParentsContainer.SetGroupMembersCollidersTriggers(true);
 
                             if (!(grandParentsContainer.entity.parent is null) && grandParentsContainer.entity.parent.containers.GetCurrentGroup(out Container greatGrandParentsContainer))
                             {
-                                //log.Entry("lompa: " + greatGrandParentsContainer.name);
                                 greatGrandParentsContainer.SetGroupMembersCollidersTriggers(true);
                             }
                         }
@@ -494,7 +533,10 @@ namespace Assets.VDE.UI.Group
                 deplorables.ForEach(deplorable => deplorable.Burn());
                 deplorables.Clear();
 
-                JoinWith(incomingSibling, incomingSiblingContainer, jointType);
+                if (entity.doJoints)
+                {
+                    JoinWith(incomingSibling, incomingSiblingContainer, jointType);
+                }
             }
         }
 
@@ -536,6 +578,7 @@ namespace Assets.VDE.UI.Group
             SetGroupMembersCollidersTriggers(true);
             SetColliderToTrigger(true);
             FreezeGroupsMembers();
+            shapes.GetGroupShape().UpdateShape();
             groupHasSettled = true;
             ready = true;
 
@@ -555,7 +598,7 @@ namespace Assets.VDE.UI.Group
         /// <param name="setTo"></param>
         internal void SetGroupMembersCollidersTriggers(bool setTo)
         {
-            foreach (Container member in membersAsGroupsWithShapes)
+            foreach (Container member in MembersAsGroupsWithShapes())
             {
                 member.SetColliderToTrigger(setTo);
             }

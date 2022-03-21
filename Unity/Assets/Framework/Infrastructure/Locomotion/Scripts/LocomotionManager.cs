@@ -25,6 +25,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
     /// 22 July 2021: Repaired accidental merge with an old version that ended up breaking the pause
 	///     functionality of Locomotion: commit hash 4d9a097b. Restored the version at commit hash ce9e2fc8/
     ///     [30 April 2021] and reapplied the changes performed in commit hash 942cf513/[14 May 2021].  (J. Hosler)
+    /// 24 July 2021: Added Climbing locomotion (C. Lian)
+    /// 17 November 2021: Added navigate based flying (DZB)
     /// </remarks>
     /// <summary>
     /// LocomotionManager is a class that provides
@@ -38,7 +40,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             Teleport,
             Armswing,
             Fly,
-            Navigate
+            Navigate,
+            Climb
         }
 
         /// <seealso cref="MRETBehaviour.ClassName"/>
@@ -80,6 +83,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
         public const string armswingMotionConstraintMultiplerFastKey = KEY_PREFIX + ".MODE.ARMSWING.MOTIONCONSTRAINTMULTIPLIER.FAST";
         public const string armswingMotionConstraintKey = KEY_PREFIX + ".MODE.ARMSWING.MOTIONCONSTRAINT";
         public const string armswingGravityConstraintKey = KEY_PREFIX + ".MODE.ARMSWING.GRAVITYCONSTRAINT";
+        public const string climbKey = KEY_PREFIX + ".MODE.CLIMB";
+        public const string climbMotionConstraintMultiplerNormalKey = KEY_PREFIX + ".MODE.CLIMB.MOTIONCONSTRAINTMULTIPLIER.NORMAL";
+        public const string climbMotionConstraintMultiplerSlowKey = KEY_PREFIX + ".MODE.CLIMB.MOTIONCONSTRAINTMULTIPLIER.SLOW";
+        public const string climbMotionConstraintMultiplerFastKey = KEY_PREFIX + ".MODE.CLIMB.MOTIONCONSTRAINTMULTIPLIER.FAST";
+        public const string climbMotionConstraintKey = KEY_PREFIX + ".MODE.CLIMB.MOTIONCONSTRAINT";
+        public const string climbGravityConstraintKey = KEY_PREFIX + ".MODE.CLIMB.GRAVITYCONSTRAINT";
         public const string gravityKey = KEY_PREFIX + ".GRAVITY";
         public const string rotateXKey = KEY_PREFIX + ".ROTATEX";
         public const string rotateYKey = KEY_PREFIX + ".ROTATEY";
@@ -169,6 +178,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             MRET.DataManager.SaveValue(new DataManager.DataValue(flyKey, false));
             MRET.DataManager.SaveValue(new DataManager.DataValue(navigateKey, false));
             MRET.DataManager.SaveValue(new DataManager.DataValue(armswingKey, false));
+            MRET.DataManager.SaveValue(new DataManager.DataValue(climbKey, false));
 
             // Create the rig references that we need to perform rig motion
             List<RotateObjectTransform> rotsList = new List<RotateObjectTransform>();
@@ -247,6 +257,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             UpdateFlyingState();
             UpdateNavigationState();
             UpdateTeleportState();
+            UpdateClimbingState();
 
             // Rotation and scaling
             UpdateRotationState();
@@ -262,6 +273,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             DisableFlying();
             DisableNavigate();
             DisableTeleport();
+            DisableClimbing();
         }
 
 #region Event Handlers
@@ -282,7 +294,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             // Set the motion constraint for the rig if one of the locomotion modes are active
             if (((bool)MRET.DataManager.FindPoint(armswingKey) == true) ||
                 ((bool)MRET.DataManager.FindPoint(flyKey) == true) ||
-                ((bool)MRET.DataManager.FindPoint(navigateKey) == true))
+                ((bool)MRET.DataManager.FindPoint(navigateKey) == true) ||
+                ((bool)MRET.DataManager.FindPoint(climbKey) == true))
             {
                 MRET.InputRig.MotionConstraint = MotionConstraint.Fast;
             }
@@ -304,7 +317,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             // Set the motion constraint for the rig if one of the locomotion modes are active
             if (((bool)MRET.DataManager.FindPoint(armswingKey) == true) ||
                 ((bool)MRET.DataManager.FindPoint(flyKey) == true) ||
-                ((bool)MRET.DataManager.FindPoint(navigateKey) == true))
+                ((bool)MRET.DataManager.FindPoint(navigateKey) == true) ||
+                ((bool)MRET.DataManager.FindPoint(climbKey) == true))
             {
                 MRET.InputRig.MotionConstraint = MotionConstraint.Normal;
             }
@@ -332,6 +346,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             {
                 hand.EnableFly();
             }
+            else if ((bool)MRET.DataManager.FindPoint(climbKey) == true)
+            {
+                hand.EnableClimb();
+            }
 
             // TODO other locomotion forms.
         }
@@ -358,6 +376,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             {
                 hand.DisableFly();
             }
+            else if ((bool) MRET.DataManager.FindPoint(climbKey) == true)
+            {
+                hand.DisableClimb();
+            }
 
             // TODO other locomotion forms.
         }
@@ -380,6 +402,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             {
                 hand.EnableNavigate();
             }
+            else if ((bool) MRET.DataManager.FindPoint(flyKey) == true)
+            {
+                hand.EnableFly();
+            }
 
             // TODO other locomotion forms.
         }
@@ -401,6 +427,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             if ((bool) MRET.DataManager.FindPoint(navigateKey) == true)
             {
                 hand.DisableNavigate();
+            }
+            else if ((bool)MRET.DataManager.FindPoint(flyKey) == true)
+            {
+                hand.DisableFly();
             }
 
             // TODO other locomotion forms.
@@ -1415,11 +1445,241 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.Locomotion
             Debug.Log("[" + ClassName + "->" + nameof(DisableArmswing) + "] Armswing disabled");
         }
 
-#endregion // Armswing
+        #endregion // Armswing
+
+#region Climbing
+
+        /// <summary>
+        /// The multiplier to be applied to the normal climbing motion.
+        /// </summary>
+        public float ClimbingNormalMotionConstraintMultiplier
+        {
+            set
+            {
+                SetClimbingNormalMotionConstraintMultiplier(value);
+            }
+            get
+            {
+                return MRET.InputRig.ClimbingNormalMotionConstraintMultiplier;
+            }
+        }
+
+        /// <summary>
+        /// Sets the normal climbing motion constraint multiplier
+        /// </summary>
+        /// <param name="value">The new motion constraint multipler</param>
+        protected virtual void SetClimbingNormalMotionConstraintMultiplier(float value)
+        {
+            // Set the climbing motion multiplier
+            MRET.InputRig.ClimbingNormalMotionConstraintMultiplier = value;
+
+            // Save to DataManager
+            MRET.DataManager.SaveValue(climbMotionConstraintMultiplerNormalKey, MRET.InputRig.ClimbingNormalMotionConstraintMultiplier);
+
+            Debug.Log("[" + ClassName + "->" + nameof(SetClimbingNormalMotionConstraintMultiplier) +
+                "] Climbing normal motion constraint multiplier set to: " + MRET.InputRig.ClimbingNormalMotionConstraintMultiplier);
+        }
+
+        /// <summary>
+        /// The multiplier to be applied to the slow climbing motion.
+        /// </summary>
+        public float ClimbingSlowMotionConstraintMultiplier
+        {
+            set
+            {
+                SetClimbingSlowMotionConstraintMultiplier(value);
+            }
+            get
+            {
+                return MRET.InputRig.ClimbingSlowMotionConstraintMultiplier;
+            }
+        }
+
+        /// <summary>
+        /// Sets the slow climbing motion constraint multiplier
+        /// </summary>
+        /// <param name="value">The new motion constraint multipler</param>
+        protected virtual void SetClimbingSlowMotionConstraintMultiplier(float value)
+        {
+            // Set the climbing motion multiplier
+            MRET.InputRig.ClimbingSlowMotionConstraintMultiplier = value;
+
+            // Save to DataManager
+            MRET.DataManager.SaveValue(climbMotionConstraintMultiplerSlowKey, MRET.InputRig.ClimbingSlowMotionConstraintMultiplier);
+
+            Debug.Log("[" + ClassName + "->" + nameof(SetClimbingSlowMotionConstraintMultiplier) +
+                "] Climbing slow motion constraint multiplier set to: " + MRET.InputRig.ClimbingSlowMotionConstraintMultiplier);
+        }
+
+        /// <summary>
+        /// The multiplier to be applied to the fast climbing motion.
+        /// </summary>
+        public float ClimbingFastMotionConstraintMultiplier
+        {
+            set
+            {
+                SetClimbingFastMotionConstraintMultiplier(value);
+            }
+            get
+            {
+                return MRET.InputRig.ClimbingFastMotionConstraintMultiplier;
+            }
+        }
+
+        /// <summary>
+        /// Sets the fast climbing motion constraint multiplier
+        /// </summary>
+        /// <param name="value">The new motion constraint multipler</param>
+        protected virtual void SetClimbingFastMotionConstraintMultiplier(float value)
+        {
+            // Set the climbing motion multiplier
+            MRET.InputRig.ClimbingFastMotionConstraintMultiplier = value;
+
+            // Save to DataManager
+            MRET.DataManager.SaveValue(climbMotionConstraintMultiplerFastKey, MRET.InputRig.ClimbingFastMotionConstraintMultiplier);
+
+            Debug.Log("[" + ClassName + "->" + nameof(SetClimbingFastMotionConstraintMultiplier) +
+                "] Climbing fast motion constraint multiplier set to: " + MRET.InputRig.ClimbingFastMotionConstraintMultiplier);
+        }
+
+        /// <summary>
+        /// The gravity constraint to be applied to the climbing motion.
+        /// </summary>
+        public GravityConstraint ClimbingGravityConstraint
+        {
+            set
+            {
+                SetClimbingGravityConstraint(value);
+            }
+            get
+            {
+                return MRET.InputRig.ClimbingGravityConstraint;
+            }
+        }
+
+        /// <summary>
+        /// Sets the gravity constraint to be applied to the climbing motion.
+        /// </summary>
+        /// <param name="value">The gravity constraint for climbing</param>
+        /// <seealso cref="GravityConstraint"/>
+        protected virtual void SetClimbingGravityConstraint(GravityConstraint value)
+        {
+            // Set the climbing gravity constraint
+            MRET.InputRig.ClimbingGravityConstraint = value;
+
+            // Save to DataManager
+            MRET.DataManager.SaveValue(climbGravityConstraintKey, MRET.InputRig.ClimbingGravityConstraint);
+
+            Debug.Log("[" + ClassName + "->" + nameof(SetClimbingGravityConstraint) + "] Climbing gravity constraint set to: " + MRET.InputRig.ClimbingGravityConstraint);
+        }
+
+        /// <summary>
+        /// Toggles climbing locomotion.
+        /// </summary>
+        public void ToggleClimbing()
+        {
+            if ((bool)MRET.DataManager.FindPoint(climbKey) == false)
+            {
+                EnableClimbing();
+            }
+            else
+            {
+                DisableClimbing();
+            }
+        }
+
+        /// <summary>
+        /// Toggles climbing locomotion.
+        /// </summary>
+        public void ToggleClimbing(bool on)
+        {
+            if (on)
+            {
+                EnableClimbing();
+            }
+            else
+            {
+                DisableClimbing();
+            }
+        }
+
+        /// <summary>
+        /// Updates climbing locomotion to reflect the current state. Available for subclasses to override.
+        /// </summary>
+        protected virtual void UpdateClimbingState()
+        {
+            // Obtain the current locomotion state
+            bool climbing = (bool)MRET.DataManager.FindPoint(climbKey);
+
+            // Only enable if the state is on AND we are not paused. Disable otherwise.
+            if (!Paused && climbing)
+            {
+                // Enable climbing
+                MRET.InputRig.EnableClimbing();
+            }
+            else
+            {
+                // Disable climbing
+                MRET.InputRig.DisableClimbing();
+            }
+
+            // Gravity
+            ApplyGravityFromEnabledLocomotion();
+        }
+
+        /// <summary>
+        /// Enables climbing locomotion.
+        /// </summary>
+        public void EnableClimbing()
+        {
+            // Obtain the current locomotion state
+            bool climbing = (bool)MRET.DataManager.FindPoint(climbKey);
+
+            // Check that not already enabled
+            if (climbing)
+            {
+                Debug.LogWarning("[" + ClassName + "->" + nameof(EnableClimbing) + "] Climb already enabled");
+                return;
+            }
+
+            // Save the new state to the DataManager
+            MRET.DataManager.SaveValue(climbKey, true);
+
+            // Update the climbing state
+            UpdateClimbingState();
+
+            Debug.Log("[" + ClassName + "->" + nameof(EnableClimbing) + "] Climb enabled");
+        }
+
+        /// <summary>
+        /// Disables climbing locomotion.
+        /// </summary>
+        public void DisableClimbing()
+        {
+            // Obtain the current locomotion state
+            bool climbing = (bool)MRET.DataManager.FindPoint(climbKey);
+
+            // Check that not already disabled
+            if (!climbing)
+            {
+                Debug.LogWarning("[" + ClassName + "->" + nameof(DisableClimbing) + "] Climb already disabled");
+                return;
+            }
+
+            // Save the new state to the DataManager
+            MRET.DataManager.SaveValue(climbKey, false);
+
+            // Update the climbing state
+            UpdateClimbingState();
+
+            Debug.Log("[" + ClassName + "->" + nameof(DisableClimbing) + "] Climb disabled");
+        }
+
+#endregion // Climbing
 
 #endregion // Modes
 
- #region Rotation/Scaling
+#region Rotation/Scaling
 
         /// <summary>
         /// Toggles X axis rotation.

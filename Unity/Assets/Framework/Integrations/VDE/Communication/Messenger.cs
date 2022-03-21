@@ -35,7 +35,7 @@ namespace Assets.VDE.Communication
 
         ConcurrentQueue<Message> wall;
         ConcurrentQueue<Shape> shapeUpdateRequests;
-        ConcurrentDictionary<int, ConcurrentDictionary<string, ConcurrentBag<Callback>>> eventSubscriptions;
+        internal ConcurrentDictionary<int, ConcurrentDictionary<string, ConcurrentBag<Callback>>> eventSubscriptions;
         internal readonly ConcurrentDictionary<Entity, IOrderedEnumerable<Entity>> triggers = new ConcurrentDictionary<Entity, IOrderedEnumerable<Entity>> { };
         private float 
             timeTillNextFastCounter, 
@@ -47,6 +47,7 @@ namespace Assets.VDE.Communication
         private int eventSubscriptionsProcessedThisTick;
         private int maxEventSubscriptionsProcessedDuringATick;
         internal int maxLoad;
+        private int forceCounter;
 
         private void Start()
         {
@@ -284,40 +285,59 @@ namespace Assets.VDE.Communication
                             trgHistory[hist] = trgHistory[hist - 1];
                         }
                         trgHistory[0] = triggersSum;
-
+                        
                         if (
-                            forcedAhead < Time.realtimeSinceStartup && 
                             shapeUpdateRequests.Count == 0 &&
-                            trgHistory[0] == trgHistory[1] &&
-                            trgHistory[0] == trgHistory[2] &&
-                            trgHistory[0] == trgHistory[3] &&
-                            trgHistory[0] == trgHistory[4])
-                        {
-                            foreach (Container container in data.entities.entities.Where(ent => 
-                                ent.Value.type == Entity.Type.Group && 
-                                ent.Value.containers.containers.Where(cont => cont.state == UI.Container.State.triggering).Any()
-                                ).Select(ent => 
-                                    ent.Value.containers.GetCurrentGroup()).OrderByDescending(cont => 
-                                        cont.entity.distanceFromGroot
-                                    )
-                                )
+                            forcedAhead < Time.realtimeSinceStartup ||
+                            (
+                                trgHistory[0] == trgHistory[1] &&
+                                trgHistory[0] == trgHistory[2] &&
+                                trgHistory[0] == trgHistory[3] &&
+                                trgHistory[0] == trgHistory[4]
+                            )
+                        ){
+                            /*
+                            if (forceCounter++ > 666)
                             {
-                                foreach (Entity item in container.entity.members.Where(gmt => gmt.type == Entity.Type.Group).OrderBy(nmt => nmt.pos))
+                                data.layouts.current.FreezeAll();
+                                Post(new Message()
                                 {
-                                    if (item.containers.GetCurrentGroup(out Container gdmp))
-                                    {
-                                        gdmp.shapes.GetGroupShape().UpdateShape();
-                                        gdmp.PositionSelfAmongstSiblings(false, true);
-                                        //gdmp.SchedulePostprocess();
-                                        StartCoroutine(gdmp.Postprocess());
-                                    }
-                                }
-                                container.shapes.GetGroupShape().UpdateShape();
-                                container.PositionSelfAmongstSiblings(false, true);
-                                container.SchedulePostprocess();
+                                    LayoutEvent = Layouts.Layouts.LayoutEvent.LayoutPopulated,
+                                    obj = new object[] { data.layouts.current },
+                                    layout = data.layouts.current,
+                                    from = data.layouts.current.GetGroot()
+                                });
                             }
-                            forcedAhead = Time.realtimeSinceStartup + forceStep;
+                            else
+                            {
+                                foreach (Container container in data.entities.entities.Where(ent => 
+                                    ent.Value.type == Entity.Type.Group && 
+                                    ent.Value.containers.containers.Where(cont => cont.state == UI.Container.State.triggering).Any()
+                                    ).Select(ent => 
+                                        ent.Value.containers.GetCurrentGroup()).OrderByDescending(cont => 
+                                            cont.entity.distanceFromGroot
+                                        )
+                                    )
+                                {
+                                    foreach (Entity item in container.entity.members.Where(gmt => gmt.type == Entity.Type.Group).OrderBy(nmt => nmt.pos))
+                                    {
+                                        if (item.containers.GetCurrentGroup(out Container gdmp))
+                                        {
+                                            gdmp.shapes.GetGroupShape().UpdateShape();
+                                            gdmp.PositionSelfAmongstSiblings(false, true);
+                                            //gdmp.SchedulePostprocess();
+                                            StartCoroutine(gdmp.Postprocess());
+                                        }
+                                    }
+                                    container.shapes.GetGroupShape().UpdateShape();
+                                    container.PositionSelfAmongstSiblings(false, true);
+                                    container.SchedulePostprocess();
+                                }
+
+                                forcedAhead = Time.realtimeSinceStartup + forceStep;
+                            }*/
                         }
+                        
                     }
                     else if (triggersSum == 0 && triggerMaxSum > 0 && shapeUpdateRequests.Count == 0 && wall.Count == 0)
                     {
@@ -349,7 +369,6 @@ namespace Assets.VDE.Communication
                 yield return wait;
             }
         }
-
         private void CheckHowManyObjectSoShow(int currentFps)
         {
             if (!(data.layouts.current is null) && data.layouts.current.variables.flags["adjustToFPS"])
@@ -376,7 +395,6 @@ namespace Assets.VDE.Communication
                 }
             }
         }
-
         internal int CheckLoad()
         {
             int trig = 0;
@@ -391,7 +409,6 @@ namespace Assets.VDE.Communication
             }
             return load;
         }
-
         void HappyTrigger()
         {
             foreach (KeyValuePair<Entity,IOrderedEnumerable<Entity>> trunk in triggers.Where(trunk => trunk.Key.readyForTrunkTrigger && !trunk.Key.triggerIsPulled))
@@ -425,7 +442,19 @@ namespace Assets.VDE.Communication
                 }
                 else if (message.TelemetryType != 0)
                 {
-                    _ = Task.Run(() => data.VDE.connection.SendTelemetry(message.telemetry));
+                    switch (data.VDE.connectionType)
+                    {
+                        case VDE.ConnectionType.SIGNALR:
+                            _ = Task.Run(() => data.VDE.signalRConnection.SendTelemetry(message.telemetry));
+                            break;
+                        case VDE.ConnectionType.GMSEC:
+#if MRET_2021_OR_LATER
+                            _ = Task.Run(() => data.VDE.gmsecConnection.EnqueueTelemetry(message.telemetry));
+#endif
+                            break;
+                        default:
+                            break;
+                    }
                 }
                 else if (message.LayoutEvent != Layouts.Layouts.LayoutEvent.NotSet)
                 {
@@ -449,7 +478,6 @@ namespace Assets.VDE.Communication
                 log.Entry("exceptional processing of a message: " + exe.Message + "\n" + exe.StackTrace);
             }
         }
-
         private void HandleHUD(Message message)
         {
             switch (message.HUDEvent)
@@ -476,12 +504,12 @@ namespace Assets.VDE.Communication
                         break;
                     }
                 case UI.HUD.HUD.Event.SetText:
+                    data.VDE.hud.SetBoardTextTo(message.message);
                     break;
                 default:
                     break;
             }
         }
-
         private void HandleLogging(Message message)
         {
             switch (message.LogingEvent)
@@ -495,13 +523,12 @@ namespace Assets.VDE.Communication
                     break;
                 case Log.Event.HUD:
                     data.VDE.hud.AddLineToBoard(message.message);
-                    log.Entry("sent to HUD: " + message.message, Log.Event.ToServer);
+                    log.Entry("sent to HUD: " + message.message);//, Log.Event.ToServer);
                     break;
                 default:
                     break;
             }
         }
-
         private void SendLogEntryToServer(Message message)
         {
             if (data.VDE.standalone)
@@ -510,14 +537,13 @@ namespace Assets.VDE.Communication
             }
             else
             {
-                _ = Task.Run(() => data.VDE.connection.SendTelemetry(new Telemetry
+                _ = Task.Run(() => data.VDE.signalRConnection.SendTelemetry(new Telemetry
                 {
                     type = Telemetry.Type.log,
                     message = message.message,
                 }));
             }
         }
-
         void HandleEvent(Message message, string eventName)
         {
             if (!(message.from is null))
@@ -527,8 +553,8 @@ namespace Assets.VDE.Communication
                     StartCoroutine(message.to.Inbox(message));
                 }
                 else if (
-                    eventSubscriptions.ContainsKey(message.from.id) && 
-                    eventSubscriptions[message.from.id].ContainsKey(eventName) && 
+                    eventSubscriptions.ContainsKey(message.from.id) &&
+                    eventSubscriptions[message.from.id].ContainsKey(eventName) &&
                     eventSubscriptions[message.from.id][eventName].Count() > 0
                     )
                 {
@@ -538,6 +564,10 @@ namespace Assets.VDE.Communication
                         eventSubscriptionsProcessedThisTick++;
                     }
                 }
+            }
+            else if (message.LayoutEvent == Layouts.Layouts.LayoutEvent.InitializeAll)
+            {
+                data.layouts.InitializeLayouts();
             }
         }
         internal void RegisterTrunk(Entity entity)
@@ -554,12 +584,10 @@ namespace Assets.VDE.Communication
                 log.Entry(entity.name + " registered as a trunk.", Log.Event.ToServer);
             }
         }
-
         internal void RequestShapeUpdate(Shape shape)
         {
             shapeUpdateRequests.Enqueue(shape);
         }
-
         internal void SubscribeToEvent(Callback callback, string layoutEvent, int targetEntityID)
         {
             if (!(callback is null))
@@ -580,7 +608,6 @@ namespace Assets.VDE.Communication
                 }
             }
         }
-
         internal void UnsubscribeFromEvent(Callback callback, string layoutEvent, int entityId)
         {
             if (!(callback is null))

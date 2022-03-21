@@ -11,19 +11,30 @@ namespace Assets.VDE.UI.Node
         Vector3 pos = new Vector3(0, -0.3F, 0);
         private void Start()
         {
-            transform.localPosition = pos; 
-            text.transform.localScale = Vector3.one * minTextSize;
+            transform.localPosition = pos;
+            if (!(textMess is null))
+            {
+                textMess.transform.localScale = Vector3.one * minTextSize;
+            }
+            else if(!(text is null))
+            {
+                text.transform.localScale = Vector3.one * minTextSize;
+            }
         }
         private void Update()
         {
             Vector3 fwd = Camera.main.transform.forward;
             float distance = Vector3.Distance(Camera.main.transform.position, transform.position);
-            if (distance < visibleMaxDistanceFromCamera)
+            if (distance < visibleOnceCameraIsCloserThan)
             {
-                if (!text.enabled)
+                if (!(textMess is null) && !textMess.enabled)
+                {
+                    textMess.enabled = true;
+                    mehRenderer.enabled = true;
+                }
+                else if (!(text is null) && !text.enabled)
                 {
                     text.enabled = true;
-                    mehRenderer.enabled = true;
                 }
                 fwd.y = 0.0F;
                 transform.LookAt(Camera.main.transform.position);
@@ -31,10 +42,14 @@ namespace Assets.VDE.UI.Node
                 transform.localPosition = pos;
                 transform.Translate(0, 0, -0.01F, Camera.main.transform);
             }
-            else if (text.enabled || mehRenderer.enabled)
+            else if (!(textMess is null) && textMess.enabled)
+            {
+                textMess.enabled = false;
+                mehRenderer.enabled = false;
+            }
+            else if (!(text is null) && text.enabled)
             {
                 text.enabled = false;
-                mehRenderer.enabled = false;
             }
         }
     }

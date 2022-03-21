@@ -93,13 +93,22 @@ public class EraserManager : MonoBehaviour
                     leftTouching = iPart;
                 }
 
-                MeshLineRenderer mRend = go.GetComponentInParent<MeshLineRenderer>();
+                /*MeshLineRenderer mRend = go.GetComponentInParent<MeshLineRenderer>();
                 if (mRend != null)
                 {
                     leftUndo = ProjectAction.AddDrawingAction(mRend.drawingScript.Serialize());
                     leftRedo = ProjectAction.DeleteDrawingAction(mRend.gameObject.name, mRend.drawingScript.guid.ToString());
 
                     leftTouching = go.GetComponent<SceneObject>();
+                }*/
+                GSFC.ARVR.MRET.Components.LineDrawing.LineDrawing lDraw =
+                    go.GetComponentInParent<GSFC.ARVR.MRET.Components.LineDrawing.LineDrawing>();
+                if (lDraw != null)
+                {
+                    leftUndo = ProjectAction.AddDrawingAction(lDraw);
+                    leftRedo = ProjectAction.DeleteDrawingAction(lDraw.name, lDraw.uuid.ToString());
+
+                    leftTouching = lDraw;
                 }
 
                 Note note = go.GetComponentInParent<Note>();
@@ -124,35 +133,50 @@ public class EraserManager : MonoBehaviour
                 InteractablePart iPart = go.GetComponentInParent<InteractablePart>();
                 if (iPart != null)
                 {
-                    PartType serializedPart = iPart.Serialize();
-                    rightUndo = ProjectAction.AddObjectAction(serializedPart, iPart.gameObject.transform.position,
-                        iPart.gameObject.transform.rotation,
-                        new Vector3(serializedPart.PartTransform.Scale.X, serializedPart.PartTransform.Scale.Y,
-                        serializedPart.PartTransform.Scale.Z),
-                        new InteractablePart.InteractablePartSettings(serializedPart.EnableInteraction[0],
-                        serializedPart.EnableCollisions[0], serializedPart.EnableGravity[0]));
-                    rightRedo = ProjectAction.DeleteObjectAction(iPart.gameObject.name, serializedPart.GUID);
+                    if (!iPart.locked)
+                    {
+                        PartType serializedPart = iPart.Serialize();
+                        rightUndo = ProjectAction.AddObjectAction(serializedPart, iPart.gameObject.transform.position,
+                            iPart.gameObject.transform.rotation,
+                            new Vector3(serializedPart.PartTransform.Scale.X, serializedPart.PartTransform.Scale.Y,
+                            serializedPart.PartTransform.Scale.Z),
+                            new InteractablePart.InteractablePartSettings(serializedPart.EnableInteraction[0],
+                            serializedPart.EnableCollisions[0], serializedPart.EnableGravity[0]));
+                        rightRedo = ProjectAction.DeleteObjectAction(iPart.gameObject.name, serializedPart.GUID);
 
-                    rightTouching = iPart;
+                        rightTouching = iPart;
+                    }
                 }
 
-                MeshLineRenderer mRend = go.GetComponentInParent<MeshLineRenderer>();
+                /*MeshLineRenderer mRend = go.GetComponentInParent<MeshLineRenderer>();
                 if (mRend != null)
                 {
                     rightUndo = ProjectAction.AddDrawingAction(mRend.drawingScript.Serialize());
                     rightRedo = ProjectAction.DeleteDrawingAction(mRend.name, mRend.drawingScript.guid.ToString());
 
                     rightTouching = go.GetComponent<SceneObject>();
+                }*/
+                GSFC.ARVR.MRET.Components.LineDrawing.LineDrawing lDraw =
+                    go.GetComponentInParent<GSFC.ARVR.MRET.Components.LineDrawing.LineDrawing>(true);
+                if (lDraw != null)
+                {
+                    rightUndo = ProjectAction.AddDrawingAction(lDraw);
+                    rightRedo = ProjectAction.DeleteDrawingAction(lDraw.name, lDraw.uuid.ToString());
+
+                    rightTouching = lDraw;
                 }
 
                 Note note = go.GetComponentInParent<Note>();
                 if (note != null)
                 {
-                    rightUndo = ProjectAction.AddNoteAction(note.ToNoteType(),
-                        note.name, note.transform.position, note.transform.rotation);
-                    rightRedo = ProjectAction.DeleteNoteAction(note.name, note.guid.ToString());
+                    if (!note.locked)
+                    {
+                        rightUndo = ProjectAction.AddNoteAction(note.ToNoteType(),
+                            note.name, note.transform.position, note.transform.rotation);
+                        rightRedo = ProjectAction.DeleteNoteAction(note.name, note.guid.ToString());
 
-                    rightTouching = go.GetComponentInParent<SceneObject>();
+                        rightTouching = go.GetComponentInParent<SceneObject>();
+                    }
                 }
             }
         }

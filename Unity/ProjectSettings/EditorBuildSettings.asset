@@ -11,7 +11,21 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Framework/Scenes/MainScene/VR.unity
     guid: b526d0c20535c1a4da451818b7352347
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Framework/Scenes/MainScene/Desktop.unity
-    guid: fdcb313eea1ed59448d1f3d7d59f8742
-  m_configObjects: {}
+    guid: a04bcb8ff03152845935b1c87442c263
+  - enabled: 0
+    path: Assets/Framework/Scenes/MainScene/Hololens.unity
+    guid: ddb19805d3e3a69449c680ee7bd252ba
+  m_configObjects:
+    Unity.XR.OpenVR.Settings: {fileID: 11400000, guid: 49bf777546c9e924fb9ba9d14b39d9a8,
+      type: 2}
+    Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 5f71daaa4f180b84ba9173413f74b3f4,
+      type: 2}
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 985d799bcd01b714d85d2be8d7b167e3,
+      type: 2}
+    com.unity.xr.openxr.settings4: {fileID: 11400000, guid: b565334966d067b4689b5dbf01eef0c6,
+      type: 2}

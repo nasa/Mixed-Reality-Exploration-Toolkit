@@ -4,12 +4,13 @@
  */
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering.HighDefinition;
+//using UnityEngine.Rendering.HighDefinition;
 
 namespace Assets.VDE.UI
 {
     public class SkiBoxController : MonoBehaviour
     {
+        /*
         public UnityEngine.Rendering.CubemapParameter[] skiboxes;
 
         int skiBox = 0;
@@ -45,5 +46,6 @@ namespace Assets.VDE.UI
                 ski.Override(skiboxes[setTo].value);
             }
         }
+        */
     }
 }

@@ -123,10 +123,20 @@ namespace Assets.VDE.UI
                 return false;
             }
 
-            float tension = 
-                Mathf.Abs(joint.currentForce.x) +
-                Mathf.Abs(joint.currentForce.y) +
-                Mathf.Abs(joint.currentForce.z);
+            float tension = 0;
+            try
+            {
+                tension =
+                    Mathf.Abs(joint.currentForce.x) +
+                    Mathf.Abs(joint.currentForce.y) +
+                    Mathf.Abs(joint.currentForce.z);
+            }
+            catch (System.Exception)
+            {
+                // this is here because of a magical leaping device and its unity. otherwise: Null Objecte Reference
+                //return true;
+                tension = 0.01F;
+            }
 
             if (tension < precision)
             {
@@ -430,7 +440,7 @@ namespace Assets.VDE.UI
             {
                 try
                 {
-                    joint.anchor = defaultNodeSize / 2;
+                    //joint.anchor = defaultNodeSize / 2;
                     lastKnownTargetSize = targetSize;
                     Vector3 padding = (elements[src]["Shape"] as Group.Shape).padding;
                     Container.PositionCorrectionDirection direction = (elements[src]["Container"] as Container).positionCorrectionDirection;

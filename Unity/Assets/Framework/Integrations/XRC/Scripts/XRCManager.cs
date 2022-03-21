@@ -89,7 +89,7 @@ namespace GSFC.ARVR.MRET.XRC
             {
                 return;
             }
-            
+
             ActionType sAction = actionPerformed.Serialize();
             switch (sAction.Type)
             {
@@ -100,7 +100,7 @@ namespace GSFC.ARVR.MRET.XRC
                     {
                         return;
                     }
-
+                    
                     string pointsStr = TypeConversion.Vector3TypeToCSV(sAction.Drawing.Points);
                     byte[] pointsBytes = System.Text.Encoding.UTF8.GetBytes(pointsStr);
                     if (pointsBytes.Length > XRCUnity.RESOURCEBUFSIZE)

@@ -2,6 +2,7 @@
  * This file is part of the Virtual Data Explorer distribution (https://coda.ee/vde).
  * Copyright (c) 2020 Kaur Kullman.
  */
+#if !MRET_2021_OR_LATER
 using Microsoft.Extensions.Logging;
 using System;
 using UnityEngine;
@@ -72,3 +73,4 @@ namespace Assets.VDE
         }
     }
 }
+#endif

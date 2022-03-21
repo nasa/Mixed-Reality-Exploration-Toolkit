@@ -38,7 +38,10 @@ namespace Assets.VDE.Layouts
             HasSettled,
             LayoutReady,
             LayoutPopulated,
-            AdjustForFPS
+            AdjustForFPS,
+            InitializeAll,
+            EntitiesReady,
+            LinksReady
         }
         internal enum EventOrigin
         {
@@ -86,19 +89,18 @@ namespace Assets.VDE.Layouts
                             // this is quite common, if config is reloaded, so no fuss is to be had because of this.
                             return layouts[layoutName];
                         }
-                    } else
+                    } else if(layoutName != "default")
                     {
-                        log.Entry("no such layout defined: " + layoutName, Log.Event.ToServer);
+                        log.Entry("No such layout included in the build nor found in modules: " + layoutName, Log.Event.ToServer);
                     }
-
                 }
                 catch (ArgumentNullException exe)
                 {
-                    log.Entry("no such layout defined: " + layoutName + " (" + exe.Message + ")\n" + exe.StackTrace, Log.Event.ToServer);
+                    log.Entry("Unable to find layout: " + layoutName + " (" + exe.Message + ")\n" + exe.StackTrace, Log.Event.ToServer);
                 }
                 catch (Exception exe)
                 {
-                    log.Entry("no such layout defined: " + layoutName + " (" + exe.Message + ")\n" + exe.StackTrace, Log.Event.ToServer);
+                    log.Entry("Unable to find layout: " + layoutName + " (" + exe.Message + ")\n" + exe.StackTrace, Log.Event.ToServer);
                 }
             }
             else

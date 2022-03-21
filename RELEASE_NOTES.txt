@@ -1,0 +1,76 @@
+RELEASE NOTES
+
+21.3
+-----------------------------
+
+Bug fixes
+- Some Keys Do Not Work in Text Boxes in Desktop Mode - 5852
+- Interactable and Locomotion Interaction Issue - 5803
+
+New Features
+- Upgrade VDE to Use GMSEC Backend - 5851
+- Add Motion Constraints to Objects - 5742
+- Generalize ROS Adapter - 5720
+- Receive Data from ROS packets - 4448
+- Walk Up/Down Ladders - 5656
+- Distance Measurement on Pointer Tool - 5735
+- Add delete button to part context menu - 5081
+- Linedrawing Refactoring - 5636
+- Visualize DataManager Limit Status on Parts - 5685
+
+Other
+- Updated to Unity 2020.3.17
+
+Known Issues
+- When editing linedrawings in collaboration sessions, new linedrawings will be created on the other end.
+
+LineDrawing Usage Notes
+The control mechanism for linedrawing has changed in a few ways. Additionally, the "Measurement" option has been removed (as it is now a toggle for all linedrawings), and linedrawing types "flat" (previously "line") and "volumetric" (previously "cable") are the new options.
+
+To create a new flat linedrawing, navigate to the LineDrawing Menu (Main Menu->Tools->Drawing). Select the mode of drawing you would like to use in the first dropdown, and ensure that the second dropdown is set to "Flat". For cables/volumetric drawings, set the second dropdown to "Volumetric".
+
+	Freeform Drawing:
+	Freeform drawing controls are mostly unchanged. Drawing is initiated by holding the use button (touchpad press/analog stick press in VR, middle mouse press in desktop mode). To stop drawing, simply release the use button.
+	
+	Straight-Edged Drawing:
+	To initiate a straight-edged drawing, press and release the use button (touchpad press/analog stick press in VR, middle mouse press in desktop mode). A preview will begin to show as you move your hand. Press and release the use button again to confirm that new point in the line. Once you would like to stop adding points to the line, double-press the use button.
+	
+	Laser Drawing:
+	To initiate a straight-edged drawing, press and release the use button once you are pointing at the desired starting point (touchpad press/analog stick press in VR, middle mouse press in desktop mode). A preview will begin to show as you move your laser. Press and release the use button again to confirm that new point in the line. Once you would like to stop adding points to the line, double-press the use button.
+	
+	Edit Menu:
+	When you hover over a line, a button with the text "Edit..." will show up. Simply click on the use button outside of the line to get rid of it. Clicking on the "Edit..." button will reveal a linedrawing edit menu. This menu can be used to switch between flat and volumetric drawings, adjusting the width, units, color and toggle measurement and grabbability. There are also grab points that can be used to adjust the line. Simply touch the point and use the grab button. Endpoints can be used to append and even join lines. To do this, touch an endpoint and press and hold the use button (touchpad press/analog stick press in VR, middle mouse press in desktop mode). Intersect and release at the endpoint of another line to join them.
+
+Setting up Ladders
+To make an object climbable in MRET, it must be set up in the Unity Editor to have the "Rung" tag.
+
+Setting up objects to display limit status
+From the Unity Editor, assign data points corresponding to the ones that will be provided by MRET to use as limit display data points. These should be assigned to the dataPoints list.
+
+Setting up floors for constrained motion
+From the Unity Editor, assign any floors the "Floor" tag.
+
+21.2.1
+-----------------------------
+
+Bug fixes
+- Controller models no longer appearing with new versions of SteamVR - 5796
+
+21.2.0
+-----------------------------
+
+Bug fixes
+- ActiveMQ URIs not handled correctly for collaboration session setup
+- Object Menu panel timing issue and skewing - 5082
+- Collaboration configuration menu panel connectiontype dropdown not interactable
+
+New Features
+- Virtual Data Explorer (VDE) compatibility
+- Hololens 2 Prototype Support - 5624
+- High Definition Rendering Pipeline Supported by default
+- Part Locking - 5684
+
+Other
+- Updated to Unity 2020.3.2
+- Using OpenXR framework
+- Tutorial projects - 5683
