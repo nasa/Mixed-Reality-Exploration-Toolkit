@@ -23,6 +23,7 @@ Hence import all these assets first into the project under [Unity/Assets/Assetsa
 
 * [MRTK](https://github.com/microsoft/MixedRealityToolkit-Unity/releases/download/v2.7.2/Microsoft.MixedReality.Toolkit.Unity.Foundation.2.7.2.unitypackage) Version 2.7.2
 * [VR Capture](https://assetstore.unity.com/packages/tools/video/vr-capture-75654) Version 11.6
+* [ROSSharp Unity](https://github.com/siemens/ros-sharp/tree/master/Unity3D/Assets) Version 1.7
 
 ### Paid assets:
 
