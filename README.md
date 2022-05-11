@@ -58,6 +58,7 @@ Ensure that Project Settings->Player->Other Settings->Active Input Handling is s
 
 ## Quick Start - Loading a Project
 MRET projects can be opened at any point by following the following steps:
+
 1.Open the controller menu.
 2.Navigate to File->Open Project.
 3.Select a project from the file browser. Press “Open”. It may take a few minutes for the project to completely load.
