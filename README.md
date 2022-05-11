@@ -56,6 +56,12 @@ Now navigate in Unity to `Project > Assets > Framework > Scenes > MainScene` and
 ### Additional Configuration
 Ensure that Project Settings->Player->Other Settings->Active Input Handling is set to "Both".
 
+## Quick Start - Loading a Project
+MRET projects can be opened at any point by following the following steps:
+1.Open the controller menu.
+2.Navigate to File->Open Project.
+3.Select a project from the file browser. Press “Open”. It may take a few minutes for the project to completely load.
+
 ## Contributing
 
 Pull requests are welcome. For more information on contributing, please see [Contributing.md](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/blob/master/CONTRIBUTING.md).
