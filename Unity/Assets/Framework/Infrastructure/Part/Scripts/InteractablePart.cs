@@ -97,7 +97,7 @@ public class InteractablePart : SceneObject, ISelectable
 
         // Load from asset bundle.
         Action<object> action = (object loadedPart) => {
-            ApplyModelToPart(interactablePart, (GameObject) loadedPart, size);
+            ApplyModelToPart(interactablePart, (GameObject)loadedPart, size);
         };
 #if (!UNITY_EDITOR && HOLOLENS_BUILD)
                 ModelLoading.ImportAssetBundleModelAsync(Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "MRET/UWP/")
@@ -237,7 +237,7 @@ public class InteractablePart : SceneObject, ISelectable
     {
         base.Use(hand);
 
-        if (!isPlacing)
+        if (!isPlacing && CanPerformInteraction())
         {
             if (clicked == true)
             {
@@ -381,7 +381,7 @@ public class InteractablePart : SceneObject, ISelectable
 
         EndTouch();
     }
-    
+
     public void LoadPartPanel(GameObject controller, bool reinitialize)
     {
         if (!MRET.PartPanelEnabled)
@@ -400,7 +400,7 @@ public class InteractablePart : SceneObject, ISelectable
                 if (objectCollider)
                 {
                     //Vector3 selectedPosition = objectCollider.ClosestPointOnBounds(controller.transform.position);
-                    
+
                     // Move panel between selected point and headset.
                     partPanel.transform.position = Vector3.Lerp(controller.transform.position, headsetObject.transform.position, 0.1f);
 
@@ -504,6 +504,15 @@ public class InteractablePart : SceneObject, ISelectable
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Determines whether or not the part can be interacted with.
+    /// </summary>
+    /// <returns>True if it can, false if it can't.</returns>
+    private bool CanPerformInteraction()
+    {
+        return !((bool)MRET.DataManager.FindPoint(DrawLineManager.ISDRAWINGFLAGKEY));
     }
 
     /// <summary>
@@ -655,7 +664,7 @@ public class InteractablePart : SceneObject, ISelectable
         EasyBuildSystem.Features.Scripts.Core.Base.Piece.PieceBehaviour pb = gameObject.AddComponent<EasyBuildSystem.Features.Scripts.Core.Base.Piece.PieceBehaviour>();
 
         pb.ChangeState(EasyBuildSystem.Features.Scripts.Core.Base.Piece.Enums.StateType.Preview);
-        
+
         bb.ChangeMode(EasyBuildSystem.Features.Scripts.Core.Base.Builder.Enums.BuildMode.Placement);
         bb.placingObject = gameObject;
 
@@ -894,10 +903,10 @@ public class InteractablePart : SceneObject, ISelectable
         {
             return;
         }
-        
+
         selected = true;
         ISelectable[] sels = GetComponentsInParent<ISelectable>();
-        if ((sels.Length == 0 || ( sels.Length == 1 && sels[0] == (ISelectable) this)) && hierarchical)
+        if ((sels.Length == 0 || (sels.Length == 1 && sels[0] == (ISelectable)this)) && hierarchical)
         {
             foreach (ISelectable selChild in GetInteractablePartRoot(this).GetComponentsInChildren<ISelectable>(true))
             {
@@ -927,7 +936,7 @@ public class InteractablePart : SceneObject, ISelectable
 
         selected = false;
         ISelectable[] sels = GetComponentsInParent<ISelectable>();
-        if ((sels.Length == 0 || (sels.Length == 1 && sels[0] == (ISelectable) this)) && hierarchical)
+        if ((sels.Length == 0 || (sels.Length == 1 && sels[0] == (ISelectable)this)) && hierarchical)
         {
             foreach (ISelectable selChild in GetInteractablePartRoot(this).GetComponentsInChildren<ISelectable>(true))
             {
@@ -952,7 +961,7 @@ public class InteractablePart : SceneObject, ISelectable
         {
             iPartToReturn = newIPart[0];
         }
-        
+
         return iPartToReturn;
     }
 #endregion

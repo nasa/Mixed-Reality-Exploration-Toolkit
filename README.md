@@ -8,13 +8,8 @@ The Mixed Reality Exploration Toolkit (MRET) is an XR toolkit designed for rapid
 
 Download the release package from the [release page](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/tag/v21.3.0). Simply extract the zip folder and run MRET.exe.
 
-### Non-HDRP
-* [VR](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/download/v21.1.0/MRET21.1VR.zip)
-* [Desktop](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/download/v21.1.0/MRET21.1Desktop.zip)
-
-### HDRP
-* [VR](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/download/v21.1.0/MRET21.1HDRPVR.zip)
-* [Desktop](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/download/v21.1.0/MRET21.1HDRPDesktop.zip) (Raytracing)
+* [VR](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/download/v21.3.1/MRET21.3.1R.zip)
+* [Desktop](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/download/v21.1.0/MRET21.3.1Desktop.zip)
 
 ## Installation (Development Environment)
 
@@ -33,7 +28,7 @@ Hence import all these assets first into the project under [Unity/Assets/Assetsa
 
 While MRET is free and [open-source](https://opensource.gsfc.nasa.gov/documents/NASA_Open_Source_Agreement_1.3.pdf), it does rely on third party assets that aren't.
 
-Prices give a ballpark estimate for building MRET as of 2023.03.21. The prices of these assets fluctuate over time and may differ from what is listed.
+Prices give a ballpark estimate for building MRET as of 2022.03.21. The prices of these assets fluctuate over time and may differ from what is listed.
 
 * [Best HTTP/2](https://assetstore.unity.com/packages/tools/network/best-http-2-155981) Version 2.5.4 - $60.
 * [Easy Build System](https://assetstore.unity.com/packages/templates/systems/easy-build-system-45394) Version 5.4.4 - $20.

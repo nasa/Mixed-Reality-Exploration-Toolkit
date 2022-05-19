@@ -11,13 +11,14 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
     /// <remarks>
     /// History:
     /// 13 December 2021: Created
+    /// 17 May 2022: Added data manager flag (DZB)
     /// </remarks>
 	/// <summary>
 	/// LineDrawingController controls the drawing and editing of LineDrawings.
     /// Author: Dylan Z. Baker
 	/// </summary>
 	public class LineDrawingController : MRETUpdateBehaviour
-	{
+    {
         /// <summary>
         /// Minimum distance between points.
         /// </summary>
@@ -52,6 +53,7 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
                         {
                             Destroy(currentCursor);
                         }
+                        Infrastructure.Framework.MRET.DataManager.SaveValue(DrawLineManager.ISDRAWINGFLAGKEY, false);
                         break;
 
                     case DrawingMode.Free:
@@ -65,6 +67,7 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
                             currentCursor = Instantiate(hand.drawingCursor);
                             currentCursor.transform.localScale = hand.drawingCursorScale;
                         }
+                        Infrastructure.Framework.MRET.DataManager.SaveValue(DrawLineManager.ISDRAWINGFLAGKEY, true);
                         break;
 
                     case DrawingMode.Laser:
@@ -72,6 +75,7 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
                         {
                             hand.ToggleDrawingPointerOn();
                         }
+                        Infrastructure.Framework.MRET.DataManager.SaveValue(DrawLineManager.ISDRAWINGFLAGKEY, true);
                         break;
                 }
                 _drawingMode = value;
@@ -116,14 +120,14 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
         [Tooltip("Offset to apply to the cursor.")]
         public Vector3 cursorOffset = Vector3.zero;
 
-		/// <seealso cref="MRETBehaviour.ClassName"/>
-		public override string ClassName
-		{
-			get
-			{
-				return nameof(LineDrawingController);
-			}
-		}
+        /// <seealso cref="MRETBehaviour.ClassName"/>
+        public override string ClassName
+        {
+            get
+            {
+                return nameof(LineDrawingController);
+            }
+        }
 
         /// <summary>
         /// Whether or not adding to beginning.
@@ -137,17 +141,17 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
 
         /// <seealso cref="MRETBehaviour.IntegrityCheck"/>
         protected override IntegrityState IntegrityCheck()
-		{
+        {
             // Take the inherited behavior
             IntegrityState state = base.IntegrityCheck();
 
             // Custom integrity checks here
             return (
                 (state == IntegrityState.Failure) // TODO: || (MyRequiredRef == null)
-				
+
                     ? IntegrityState.Failure   // Fail is base class fails or anything is null
                     : IntegrityState.Success); // Otherwise, our integrity is valid
-		}
+        }
 
         protected override void MRETAwake()
         {
@@ -155,7 +159,7 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
             updateRate = UpdateFrequency.Hz20;
 
             // DZB: Stopgap solution, want control mode handling.
-             Infrastructure.Framework.MRET.DataManager.SaveValue(LineDrawingManager.ISDRAWINGFLAGKEY, false);
+            Infrastructure.Framework.MRET.DataManager.SaveValue(LineDrawingManager.ISDRAWINGFLAGKEY, false);
         }
 
         protected override void MRETUpdate()
@@ -241,7 +245,7 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
         {
             if (drawingMode == DrawingMode.Straight)
             {
-                latchedPoint = currentCursor == null ? hand.transform.position :currentCursor.transform.position;
+                latchedPoint = currentCursor == null ? hand.transform.position : currentCursor.transform.position;
             }
             else if (drawingMode == DrawingMode.Laser)
             {
@@ -565,9 +569,9 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
             float deltaYMag = Math.Abs(deltaY);
             float deltaZMag = Math.Abs(deltaZ);
 
-            double thetaXY = NormalizeAngle((float) Math.Atan(deltaYMag / deltaXMag));
-            double thetaXZ = NormalizeAngle((float) Math.Atan(deltaZMag / deltaXMag));
-            double thetaYZ = NormalizeAngle((float) Math.Atan(deltaZMag / deltaYMag));
+            double thetaXY = NormalizeAngle((float)Math.Atan(deltaYMag / deltaXMag));
+            double thetaXZ = NormalizeAngle((float)Math.Atan(deltaZMag / deltaXMag));
+            double thetaYZ = NormalizeAngle((float)Math.Atan(deltaZMag / deltaYMag));
 
             if (thetaXY < DegreesToRadians(22.5f))
             {   // On X-axis in this direction. Y remains constant.
@@ -646,19 +650,19 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
         /// <returns>Radians value.</returns>
         private float DegreesToRadians(float degreeValue)
         {
-            return (float) Math.PI * degreeValue / 180;
+            return (float)Math.PI * degreeValue / 180;
         }
 
         private float NormalizeAngle(float angleInRads)
         {
             while (angleInRads < 0)
             {
-                angleInRads += 2 * (float) Math.PI;
+                angleInRads += 2 * (float)Math.PI;
             }
 
-            while (angleInRads > 2 * (float) Math.PI)
+            while (angleInRads > 2 * (float)Math.PI)
             {
-                angleInRads -= 2 * (float) Math.PI;
+                angleInRads -= 2 * (float)Math.PI;
             }
 
             return angleInRads;
@@ -749,9 +753,9 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
             }
         }
 
-        #endregion
+#endregion
 
-        #region Pointer
+#region Pointer
 
         private Vector3 GetPointerEnd()
         {
@@ -763,6 +767,6 @@ namespace GSFC.ARVR.MRET.Components.LineDrawing
             return Vector3.zero;
         }
 
-        #endregion
+#endregion
     }
 }
