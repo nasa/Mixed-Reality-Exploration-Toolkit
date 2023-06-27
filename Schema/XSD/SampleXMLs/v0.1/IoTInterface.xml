@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project
+    xmlns="http://www.example.org/MRET"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xsi:schemaLocation="http://www.example.org/MRET ../../SchemaFiles/v0.1/Project.xsd">
+
+	<Description>IoT Interface Example</Description>
+	<Environment>
+        <Label>NASA-IoT-Interface</Label>
+		<Description>>NASA IoT Interface Example</Description>
+	    <AssetBundle>standard-scenes</AssetBundle>
+	    <Name>Cleanroom_01</Name>
+	    <DefaultUserTransform>
+	      <Position>
+	        <X>4.7</X>
+	        <Y>0</Y>
+	        <Z>-1</Z>
+	      </Position>
+	      <Rotation>
+	        <X>0</X>
+	        <Y>0</Y>
+	        <Z>0</Z>
+            <W>1</W>
+	      </Rotation>
+	      <Scale>
+	        <X>1</X>
+	        <Y>1</Y>
+	        <Z>1</Z>
+	      </Scale>
+	    </DefaultUserTransform>
+	    <Skybox>
+	      <AssetBundle>none</AssetBundle>
+	      <MaterialName>GraySkybox</MaterialName>
+	    </Skybox>
+	    <ClippingPlanes>
+	      <Near>0.05</Near>
+	      <Far>1000</Far>
+	    </ClippingPlanes>
+        <LocomotionSettings>
+            <TeleportDistance>100</TeleportDistance>
+            <FlySpeed>5</FlySpeed>
+            <TouchpadSpeed>5</TouchpadSpeed>
+            <ArmswingSpeed>5</ArmswingSpeed>
+        </LocomotionSettings>
+	</Environment>
+    <IoTThings>
+        <Thing ID="id-iotthing1">
+            <Name>Thing1</Name>
+            <Payload>
+                <!-- Float value with a threshold -->
+                <Value>
+		            <Type>float</Type>
+		            <Thresholds>
+   			            <!-- Default color -->
+		                <Color>Yellow</Color>
+		                <Threshold>
+                            <Low>100</Low>
+		                    <High>100</High>
+		                    <Color>Blue</Color>
+		                </Threshold>
+		            </Thresholds>
+                </Value>
+            </Payload>
+        </Thing>
+        <Thing ID="id-iotthing2">
+            <Name>Thing2</Name>
+            <Payload>
+                <!-- JSON response -->
+		        <Pairs>
+                    <!-- Key/Value pairs with multiple thresholds -->
+		            <Pair>
+		                <Key>temperature</Key>
+		                <Value>
+		                    <Type>float</Type>
+		                    <Thresholds>
+                                <!-- Default color not specified so defaults to black -->
+                                <Threshold>
+                                    <!-- Low is (-)infinity -->
+                                    <High>40</High>
+                                    <Color>Blue</Color>
+                                </Threshold>
+                                <Threshold>
+                                    <Low>40</Low>
+                                    <High>72</High>
+                                    <Color>Green</Color>
+                                </Threshold>
+			                    <Threshold>
+			                        <Low>72</Low>
+	                                <High>100</High>
+			                        <Color>Yellow</Color>
+			                    </Threshold>
+	                            <Threshold>
+	                                <Low>100</Low>
+	                                <Color>Red</Color>
+	                            </Threshold>
+		                    </Thresholds>
+		                </Value>
+		            </Pair>
+                    <Pair>
+                          <Key>voltage</Key>
+                          <Value>
+                              <Type>float</Type>
+                              <Thresholds>
+                                  <!-- Default color not specified so defaults to black -->
+                                  <Threshold>
+                                      <Low>110</Low>
+                                      <High>120</High>
+                                      <Color>Green</Color>
+                                  </Threshold>
+                                  <Threshold>
+                                      <Low>120</Low>
+                                      <High>140</High>
+                                      <Color>Red</Color>
+                                  </Threshold>
+                              </Thresholds>
+                          </Value>
+                    </Pair>
+		        </Pairs>
+            </Payload>
+        </Thing>
+        <Thing ID="id-iotthing3">
+            <Name>Thing3</Name>
+            <Payload>
+                <!-- String default, no thresholds -->
+                <Value/>
+            </Payload>
+        </Thing>
+    </IoTThings>
+	<IoTConnections>
+	
+        <!-- Examples of interfaces to show how to specify server and client certificates -->
+	    <IoTConnection>
+	        <Name>Refrigerator</Name>
+            <Description>My Refrigerator</Description>
+	        <Server>127.0.0.1</Server>
+            <Port>8883</Port>
+            <!-- Server and client certificates both specified -->
+            <ServerCertificate>
+                [Enter CA registered certificate Here]
+            </ServerCertificate>
+            <ClientCertificate>
+                [Enter CA issued (signed) certificate Here]
+            </ClientCertificate>
+            <Topics>
+                <Topic ThingID="id-iotthing1" pattern="/home/refrigerator"/>
+            </Topics>
+	    </IoTConnection>
+	    <IoTConnection>
+            <Name>Thermostat</Name>
+            <Description>My Thermostat</Description>
+            <Server>127.0.0.1</Server>
+            <Port>8883</Port>
+            <!-- No server or client certificates specified so lookup from default files -->
+            <Topics>
+                <Topic ThingID="id-iotthing2" pattern="/home/thermostat"/>
+            </Topics>
+        </IoTConnection>
+        <IoTConnection>
+            <Name>Home</Name>
+            <Description>My Home Things</Description>
+            <Server>127.0.0.1</Server>
+            <Port>8883</Port>
+            <!-- No server or client certificates specified so lookup from specified files -->
+            <ServerCertificateFile>./myServerFile</ServerCertificateFile>
+            <ClientCertificateFile>./myClientFile</ClientCertificateFile>
+            <Topics>
+                <Topic ThingID="id-iotthing3" pattern="/home/television"/>
+            </Topics>
+        </IoTConnection>
+        
+        <!-- Examples of interfaces to show how to specify topics -->        
+        <IoTConnection>
+            <Name>All</Name>
+            <Description>All Things</Description>
+            <Server>127.0.0.1</Server>
+            <Port>8883</Port>
+            <!-- All topics on the server with received payloads processed as string data -->
+            <Topics>
+                <Topic/>
+            </Topics>
+        </IoTConnection>
+        
+    </IoTConnections>
+</Project>

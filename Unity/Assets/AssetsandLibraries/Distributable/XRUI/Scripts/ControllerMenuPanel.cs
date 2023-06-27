@@ -1,12 +1,13 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
+using GOV.NASA.GSFC.XR.XRUI.ToolTip;
 
-namespace GSFC.ARVR.XRUI.ControllerMenu
+namespace GOV.NASA.GSFC.XR.XRUI.ControllerMenu
 {
     /// <remarks>
     /// History:
@@ -193,6 +194,11 @@ namespace GSFC.ARVR.XRUI.ControllerMenu
         public int buttonsPerRow = 4;
 
         /// <summary>
+        /// Detemines whether this panel can be interacted with
+        /// </summary>
+        private bool enableButtons = true;
+        
+        /// <summary>
         /// Current buttons and toggles on menu panel.
         /// </summary>
         private List<GameObject> buttons;
@@ -269,12 +275,23 @@ namespace GSFC.ARVR.XRUI.ControllerMenu
             rowCount = 0;
             columnCount = 0;
 
-            titleText.text = name = panelName;
+            if (titleText)
+            {
+                titleText.text = name = panelName;
+            }
 
-            homeButton.gameObject.SetActive(homeButtonEnabled);
-
-            previousButton.gameObject.SetActive(previousButtonEnabled);
-            nextButton.gameObject.SetActive(nextButtonEnabled);
+            if (homeButton)
+            {
+                homeButton.gameObject.SetActive(homeButtonEnabled);
+            }
+            if (previousButton)
+            {
+                previousButton.gameObject.SetActive(previousButtonEnabled);
+            }
+            if (nextButton)
+            {
+                nextButton.gameObject.SetActive(nextButtonEnabled);
+            }
         }
 
         /// <summary>
@@ -377,7 +394,7 @@ namespace GSFC.ARVR.XRUI.ControllerMenu
             }
 
             Button.ButtonClickedEvent clickEvent = new Button.ButtonClickedEvent();
-            clickEvent.AddListener(() => { if (onClick != null) onClick.Invoke(); });
+            clickEvent.AddListener(() => { if (onClick != null && enableButtons) onClick.Invoke(); });
             buttonObj.onClick = clickEvent;
 
             // Set image or text on button.
@@ -553,7 +570,7 @@ namespace GSFC.ARVR.XRUI.ControllerMenu
             }
 
             Toggle.ToggleEvent changeEvent = new Toggle.ToggleEvent();
-            changeEvent.AddListener((x) => { if (onChange != null) OnTogglePress(toggleObj, onChange); });
+            changeEvent.AddListener((x) => { if (onChange != null && enableButtons) OnTogglePress(toggleObj, onChange); });
             toggleObj.onValueChanged = changeEvent;
 
             enableEvents.Add(onEnable);
@@ -708,6 +725,21 @@ namespace GSFC.ARVR.XRUI.ControllerMenu
             }
 
             return textObj;
+        }
+
+        /// <summary>
+        /// Disables selectables in this panel
+        /// </summary>
+        ///FIXME: Prevent tapping on buttons that are not on the top layer for other UIElements
+        public void disableInteractions(){
+            enableButtons = false;
+        }
+        /// <summary>
+        /// Enables selectables in this panel
+        /// </summary>
+        ///FIXME: Prevent tapping on buttons that are not on the top layer for other UIElements
+        public void enableInteractions(){
+            enableButtons = true;
         }
 
         /// <summary>

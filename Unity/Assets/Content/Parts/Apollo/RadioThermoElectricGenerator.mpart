@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Part xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Radio Thermo-electric Generator (RTG)"
+	ID="RadioThermoelectricGenerator" xmlns="http://www.example.org/MRET">
+	
+   <Vendor>Vendor</Vendor>
+   <Description>The Radio Thermo-electric Generator (RTG) worked as a battery
+       that converted heat from radioisotope decay into electricity. </Description>
+   <AssetBundle>apollo-assets</AssetBundle>
+   <PartName>RadioThermoelectricGenerator</PartName>
+   <PartTransform>
+       <Position>
+           <X>0</X>
+           <Y>0</Y>
+           <Z>0</Z>
+       </Position>
+       <Rotation>
+           <X>0</X>
+           <Y>0</Y>
+           <Z>0</Z>
+           <W>1</W>
+       </Rotation>
+       <Scale>
+           <X>0.5331045</X>
+           <Y>0.5328816</Y>
+           <Z>0.3495408</Z>
+       </Scale>
+   </PartTransform>
+   <EnableCollisions>false</EnableCollisions>
+   <EnableGravity>false</EnableGravity>
+   <EnableInteraction>true</EnableInteraction>
+   <NonInteractable>false</NonInteractable>
+   <MinMass>25</MinMass>
+   <MaxMass>25</MaxMass>
+   <MassContingency>0</MassContingency>
+   <PartType>Instrument</PartType>
+   <PartFileName />
+   <ChildParts />
+   <IdlePower>0</IdlePower>
+   <AveragePower>0</AveragePower>
+   <PeakPower>0</PeakPower>
+   <PowerContingency>0</PowerContingency>
+   <RandomizeTexture>false</RandomizeTexture>
+</Part>

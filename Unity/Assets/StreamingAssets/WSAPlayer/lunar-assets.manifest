@@ -1,0 +1,148 @@
+ManifestFileVersion: 0
+CRC: 2727384521
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 9fa84f82c069f7643f7c1acd12e4e2b0
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 2bd73f2cb38bdfc1239dbdae5ed5b59c
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: a7503af7db833c840a891458c125d4e9, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  3/Moon_001_NORM.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Materials/moon_8k_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder010High.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/moon_sample.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder001High.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  3/Moon_001_OCC.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder003High.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  2/Pebles_001_SPEC.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  5/Rock_038_baseColor.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock003High.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  1/Stylized_Rocks_001_basecolor.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  1/Stylized_Rocks_001_roughness.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  5/Rock_038_height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  4/Stone_Path_005_Roughness.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  4/Stone_Path_005_AmbientOcclusion.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock001Low.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  3/Moon_001_COLOR.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  5/Rock_038_ambientOcclusion.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  5/Rock_038_roughness.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  2/Pebles_001_NRM.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Moon.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  6/Concrete_012_NORM.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/moonmap2k.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  1/Stylized_Rocks_001_height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  1/Stylized_Rocks_001_ambientOcclusion.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder009Low.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock009High.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/moon_8k.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock010Low.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder010Low.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock009Med.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock003Med.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock010High.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  1/Stylized_Rocks_001_normal.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Materials/moon_8k.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  6/Concrete_012_COLOR.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  4/Stone_Path_005_BaseColor.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock009Med.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder009High.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Materials/MoonMap2_2500x1250_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder010Med.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock003Low.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock003Med.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder001Low.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder001Med.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Moon_alpha.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock003Low.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock010Low.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder009Med.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/RockPlaceholder.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock009Low.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  2/Pebles_001_DISP.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/RockPlaceholder.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  4/Stone_Path_005_Normal.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  3/Moon_001_SPEC.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock010Med.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock001Low.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder003Med.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  2/Pebles_001_COLOR.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/BoulderPlaceholder.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock001Med.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  5/Rock_038_normal.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/moon.FBX
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  2/Pebles_001_OCC.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock001Med.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  3/Moon_001_DISP.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock010High.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock003High.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock009Low.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock010Med.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock009High.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Materials/MoonMap2_2500x1250.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Boulders/Boulder003Low.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Models/Rocks/Rock001High.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Materials/moon_sample_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Materials/moon_sample.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Materials/SimpleLunarRock.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/Rock
+  4/Stone_Path_005_Height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Prefabs/Rocks/Rock001High.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/moon-normal.jpg
+Dependencies:
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/ARM64/apollo-assets

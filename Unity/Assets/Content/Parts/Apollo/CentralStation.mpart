@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Part xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Central Station"
+	ID="CentralStation" xmlns="http://www.example.org/MRET">
+	
+   <Vendor>Vendor</Vendor>
+   <Description>The Central Station was the control center for all the ALSEP instruments, and it received data and commands from Earth and distributed power to each instrument.</Description>
+   <AssetBundle>apollo-assets</AssetBundle>
+   <PartName>CentralStation</PartName>
+   <PartTransform>
+       <Position>
+           <X>0</X>
+           <Y>0</Y>
+           <Z>0</Z>
+       </Position>
+       <Rotation>
+			<X>-0.2056049</X>
+			<Y>-0.676555</Y>
+			<Z>-0.676555</Z>
+			<W>0.2056049</W>
+       </Rotation>
+       <Scale>
+           <X>0.6081286</X>
+           <Y>0.557675</Y>
+           <Z>1.584638</Z>
+       </Scale>
+   </PartTransform>
+   <EnableCollisions>false</EnableCollisions>
+   <EnableGravity>false</EnableGravity>
+   <EnableInteraction>true</EnableInteraction>
+   <NonInteractable>false</NonInteractable>
+   <MinMass>25</MinMass>
+   <MaxMass>25</MaxMass>
+   <MassContingency>0</MassContingency>
+   <PartType>Instrument</PartType>
+   <PartFileName />
+   <ChildParts />
+   <IdlePower>0</IdlePower>
+   <AveragePower>0</AveragePower>
+   <PeakPower>0</PeakPower>
+   <PowerContingency>0</PowerContingency>
+   <RandomizeTexture>false</RandomizeTexture>
+</Part>

@@ -1,0 +1,35 @@
+ManifestFileVersion: 0
+CRC: 89407804
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 6ab8714a0996c7da42beb7553095ac5a
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 1364e67b025282f845ceeccdd230fd78
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 104
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 121
+  Script: {instanceID: 0}
+- Class: 157
+  Script: {instanceID: 0}
+- Class: 196
+  Script: {instanceID: 0}
+- Class: 258
+  Script: {instanceID: 0}
+- Class: 850595691
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/SSPD_MRET_Content/Content/CAESAR/Comet67pHD.unity
+Dependencies: []

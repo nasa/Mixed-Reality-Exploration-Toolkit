@@ -27,7 +27,9 @@
 	
 	<Teleport>True</Teleport>
     <Fly>True</Fly>
-	
+	<Touchpad>True</Touchpad>
+    <Armswing>True</Armswing>
+
 	<RotateX>True</RotateX>
 	<RotateY>True</RotateY>
 	<RotateZ>True</RotateZ>

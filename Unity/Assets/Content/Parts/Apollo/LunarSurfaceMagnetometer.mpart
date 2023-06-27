@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Part xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Lunar Surface Magnetometer (LSM)"
+	ID="LunarSurfaceMagnetometer" xmlns="http://www.example.org/MRET">
+	
+   <Vendor>Vendor</Vendor>
+   <Description>The Lunar Surface Magnetometer measured the magnetic
+       field on the lunar surface, and this in turn provides information
+       regarding the lunar surface and solar plasma.</Description>
+   <AssetBundle>apollo-assets</AssetBundle>
+   <PartName>LunarSurfaceMagnetometer</PartName>
+   <PartTransform>
+       <Position>
+           <X>0</X>
+           <Y>0</Y>
+           <Z>0</Z>
+       </Position>
+       <Rotation>
+           <X>0</X>
+           <Y>0</Y>
+           <Z>0</Z>
+           <W>1</W>
+       </Rotation>
+       <Scale>
+           <X>1.18813</X>
+           <Y>0.8668593</Y>
+           <Z>0.6026727</Z>
+       </Scale>
+   </PartTransform>
+   <EnableCollisions>false</EnableCollisions>
+   <EnableGravity>false</EnableGravity>
+   <EnableInteraction>true</EnableInteraction>
+   <NonInteractable>false</NonInteractable>
+   <MinMass>25</MinMass>
+   <MaxMass>25</MaxMass>
+   <MassContingency>0</MassContingency>
+   <PartType>Instrument</PartType>
+   <PartFileName />
+   <ChildParts />
+   <IdlePower>0</IdlePower>
+   <AveragePower>0</AveragePower>
+   <PeakPower>0</PeakPower>
+   <PowerContingency>0</PowerContingency>
+   <RandomizeTexture>false</RandomizeTexture>
+</Part>

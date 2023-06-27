@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+               
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="SceneObjectTypes.xsd"/>
+    <include schemaLocation="RandomizeTypes.xsd"/>
+
+    <complexType name="SceneObjectGeneratorType">
+        <annotation>
+            <documentation>Defines procedural object generation</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="mret:SceneObjectType">
+		        <sequence>
+		            <element name="RandomSeed" type="int" minOccurs="0">
+		                <annotation>
+		                    <documentation>If present, used as the object placement random number seed</documentation>
+		                </annotation>
+		            </element>
+		            <element name="NumObjects" type="common:PositiveInteger" minOccurs="1">
+		                <annotation>
+		                    <documentation>Number of objects to generate.</documentation>
+		                </annotation>
+		            </element>
+		            <element name="PercentOfHighQuality" type="common:PercentType" minOccurs="0">
+		                <annotation>
+		                    <documentation>The percentage of high quality objects that are generated</documentation>
+		                </annotation>
+		            </element>
+		            <element name="LowQualityPrefabs" type="mret:SceneObjectGenerationPrefabsType" minOccurs="0" maxOccurs="1">
+		                <annotation>
+		                    <documentation>Low quality prefabs that get placed in the scene.</documentation>
+		                </annotation>
+		            </element>
+		            <element name="HighQualityPrefabs" type="mret:SceneObjectGenerationPrefabsType" minOccurs="0" maxOccurs="1">
+		                <annotation>
+		                    <documentation>High quality prefabs that get placed in the scene.</documentation>
+		                </annotation>
+		            </element>
+		            <element name="CollisionDistance" type="float" minOccurs="0">
+		                <annotation>
+		                    <documentation>Distance that the raycast points downward to detect collisions.</documentation>
+		                </annotation>
+		            </element>
+		            <element name="CollisionDepth" type="common:PercentType" minOccurs="0">
+		                <annotation>
+		                    <documentation>Depth the object will sink into the collision object.</documentation>
+		                </annotation>
+		            </element>
+		            <choice minOccurs="0">
+		                <annotation>
+		                    <documentation>Defines the layer mask to apply collision detection for object placement</documentation>
+		                </annotation>
+		                <element name="CollisionLayerMask" type="common:LayerMaskType" minOccurs="0">
+		                    <annotation>
+		                        <documentation>Layer mask to apply collision detection for placement of the objects. Default is -1.</documentation>
+		                    </annotation>
+		                </element>
+		                <element name="CollisionLayerMaskName" type="string" minOccurs="0">
+		                    <annotation>
+		                        <documentation>Layer mask to apply collision detection for placement of the objects. Default is "Everything".</documentation>
+		                    </annotation>
+		                </element>
+		            </choice>
+		        </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="SceneObjectGeneratorsType">
+        <annotation>
+            <documentation>Defines a collection of procedural object generators</documentation>
+        </annotation>
+        <sequence>
+            <element name="SceneObjectGenerator" type="mret:SceneObjectGeneratorType" minOccurs="0" maxOccurs="unbounded" />
+        </sequence>
+    </complexType>
+
+    <complexType name="SceneObjectGenerationPrefabType">
+        <annotation>
+            <documentation>Defines procedural object generation prefab used as a template for cloning instances</documentation>
+        </annotation>
+        <sequence>
+            <element name="MeshAsset" type="common:AssetType" minOccurs="1">
+                <annotation>
+                    <documentation>The mesh for the prefab</documentation>
+                </annotation>
+            </element>
+            <element name="MaterialAsset" type="common:AssetType" minOccurs="0">
+                <annotation>
+                    <documentation>If present will define the material to apply to the mesh</documentation>
+                </annotation>
+            </element>
+            <element name="RandomizePosition" type="mret:RandomizePositionType" minOccurs="0">
+                <annotation>
+                    <documentation>If present will perform position randomization to the generated objects from this prefab</documentation>
+                </annotation>
+            </element>
+            <element name="RandomizeRotation" type="mret:RandomizeRotationType" minOccurs="0">
+                <annotation>
+                    <documentation>If present will perform rotation randomization to the generated objects from this prefab</documentation>
+                </annotation>
+            </element>
+            <element name="RandomizeScale" type="mret:RandomizeScaleType" minOccurs="0">
+                <annotation>
+                    <documentation>If present will perform scale randomization to the generated objects from this prefab</documentation>
+                </annotation>
+            </element>
+            
+        </sequence>
+    </complexType>
+
+    <complexType name="SceneObjectGenerationPrefabsType">
+        <annotation>
+            <documentation>Defines a collection of procedural object generation prefabs used as a template for cloning instances</documentation>
+        </annotation>
+        <sequence>
+            <element name="Prefab" type="mret:SceneObjectGenerationPrefabType" minOccurs="1" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>Defines a procedural object generation prefab used as a template for cloning instances</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+
+</schema>

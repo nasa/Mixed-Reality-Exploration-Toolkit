@@ -1,0 +1,111 @@
+ManifestFileVersion: 0
+CRC: 3384162603
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 0439fa8058bc0b6622fbdf0207869eb6
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 976e6a435eb4c8cd04d7afc6659d0d60
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-GPS.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-EDI.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Foil Silver.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Solar
+  Panel 3.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Textures/Aluminium
+  foil large folds_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/plumbing.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Propellent
+  Tanks.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-SPD-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-EIS.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-ASPOC-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-DIS.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-S-Band-Antennas-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Gold.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-Mag-Booms-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/No Name.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Aluminium
+  foil large folds.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-DES-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-EIS-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Aluminum.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-ASPOC.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Gold Iridite.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-EDI-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Steel.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-DES.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Gold Iridite
+  No Reflection.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Textures/aluminium
+  foil large folds normal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Panel.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-ADP.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-Deck.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-Wiring-Harness-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-SPD.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Thrust
+  Tube Outer.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-Panel.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Black.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-HPCA-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-FEEPS.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/SPD Line.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Material
+  #2868.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Materials/Material
+  #1441.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-Mag-Booms.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-HPCA.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-Deck-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Textures/Solar Panel
+  3.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Textures/aluminium
+  foil large folds occlusion.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-DIS-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-GPS-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-Panel-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Textures/common
+  5 percent mask.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-FEEPS-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Models/MMS.FBX
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-S-Band-Antennas.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Textures/Aluminium
+  foil large folds_DetailMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Textures/Thrust
+  Tube Outer.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/Fixed/MMS-ADP-Fixed.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Prefabs/MMS-Wiring-Harness.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Textures/Thrust
+  Tube Outer Bump.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/MMS/Textures/steel common
+  rough occlusion.png
+Dependencies: []

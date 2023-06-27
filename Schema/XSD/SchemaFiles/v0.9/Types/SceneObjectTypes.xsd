@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="ScriptTypes.xsd"/>
+
+    <complexType name="SceneObjectType">
+        <complexContent>
+            <extension base="common:IdentifiableType">
+		        <sequence>
+                    <element name="Transform" type="common:TransformType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Scripts" type="mret:ScriptsType" minOccurs="0" maxOccurs="1"/>
+		            <element name="ChildSceneObjects" type="mret:SceneObjectsType" minOccurs="0" maxOccurs="1"/>
+		        </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SceneObjectsType">
+        <complexContent>
+            <extension base="common:GroupType">
+		        <choice>
+		            <element name="SceneObject" type="mret:SceneObjectType" minOccurs="1" maxOccurs="unbounded"/>
+		            <element name="SceneObjects" type="mret:SceneObjectsType" minOccurs="0" maxOccurs="unbounded"/>
+		        </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="InteractionSettingsType">
+        <sequence>
+	        <element name="EnableInteraction" type="boolean" minOccurs="0" maxOccurs="1" default="true"/>
+	        <element name="EnableUsability" type="boolean" minOccurs="0" maxOccurs="1" default="true"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="TelemetrySettingsType">
+        <sequence>
+		    <element name="ShadeForLimitViolations" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+			<element name="TelemetryKey" type="string" minOccurs="0" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="InteractableSceneObjectType">
+        <complexContent>
+            <extension base="mret:SceneObjectType">
+                <sequence>
+                    <element name="Interactions" type="mret:InteractionSettingsType" minOccurs="0" maxOccurs="1"/>
+                    <element name="HighlightMaterial" type="common:MaterialType" minOccurs="0" maxOccurs="1"/>
+                    <element name="SelectionMaterial" type="common:MaterialType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Opacity" type="unsignedByte" minOccurs="0" maxOccurs="1" default="255"/>
+		            <element name="Visible" type="boolean" minOccurs="0" maxOccurs="1" default="true"/>
+		            <element name="Telemetry" type="mret:TelemetrySettingsType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="MassSpecificationsType">
+        <sequence>
+            <element name="Min" type="common:MassType" minOccurs="0" maxOccurs="1" default="1"/>
+            <element name="Max" type="common:MassType" minOccurs="0" maxOccurs="1" default="1"/>
+            <element name="Contingency" type="common:MassType" minOccurs="0" maxOccurs="1" default="0"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="PhysicalSpecificationsType">
+        <sequence>
+            <element name="Mass" type="mret:MassSpecificationsType" minOccurs="0" maxOccurs="1"/>
+            <element name="Notes" type="string" minOccurs="0" maxOccurs="1" default=""/>
+            <element name="Reference" type="anyURI" minOccurs="0" maxOccurs="1" default="about:blank"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="PhysicsSettingsType">
+        <sequence>
+            <element name="EnableCollisions" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+            <element name="EnableGravity" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="PhysicalSceneObjectType">
+        <complexContent>
+            <extension base="mret:InteractableSceneObjectType">
+                <sequence>
+                    <element name="Model" type="common:ModelType" minOccurs="0" maxOccurs="1"/>
+                    <element name="Physics" type="mret:PhysicsSettingsType" minOccurs="0" maxOccurs="1"/>
+                    <element name="Specifications" type="mret:PhysicalSpecificationsType" minOccurs="0" maxOccurs="1"/>
+		            <element name="RandomizeTextures" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="UserType">
+		<complexContent>
+		    <extension base="mret:SceneObjectType">
+		        <sequence>
+                    <element name="Avatar" type="common:ModelType" minOccurs="0" maxOccurs="1"/>
+					<group ref="common:ColorTypeGroup" minOccurs="1" maxOccurs="1"/>
+		        </sequence>
+		    </extension>
+		</complexContent>
+    </complexType>
+
+    <complexType name="AxisControlledSceneObjectType">
+        <sequence>
+            <element name="Name" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="Axis" type="common:AxisType" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="DualAxisRotatableSceneObjectType">
+        <complexContent>
+            <extension base="mret:PhysicalSceneObjectType">
+                <sequence>
+                    <element name="ParentName" type="string" minOccurs="1" maxOccurs="1"/>
+                    <element name="HorizontalControlledObject" type="mret:AxisControlledSceneObjectType" minOccurs="1" maxOccurs="1"/>
+                    <element name="VerticalControlledObject" type="mret:AxisControlledSceneObjectType" minOccurs="1" maxOccurs="1"/>
+                    <element name="MinX" type="float" minOccurs="1" maxOccurs="1"/>
+                    <element name="MaxX" type="float" minOccurs="1" maxOccurs="1"/>
+                    <element name="MinY" type="float" minOccurs="1" maxOccurs="1"/>
+                    <element name="MaxY" type="float" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

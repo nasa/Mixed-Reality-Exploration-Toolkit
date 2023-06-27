@@ -1,4 +1,4 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem
 {
     public enum MotionConstraint
     {

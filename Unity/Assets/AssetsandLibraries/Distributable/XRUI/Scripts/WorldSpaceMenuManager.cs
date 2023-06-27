@@ -1,17 +1,39 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
-using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem;
+using GOV.NASA.GSFC.XR.CrossPlatformInputSystem;
 
-namespace GSFC.ARVR.XRUI.WorldSpaceMenu
+namespace GOV.NASA.GSFC.XR.XRUI.WorldSpaceMenu
 {
     public class WorldSpaceMenuManager : MonoBehaviour
     {
-        public void DimMenu()
+        [Tooltip("Indicates whether the controller menu should be hidden when this controller is enabled.")]
+        public bool HideControllerMenuOnEnable = false;
+
+        private void OnEnable()
         {
-            gameObject.SetActive(false);
-            foreach (InputHand hand in MRET.Infrastructure.Framework.MRET.InputRig.hands)
+            if (HideControllerMenuOnEnable)
+            {
+                DimControllerMenu();
+            }
+        }
+
+        private void DimControllerMenu()
+        {
+            foreach (InputHand hand in MRET.MRET.InputRig.hands)
+            {
+                ControllerMenu.ControllerMenu men = hand.GetComponentInChildren<ControllerMenu.ControllerMenu>();
+                if (men && men.IsShown())
+                {
+                    men.DimMenu();
+                }
+            }
+        }
+
+        private void UnDimControllerMenu()
+        {
+            foreach (InputHand hand in MRET.MRET.InputRig.hands)
             {
                 ControllerMenu.ControllerMenu men = hand.GetComponentInChildren<ControllerMenu.ControllerMenu>();
                 if (men)
@@ -19,6 +41,12 @@ namespace GSFC.ARVR.XRUI.WorldSpaceMenu
                     men.UnDimMenu();
                 }
             }
+        }
+
+        public void DimMenu()
+        {
+            gameObject.SetActive(false);
+            UnDimControllerMenu();
         }
 
         public void UnDimMenu()

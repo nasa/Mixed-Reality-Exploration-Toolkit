@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="SceneObjectTypes.xsd"/>
+
+    <simpleType name="PointCloudCategoryType">
+        <restriction base="string">
+            <enumeration value="Static"/>
+            <enumeration value="Dynamic"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="PointCloudFormatType">
+        <restriction base="string">
+            <enumeration value="Binary"/>
+            <enumeration value="ASCII"/>
+            <enumeration value="LAS"/>
+            <enumeration value="pcache"/>
+            <enumeration value="potree"/>
+            <enumeration value="NetCDF"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="PointCloudFileType">
+        <simpleContent>
+            <extension base="string">
+                <attribute name="format" type="mret:PointCloudFormatType" use="optional" default="pcache"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <complexType name="PointCloudSourceType">
+        <choice>
+            <element name="File" type="mret:PointCloudFileType" minOccurs="1" maxOccurs="1"/>
+            <element name="Asset" type="common:AssetType" minOccurs="1" maxOccurs="1"/>
+            <element name="URL" type="anyURI" minOccurs="1" maxOccurs="1"/>
+        </choice>
+    </complexType>
+
+    <complexType name="PointCloudsType">
+        <complexContent>
+            <extension base="common:GroupType">
+		        <choice>
+		            <element name="PointCloud" type="mret:PointCloudType" minOccurs="1" maxOccurs="unbounded"/>
+		            <element name="PointClouds" type="mret:PointCloudsType" minOccurs="0" maxOccurs="unbounded"/>
+		        </choice>
+		    </extension>
+		</complexContent>
+    </complexType>
+
+    <complexType name="PointCloudType">
+        <complexContent>
+            <extension base="mret:SceneObjectType">
+		        <sequence>
+                    <element name="Type" type="mret:PointCloudCategoryType" minOccurs="0" maxOccurs="1" default="Static"/>
+                    <element name="Source" type="mret:PointCloudSourceType" minOccurs="1" maxOccurs="1"/>
+                    <element name="LODLevel" type="common:LevelOfDetailType" minOccurs="0" maxOccurs="1" default="0"/>
+		        </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

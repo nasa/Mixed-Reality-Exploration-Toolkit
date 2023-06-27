@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mt:TextAnnotation xsi:schemaLocation="http://www.example.org/MRET TextAnnotation.xsd " xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mt="http://www.example.org/MRET">
+
+<mt:Texts>
+
+<mt:Texts>Welcome to the MRET (Mixed Reality Exploration Toolkit) Tutorial!</mt:Texts>
+
+<mt:Texts>In this section, we will be going over the different modes of Locomotion you can choose from. They include teleporting, flying, and walking!</mt:Texts>
+
+<mt:Texts>First, we will go over teleporting. You can do this by aiming your controller at where you wish to go, and pressing the trigger button.</mt:Texts>
+
+<mt:Texts>If your teleport line is green, that means you can teleport to that position. If it is red, you cannot teleport there.</mt:Texts>
+
+<mt:Texts>Try using teleportation to cross the room!</mt:Texts>
+
+</mt:Texts>
+
+<mt:TimePerText>7</mt:TimePerText>
+
+<mt:Loop>true</mt:Loop>
+
+<mt:AttachTo>TutorialMenu/Canvas/TutorialText</mt:AttachTo>
+
+</mt:TextAnnotation>

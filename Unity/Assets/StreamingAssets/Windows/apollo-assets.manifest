@@ -1,0 +1,212 @@
+ManifestFileVersion: 0
+CRC: 626644592
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 599762d412199b54e291f5e7f53f02c2
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: bffbf2f854ec826b2881cedb300fb101
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 1953259897
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A11Footprint1/A11Footprint1_normal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SideCcig/Textures/DefaultMaterial_Normal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/HeatFlowExperiment/Textures/heat
+  flow experiment_DefaultMaterial_Metallic.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A16Surface1/A16Surface1_height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SolarWindSpectrometer/Prefabs/SolarWindSpectrometer.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/HeatFlowExperiment/Textures/heat
+  flow experiment_DefaultMaterial_Roughness.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Lunar_Fabric_AO_4k.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/LaserRangingRetroReflector/Textures/laser
+  ranging retroreflector_DefaultMaterial_BaseColor.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SurfaceMagnetometer/Textures/lunar
+  surface magnetometer_DefaultMaterial_Normal.tif
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/AS16Surface2/AS16Surrface2_smoothness.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A17Rock1/A17RockTexture1_smoothness.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/LaserRangingRetroReflector/Textures/laser
+  ranging retroreflector_DefaultMaterial_Normal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A11Footprint1/A11Footprint1_diffuseOriginal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/PassiveSeismicExperiment/Textures/passive
+  seismic experiment_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SurfaceMagnetometer/Prefabs/LunarSurfaceMagnetometer.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/CentralStation/Textures/central
+  station_DefaultMaterial_Height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SolarWindSpectrometer/Materials/solar
+  wind spectrometer.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SideCcig/Textures/side
+  ccig_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SideCcig/Models/side-ccig.blend
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Lunar_Fabric_Normal_4k.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SurfaceMagnetometer/Textures/lunar
+  surface magnetometer_DefaultMaterial_BaseColor.tif
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A16Surface1/A16Surface1_ao.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/PassiveSeismicExperiment/Prefabs/PassiveSeismicExperiment.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarRovingVehicle/Models/LunarRovingVehicle.FBX
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/HeatFlowExperiment/Textures/heat
+  flow experiment_DefaultMaterial_BaseColor.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/PassiveSeismicExperiment/Textures/passive
+  seismic experiment_Material.003_Normal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/PassiveSeismicExperiment/Materials/passive
+  seismic experiment.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SolarWindSpectrometer/Textures/solar
+  wind spectrometer_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A17Rock1/A17RockTexture1_normal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SolarWindSpectrometer/Textures/solar
+  wind spectrometer_DefaultMaterial_Metallic.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Materials/FloodLights.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/RadioThermoElectricGenerator/Models/radio-thermoelectric-generator.blend
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SideCcig/Textures/DefaultMaterial_Metallic.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/AS16Surface2/AS16Surface2_terrainLayer.terrainlayer
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarRovingVehicle/Prefabs/LunarRovingVehicleOrig.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/CentralStation/Models/central-station.blend
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SideCcig/Prefabs/SideCCIG.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A11Footprint1/A11Footprint1_diffuseTransparent_Right.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A17Rock1/A17RockTexture1_height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/LaserRangingRetroReflector/Materials/laser
+  ranging retroreflector.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A16Surface1/A16Surface1_normal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/CentralStation/Textures/central
+  station_DefaultMaterial_Metallic.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/AS16Surface2/AS16Surrface2_diffuseOriginal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A17Rock1/A17RockTexture1_ao.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/CentralStation/Textures/central
+  station_DefaultMaterial_Normal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A11Footprint1/A11Footprint1_height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/RadioThermoElectricGenerator/Materials/radio
+  thermoelectric generator.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A16Surface1/A16Surface1_diffuseOriginal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/AS16Surface2/AS16Surrface2_normal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarRovingVehicle/Prefabs/LunarRovingVehicle.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Materials/Lander
+  Fabric Material.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SurfaceMagnetometer/Materials/lunar
+  surface magnetometer.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/CentralStation/Textures/central
+  station_DefaultMaterial_BaseColor.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SolarWindSpectrometer/Textures/solar
+  wind spectrometer_DefaultMaterial_Roughness.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Lunar_Metals_Normal_4k.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A16Surface1/A16Surface1_edge.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Metal
+  Yellow_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/LaserRangingRetroReflector/Textures/laser
+  ranging retroreflector_DefaultMaterial_Metallic.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SideCcig/Textures/DefaultMaterial_Normal_OpenGL.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/HeatFlowExperiment/Textures/heat
+  flow experiment_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/HeatFlowExperiment/Textures/heat
+  flow experiment_DefaultMaterial_Height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Lunar_MLI_Albedo_4k.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SurfaceMagnetometer/Models/lunar-surface-magnetometer.blend
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/CentralStation/Textures/central
+  station_DefaultMaterial_Roughness.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/LaserRangingRetroReflector/Models/laser-ranging-retroreflector.blend
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A11Footprint1/A11Footprint1_diffuse.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Wrinkled
+  Thermal Blanket_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Lunar_MLI_AO_4k.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/PassiveSeismicExperiment/Textures/passive
+  seismic experiment_Material.003_Metallic.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A11Footprint1/A11Footprint1_diffuseTransparent_Left.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Lunar_Metals_Albedo_4k.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A17Rock1/A17RockTexture1_edge.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/AS16Surface2/AS16Surrface2_ao.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/AS16Surface2/AS16Surrface2_height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A16Surface1/A16Surface1_smoothness.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/LaserRangingRetroReflector/Prefabs/LaserRangingRetroreflector.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/RadioThermoElectricGenerator/Prefabs/RadioThermoelectricGenerator.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A17Rock1/A17RockTexture1_metallic.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Lunar_Fabric_Albedo_4k.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/CentralStation/Materials/central
+  station.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A11Footprint1/A11Footprint1_smoothness.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Models/LunarLanderUnity.fbx
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/HeatFlowExperiment/Materials/heat
+  flow experiment.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/AS16Surface2/AS16Surrface2_edge.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarRovingVehicle/Models/LunarRovingVehicleNoAnim.FBX
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/LaserRangingRetroReflector/Textures/laser
+  ranging retroreflector_DefaultMaterial_Roughness.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A11Footprint1/A11Footprint1_edge.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SolarWindSpectrometer/Models/solar-wind-spectrometer.blend
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A11Footprint1/A11Footprint1_ao.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Materials/Metal
+  Yellow.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Prefabs/LunarLander.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SurfaceMagnetometer/Textures/lunar
+  surface magnetometer_DefaultMaterial_Roughness.tif
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/CentralStation/Textures/central
+  station_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/PassiveSeismicExperiment/Textures/passive
+  seismic experiment_Material.003_BaseColor.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SurfaceMagnetometer/Textures/lunar
+  surface magnetometer_DefaultMaterial_Metallic.tif
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SideCcig/Textures/DefaultMaterial_Base_Color.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SideCcig/Materials/side
+  ccig.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/LaserRangingRetroReflector/Textures/laser
+  ranging retroreflector_DefaultMaterial_Height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarRovingVehicle/Prefabs/LunarRovingVehicleNoAnim.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SolarWindSpectrometer/Textures/solar
+  wind spectrometer_DefaultMaterial_Height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Lander
+  Fabric Material_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/RadioThermoElectricGenerator/Textures/radio
+  thermoelectric generator_DefaultMaterial_BaseColor.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/PassiveSeismicExperiment/Models/passive-seismic-experiment.blend
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SolarWindSpectrometer/Textures/solar
+  wind spectrometer_DefaultMaterial_BaseColor.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SurfaceMagnetometer/Textures/lunar
+  surface magnetometer_DefaultMaterial_Height.tif
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Materials/Wrinkled
+  Thermal Blanket.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SolarWindSpectrometer/Textures/solar
+  wind spectrometer_DefaultMaterial_Normal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SideCcig/Textures/DefaultMaterial_Roughness.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/HeatFlowExperiment/Textures/heat
+  flow experiment_DefaultMaterial_Normal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/HeatFlowExperiment/Models/heat-flow-experiment.blend
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/HeatFlowExperiment/Prefabs/HeatFlowExperiment.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/PassiveSeismicExperiment/Textures/passive
+  seismic experiment_Material.003_Height.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/PassiveSeismicExperiment/Textures/passive
+  seismic experiment_Material.003_Roughness.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/LaserRangingRetroReflector/Textures/laser
+  ranging retroreflector_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SurfaceMagnetometer/Textures/lunar
+  surface magnetometer_MaskMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Lunar_Metals_AO_4k.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/CentralStation/Prefabs/CentralStation.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Moon/Textures/A17Rock1/A17RockTexture1_diffuseOriginal.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Apollo/LunarLander/Textures/Lunar_MLI_Normal_4k.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Instruments/Apollo/SideCcig/Textures/DefaultMaterial_Height.png
+Dependencies: []

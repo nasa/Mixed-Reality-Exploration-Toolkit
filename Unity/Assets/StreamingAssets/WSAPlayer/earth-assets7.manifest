@@ -1,0 +1,66 @@
+ManifestFileVersion: 0
+CRC: 605349102
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: b61406646d4419f0af4e5dae06c59d73
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5521a81fadd599456875aa52065d998b
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7a70c881415690c418f87514fe62ae5f, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 48a79b01ea5641d4aa6daa2e23605641, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8e6292b2c06870d4495f009f912b9600, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 122
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Unity.Postprocessing.Runtime
+  ClassName: UnityEngine.Rendering.PostProcessing.BoolParameter
+- AssemblyName: Unity.Postprocessing.Runtime
+  ClassName: UnityEngine.Rendering.PostProcessing.ColorParameter
+- AssemblyName: Unity.Postprocessing.Runtime
+  ClassName: UnityEngine.Rendering.PostProcessing.FloatParameter
+- AssemblyName: Unity.Postprocessing.Runtime
+  ClassName: UnityEngine.Rendering.PostProcessing.TextureParameter
+Assets:
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Earth/Textures/world-mosaic-final-100.jpg
+- Assets/AssetsandLibraries/Non-Distributable/Earth/Textures/EarthDiffuse.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Earth/Textures/EarthBump.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Earth/Materials/EarthCloudMaterialLowRes.mat
+- Assets/AssetsandLibraries/Non-Distributable/Earth/Textures/EarthStarfield.png
+- Assets/AssetsandLibraries/Non-Distributable/Earth/Textures/EarthNormalMap.png
+- Assets/AssetsandLibraries/Non-Distributable/Earth/Textures/EarthLights.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Earth/Textures/EarthSpecularBlue.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Earth/Materials/EarthMaterialLowRes.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Earth/Prefabs/EarthLowRes.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Earth/Textures/712130main_8246931247_e60f3c09fb_o.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Earth/Materials/EarthGlowProfile.asset
+- Assets/AssetsandLibraries/Non-Distributable/Earth/Materials/EarthCloudMaterial.mat
+- Assets/AssetsandLibraries/Non-Distributable/Earth/Textures/EarthSpecular.png
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Earth/Prefabs/EarthHighRes.prefab
+- Assets/AssetsandLibraries/Non-Distributable/Earth/Materials/EarthShader.shader
+- Assets/AssetsandLibraries/Non-Distributable/Earth/Textures/EarthClouds.png
+- Assets/AssetsandLibraries/Non-Distributable/Earth/Materials/EarthMaterial.mat
+Dependencies: []

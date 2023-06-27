@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.example.org/MRET"
+	elementFormDefault="qualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:mt="http://www.example.org/MRET">
+	
+	<include schemaLocation="Common.xsd"/>
+
+	<complexType name="TextAnnotation">
+		<sequence>
+			<element name="Texts" type="mt:TextListType"></element>
+			<element name="TimePerText" type="float"></element>
+			<element name="Loop" type="boolean"></element>
+			<element name="AttachTo" type="string"></element>
+		</sequence>
+		<attribute name="Version" type="string"></attribute>
+	</complexType>
+
+	<element name="TextAnnotation" type="mt:TextAnnotation"/>
+</schema>

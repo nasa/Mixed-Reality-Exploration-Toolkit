@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Part ID="doghouse_highdetail" Name="doghouse_highdetail"
+	xmlns="http://www.example.org/MRET"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/MRET ../../SchemaFiles/v0.1/Part.xsd">
+	
+	<Vendor>Heather Space Industries</Vendor>
+	<Description>The Dog House</Description>
+	<AssetBundle>atlas-assets</AssetBundle>
+	<PartName>PartName</PartName>
+	<PartTransform>
+		<Position>
+			<X>0.0</X>
+			<Y>0.0</Y>
+			<Z>0.0</Z>
+		</Position>
+		<Rotation>
+			<X>0.0</X>
+			<Y>0.0</Y>
+			<Z>0.0</Z>
+			<W>1.0</W>
+		</Rotation>
+		<Scale>
+			<X>0.0</X>
+			<Y>0.0</Y>
+			<Z>0.0</Z>
+		</Scale>
+	</PartTransform>
+	<EnableCollisions>true</EnableCollisions>
+	<EnableGravity>true</EnableGravity>
+	<EnableInteraction>true</EnableInteraction>
+	<MinMass>0.0</MinMass>
+	<MaxMass>0.0</MaxMass>
+    <MassContingency>0.0</MassContingency>
+	<PartType>GSE</PartType>
+	<PartFileName>PartFileName</PartFileName>
+	<ChildParts></ChildParts>
+	<Notes>Notes Here</Notes>
+	<Reference>I have nothing</Reference>
+	<Subsystem>Thermal</Subsystem>
+</Part>

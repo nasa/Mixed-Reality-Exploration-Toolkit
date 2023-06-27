@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LookupTable name="mretTypeMap" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://aaa.gsfc.nasa.gov/ltml ltml.xsd"
+	xmlns="http://aaa.gsfc.nasa.gov/ltml">
+	
+	<NamespaceTable name="SerializableTypes">
+		<Mapping name="TextAnnotationType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Annotation+TextAnnotationPlayer"/>
+		<Mapping name="AudioAnnotationType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Annotation+AudioPlayer"/>
+
+		<Mapping name="PartType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Interactable+InteractablePart"/>
+		<Mapping name="NoteType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Interactable+InteractableNote"/>
+		<Mapping name="Drawing2dType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Interactable+Interactable2dDrawing"/>
+		<Mapping name="Drawing3dType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Interactable+Interactable3dDrawing"/>
+		<Mapping name="PhysicalSceneObjectType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Interactable+PhysicalSceneObject"/>
+		<Mapping name="InteractableSceneObjectType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Interactable+InteractableSceneObject"/>
+
+		<Mapping name="SceneObjectType" value="GSFC.ARVR.MRET.Infrastructure.Framework+SceneObject"/>
+		<Mapping name="IdentifiableType" value="GSFC.ARVR.MRET.Infrastructure.Framework+Identifiable"/>
+		
+		<Mapping name="EnvironmentType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Project+Environment"/>
+		<Mapping name="UserType" value="GSFC.ARVR.MRET.Infrastructure.Framework.User+User"/>
+		<Mapping name="TimeSimulationType" value="GSFC.ARVR.MRET.Time+TimeSimulation"/>
+		<Mapping name="ContentType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Project+ProjectContent"/>
+		<Mapping name="InterfacesType" value="?"/>
+		<Mapping name="ProjectType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Project+UnityProject"/>
+
+		<Mapping name="PartsType" value="GSFC.ARVR.MRET.Infrastructure.Framework.Interactable+PartsGroup"/>
+		<Mapping name="SceneObjectsType" value="GSFC.ARVR.MRET.Infrastructure.Framework+SceneObjectGroup"/>
+
+	</NamespaceTable>
+	
+</LookupTable>

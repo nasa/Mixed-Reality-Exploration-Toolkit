@@ -1,0 +1,175 @@
+ManifestFileVersion: 0
+CRC: 1689911830
+AssetBundleManifest:
+  AssetBundleInfos:
+    Info_0:
+      Name: standard-assets
+      Dependencies:
+        Dependency_0: font-assets
+    Info_1:
+      Name: restore-telem
+      Dependencies: {}
+    Info_2:
+      Name: apollo-scenes-deprecated
+      Dependencies:
+        Dependency_0: apollo-assets-deprecated
+        Dependency_1: skybox-stars
+    Info_3:
+      Name: apollo-assets
+      Dependencies: {}
+    Info_4:
+      Name: apollo-assets-deprecated
+      Dependencies:
+        Dependency_0: apollo-assets
+    Info_5:
+      Name: oldrestore-assets
+      Dependencies: {}
+    Info_6:
+      Name: lunar-assets
+      Dependencies:
+        Dependency_0: apollo-assets
+    Info_7:
+      Name: mms-assets
+      Dependencies: {}
+    Info_8:
+      Name: cubesat-assets
+      Dependencies:
+        Dependency_0: standard-assets
+    Info_9:
+      Name: shuttle-assets
+      Dependencies: {}
+    Info_10:
+      Name: mars-assets
+      Dependencies: {}
+    Info_11:
+      Name: earth-assets7
+      Dependencies: {}
+    Info_12:
+      Name: fortytwo-scenes
+      Dependencies:
+        Dependency_0: apollo-assets
+        Dependency_1: apollo-assets-deprecated
+        Dependency_2: earth-assets7
+        Dependency_3: sun-assets
+        Dependency_4: ds1-assets
+        Dependency_5: fortytwo-assets
+    Info_13:
+      Name: sun-assets
+      Dependencies:
+        Dependency_0: apollo-assets
+    Info_14:
+      Name: solarsystem-scenes
+      Dependencies:
+        Dependency_0: earth-assets7
+        Dependency_1: comet67p-assets
+    Info_15:
+      Name: restore-assets
+      Dependencies: {}
+    Info_16:
+      Name: standard-scenes
+      Dependencies:
+        Dependency_0: standard-assets
+        Dependency_1: font-assets
+        Dependency_2: facilities-ssdif-assets
+        Dependency_3: facilities-ses-assets
+        Dependency_4: facilities-cleanroom-assets
+    Info_17:
+      Name: lunar-scenes
+      Dependencies:
+        Dependency_0: earth-assets7
+        Dependency_1: sun-assets
+        Dependency_2: solarsystem-assets
+    Info_18:
+      Name: rtelem
+      Dependencies: {}
+    Info_19:
+      Name: skybox-stars
+      Dependencies: {}
+    Info_20:
+      Name: solarsystem-assets
+      Dependencies: {}
+    Info_21:
+      Name: isat
+      Dependencies: {}
+    Info_22:
+      Name: caesar-assets
+      Dependencies: {}
+    Info_23:
+      Name: apollo-scenes
+      Dependencies:
+        Dependency_0: earth-assets7
+        Dependency_1: sun-assets
+        Dependency_2: solarsystem-assets
+    Info_24:
+      Name: restore-scenes
+      Dependencies: {}
+    Info_25:
+      Name: earth-scenes
+      Dependencies:
+        Dependency_0: lunar-assets
+        Dependency_1: earth-assets7
+        Dependency_2: sun-assets
+    Info_26:
+      Name: caesar-scenes
+      Dependencies: {}
+    Info_27:
+      Name: sspdworkcell-scenes
+      Dependencies: {}
+    Info_28:
+      Name: hubble-assets
+      Dependencies:
+        Dependency_0: standard-assets
+    Info_29:
+      Name: iss-assets
+      Dependencies: {}
+    Info_30:
+      Name: ds1-assets
+      Dependencies: {}
+    Info_31:
+      Name: rst_observatory_500k_200911
+      Dependencies: {}
+    Info_32:
+      Name: rst_observatory_250k_200911
+      Dependencies: {}
+    Info_33:
+      Name: rst_observatory_1000k_200911
+      Dependencies: {}
+    Info_34:
+      Name: rosetta-assets
+      Dependencies: {}
+    Info_35:
+      Name: lobby-assets
+      Dependencies: {}
+    Info_36:
+      Name: fortytwo-assets
+      Dependencies: {}
+    Info_37:
+      Name: comet67p-assets
+      Dependencies: {}
+    Info_38:
+      Name: font-assets
+      Dependencies: {}
+    Info_39:
+      Name: rst-itar-assets
+      Dependencies: {}
+    Info_40:
+      Name: rst-itar-harness-assets
+      Dependencies: {}
+    Info_41:
+      Name: rst-itar-sorc-assets
+      Dependencies: {}
+    Info_42:
+      Name: facilities-ssdif-assets
+      Dependencies: {}
+    Info_43:
+      Name: facilities-ses-assets
+      Dependencies: {}
+    Info_44:
+      Name: facilities-cleanroom-assets
+      Dependencies: {}
+    Info_45:
+      Name: rst-assets
+      Dependencies: {}
+    Info_46:
+      Name: osiris-rex-assets
+      Dependencies: {}

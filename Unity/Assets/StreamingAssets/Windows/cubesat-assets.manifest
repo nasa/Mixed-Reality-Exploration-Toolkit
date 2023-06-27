@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1007832634
+CRC: 3126543518
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: e939db0d7b68f9e65b402ae692e0b8ea
+    Hash: 0fd81d238cd338fc8e9483296707d782
   TypeTreeHash:
     serializedVersion: 2
-    Hash: e936cbd2fcdae586aac9c065b80f8571
+    Hash: 3daf510127035ab926264d12eceef6f1
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -25,112 +25,126 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 54
   Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
 - Class: 65
   Script: {instanceID: 0}
 - Class: 134
   Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Objects/clydespaceeps_asm_simple.prefab
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/nanoRTU.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Q7.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/1U_solar_panel_no_magnetorquers_deployable.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Helium_Radio_Transmitter.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/NanoCam_C1U_70_mm.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Material/New Material.mat
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Monopropellent_Thruster_for_3U_Applications.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Material/New Material 4.mat
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/10SP-M_Microwheel.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Deployable_antenna.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Nano_Star_Tracker.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/AEOLDOS_stowed.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/CHREC_Space_Processor_CSP.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/OEM-638.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/STIM202_Butterfly_Gyro.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Moog_058E144_Cold_Gas_Thruster.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/HYDROX.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/BIT-3_Iodine_Thruster.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Swift_SLX_Communications.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Magnetorquer_Board.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/MOSAIC_modular_solar_panel.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Moog_058_163_Cold_Gas_Thruster.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/COBRA_gimbal_stowed.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/SGR-05P_GPS.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/NanoMind_Processor_A712D.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Syrlinks_X-Band_Transmitter.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Syrlinks_S-Band_Transceiver.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Objects/Generic6U.prefab
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/PC-104_ACS_Board.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Hydros_1U.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Standalon_30_Wh_Battery.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Material/New Material 7.mat
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Magnetic_Sensor_for_Spacecraft.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/UHF-VHF_Antenna_stowed.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/MHX 2420.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/NanoCam_C1U_35_mm.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Micro_Reaction_Wheel.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Magnetic_Torquer_for_Micro-Satellite.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Wi-Sys_GPS_Antenna.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Marotta_Cold_Gas_Micro_thruster.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/GPS_Receiver.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Hawk_Deployable_Solar_Array_deployed.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Material/New Material 2.mat
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/SAR100_Single_Axis_Gyro.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/NanoCom_AX100.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/ST-200_Star_Tracker.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Objects/GomSpaceNanoMindA712Dsimple.prefab
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Cubesat_Sun_Sensor.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Material/New Material 3.mat
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/PicoRelease_deployed.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/XB1_stack_of_2U.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Material/New Material 1.mat
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Cosine_Sun_Sensor.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/S-Band_Compact_Radio.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Syrlinks_X-S_Band_Transceiver.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/2_lbf_Cold_Gas_thruster.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Hydros_0.5U.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Power_Distribution_Board.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/PUC_Propulsion_unit_for_cubesats_thruster.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Sunmill_Array.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/STC-MS03_S-Band_Transceiver.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Moog_058_154_Cold_Gas_Thruster.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/n2420.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Objects/BlueCanyonXB12UStacksimple.prefab
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Material/New Material 5.mat
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/LR1_Battery.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/RW-.01_Reaction_Wheel.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/XB1.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/CRS39_Gyro.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/S-Band_Patch_Antenna.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/NanoCom_ANT_430_stowed.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Kraken_Arm_deployed.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Dash4.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/TRXUV_VHF-UHF_Transceiver_Complex.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Hispico_S-Band_Patch_Antenna.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Magnetorquer_Rod.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/COBRA_gimbal_deployed.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/1U_Structure.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Electrospray_Thruster.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Syrlinks_S-Band_Receiver.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/L3_Cadet_Radio.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/TS_Nano_Star_Tracker.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/PicoRelease_stowed.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Ant_GPS.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Material/New Material 6.mat
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/On_Board_Computer.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/G2000_Gyroscope.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Objects/MMAHaWKSolarArraydeployedsimple.prefab
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/NanoCom_ANT_430_deployed.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Objects/CubeSpaceSmallCubeWheelsimple.prefab
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Low_Rate_S-band_transmitter.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Objects/ANT-GPSPatchAntennaAssembly.prefab
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/MAI-400.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/CubeWheel_Small.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/MigaOne-15.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/UHF-VHF_Antenna_deployed.fbx
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Kraken_Arm_stowed.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/GPS12-V1.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/MAI-SES.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Moog_058E142_Cold_Gas_Thruster.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/UpdatedModelFiles/Hawk_Deployable_Solar_Array_stowed.obj
-- Assets/AssetBundleContent/Non-ITAREAR/Cubesats/6UDesign/Objects/isisantenna_stowedasm0013.prefab
-Dependencies: []
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/2_lbf_Cold_Gas_thruster.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/NanoCam_C1U_35_mm.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Hydros_1U.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/OEM-638.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/S-Band_Compact_Radio.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/CHREC_Space_Processor_CSP.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Standalon_30_Wh_Battery.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/NanoCom_ANT_430_stowed.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/1U_Structure.gltf
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/GPS_Receiver.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/STC-MS03_S-Band_Transceiver.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Cosine_Sun_Sensor.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Moog_058_154_Cold_Gas_Thruster.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Nano_Star_Tracker.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Syrlinks_S-Band_Receiver.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Wi-Sys_GPS_Antenna.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/On_Board_Computer.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/AEOLDOS_stowed.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Magnetorquer_Board.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/SGR-05P_GPS.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/MigaOne-15.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Objects/Generic6U.prefab
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/n2420.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/PicoRelease_stowed.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/UHF-VHF_Antenna_stowed.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Marotta_Cold_Gas_Micro_thruster.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/GPS12-V1.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/NanoMind_Processor_A712D.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Hawk_Deployable_Solar_Array_stowed.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Objects/MMAHaWKSolarArraydeployedsimple.prefab
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Kraken_Arm_deployed.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/RW-.01_Reaction_Wheel.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/TRXUV_VHF-UHF_Transceiver_Complex.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/HYDROX.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/NanoCom_ANT_430_deployed.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Magnetic_Torquer_for_Micro-Satellite.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Hydros_0.5U.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Objects/ANT-GPSPatchAntennaAssembly.prefab
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Hawk_Deployable_Solar_Array_deployed.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/XB1.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/nanoRTU.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Kraken_Arm_stowed.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Moog_058E142_Cold_Gas_Thruster.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/XB1_stack_of_2U.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/S-Band_Patch_Antenna.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/LR1_Battery.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Magnetic_Sensor_for_Spacecraft.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/PUC_Propulsion_unit_for_cubesats_thruster.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Syrlinks_X-S_Band_Transceiver.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Hispico_S-Band_Patch_Antenna.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/1U_solar_panel_no_magnetorquers_deployable.fbx
+- Assets/MRET/Components/SceneObjects/Marker/Deprecated/Assets/Models/Pin.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/COBRA_gimbal_deployed.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Electrospray_Thruster.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Material/New Material
+  5.mat
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/10SP-M_Microwheel.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/L3_Cadet_Radio.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Ant_GPS.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Syrlinks_X-Band_Transmitter.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Magnetorquer_Rod.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Material/New Material
+  7.mat
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/1U_Structure2.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Dash4.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/SAR100_Single_Axis_Gyro.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Material/New Material
+  6.mat
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/MAI-400.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Micro_Reaction_Wheel.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Q7.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Moog_058E144_Cold_Gas_Thruster.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Material/New Material
+  3.mat
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/BIT-3_Iodine_Thruster.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Material/New Material.mat
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Objects/CubeSpaceSmallCubeWheelsimple.prefab
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/TS_Nano_Star_Tracker.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Material/New Material
+  2.mat
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/G2000_Gyroscope.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Swift_SLX_Communications.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/MAI-SES.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Monopropellent_Thruster_for_3U_Applications.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Power_Distribution_Board.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Material/New Material
+  4.mat
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/ST-200_Star_Tracker.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/CRS39_Gyro.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/1U_Structure.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Low_Rate_S-band_transmitter.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Objects/GomSpaceNanoMindA712Dsimple.prefab
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Objects/clydespaceeps_asm_simple.prefab
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Helium_Radio_Transmitter.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/STIM202_Butterfly_Gyro.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Objects/isisantenna_stowedasm0013.prefab
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Moog_058_163_Cold_Gas_Thruster.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/MOSAIC_modular_solar_panel.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/NanoCom_AX100.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/COBRA_gimbal_stowed.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Sunmill_Array.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/NanoCam_C1U_70_mm.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Cubesat_Sun_Sensor.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/MHX 2420.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Syrlinks_S-Band_Transceiver.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/PicoRelease_deployed.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/CubeWheel_Small.fbx
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/PC-104_ACS_Board.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/Deployable_antenna.obj
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Material/New Material
+  1.mat
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/6UDesign/Objects/BlueCanyonXB12UStacksimple.prefab
+- Assets/Content/Standard_MRET_Content/Content/Cubesats/UpdatedModelFiles/UHF-VHF_Antenna_deployed.fbx
+Dependencies:
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/standard-assets

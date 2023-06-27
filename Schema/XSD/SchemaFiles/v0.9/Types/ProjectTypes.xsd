@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+	elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+               
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="ActionSequenceTypes.xsd"/>
+    <include schemaLocation="DisplayTypes.xsd"/>
+    <include schemaLocation="DrawingTypes.xsd"/>
+    <include schemaLocation="FeedTypes.xsd"/>
+    <include schemaLocation="InterfaceTypes.xsd"/>
+    <include schemaLocation="MarkerTypes.xsd"/>
+    <include schemaLocation="PartTypes.xsd"/>
+    <include schemaLocation="PointCloudTypes.xsd"/>
+    <include schemaLocation="SceneObjectGeneratorTypes.xsd"/>
+    <include schemaLocation="SceneObjectTypes.xsd"/>
+    <include schemaLocation="TerrainTypes.xsd"/>
+    <include schemaLocation="TimeSimulationTypes.xsd"/>
+	
+	<complexType name="ProjectType">
+        <complexContent>
+            <extension base="common:VersionedType">
+		        <sequence>
+		            <element name="Description" type="string" minOccurs="0" maxOccurs="1"/>
+		            <element name="Environment" type="mret:EnvironmentType" minOccurs="1" maxOccurs="1"/>
+                    <element name="UserTransform" type="common:TransformType" minOccurs="0" maxOccurs="1"/>
+                    <element name="UserViews" type="mret:ViewsType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Time" type="mret:TimeSimulationType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Content" type="mret:ContentType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Interfaces" type="mret:InterfacesType" minOccurs="0" maxOccurs="1"/>
+		        </sequence>
+            </extension>
+        </complexContent>
+	</complexType>
+
+    <simpleType name="LocomotionGravityConstraintType">
+        <restriction base="string">
+            <enumeration value="Allowed"/>
+            <enumeration value="Required"/>
+            <enumeration value="Prohibited"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="LocomotionConstraintsType">
+        <sequence minOccurs="0" maxOccurs="1">
+            <element name="SlowMultiplier" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1"/>
+            <element name="NormalMultiplier" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1"/>
+            <element name="FastMultiplier" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+        <attribute name="gravityConstraint" type="mret:LocomotionGravityConstraintType" use="optional" default="Allowed"/>
+    </complexType>
+
+    <complexType name="LocomotionSettingsType">
+        <sequence>
+            <element name="Armswing" type="mret:LocomotionConstraintsType" minOccurs="0" maxOccurs="1"/>
+            <element name="Fly" type="mret:LocomotionConstraintsType" minOccurs="0" maxOccurs="1"/>
+            <element name="Navigation" type="mret:LocomotionConstraintsType" minOccurs="0" maxOccurs="1"/>
+            <element name="Teleport" minOccurs="0" maxOccurs="1">
+                <complexType>
+                    <sequence>
+                        <element name="MaxDistance" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1"/>
+                    </sequence>
+                </complexType>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="EnvironmentType">
+		<complexContent>
+		    <extension base="common:XRType">
+		        <sequence>
+                    <element name="Asset" type="common:AssetType" minOccurs="0" maxOccurs="1"/>
+		            <element name="SkyBox" type="common:MaterialType" minOccurs="1" maxOccurs="1"/>
+		            <element name="Gravity" type="common:AccelerationType" minOccurs="0" maxOccurs="1" default="9.81"/>
+		            <element name="ClippingPlane" minOccurs="0" maxOccurs="1">
+		                <complexType>
+		                    <sequence>
+		                        <element name="Near" type="float" minOccurs="0" maxOccurs="1" default="0.3"/>
+		                        <element name="Far" type="float" minOccurs="0" maxOccurs="1" default="1000.0"/>
+		                    </sequence>
+		                </complexType>
+		            </element>
+                    <element name="LocomotionSettings" type="mret:LocomotionSettingsType" minOccurs="0" maxOccurs="1"/>
+		        </sequence>
+		    </extension>
+		</complexContent>
+    </complexType>
+
+    <complexType name="ContentType">
+        <complexContent>
+            <extension base="common:XRType">
+		        <sequence>
+		            <element name="SceneObjects" type="mret:SceneObjectsType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Parts" type="mret:PartsType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Displays" type="mret:DisplaysType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Drawings" type="mret:Drawings3dType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Markers" type="mret:MarkersType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Feeds" type="mret:FeedsType" minOccurs="0" maxOccurs="1"/>
+		            <element name="ActionSequences" type="mret:ActionSequencesType" minOccurs="0" maxOccurs="1"/>
+		            <element name="PointClouds" type="mret:PointCloudsType" minOccurs="0" maxOccurs="1"/>
+		            <element name="SceneObjectGenerators" type="mret:SceneObjectGeneratorsType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Terrains" type="mret:TerrainsType" minOccurs="0" maxOccurs="1"/>
+                    <element name="IoTThings" type="mret:IoTThingsType" minOccurs="0" maxOccurs="1"/>
+		        </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+	<complexType name="ViewType">
+        <complexContent>
+            <extension base="common:IdentifiableType">
+				<sequence>
+				    <!-- TODO: Is this how we want to define a user view? Does the transform trump the user transform? -->
+					<element name="Transform" type="common:TransformType" minOccurs="0" maxOccurs="1"/>
+                    <element name="Zoom" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1" default="1.0"/>
+				</sequence>
+            </extension>
+        </complexContent>
+	</complexType>
+	
+    <complexType name="ViewsType">
+        <sequence>
+            <element name="View" type="mret:ViewType" minOccurs="1" maxOccurs="unbounded"/>
+        </sequence>
+        <attribute name="ActiveViewID" type="IDREF" use="required"/>
+    </complexType>
+
+</schema>

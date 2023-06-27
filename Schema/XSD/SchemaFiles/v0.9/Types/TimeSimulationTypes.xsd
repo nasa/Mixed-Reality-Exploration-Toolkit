@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+
+    <complexType name="TimeSimulationType">
+        <complexContent>
+            <extension base="common:VersionedType">
+		        <annotation>
+		            <documentation>Defines a time simulation</documentation>
+		        </annotation>
+		        <sequence>
+		            <element name="Name" type="string">
+		                <annotation>
+		                    <documentation>The name of this time simulation, e.g. "LunarSouthPoleLightingSimulation"</documentation>
+		                </annotation>
+		            </element>
+		            <element name="Description" type="string">
+		                <annotation>
+		                    <documentation>The name of this time simulation, e.g. "Lunar South Pole Lighting Conditions from December 1, 2022 to December 21, 2022"</documentation>
+		                </annotation>
+		            </element>
+		            <element name="StartTime" type="common:TimeType" minOccurs="0">
+		                <annotation>
+		                    <documentation>The start time of the simulation. If omitted, the start time will be the current time.</documentation>
+		                </annotation>
+		            </element>
+		            <element name="EndTime" type="common:TimeType" minOccurs="0">
+		                <annotation>
+		                    <documentation>The end time of the simulation. If omitted, the simululation will not end.</documentation>
+		                </annotation>
+		            </element>
+		            <element name="UpdateRate" type="float" default="1.0">
+		                <annotation>
+		                    <documentation>The number of simulated seconds that represent a realtime second. Negative values reverse time.</documentation>
+		                </annotation>
+		            </element>
+		            <element name="Paused" type="boolean" default="false">
+		                <annotation>
+		                    <documentation>Indicates whether the simulation is paused.</documentation>
+		                </annotation>
+		            </element>
+		        </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

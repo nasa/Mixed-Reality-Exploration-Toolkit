@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mt:Animation xmlns:mt="http://www.example.org/MRET" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/MRET Animation.xsd ">
+  <mt:Name>mt:Name</mt:Name>
+  <mt:Loop>true</mt:Loop>
+  <mt:Autoplay>true</mt:Autoplay>
+</mt:Animation>

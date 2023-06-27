@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.9" xmlns="http://www.nasa.gov/MRET">
+  <Description xmlns="">Lunar - Apollo 15 Landing Site</Description>
+  <Environment version="0.9" xmlns="">
+    <Asset>
+      <AssetName>LunarLightingApollo15</AssetName>
+      <AssetBundle>apollo-scenes</AssetBundle>
+    </Asset>
+    <SkyBox>
+      <Asset>
+        <AssetName>skyboxv1_starsonly</AssetName>
+        <AssetBundle>skybox-stars</AssetBundle>
+      </Asset>
+    </SkyBox>
+	<Gravity>1.62</Gravity>
+    <ClippingPlane>
+      <Near>0.15</Near>
+      <Far>500000</Far>
+    </ClippingPlane>
+  </Environment>
+  <UserTransform xmlns="">
+    <Position>
+      <X>1849.50989</X>
+      <Y>311.92</Y>
+      <Z>4299.037</Z>
+    </Position>
+  </UserTransform>
+  <Time version="0.9" xmlns="">
+    <Name>Apollo15</Name>
+    <Description>Apollo 15</Description>
+    <StartTime>
+      <TimeString>1971-08-02T10:52:14</TimeString>
+    </StartTime>
+    <UpdateRate>1</UpdateRate>
+    <Paused>false</Paused>
+  </Time>
+  <Content version="0.9" xmlns="">
+    <Parts version="0.9" group="0">
+      <Part version="0.9" ID="id-apollolunarlander">
+        <Name>Apollo Lunar Lander</Name>
+        <Description>Apollo Lunar Lander</Description>
+        <Transform>
+          <Position>
+            <X>1840.4</X>
+            <Y>310.37</Y>
+            <Z>4270.21</Z>
+          </Position>
+          <QRotation>
+            <X>0.6067984</X>
+            <Y>0.4223651</Y>
+            <Z>0.4285633</Z>
+            <W>-0.5193621</W>
+          </QRotation>
+          <Size>
+            <X>11.28</X>
+            <Y>11.28</Y>
+            <Z>9.4</Z>
+          </Size>
+        </Transform>
+        <Interactions>
+          <EnableInteraction>false</EnableInteraction>
+          <EnableUsability>false</EnableUsability>
+        </Interactions>
+        <Model>
+          <Asset>
+            <AssetName>LunarLander</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Mass>
+            <Min>4.28</Min>
+            <Max>4.92</Max>
+            <Contingency>0.05</Contingency>
+          </Mass>
+        </PartSpecifications>
+        <Category>Test Fixture</Category>
+      </Part>
+      <Part version="0.9" ID="id-apollolrv">
+        <Name>Apollo LRV</Name>
+        <Description>Apollo LRV</Description>
+        <Transform>
+          <Position>
+            <X>1841.59</X>
+            <Y>313.14</Y>
+            <Z>4287.74</Z>
+          </Position>
+          <QRotation>
+            <X>0.164512</X>
+            <Y>0.6877034</Y>
+            <Z>0.6877033</Z>
+            <W>-0.1645119</W>
+          </QRotation>
+          <Size>
+            <X>2.106</X>
+            <Y>3.8475</Y>
+            <Z>2.835</Z>
+          </Size>
+        </Transform>
+        <Interactions>
+          <EnableInteraction>false</EnableInteraction>
+          <EnableUsability>false</EnableUsability>
+        </Interactions>
+        <Model>
+          <Asset>
+            <AssetName>LunarRovingVehicle</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Mass>
+            <Min>0.034</Min>
+            <Max>0.034</Max>
+            <Contingency>0.002</Contingency>
+          </Mass>
+        </PartSpecifications>
+        <Category>Test Fixture</Category>
+      </Part>
+      <Part version="0.9" ID="id-astronaut">
+        <Name>Astronaut</Name>
+        <Description>Astronaut</Description>
+        <Transform>
+          <Position>
+            <X>1847.46</X>
+            <Y>312.03</Y>
+            <Z>4289.51</Z>
+          </Position>
+          <QRotation>
+            <X>-1.89E-06</X>
+            <Y>-0.04728138</Y>
+            <Z>-1.565E-05</Z>
+            <W>0.9988817</W>
+          </QRotation>
+          <Size>
+            <X>1</X>
+            <Y>2.2</Y>
+            <Z>1.4</Z>
+          </Size>
+        </Transform>
+        <Interactions>
+          <EnableInteraction>false</EnableInteraction>
+          <EnableUsability>false</EnableUsability>
+        </Interactions>
+        <Model>
+          <Asset>
+            <AssetName>SpaceSuitZ2</AssetName>
+            <AssetBundle>mars-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableCollisions>true</EnableCollisions>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Mass>
+            <Min>0.220000014</Min>
+            <Max>0.23</Max>
+            <Contingency>0.0100000007</Contingency>
+          </Mass>
+        </PartSpecifications>
+        <Category>Test Fixture</Category>
+      </Part>
+      <Part version="0.9" ID="id-centralstation">
+        <Name>Central Station</Name>
+        <Description>The Central Station was the control center for all the ALSEP instruments, and it received data and commands from Earth and distributed power to each instrument.</Description>
+        <Transform>
+          <Position>
+            <X>1850.40588</X>
+            <Y>312.0202</Y>
+            <Z>4304.68945</Z>
+          </Position>
+          <QRotation>
+            <X>-0.1880577</X>
+            <Y>-0.6816837</Y>
+            <Z>-0.681603</Z>
+            <W>0.188040063</W>
+          </QRotation>
+          <Size>
+            <X>0.6081286</X>
+            <Y>0.557675</Y>
+            <Z>1.584638</Z>
+          </Size>
+        </Transform>
+        <Model>
+          <Asset>
+            <AssetName>CentralStation</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableCollisions>true</EnableCollisions>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Mass>
+            <Min units="Kilogram">25.0</Min>
+            <Max units="Kilogram">25.0</Max>
+          </Mass>
+        </PartSpecifications>
+        <Category>Power Distribution Board</Category>
+      </Part>
+      <Part version="0.9" ID="id-laserrangingretroreflector">
+        <Name>Laser Ranging Retroreflector</Name>
+        <Description>The Laser Ranging Retroreflector reflects an incoming light beam back to Earth, and this measures the distance between the Earth and the Moon. It is also the only ALSEP instrument still sending data from the Moon.</Description>
+        <Transform>
+          <Position>
+            <X>1851.168</X>
+            <Y>313.198</Y>
+            <Z>4301.678</Z>
+          </Position>
+          <QRotation>
+            <Y>-0.8145496</Y>
+            <W>0.5800939</W>
+          </QRotation>
+          <Size>
+            <X>0.562231</X>
+            <Y>0.4041013</Y>
+            <Z>1.019054</Z>
+          </Size>
+        </Transform>
+        <Model>
+          <Asset>
+            <AssetName>LaserRangingRetroreflector</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableCollisions>true</EnableCollisions>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Power>
+            <Min units="Watt">0</Min>
+            <Max units="Watt">0</Max>
+          </Power>
+          <Mass>
+            <Min units="Kilogram">77.0</Min>
+            <Max units="Kilogram">77.0</Max>
+          </Mass>
+        </PartSpecifications>
+        <Category>Instrument</Category>
+      </Part>
+      <Part version="0.9" ID="id-solarwindspectrometer">
+        <Name>Solar Wind Spectrometer</Name>
+        <Description>The Solar Wind Spectrometer compared the solar wind properties of the lunar surface with those in space around the Moon, and it determined any effects of the Moon on solar wind properties.</Description>
+        <Transform>
+          <Position>
+            <X>1848.617</X>
+            <Y>313.215</Y>
+            <Z>4304.813</Z>
+          </Position>
+          <QRotation>
+            <X>-0.01191064</X>
+            <Y>-0.9448255</Y>
+            <Z>-0.03457003</Z>
+            <W>0.3255271</W>
+          </QRotation>
+          <Size>
+            <X>0.3529741</X>
+            <Y>0.4428205</Y>
+            <Z>0.4756669</Z>
+          </Size>
+        </Transform>
+        <Model>
+          <Asset>
+            <AssetName>SolarWindSpectrometer</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableCollisions>true</EnableCollisions>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Power>
+            <Min units="Watt">12.5</Min>
+            <Max units="Watt">12.5</Max>
+          </Power>
+          <Mass>
+            <Min units="Kilogram">5.7</Min>
+            <Max units="Kilogram">5.7</Max>
+          </Mass>
+        </PartSpecifications>
+        <Category>Instrument</Category>
+      </Part>
+      <Part version="0.9" ID="id-sideccig">
+        <Name>Side CCIG</Name>
+        <Description>The Suprathermal Ion Detector Experiment (SIDE) measured the energies of positively charged ions near the surface of the Moon, studied the interaction between the solar wind and the Moon as the Moon moved through the Earth's magnetic field. The Cold Cathode Ion Gauge (CCIG) measured the total pressure of the lunar atmosphere.</Description>
+        <Transform>
+          <Position>
+            <X>1847.037</X>
+            <Y>313.314</Y>
+            <Z>4305.962</Z>
+          </Position>
+          <QRotation>
+            <X>-0.701627254</X>
+            <Y>0.0150839984</Y>
+            <Z>-0.0153117282</Z>
+            <W>0.712219954</W>
+          </QRotation>
+          <Size>
+            <X>0.4550012</X>
+            <Y>0.4649909</Y>
+            <Z>0.4395201</Z>
+          </Size>
+        </Transform>
+        <Model>
+          <Asset>
+            <AssetName>SideCCIG</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableCollisions>true</EnableCollisions>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Power>
+            <Min units="Watt">6.5</Min>
+            <Max units="Watt">6.5</Max>
+          </Power>
+          <Mass>
+            <Min units="Kilogram">8.5</Min>
+            <Max units="Kilogram">8.5</Max>
+          </Mass>
+        </PartSpecifications>
+        <Category>Instrument</Category>
+      </Part>
+      <Part version="0.9" ID="id-passiveseismicexperiment">
+        <Name>Passive Seismic Experiment</Name>
+        <Description>The Passive Seismic Experiment studied the seismic waves throughout the Moon and provided us with information regarding the Moon's internal structure.</Description>
+        <Transform>
+          <Position>
+            <X>1849.697</X>
+            <Y>314.198</Y>
+            <Z>4305.089</Z>
+          </Position>
+          <Size>
+            <X>0.602846</X>
+            <Y>0.1095413</Y>
+            <Z>0.6028459</Z>
+          </Size>
+        </Transform>
+        <Model>
+          <Asset>
+            <AssetName>PassiveSeismicExperiment</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableCollisions>true</EnableCollisions>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Teledyne Corporation</Vendor>
+          <Version>Unknown</Version>
+          <Power>
+            <Min units="Watt">4.3</Min>
+            <Max units="Watt">7.4</Max>
+          </Power>
+          <Mass>
+            <Min units="Kilogram">11.5</Min>
+            <Max units="Kilogram">11.5</Max>
+          </Mass>
+        </PartSpecifications>
+        <Category>Instrument</Category>
+      </Part>
+      <Part version="0.9" ID="id-heatflowexperiment">
+        <Name>Heat Flow Experiment</Name>
+        <Description>The Heat Flow Experiment measured the heat coming out of the Moon by measuring the temperature differences in the regolith.</Description>
+        <Transform>
+          <Position>
+            <X>1847.512</X>
+            <Y>313.276</Y>
+            <Z>4304.641</Z>
+          </Position>
+          <QRotation>
+            <X>-0.6727175</X>
+            <Y>-0.217832983</Y>
+            <Z>-0.217832983</Z>
+            <W>0.6727175</W>
+          </QRotation>
+          <Size>
+            <X>0.6249857</X>
+            <Y>0.576634</Y>
+            <Z>0.3507342</Z>
+          </Size>
+        </Transform>
+        <Model>
+          <Asset>
+            <AssetName>HeatFlowExperiment</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableCollisions>true</EnableCollisions>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Power>
+            <Min units="Watt">3.9</Min>
+            <Max units="Watt">3.9</Max>
+          </Power>
+          <Mass>
+            <Min units="Kilogram">5.5</Min>
+            <Max units="Kilogram">5.5</Max>
+          </Mass>
+        </PartSpecifications>
+        <Category>Instrument</Category>
+      </Part>
+      <Part version="0.9" ID="id-lunarsurfacemagnetometer">
+        <Name>Lunar Surface Magnetometer</Name>
+        <Description>The Lunar Surface Magnetometer measured the magnetic field on the lunar surface, and this in turn provides information regarding the lunar surface and solar plasma.</Description>
+        <Transform>
+          <Position>
+            <X>1857.166</X>
+            <Y>312.2459</Y>
+            <Z>4302.861</Z>
+          </Position>
+          <QRotation>
+            <X>0.277979136</X>
+            <Y>-0.6406533</Y>
+            <Z>-0.689399064</Z>
+            <W>-0.192405552</W>
+          </QRotation>
+          <Size>
+            <X>1.18813</X>
+            <Y>0.8668593</Y>
+            <Z>0.6026727</Z>
+          </Size>
+        </Transform>
+        <Model>
+          <Asset>
+            <AssetName>LunarSurfaceMagnetometer</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableCollisions>true</EnableCollisions>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Power>
+            <Min units="Watt">5.5</Min>
+            <Max units="Watt">5.5</Max>
+          </Power>
+          <Mass>
+            <Min units="Kilogram">8.9</Min>
+            <Max units="Kilogram">8.9</Max>
+          </Mass>
+        </PartSpecifications>
+        <Category>Instrument</Category>
+      </Part>
+      <Part version="0.9" ID="id-radiothermoelectricgenerator">
+        <Name>Radio Thermoelectric Generator</Name>
+        <Description>This worked as a battery that converted heat from radioisotope decay into electricity.</Description>
+        <Transform>
+          <Position>
+            <X>1849.034</X>
+            <Y>313.19</Y>
+            <Z>4306.409</Z>
+          </Position>
+          <QRotation>
+            <X>-0.5514037</X>
+            <Y>-0.442666948</Y>
+            <Z>-0.442666948</Z>
+            <W>0.5514037</W>
+          </QRotation>
+          <Size>
+            <X>0.5331045</X>
+            <Y>0.5328816</Y>
+            <Z>0.3495408</Z>
+          </Size>
+        </Transform>
+        <Model>
+          <Asset>
+            <AssetName>RadioThermoelectricGenerator</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableCollisions>true</EnableCollisions>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Power>
+            <Min units="Watt">0</Min>
+            <Max units="Watt">0</Max>
+          </Power>
+          <Mass>
+            <Min units="Kilogram">13.6</Min>
+            <Max units="Kilogram">13.6</Max>
+          </Mass>
+        </PartSpecifications>
+        <Category>Solar Cell</Category>
+      </Part>
+    </Parts>
+  </Content>
+</Project>

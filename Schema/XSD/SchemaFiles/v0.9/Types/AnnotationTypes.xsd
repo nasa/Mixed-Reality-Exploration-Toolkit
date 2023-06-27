@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+
+    <complexType name="AnnotationType">
+        <complexContent>
+            <extension base="common:IdentifiableType">
+                <annotation>
+                    <documentation>Defines an annotation</documentation>
+                </annotation>
+                <sequence>
+                    <element name="StartDelay" type="common:DurationType" minOccurs="0" maxOccurs="1" default="0"/>
+                    <element name="Loop" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+                    <element name="AttachTo" type="IDREF" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="TextsType">
+        <choice>
+            <element name="Text" type="string" minOccurs="1" maxOccurs="unbounded"/>
+        </choice>
+    </complexType>
+
+    <complexType name="TextAnnotationType">
+        <complexContent>
+            <extension base="mret:AnnotationType">
+                <annotation>
+                    <documentation>Defines a text annotation</documentation>
+                </annotation>
+                <sequence>
+                    <element name="TimePerText" type="common:DurationType" minOccurs="0" maxOccurs="1" default="1"/>
+                    <element name="TextIndex" type="common:NonNegativeInteger" minOccurs="0" maxOccurs="1" default="0"/>
+                    <element name="Texts" type="mret:TextsType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="AnnotationSourceFormatType">
+        <restriction base="string">
+            <!-- Popular Audio -->
+            <enumeration value="M4A"/>
+            <enumeration value="FLAC"/>
+            <enumeration value="MP3"/>
+            <enumeration value="WAV"/>
+            <enumeration value="WMA"/>
+            <enumeration value="AAC"/>
+            <!-- Popular Video -->
+            <enumeration value="MOV"/>
+            <enumeration value="WMV"/>
+            <enumeration value="AVI"/>
+            <enumeration value="AVCHD"/>
+            <enumeration value="FLV"/>
+            <enumeration value="F4V"/>
+            <enumeration value="SWF"/>
+            <!-- Both -->
+            <enumeration value="MP4"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="AnnotationSourceFileType">
+        <simpleContent>
+            <extension base="string">
+                <attribute name="format" type="mret:AnnotationSourceFormatType" use="optional" default="MP4"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <complexType name="AnnotationSourceType">
+        <choice>
+            <element name="File" type="mret:AnnotationSourceFileType" minOccurs="1" maxOccurs="1"/>
+            <element name="Asset" type="common:AssetType" minOccurs="1" maxOccurs="1"/>
+            <element name="URL" type="anyURI" minOccurs="1" maxOccurs="1"/>
+        </choice>
+    </complexType>
+
+    <complexType name="SourceAnnotationType">
+        <complexContent>
+            <extension base="mret:AnnotationType">
+                <annotation>
+                    <documentation>Defines an annotation source</documentation>
+                </annotation>
+                <sequence>
+                    <element name="StartTime" type="common:DurationType" minOccurs="0" maxOccurs="1" default="0">
+                        <annotation>
+                            <documentation>The amount of time to jump forward when starting the source.</documentation>
+                        </annotation>
+                    </element>
+                    <element name="Duration" type="common:DurationType" minOccurs="0" maxOccurs="1" default="0">
+                        <annotation>
+                            <documentation>Duration of source. Omission (or 0) plays the entire source</documentation>
+                        </annotation>
+                    </element>
+                    <element name="Speed" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1" default="1.0">
+                        <annotation>
+                            <documentation>Speed multiplier, i.e. 0.5 is half speed</documentation>
+                        </annotation>
+                    </element>
+                    <element name="Source" type="mret:AnnotationSourceType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="AudioAnnotationType">
+        <complexContent>
+            <extension base="mret:SourceAnnotationType">
+                <annotation>
+                    <documentation>Defines an audio annotation</documentation>
+                </annotation>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="VideoAnnotationType">
+        <complexContent>
+            <extension base="mret:SourceAnnotationType">
+                <annotation>
+                    <documentation>Defines a video annotation</documentation>
+                </annotation>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

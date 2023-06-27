@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TimeSimulation xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.example.org/MRET">
+
+	<Name>SouthPole-January2024</Name>
+	<Description>SouthPole, January 2024, 1 sec = 1 day</Description>
+	<StartTime>
+		<TimeString>2024-01-01T00:00:00</TimeString>
+	</StartTime>
+	<UpdateRate>86400.0</UpdateRate>
+	<Paused>true</Paused>
+
+</TimeSimulation>

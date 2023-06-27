@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.example.org/MRET"
+	elementFormDefault="qualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:mt="http://www.example.org/MRET">
+
+	<include schemaLocation="Common.xsd"/>
+	
+	<complexType name="ModeType">
+		<sequence>
+			<element name="Name" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="Gravity" minOccurs="1" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="Off"></enumeration>
+						<enumeration value="On"></enumeration>
+						<enumeration value="Optional"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="Controls">
+				<complexType>
+					<sequence>
+						<element name="Notes" type="boolean"></element>
+						<element name="LineDrawing" type="boolean"></element>
+						<element name="CableDrawing" type="boolean"></element>
+						<element name="MeasureDrawing" type="boolean"></element>
+						<element name="RotationandScaling"
+							type="boolean">
+						</element>
+						<element name="ImageCapture" type="boolean"></element>
+						<element name="VideoCapture" type="boolean"></element>
+						<element name="VideoDisplay" type="boolean"></element>
+						<element name="ToolPass" type="boolean"></element>
+						<element name="Ruler" type="boolean"></element>
+						<element name="AxialControl" type="boolean"></element>
+					</sequence>
+				</complexType></element>
+		</sequence>
+	</complexType>
+
+	<element name="Mode" type="mt:ModeType"></element>
+</schema>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/Common"
+    elementFormDefault="unqualified"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common">
+
+    <simpleType name="PositiveInteger">
+        <restriction base="int">
+            <minInclusive value="1"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="NegativeInteger">
+        <restriction base="int">
+            <maxInclusive value="-1"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="NonNegativeInteger">
+        <restriction base="int">
+            <minInclusive value="0"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="NonNegativeFloat">
+        <restriction base="float">
+            <minInclusive value="0"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="NonNegativeInteger3Type">
+        <sequence>
+            <element name="X" type="common:NonNegativeInteger" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Y" type="common:NonNegativeInteger" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Z" type="common:NonNegativeInteger" minOccurs="0" maxOccurs="1" default="0"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="NonNegativeFloat3Type">
+        <sequence>
+            <element name="X" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Y" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Z" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1" default="0"/>
+        </sequence>
+    </complexType>
+
+</schema>

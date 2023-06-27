@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TimeSimulation xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.9" xmlns="http://www.nasa.gov/MRET">
+  <Name xmlns="">SouthPole-December2022</Name>
+  <Description xmlns="">SouthPole, December 2022, 1 sec = 1 day, Backwards</Description>
+  <StartTime xmlns="">
+    <TimeString>2022-12-31T23:59:59</TimeString>
+  </StartTime>
+  <EndTime xmlns="">
+    <TimeString>2022-12-01T00:00:00</TimeString>
+  </EndTime>
+  <UpdateRate xmlns="">-86400</UpdateRate>
+  <Paused xmlns="">true</Paused>
+</TimeSimulation>

@@ -1,0 +1,82 @@
+ManifestFileVersion: 0
+CRC: 2987384384
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: aa29eb94f6dc2f2996bf104586bc7a80
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 4a51026d08bf40f7f6eea65537d2ffbc
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-[Color
+  M09].mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-7.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-EASTWALL2.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-[Color
+  H01]1.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/southwall2.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/2.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-northwall2.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-[Translucent
+  Glass Tinted].mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/door.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/7.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-layoutssdif.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/ssdif
+  west wall copy.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/layoutssdif2.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/southwall21.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-southwall2.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/EASTWALL2.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/layoutssdif1.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/1.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/3.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-[Color
+  L16].mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbx
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-4.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-2.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-layoutssdif#1.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/layoutssdif.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-[Color
+  M00].mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-[Translucent
+  Glass Blue].mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/westwall.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-southwall2#1.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/northwall2.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-layoutssdif#4.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-DefaultMaterial~1.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-door.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-ssdif
+  west wall copy.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/Translucent_Glass_Tinted.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-westwall.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-6.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-grey.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-[Color
+  M04].mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/Materials/ssdif_v3-3.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SSDIF/Assets/Models/ssdif_v3.fbm/6.png
+Dependencies: []

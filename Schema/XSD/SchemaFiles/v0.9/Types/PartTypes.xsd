@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="http://www.w3.org/2005/08/xml.xsd"
+               namespace="http://www.w3.org/XML/1998/namespace"/>
+<!--
+    <import schemaLocation="http://www.w3.org/2005/08/xml.xsd"
+               namespace="http://www.w3.org/2001/XInclude"/>
+-->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="InterfaceTypes.xsd"/>
+    <include schemaLocation="SceneObjectTypes.xsd"/>
+
+    <simpleType name="PartCategoryType">
+        <restriction base="string">
+            <enumeration value="CPU"/>
+            <enumeration value="Memory"/>
+            <enumeration value="FPGA"/>
+            <enumeration value="Processor"/>
+            <enumeration value="Processor Board"/>
+            <enumeration value="Microcontroller"/>
+            <enumeration value="Aerodynamic"/>
+            <enumeration value="Earth Tracker"/>
+            <enumeration value="Gyro"/>
+            <enumeration value="Reaction Wheel"/>
+            <enumeration value="Magnetorquer"/>
+            <enumeration value="Star Tracker"/>
+            <enumeration value="Sun Sensor"/>
+            <enumeration value="SSDR"/>
+            <enumeration value="Antenna"/>
+            <enumeration value="Modem"/>
+            <enumeration value="Radio"/>
+            <enumeration value="Transceiver"/>
+            <enumeration value="Transmitter"/>
+            <enumeration value="Transponder"/>
+            <enumeration value="GPS"/>
+            <enumeration value="De-Orbit"/>
+            <enumeration value="Battery"/>
+            <enumeration value="Power Distribution Board"/>
+            <enumeration value="Solar Cell"/>
+            <enumeration value="Solar Panel"/>
+            <enumeration value="Cold Gas"/>
+            <enumeration value="Electric"/>
+            <enumeration value="Liquid"/>
+            <enumeration value="Bus"/>
+            <enumeration value="Chassis"/>
+            <enumeration value="Gymbal"/>
+            <enumeration value="Mechanical Arm"/>
+            <enumeration value="Phase Change"/>
+            <enumeration value="GSE"/>
+            <enumeration value="Test Fixture"/>
+            <enumeration value="Instrument"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="PartSubsystemType">
+        <restriction base="string">
+            <enumeration value="AttitudeDeterminationAndControl"/>
+            <enumeration value="DeOrbit"/>
+            <enumeration value="Propulsion"/>
+            <enumeration value="Structures"/>
+        </restriction>
+    </simpleType>
+
+<!-- 
+    <complexType name="PartMassType">
+        <sequence>
+            <element name="Min" type="common:MassType" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Max" type="common:MassType" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Contingency" type="common:MassType" minOccurs="0" maxOccurs="1" default="0"/>
+        </sequence>
+    </complexType>
+-->
+ 
+    <complexType name="PowerSpecificationsType">
+        <sequence>
+            <element name="Min" type="common:PowerType" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Max" type="common:PowerType" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Idle" type="common:PowerType" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Average" type="common:PowerType" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Contingency" type="common:PowerType" minOccurs="0" maxOccurs="1" default="0"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="PartSpecificationsType">
+        <complexContent>
+            <extension base="mret:PhysicalSpecificationsType">
+		        <sequence>
+		            <element name="Vendor" type="string" minOccurs="1" maxOccurs="1"/>
+		            <element name="Version" type="string" minOccurs="1" maxOccurs="1"/>
+		            <element name="Power" type="mret:PowerSpecificationsType" minOccurs="0" maxOccurs="1"/>
+                    <element name="Mass" type="mret:MassSpecificationsType" minOccurs="0" maxOccurs="1"/>
+		            <element name="Notes" type="string" minOccurs="0" maxOccurs="1" default=""/>
+		            <element name="Reference" type="anyURI" minOccurs="0" maxOccurs="1" default="about:blank"/>
+		        </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="PartsType">
+        <complexContent>
+            <extension base="common:GroupType">
+                <sequence>
+                    <element name="AssemblyInteractions" type="mret:InteractionSettingsType" minOccurs="0" maxOccurs="1"/>
+                    <element name="Enclosure" type="mret:EnclosureType" minOccurs="0" maxOccurs="1"/>
+			        <choice>
+			            <element name="Part" type="mret:PartType" minOccurs="1" maxOccurs="unbounded"/>
+<!--                    <element ref="xi:include" minOccurs="1" maxOccurs="unbounded"/> -->
+	                    <element name="Parts" type="mret:PartsType" minOccurs="0" maxOccurs="unbounded"/>
+	                </choice>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="EnclosureType">
+        <complexContent>
+            <extension base="mret:PhysicalSceneObjectType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="PartType">
+        <complexContent>
+            <extension base="mret:PhysicalSceneObjectType">
+                <sequence>
+                    <element name="PartSpecifications" type="mret:PartSpecificationsType" minOccurs="1" maxOccurs="1"/>
+                    <element name="Category" type="mret:PartCategoryType" minOccurs="0" maxOccurs="1" default="Chassis"/>
+                    <element name="Subsystem" type="mret:PartSubsystemType" minOccurs="0" maxOccurs="1" default="Structures"/>
+		            <element name="ROSInterface" type="mret:ROSInterfaceType" minOccurs="0" maxOccurs="1"/>
+                    <element name="ChildParts" type="mret:PartsType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

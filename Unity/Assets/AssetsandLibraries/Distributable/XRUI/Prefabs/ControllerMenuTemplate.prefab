@@ -75,7 +75,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3a819b5a18739da4aa5ec8ad248e5e59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuPanelPrefab: {fileID: 2946699746191197790, guid: dfe18dd37d8d7774481f79a831df446d,
+  menuPanelPrefab: {fileID: 5044855872509072686, guid: 5197539642c973a4b8789c61007fa88f,
     type: 3}
   menuBarButtonPrefab: {fileID: 8248659122590327290, guid: 34ce964a27b164a4a9b5e344da25f7d3,
     type: 3}
@@ -90,8 +90,10 @@ MonoBehaviour:
       m_Calls: []
   activePanelPosition: {x: 5556356, y: 162801.2, z: -22473.51}
   secondaryPanelOffset: {x: 6286, y: -700, z: 0}
+  panelRotation: {x: 0, y: 0, z: 0}
   activePanelScale: 66.107
   secondaryPanelScale: 60
+  menuDimmed: 0
 --- !u!1 &257649362622308161
 GameObject:
   m_ObjectHideFlags: 0
@@ -174,6 +176,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!114 &144185510933354749
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,6 +258,7 @@ MonoBehaviour:
   m_ChildControlHeight: 0
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
+  m_ReverseArrangement: 0
 --- !u!223 &7859814467812327179
 Canvas:
   m_ObjectHideFlags: 0
@@ -298,6 +302,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 1
 --- !u!114 &7887076431233329464
 MonoBehaviour:
   m_ObjectHideFlags: 0

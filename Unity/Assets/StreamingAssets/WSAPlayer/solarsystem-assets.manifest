@@ -1,0 +1,62 @@
+ManifestFileVersion: 0
+CRC: 2883908672
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: fb0c6d370da61b3ad7058c7de99ba846
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 1e4ffcca78cdf12b0df3416fdbc519f8
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b81dd4373435fb048969a03cab8105fa, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fa5b606318c46e64a87b1eee97b295d6, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 128
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 223
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.PersistentCallGroup
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.RectOffset
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.FontData
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
+Assets:
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/Prefabs/TelemetryHUD.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/Materials/Text.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/Images/BorderGreen.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/Materials/Text2.mat
+Dependencies: []

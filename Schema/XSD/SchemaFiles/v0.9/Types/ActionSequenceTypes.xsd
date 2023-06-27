@@ -1,0 +1,405 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+               
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="SceneObjectTypes.xsd"/>
+    <include schemaLocation="DrawingTypes.xsd"/>
+
+    <complexType name="ActionType">
+        <complexContent>
+            <extension base="common:VersionedType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="EnvironmentRotateActionType">
+        <complexContent>
+            <extension base="mret:ActionType">
+                <sequence>
+                    <element name="Axis" type="common:AxisType" minOccurs="0" maxOccurs="1" default="Y"/>
+                    <element name="ReferencePoint" type="common:TransformPositionType" minOccurs="1" maxOccurs="1"/>
+                    <element name="Degrees" type="common:DegreeType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="EnvironmentScaleActionType">
+        <complexContent>
+            <extension base="mret:ActionType">
+                <sequence>
+                    <element name="Scale" type="common:TransformScaleType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="IdentifiableObjectActionType">
+        <complexContent>
+            <extension base="mret:ActionType">
+                <sequence>
+                    <element name="ActionObjectID" type="IDREF" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="AddIdentifiableObjectActionType">
+        <complexContent>
+            <extension base="mret:IdentifiableObjectActionType">
+                <sequence>
+                    <element name="ActionObject" type="common:IdentifiableType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="DeleteIdentifiableObjectActionType">
+        <complexContent>
+            <extension base="mret:IdentifiableObjectActionType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SceneObjectActionType">
+        <complexContent>
+            <extension base="mret:IdentifiableObjectActionType">
+                <sequence>
+                    <element name="ParentID" type="IDREF" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="AddSceneObjectActionType">
+        <complexContent>
+            <extension base="mret:TransformSceneObjectActionType">
+                <sequence>
+                    <element name="ActionObject" type="mret:SceneObjectType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ActionAttributeType">
+        <simpleContent>
+            <extension base="anySimpleType">
+                <annotation>
+                    <documentation>Defines an action attribute</documentation>
+                </annotation>
+                <attribute name="AttributeName" type="string" use="required"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <complexType name="UpdateIdentifiableObjectActionType">
+        <complexContent>
+            <extension base="mret:IdentifiableObjectActionType">
+                <sequence>
+                    <element name="Attributes" type="mret:ActionAttributeType" minOccurs="1" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="TransformSceneObjectActionType">
+        <complexContent>
+            <extension base="mret:SceneObjectActionType">
+                <sequence>
+                    <element name="Transform" type="common:TransformType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="InteractableSceneObjectActionType">
+        <complexContent>
+            <extension base="mret:SceneObjectActionType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="UpdateInteractionsActionType">
+        <complexContent>
+            <extension base="mret:InteractableSceneObjectActionType">
+                <sequence>
+                    <element name="Interactions" type="mret:InteractionSettingsType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="PhysicalSceneObjectActionType">
+        <complexContent>
+            <extension base="mret:InteractableSceneObjectActionType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="UpdatePhysicsActionType">
+        <complexContent>
+            <extension base="mret:PhysicalSceneObjectActionType">
+                <sequence>
+                    <element name="Physics" type="mret:PhysicsSettingsType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="NoteActionType">
+        <complexContent>
+            <extension base="mret:InteractableSceneObjectActionType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="NoteDrawingActionType">
+        <complexContent>
+            <extension base="mret:NoteActionType">
+                <sequence>
+                    <element name="DrawingID" type="IDREF" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="AddDrawingToNoteActionType">
+        <complexContent>
+            <extension base="mret:NoteDrawingActionType">
+                <sequence>
+                    <element name="Drawing" type="mret:Drawing2dType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="DeleteDrawingFromNoteActionType">
+        <complexContent>
+            <extension base="mret:NoteDrawingActionType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="DrawingActionType">
+        <complexContent>
+            <extension base="mret:SceneObjectActionType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="UpdateDrawingActionType">
+        <complexContent>
+            <extension base="mret:DrawingActionType">
+                <sequence>
+                    <element name="Width" type="common:LengthType" minOccurs="0" maxOccurs="1" default="0.0025"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="AddPointsToDrawingActionType">
+        <complexContent>
+            <extension base="mret:DrawingActionType">
+                <sequence>
+                    <element name="Points" type="common:PointsType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="DeletePointsFromDrawingActionType">
+        <complexContent>
+            <extension base="mret:DrawingActionType">
+                <sequence>
+                    <element name="Points" type="common:PointsType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="AnnotationControlType">
+        <restriction base="string">
+            <enumeration value="Play"/>
+            <enumeration value="Pause"/>
+            <enumeration value="Stop"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="AnnotationActionType">
+        <complexContent>
+            <extension base="mret:IdentifiableObjectActionType">
+	            <sequence>
+                    <element name="Control" type="mret:AnnotationControlType" minOccurs="1" maxOccurs="1"/>
+	            </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="TextAnnotationActionType">
+        <complexContent>
+            <extension base="mret:AnnotationActionType">
+                <sequence>
+                    <element name="TimePerText" type="common:DurationType" minOccurs="0" maxOccurs="1"/>
+                    <element name="TextIndex" type="common:NonNegativeInteger" minOccurs="0" maxOccurs="1" default="0"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SourceAnnotationActionType">
+        <complexContent>
+            <extension base="mret:AnnotationActionType">
+                <sequence>
+                    <element name="StartTime" type="common:DurationType" minOccurs="0" maxOccurs="1"/>
+                    <element name="Duration" type="common:DurationType" minOccurs="0" maxOccurs="1"/>
+                    <element name="Speed" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1" default="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ActionSetType">
+	    <choice>
+            <!-- Identifiable -->
+            <element name="AddIdentifiableObject" type="mret:AddIdentifiableObjectActionType" minOccurs="1" maxOccurs="1"/>
+            <element name="DeleteIdentifiableObject" type="mret:DeleteIdentifiableObjectActionType" minOccurs="1" maxOccurs="1"/>
+            <element name="UpdateIdentifiableObject" type="mret:UpdateIdentifiableObjectActionType" minOccurs="1" maxOccurs="1"/>
+
+            <!-- SceneObject -->
+	        <element name="AddSceneObject" type="mret:AddSceneObjectActionType" minOccurs="1" maxOccurs="1"/>
+            <element name="TransformSceneObject" type="mret:TransformSceneObjectActionType" minOccurs="1" maxOccurs="1"/>
+            <element name="ChangeParent" type="mret:ActionType" minOccurs="1" maxOccurs="1"/>
+
+            <!-- PhysicalSceneObject -->
+            <element name="UpdatePhysics" type="mret:UpdatePhysicsActionType" minOccurs="1" maxOccurs="1"/>
+
+            <!-- Note -->
+            <element name="AddDrawingToNote" type="mret:AddDrawingToNoteActionType" minOccurs="1" maxOccurs="1"/>
+            <element name="DeleteDrawingFromNote" type="mret:DeleteDrawingFromNoteActionType" minOccurs="1" maxOccurs="1"/>
+
+            <!-- Drawing -->
+            <element name="UpdateDrawing" type="mret:UpdateDrawingActionType" minOccurs="1" maxOccurs="1"/>
+	        <element name="AddPointsToDrawing" type="mret:AddPointsToDrawingActionType" minOccurs="1" maxOccurs="1"/>
+	        <element name="DeletePointsFromDrawing" type="mret:DeletePointsFromDrawingActionType" minOccurs="1" maxOccurs="1"/>
+
+            <!-- Environment -->
+	        <element name="RotateEnvironment" type="mret:EnvironmentRotateActionType" minOccurs="1" maxOccurs="1"/>
+	        <element name="ScaleEnvironment" type="mret:EnvironmentScaleActionType" minOccurs="1" maxOccurs="1"/>
+
+	        <!-- Annotation -->
+	        <element name="UpdateTextAnnotation" type="mret:TextAnnotationActionType" minOccurs="1" maxOccurs="1"/>
+            <element name="UpdateSourceAnnotation" type="mret:SourceAnnotationActionType" minOccurs="1" maxOccurs="1"/>
+	    </choice>
+    </complexType>
+
+    <simpleType name="ActionSequenceDirectionType">
+        <restriction base="string">
+            <enumeration value="Forward"/>
+            <enumeration value="Backward"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="ActionSequenceProcessingOrderType">
+        <restriction base="string">
+            <enumeration value="Sequential"/>
+            <enumeration value="Parallel"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="ActionSequenceWrapModeType">
+        <restriction base="string">
+            <enumeration value="Default">
+                <annotation>
+                    <documentation>Inherited behavior.</documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="Once">
+                <annotation>
+                    <documentation>When time reaches the end of the action sequence, the sequence will automatically stop playing and time will be reset to beginning.</documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="ClampForever">
+	            <annotation>
+	                <documentation>Plays back the action sequence. When it reaches the end, it will keep playing the last action and never stop playing.</documentation>
+	            </annotation>
+            </enumeration>
+            <enumeration value="Loop">
+                <annotation>
+                    <documentation>When time reaches the end of the action sequence, time will continue at the beginning.</documentation>
+                </annotation>
+            </enumeration>
+            <enumeration value="PingPong">
+                <annotation>
+                    <documentation>When time reaches the end of the action sequence, time will ping pong back between beginning and end.</documentation>
+                </annotation>
+            </enumeration>
+        </restriction>
+    </simpleType>
+
+    <complexType name="ActionSequencesType">
+        <complexContent>
+            <extension base="common:GroupType">
+		        <choice>
+		            <element name="ActionSequence" type="mret:ActionSequenceType" minOccurs="1" maxOccurs="unbounded"/>
+		            <element name="ActionSequences" type="mret:ActionSequencesType" minOccurs="0" maxOccurs="unbounded"/>
+		        </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ActionSequenceBaseType">
+        <complexContent>
+            <extension base="common:IdentifiableType">
+                <sequence>
+                    <element name="Autoplay" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+                    <element name="Direction" type="mret:ActionSequenceDirectionType" minOccurs="0" maxOccurs="1" default="Forward"/>
+                    <element name="Duration" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1" default="1">
+                        <annotation>
+                            <documentation>Duration in seconds</documentation>
+                        </annotation>
+                    </element>
+        
+                    <element name="WrapMode" type="mret:ActionSequenceWrapModeType" minOccurs="0" maxOccurs="1" default="Default"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ActionSequenceGroupType">
+        <complexContent>
+            <extension base="mret:ActionSequenceBaseType">
+                <sequence>
+                    <element name="ProcessingOrder" type="mret:ActionSequenceProcessingOrderType" minOccurs="0" maxOccurs="1" default="Sequential"/>
+                    <element name="ActionSequence" type="mret:ActionSequenceType" minOccurs="0" maxOccurs="unbounded"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="ActionSequenceFrameType">
+        <complexContent>
+            <extension base="mret:ActionSequenceBaseType">
+                <sequence>
+                    <element name="Action" type="mret:ActionSetType" minOccurs="1" maxOccurs="1"/>
+                    <element name="Inverse" type="mret:ActionSetType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ActionSequencePropertyType">
+        <complexContent>
+            <extension base="mret:ActionSequenceBaseType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ActionSequenceType">
+        <choice maxOccurs="1" minOccurs="1">
+            <element name="Property" type="mret:ActionSequencePropertyType"/>
+            <element name="Frame" type="mret:ActionSequenceFrameType"/>
+            <element name="Group" type="mret:ActionSequenceGroupType"/>
+        </choice>
+    </complexType>
+    
+</schema>

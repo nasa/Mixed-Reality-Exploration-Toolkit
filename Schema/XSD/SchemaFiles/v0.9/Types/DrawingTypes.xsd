@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+               
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="SceneObjectTypes.xsd"/>
+
+    <simpleType name="DrawingRender3dType">
+        <restriction base="string">
+            <enumeration value="Basic"/>
+            <enumeration value="Volumetric"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="DrawingType">
+        <complexContent>
+            <extension base="mret:InteractableSceneObjectType">
+                <sequence>
+                    <element name="Material" type="common:MaterialType" minOccurs="0" maxOccurs="1"/>
+                    <choice>
+						<group ref="common:ColorTypeGroup" minOccurs="0" maxOccurs="1"/>
+	                    <element name="Gradient" type="common:ColorGradientType" minOccurs="0" maxOccurs="1"/>
+	                </choice>
+                    <element name="Width" type="common:LengthType" minOccurs="0" maxOccurs="1" default="0.0025"/>
+                    <element name="Points" type="common:PointsType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Drawings2dType">
+        <sequence>
+            <element name="Drawing" type="mret:Drawing2dType" minOccurs="1" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="Drawing2dType">
+        <complexContent>
+            <extension base="mret:DrawingType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="Drawings3dType">
+        <sequence>
+            <element name="Drawing" type="mret:Drawing3dType" minOccurs="1" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="Drawing3dType">
+        <complexContent>
+            <extension base="mret:DrawingType">
+                <sequence>
+                    <element name="Type" type="mret:DrawingRender3dType" minOccurs="0" maxOccurs="1" default="Basic"/>
+                    <element name="DisplayMeasurement" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+                    <element name="DisplaySegmentMeasurements" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+                    <element name="Units" type="common:LengthUnitType" minOccurs="0" maxOccurs="1" default="Meter"/>
+					<element name="LengthLimit" type="common:LengthType" minOccurs="0" maxOccurs="1" default="INF"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

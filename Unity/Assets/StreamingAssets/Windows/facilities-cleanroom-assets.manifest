@@ -1,0 +1,126 @@
+ManifestFileVersion: 0
+CRC: 2581633149
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: de2c4c86c6af346a06472508b8408552
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 976e6a435eb4c8cd04d7afc6659d0d60
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Prefabs/Cleanroom.prefab
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  wall.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  wall a.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  ceiling tile.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Textures/cleanroom
+  rollup door.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/toolbox
+  3.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  ceiling lights.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  cell wall a.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  ceiling grid.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/Material
+  #380.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  rollup door orig.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  column a.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/Miscellaneous
+  Acoustic Tile - 2x4 White Pebbled.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  barrier yellow.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  window frame.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  toolbox 1.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  window shade.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  wall end orig.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/toolbox
+  1.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  wall seam.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  crane cables.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  toolbox 2.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/Material
+  #379.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Textures/cleanroom
+  floor normal.jpg
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/smoke
+  pipe.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/cleanroom
+  cell_.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  rollup main.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/No
+  Name.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/unassigned.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  crane.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  cell frame.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/toolbox
+  2.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  toolbox 3.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  acoustic tile.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  floor.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Textures/cleanroom
+  wall filter.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/cleanroom
+  Walla.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  smoke pipe.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  glass.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/Material
+  #505.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  column b.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Materials/cleanroom
+  wall b.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/Black.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Cleanroom.FBX
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Textures/cleanroom
+  wall filter bump.png
+- Assets/Content/Standard_MRET_Content/Content/Facilities/MMS-Cleanroom/Assets/Models/Materials/cleenroom
+  crane.mat
+Dependencies: []

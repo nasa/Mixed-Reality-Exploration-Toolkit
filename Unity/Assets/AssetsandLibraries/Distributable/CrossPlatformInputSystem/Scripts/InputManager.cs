@@ -1,9 +1,9 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem
 {
     /// <remarks>
     /// History:
@@ -23,9 +23,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// </summary>
         public enum InputMode { Desktop, OpenVR }
         /// <summary>
-        /// The mode that MRET will run in.
+        /// The mode that the application will run in.
         /// </summary>
-        [Tooltip("The mode that MRET will run in.")]
+        [Tooltip("The mode that the application will run in.")]
         public InputMode inputMode = InputMode.Desktop;
 
         // TODO: These could instead be set up entirely from script, but I'm punting to do this when
@@ -49,13 +49,13 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         private void Awake()
         {
             instance = this;
-            InitializeRig(true);
+            InitializeRig();
         }
 
         /// <summary>
         /// Used to initialize the rig as specified under inputMode.
         /// </summary>
-        public void InitializeRig(bool avatarActive)
+        public void InitializeRig()
         {
             if (activeRig != null)
             {
@@ -66,12 +66,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             switch (inputMode)
             {
                 case InputMode.OpenVR:
-                    SetUpRig(openVRRigPrefab, avatarActive);
+                    SetUpRig(openVRRigPrefab);
                     break;
 
                 case InputMode.Desktop:
                 default:
-                    SetUpRig(desktopRigPrefab, avatarActive);
+                    SetUpRig(desktopRigPrefab);
                     break;
             }
         }
@@ -92,7 +92,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// Performs instantiation of rig prefab and captures necessary references.
         /// </summary>
         /// <param name="prefab"> Prefab to use for rig. </param>
-        private void SetUpRig(GameObject prefab, bool avatarActive)
+        private void SetUpRig(GameObject prefab)
         {
             // Instantiate the rig prefab.
             GameObject activeRigGO = (GameObject) Instantiate(prefab);
@@ -113,7 +113,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             }
 
             // If the component isn't null, initialize it.
-            activeRig.Initialize(avatarActive, InputHand.ControllerMode.Controller);
+            activeRig.Initialize(InputHand.ControllerMode.Controller);
         }
     }
 }

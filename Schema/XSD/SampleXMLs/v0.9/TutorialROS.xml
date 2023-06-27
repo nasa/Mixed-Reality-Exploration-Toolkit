@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mret:ROSInterface version="0.9"
+    ID="id-terrain0"
+    xmlns:mret="http://www.nasa.gov/MRET"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.nasa.gov/MRET ../../SchemaFiles/v0.9/ROSInterface.xsd">
+
+    <Name>ROSInterfaceTutorial</Name>
+    
+    <!-- Connection -->
+    <Server>ws://192.168.56.101</Server>
+    <Port>9090</Port>
+    
+    <!-- Protocol -->
+    <Protocol>WebSocketDotNET</Protocol>
+    <Serializer>Microsoft</Serializer>
+
+    <!-- Use this field to subscribe to a joint state topic, i.e. "/joint_states" -->
+    <JointStateSubscriberTopic>/joint_states</JointStateSubscriberTopic>
+
+    <!-- Use this field to publish to a joint state topic, i.e. "/joint_states" -->
+    <JointStatePublisherTopic>/joint_states</JointStatePublisherTopic>
+    <RobotDescription format="URD">./robot_description.urdf</RobotDescription>
+    
+</mret:ROSInterface>

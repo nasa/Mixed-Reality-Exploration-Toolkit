@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 2922715913
+CRC: 1264677979
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: a2cdb2b72ffef7d4652cac35553c786b
+    Hash: 4dc94a1c7b9b3171a0c7efc0f4cd94c0
   TypeTreeHash:
     serializedVersion: 2
-    Hash: e8da9544b6fd3d7f102ca43d599162f8
+    Hash: 39044e8362fb278e2ec84a6d80c30fa0
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -27,13 +27,17 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 49
   Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/Z2.obj
-- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_spec_color_s.jpg
-- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_Color_s.jpg
-- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_spec_s.jpg
-- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_normal_s.jpg
-- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_Reflect_s.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/Models/z2_Reflect_s.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/Models/z2_spec_color_s.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/Models/z2_spec_s.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/Models/z2_Color_s.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/Models/z2_normal_s.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/Prefabs/SpaceSuitZ2.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/Models/Z2.obj
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/Models/z2_Bump_s.jpg
 - Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/README.txt
-- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/Z2/z2_Bump_s.jpg
 Dependencies: []

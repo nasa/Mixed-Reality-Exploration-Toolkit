@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.example.org/MRET" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:mt="http://www.example.org/MRET">
+
+    <include schemaLocation=""></include>
+    <complexType name="PartType">
+		<sequence maxOccurs="unbounded" minOccurs="0">
+			<element name="Vendor" type="string" maxOccurs="1"
+				minOccurs="0">
+			</element>
+			<element name="Description" type="string" maxOccurs="1"
+				minOccurs="0">
+			</element>
+			<element name="AssetBundle" type="string"></element>
+			<element name="PartName" type="string"></element>
+			<element name="PartTransform"
+				type="mt:UnityTransformType">
+			</element>
+			<element name="EnableCollisions" type="boolean"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="EnableGravity" type="boolean" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="EnableInteraction" type="boolean"
+				maxOccurs="1" minOccurs="1">
+			</element>
+            <element name="RandomizeTextures" type="boolean" minOccurs="0"></element>
+            <element name="MinMass" type="mt:NonNegativeFloat"
+				maxOccurs="1" minOccurs="0">
+				<annotation>
+					<documentation>Mass of Part in grams</documentation>
+				</annotation>
+			</element>
+			<element name="MaxMass" type="mt:NonNegativeFloat"
+				maxOccurs="1" minOccurs="0">
+			</element>
+			<element name="MassContingency" type="float"></element>
+			<element name="PartType">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="CPU"></enumeration>
+						<enumeration value="Memory"></enumeration>
+						<enumeration value="FPGA"></enumeration>
+						<enumeration value="Processor"></enumeration>
+						<enumeration value="Processor Board"></enumeration>
+						<enumeration value="Microcontroller"></enumeration>
+						<enumeration value="Aerodynamic"></enumeration>
+						<enumeration value="Earth Tracker"></enumeration>
+						<enumeration value="Gyro"></enumeration>
+						<enumeration value="Reaction Wheel"></enumeration>
+						<enumeration value="Magnetorquer"></enumeration>
+						<enumeration value="Star Tracker"></enumeration>
+						<enumeration value="Sun Sensor"></enumeration>
+						<enumeration value="SSDR"></enumeration>
+						<enumeration value="Antenna"></enumeration>
+						<enumeration value="Modem"></enumeration>
+						<enumeration value="Radio"></enumeration>
+						<enumeration value="Transceiver"></enumeration>
+						<enumeration value="Transmitter"></enumeration>
+						<enumeration value="Transponder"></enumeration>
+						<enumeration value="GPS"></enumeration>
+						<enumeration value="De-Orbit"></enumeration>
+						<enumeration value="Battery"></enumeration>
+						<enumeration value="Power Distribution Board"></enumeration>
+						<enumeration value="Solar Cell"></enumeration>
+						<enumeration value="Solar Panel"></enumeration>
+						<enumeration value="Cold Gas"></enumeration>
+						<enumeration value="Electric"></enumeration>
+						<enumeration value="Liquid"></enumeration>
+						<enumeration value="Bus"></enumeration>
+						<enumeration value="Chassis"></enumeration>
+						<enumeration value="Gymbal"></enumeration>
+						<enumeration value="Mechanical Arm"></enumeration>
+						<enumeration value="Phase Change"></enumeration>
+						<enumeration value="GSE"></enumeration>
+						<enumeration value="Test Fixture"></enumeration>
+						<enumeration value="Instrument"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="PartFileName" type="string" maxOccurs="1"
+				minOccurs="0">
+				<annotation>
+					<documentation>Maybe hex binary?</documentation>
+				</annotation>
+			</element>
+			<element name="ChildParts" type="mt:PartsType"></element>
+			<element name="Enclosure" type="mt:PartType" maxOccurs="1"
+				minOccurs="0">
+			</element>
+			<element name="Notes" type="string"></element>
+			<element name="Reference" type="string"></element>
+			<element name="Subsystem" type="string"></element>
+			<element name="IdlePower" type="float"></element>
+			<element name="AveragePower" type="float"></element>
+			<element name="PeakPower" type="float"></element>
+			<element name="PowerContingency" type="float"></element>
+			<element name="RandomizeTexture" type="boolean" minOccurs="0"></element>
+
+		</sequence>
+
+		<attribute name="Name" type="NCName" use="required"></attribute>
+		<attribute name="ID" type="ID" use="required">
+			<annotation>
+				<documentation>Unique Identifier</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="Version" type="string"></attribute>
+	</complexType>
+	
+	<complexType name="PartsType">
+		<sequence maxOccurs="unbounded" minOccurs="0">
+            <element name="Parts" type="mt:PartType" minOccurs="0" maxOccurs="unbounded">
+			</element>
+            <element name="ID" type="int" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="MetaInfoType">
+		<sequence>
+			<element name="Name" type="string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<element name="Value" type="string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<element name="Subcomponent" type="string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<element name="HighlightObject" type="string" minOccurs="0"
+				maxOccurs="unbounded" />
+			<element name="Transform" type="mt:UnityTransformType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<element name="TextBoxOffset" type="mt:UnityTransformType"
+				minOccurs="0" maxOccurs="unbounded" />
+			<element name="XLength" type="float" minOccurs="0"
+				maxOccurs="unbounded" />
+			<element name="YLength" type="float" minOccurs="0"
+				maxOccurs="unbounded" />
+			<element name="ZLength" type="float" minOccurs="0"
+				maxOccurs="unbounded" />
+		</sequence>
+	</complexType>
+	
+	<complexType name="Vector3Type">
+    	<sequence>
+    		<element name="X" type="float" maxOccurs="1"
+    			minOccurs="1">
+    		</element>
+    		<element name="Y" type="float" maxOccurs="1" minOccurs="1"></element>
+    		<element name="Z" type="float" maxOccurs="1" minOccurs="1"></element>
+    	</sequence>
+    </complexType>
+    
+	<complexType name="UnityTransformType">
+		<sequence>
+			<element name="Position" type="mt:Vector3Type"></element>
+			<element name="Rotation" type="mt:QuaternionType"></element>
+			<element name="Scale" type="mt:Vector3Type"></element>
+		</sequence>
+	</complexType>
+	
+	<simpleType name="NonNegativeFloat">
+		<restriction base="float">
+			<minInclusive value="0"></minInclusive>
+		</restriction>
+	</simpleType>
+
+	<complexType name="VirtualEnvironmentType">
+		<sequence>
+			<element name="Label" type="string"></element>
+			<element name="Description" type="string"></element>
+			<element name="AssetBundle" type="string"></element>
+			<element name="Name" type="string"></element>
+			<element name="DefaultUserTransform"
+				type="mt:UnityTransformType">
+			</element>
+			<element name="Skybox">
+				<complexType>
+					<sequence>
+						<element name="AssetBundle" type="string"></element>
+						<element name="MaterialName" type="string"></element>
+					</sequence>
+				</complexType>
+			</element>
+			<element name="ClippingPlanes">
+				<complexType>
+					<sequence>
+						<element name="Near" type="float"></element>
+						<element name="Far" type="float"></element>
+					</sequence>
+				</complexType></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="DrawingType">
+		<sequence>
+			<element name="Name" type="string" maxOccurs="1"
+				minOccurs="1">
+			</element>
+			<element name="RenderType"
+				type="mt:LineDrawingRenderTypeType" maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="DesiredUnits" type="mt:LineDrawingUnitsType"
+				minOccurs="1" maxOccurs="1" />
+			<element name="Points" type="mt:Vector3Type" minOccurs="1"
+				maxOccurs="unbounded" />
+			<element name="Width" type="float" maxOccurs="1"
+				minOccurs="1">
+			</element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="DrawingsType">
+		<sequence maxOccurs="unbounded" minOccurs="0">
+			<element name="Drawings" type="mt:DrawingType" minOccurs="0" maxOccurs="unbounded">
+			</element>
+			<element name="ID" type="int" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<simpleType name="LineDrawingUnitsType">
+		<restriction base="string">
+			<enumeration value="meters"></enumeration>
+			<enumeration value="centimeters"></enumeration>
+			<enumeration value="millimeters"></enumeration>
+			<enumeration value="yards"></enumeration>
+			<enumeration value="feet"></enumeration>
+			<enumeration value="inches"></enumeration>
+		</restriction>
+	</simpleType>
+
+	<simpleType name="LineDrawingRenderTypeType">
+		<restriction base="string"></restriction>
+	</simpleType>
+
+	<complexType name="MonoScript">
+		<sequence>
+			<element name="ClassName" type="string"></element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="LocationType">
+		<sequence>
+			<element name="X" type="float"></element>
+			<element name="Y" type="float"></element>
+			<element name="Z" type="float"></element>
+		</sequence>
+	</complexType>
+	
+	<complexType name="DimensionType">
+		<sequence>
+			<element name="Depth" type="mt:NonNegativeFloat"></element>
+			<element name="Height" type="mt:NonNegativeFloat"></element>
+			<element name="Width" type="mt:NonNegativeFloat"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="PartOptionsType">
+		<sequence>
+			<element name="Physics" type="boolean" minOccurs="1" maxOccurs="1"></element>
+			<element name="Gravity" type="boolean" minOccurs="1" maxOccurs="1"></element>
+			<element name="Metadata" type="boolean" minOccurs="1" maxOccurs="1"></element>
+			<element name="Visibility" type="boolean" minOccurs="1" maxOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="DualAxisRotatableObjectType">
+		<sequence>
+			<element name="ParentName" type="string" minOccurs="1" maxOccurs="1">
+			</element>
+            <element name="Transform" type="mt:UnityTransformType" minOccurs="1" maxOccurs="1"></element>
+            <element name="ObjectName" type="string" minOccurs="1" maxOccurs="1">
+			</element>
+			<element name="HorizontalControlledObjectName" type="string"
+				minOccurs="1" maxOccurs="1">
+			</element>
+			<element name="VerticalControlledObjectName" type="string"
+				minOccurs="1" maxOccurs="1">
+			</element>
+			<element name="HorizontalObjectAxis" minOccurs="1"
+				maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="X"></enumeration>
+						<enumeration value="Y"></enumeration>
+						<enumeration value="Z"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="VerticalObjectaxis" minOccurs="1"
+				maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="X"></enumeration>
+						<enumeration value="Y"></enumeration>
+						<enumeration value="Z"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="MinX" type="float" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="MaxX" type="float" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="MinY" type="float" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="MaxY" type="float" minOccurs="1"
+				maxOccurs="1">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="NoteType">
+		<sequence>
+			<element name="ParentName" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="Transform" type="mt:UnityTransformType"
+				minOccurs="1" maxOccurs="1">
+			</element>
+			<element name="State" minOccurs="1" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="Minimized"></enumeration>
+						<enumeration value="Maximized"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="Title" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="Details" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="Drawings" type="mt:NoteDrawingsType"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="VideoSourceType">
+		<sequence>
+			<element name="ParentName" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="Title" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="Type" minOccurs="1" maxOccurs="1">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="virtualFeed"></enumeration>
+						<enumeration value="externalFeed"></enumeration>
+						<enumeration value="dataFeed"></enumeration>
+						<enumeration value="htmlFeed"></enumeration>
+						<enumeration value="spriteFeed"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="Transform" type="mt:UnityTransformType"
+				minOccurs="1" maxOccurs="1">
+			</element>
+			<element name="SourceLink" type="string"></element>
+			<element name="SpriteType">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="Toggle"></enumeration>
+						<enumeration value="Number"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="SpriteData" type="string"></element>
+			<element name="Image" type="string"></element>
+			<element name="Value" type="string"></element>
+			<element name="Standby" type="string"></element>
+			<element name="Alert" type="string"></element>
+
+			<element name="Time" type="long"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="GMSECSourceType">
+		<sequence>
+			<element name="ConnectionType" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="Server" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+			<element name="Subject" type="string" minOccurs="1" maxOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="GMSECSourcesType">
+		<sequence>
+			<element name="GMSECSources" type="mt:GMSECSourceType" minOccurs="0" maxOccurs="unbounded"></element>
+			<element name="ID" type="int" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="NotesType">
+		<sequence>
+			<element name="Notes" type="mt:NoteType" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+			<element name="ID" type="int" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="QuaternionType">
+		<sequence>
+			<element name="X" type="float"></element>
+			<element name="Y" type="float"></element>
+			<element name="Z" type="float"></element>
+			<element name="W" type="float"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="MatlabConnectionType">
+		<sequence>
+			<element name="host" type="string"></element>
+			<element name="port" type="int"></element>
+			<element name="send" type="boolean"></element>
+			<element name="receive" type="boolean"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="TextListType">
+		<sequence>
+			<element name="Texts" type="string" minOccurs="0" maxOccurs="unbounded"></element>
+			<element name="ID" type="int" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="NoteDrawingType">
+		<sequence>
+			<element name="Points" type="mt:Vector3Type" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+			<element name="ID" type="int"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="NoteDrawingsType">
+		<sequence>
+			<element name="NoteDrawings" type="mt:NoteDrawingType"
+				minOccurs="0" maxOccurs="unbounded">
+			</element>
+			<element name="ID" type="int" maxOccurs="unbounded" minOccurs="0"></element>
+		</sequence>
+	</complexType>
+
+
+	<complexType name="HUDType">
+		<sequence>
+
+
+			<element name="Display" type="mt:DisplayType" minOccurs="0" maxOccurs="unbounded"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="DisplayType">
+		<sequence>
+			<element name="Transform" type="mt:UnityTransformType"></element>
+			<element name="Type">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="Mini"></enumeration>
+						<enumeration value="World"></enumeration>
+						<enumeration value="HUD"></enumeration>
+					</restriction>
+				</simpleType>
+			</element>
+			<element name="DisplayNumber" type="int"></element>
+			<element name="FeedSource" type="mt:VideoSourceType"></element>
+			<element name="Width" type="float"></element>
+			<element name="Height" type="float"></element>
+		</sequence>
+	</complexType>
+
+	<complexType name="TelemetryTransformType">
+		<sequence>
+			<element name="ControlledAttribute" type="mt:TelemetryTransformAttributeType"></element>
+			<element name="XPointInfo" type="mt:TelemetryTransformPointType"></element>
+			<element name="YPointInfo" type="mt:TelemetryTransformPointType"></element>
+			<element name="ZPointInfo" type="mt:TelemetryTransformPointType"></element>
+			<element name="WPointInfo" type="mt:TelemetryTransformPointType"></element>
+			<element name="Radians" type="boolean"></element>
+			<element name="Quaternions" type="boolean"></element>
+			<element name="Frequency" type="int"></element>
+		</sequence>
+	</complexType>
+
+	<simpleType name="TelemetryTransformAttributeType">
+		<restriction base="string">
+			<enumeration value="None"></enumeration>
+			<enumeration value="GlobalPosition"></enumeration>
+			<enumeration value="LocalPosition"></enumeration>
+			<enumeration value="GlobalRotation"></enumeration>
+			<enumeration value="LocalRotation"></enumeration>
+			<enumeration value="Scale"></enumeration>
+		</restriction>
+	</simpleType>
+
+	<complexType name="TelemetryTransformPointType">
+		<sequence>
+			<element name="Name" type="string"></element>
+			<element name="UseValue" type="boolean"></element>
+			<element name="Invert" type="boolean"></element>
+			<element name="Offset" type="float"></element>
+		</sequence>
+	</complexType>
+</schema>

@@ -1,0 +1,34 @@
+ManifestFileVersion: 0
+CRC: 176589609
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 29f2c6e66ffb0fdccc2fda35e951a3d1
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 939e20ecac0e95a3f7c5cfb3e57acb1d
+HashAppended: 0
+ClassTypes:
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars001.png
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars003.png
+- Assets/AssetsandLibraries/Non-Distributable/SkyBox Volume 2/Stars01/StarSkyBox.mat
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars002.png
+- Assets/AssetsandLibraries/Non-Distributable/SkyBox Volume 2/Stars01/frontImage.png
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/skyboxv1_starsonly.mat
+- Assets/AssetsandLibraries/Non-Distributable/SkyBox Volume 2/Stars01/downImage.png
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars005.png
+- Assets/AssetsandLibraries/Non-Distributable/SkyBox Volume 2/Stars01/rightImage.png
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars004.png
+- Assets/AssetsandLibraries/Non-Distributable/SkyBox Volume 2/Stars01/backImage.png
+- Assets/AssetsandLibraries/Non-Distributable/skyboxv1_stars_only/stars006.png
+- Assets/AssetsandLibraries/Non-Distributable/SkyBox Volume 2/Stars01/upImage.png
+- Assets/AssetsandLibraries/Non-Distributable/SkyBox Volume 2/Stars01/leftImage.png
+Dependencies: []

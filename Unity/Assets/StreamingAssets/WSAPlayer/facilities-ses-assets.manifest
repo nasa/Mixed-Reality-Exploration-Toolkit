@@ -1,0 +1,92 @@
+ManifestFileVersion: 0
+CRC: 3990448218
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 92c2221eff08c52b2787af9d9f665a63
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 6893d17f7a813c37f4f7b51abc5be221
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #e40046ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #767ea8ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #f57599ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #8a5b29ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #000000ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #c0ffffff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #db4405ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #a59e96ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #ec85d1ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #c1e188ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #f89fc9ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #e35dc0ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #6e79bcff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #008554ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #cad1eeff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #828dc7ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #875400ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #404040ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #43489cff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #0071ceff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #b0b6ceff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #ffffffff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #c0c0c0ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #2a2c64ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/ses_chamber_v2.fbx
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #b1a284ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #ce0e69ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #24d07bff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #808080ff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #f2c12dff.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-default.mat
+- Assets/Content/Standard_MRET_Content/Content/Facilities/SpaceEnvironmentSimulator/Assets/Models/Materials/ses_chamber_v2-Color
+  #d67262ff.mat
+Dependencies: []

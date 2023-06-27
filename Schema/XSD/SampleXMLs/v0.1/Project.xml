@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Project
+    xmlns="http://www.example.org/MRET"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+	xsi:schemaLocation="http://www.example.org/MRET ../../SchemaFiles/v0.1/Project.xsd">
+	
+</Project>

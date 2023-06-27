@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<mret:TimeSimulation version="0.9"
+    xmlns:mret="http://www.nasa.gov/MRET"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xsi:schemaLocation="http://www.nasa.gov/MRET ../../SchemaFiles/v0.9/TimeSimulation.xsd">
+
+	<Name>Apollo15Eva1</Name>
+	<Description>Apollo 15 EVA 1</Description>
+	<StartTime>
+		<TimeString>1971-07-31T13:13:10</TimeString>
+	</StartTime>
+	<UpdateRate>1.0</UpdateRate>
+	<Paused>true</Paused>
+
+</mret:TimeSimulation>

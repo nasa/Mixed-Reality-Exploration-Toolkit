@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+
+    <simpleType name="RandomizeDistributionFunctionType">
+        <restriction base="string">
+            <enumeration value="Linear"/>
+            <enumeration value="Normal"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="RandomizeType">
+		<annotation>
+			<documentation>Defines a randomization</documentation>
+		</annotation>
+        <complexContent>
+            <extension base="common:VersionedType">
+				<sequence>
+					<element name="RandomSeed" type="int" minOccurs="0">
+						<annotation>
+							<documentation>If present, used as the random number seed for the rotation range</documentation>
+						</annotation>
+					</element>
+				</sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="RandomizeTransformType">
+        <annotation>
+            <documentation>Defines a transform randomization</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="mret:RandomizeType">
+                <sequence>
+                    <element name="RandomizeX" type="boolean" minOccurs="0">
+                        <annotation>
+                            <documentation>Indicates whether the X axis of the transform is randomized</documentation>
+                        </annotation>
+                    </element>
+                    <element name="RandomizeY" type="boolean" minOccurs="0">
+                        <annotation>
+                            <documentation>Indicates whether the Y axis of the transform is randomized</documentation>
+                        </annotation>
+                    </element>
+                    <element name="RandomizeZ" type="boolean" minOccurs="0">
+                        <annotation>
+                            <documentation>Indicates whether the Z axis of the transform is randomized</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="RandomizePositionType">
+        <annotation>
+            <documentation>Defines a position randomization</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="mret:RandomizeTransformType">
+                <sequence>
+                    <element name="DistributionType" type="mret:RandomizeDistributionFunctionType" minOccurs="0">
+                        <annotation>
+                            <documentation>Indicates the distribution function used to position the generated objects</documentation>
+                        </annotation>
+                    </element>
+                    <choice minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Defines the position distribution based upon the DistributionType</documentation>
+                        </annotation>
+                        <sequence minOccurs="1" maxOccurs="1">
+                            <annotation>
+                                <documentation>Used when DistributionType is "Linear". Defines a linear distribution of objects around the Transform of the attached object.</documentation>
+                            </annotation>
+                            <element name="PositionMin" type="common:Vector3Type"  minOccurs="1" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Minimum position values (Inclusive)</documentation>
+                                </annotation>
+                            </element>
+                            <element name="PositionMax" type="common:Vector3Type"  minOccurs="1" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Maximum position values (Inclusive)</documentation>
+                                </annotation>
+                            </element>
+                        </sequence>
+                        <sequence minOccurs="1" maxOccurs="1">
+                            <annotation>
+                                <documentation>Used when SpreadType is "Normal". Defines a normalized distribution of objects around the Transform of this generator. The spread is defined as [μ, σ²].</documentation>
+                            </annotation>
+                            <element name="PositionMean" type="common:Vector3Type" minOccurs="1" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Mean of the object spread on each axis. This controls the position of the normal distribution curve on the axis.</documentation>
+                                </annotation>
+                            </element>
+                            <element name="PositionStandardDeviation" type="common:NonNegativeFloat3Type" minOccurs="1" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Standard deviation of the object spread. This controls the width of the normal distribution curve on the axis. Smaller values are narrower curves.</documentation>
+                                </annotation>
+                            </element>
+                        </sequence>
+                    </choice>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="RandomizeRotationType">
+        <annotation>
+            <documentation>Defines a rotation randomization</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="mret:RandomizeTransformType">
+                <sequence>
+                    <element name="RotationMin" type="common:Degree3Type" minOccurs="0">
+                        <annotation>
+                            <documentation>Minimum rotation angle in degrees on each axis (Inclusive)</documentation>
+                        </annotation>
+                    </element>
+                    <element name="RotationMax" type="common:Degree3Type" minOccurs="0">
+                        <annotation>
+                            <documentation>Maximum rotation angle in degrees on each axis (Inclusive)</documentation>
+                        </annotation>
+                    </element>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="RandomizeScaleType">
+        <annotation>
+            <documentation>Defines a scale randomization</documentation>
+        </annotation>
+        <complexContent>
+            <extension base="mret:RandomizeTransformType">
+                <sequence>
+                    <element name="MaintainAxialRatio" type="boolean" minOccurs="0">
+                        <annotation>
+                            <documentation>Indicates whether the the axial ratio should be maintained when scale is randomized</documentation>
+                        </annotation>
+                    </element>
+                    <choice minOccurs="0" maxOccurs="1">
+                        <annotation>
+                            <documentation>Defines the scale range based upon the value of MaintainAxialRatio</documentation>
+                        </annotation>
+                        <sequence minOccurs="1" maxOccurs="1">
+                            <annotation>
+                                <documentation>Scale settings when MaintainAxialRatio is enabled. RandomizeX, Y and Z are ignored.</documentation>
+                            </annotation>
+                            <element name="MaintainAxialRatioScaleMin" type="common:NonNegativeFloat" minOccurs="1" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Minimum scale for an object on each axis (Inclusive)</documentation>
+                                </annotation>
+                            </element>
+                            <element name="MaintainAxialRatioScaleMax" type="common:NonNegativeFloat" minOccurs="1" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Maximum scale for an object on each axis (Inclusive)</documentation>
+                                </annotation>
+                            </element>
+                        </sequence>
+                        <sequence minOccurs="1" maxOccurs="1">
+                            <annotation>
+                                <documentation>Scale settings when MaintainAxialRatio is disabled. RandomizeX, Y and Z are used.</documentation>
+                            </annotation>
+                            <element name="ScaleMin" type="common:NonNegativeFloat3Type" minOccurs="1" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Minimum scale for an object on each axis (Inclusive)</documentation>
+                                </annotation>
+                            </element>
+                            <element name="ScaleMax" type="common:NonNegativeFloat3Type" minOccurs="1" maxOccurs="1">
+                                <annotation>
+                                    <documentation>Maximum scale for an object on each axis (Inclusive)</documentation>
+                                </annotation>
+                             </element>
+                        </sequence>
+                    </choice>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

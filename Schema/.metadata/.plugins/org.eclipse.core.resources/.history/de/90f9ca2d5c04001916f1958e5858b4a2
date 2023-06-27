@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.example.org/MRET" elementFormDefault="qualified" xmlns:mt="http://www.example.org/Configuration" xmlns:Q1="http://www.example.org/MRET">
+
+	<complexType name="ConfigurationType">
+		<sequence>
+			<element name="AssetsPath" type="string" minOccurs="1"
+				maxOccurs="1" />
+			<element name="EnvironmentsPath" type="string" minOccurs="1"
+				maxOccurs="1" />
+			<element name="AssetBundlesPath" type="string" minOccurs="1"
+				maxOccurs="1" />
+			<element name="FBXPath" type="string" minOccurs="1"
+				maxOccurs="1" />
+			<element name="ProjectsPath" type="string" minOccurs="1"
+				maxOccurs="1" />
+			<element name="TemplatesPath" type="string" minOccurs="1"
+				maxOccurs="1">
+			</element>
+
+			<element name="HudPath" type="string" minOccurs="1" maxOccurs="1"></element>
+		</sequence>
+	</complexType>
+
+    <element name="Configuration" type="Q1:ConfigurationType"></element>
+</schema>

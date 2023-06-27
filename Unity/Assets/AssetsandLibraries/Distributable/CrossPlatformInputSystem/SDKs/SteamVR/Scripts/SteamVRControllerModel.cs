@@ -1,28 +1,32 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
+#if MRET_EXTENSION_OBJIMPORTER
 using Dummiesman;
+#endif
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK
 {
     /// <remarks>
     /// History:
     /// 27 October 2020: Created
-    /// 9 September 2021: Supporting fix to previously invalid JSON syntax in SteamVR.
+    /// 9 September 2021: Supporting fix to previously invalid JSON syntax in SteamVR
+    /// 20 October 2021: Supporting non-default SteamVR installs, courtesy of Kaur Kullman, UMBC
     /// </remarks>
     /// <summary>
     /// Loads controller models from SteamVR render model folder.
     /// Author: Dylan Z. Baker
     /// </summary>
-    public class SteamVRControllerModel : MonoBehaviour
+    public class SteamVRControllerModel : MonoBehaviour, IControllerModel
     {
-        #region JSON
+#region JSON
         private class SteamVRControllerModelInfo
         {
             public class SteamVRControllerModelComponentLocal
@@ -73,12 +77,19 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
         }
         #endregion
 
+        /// <seealso cref="IControllerModel.Initialize(InputHand)"/>
+        public void Initialize(InputHand hand)
+        {
+            StartCoroutine(ReadJSON());
+        }
+
         /// <summary>
         /// Name of the controller.
         /// </summary>
         [Tooltip("Name of the controller.")]
         public string controllerName;
 
+        /*
         int numWaited = 0;
         void Update()
         {
@@ -90,33 +101,27 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
                 }
             }
         }
+        */
 
         /// <summary>
         /// Read the controller model from JSON and load it.
         /// </summary>
-        private void ReadJSON()
+        private IEnumerator ReadJSON()
         {
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {   // Windows.
-                string x86Path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
-                if (string.IsNullOrEmpty(x86Path))
-                {
-                    Debug.LogError("[SteamVRControllerModel->ReadJSON] Unable to find x86 path.");
-                    return;
-                }
-
-                string steamVRPath = Path.Combine(x86Path, "Steam/steamapps/common/SteamVR");
+                string steamVRPath = GetSteamVRPath();
                 if (!Directory.Exists(steamVRPath))
                 {
                     Debug.LogError("[SteamVRControllerModel->ReadJSON] Unable to find SteamVR path.");
-                    return;
+                    yield break;
                 }
 
                 string jsonPath = Path.Combine(steamVRPath, "resources/rendermodels/" + controllerName + "/" + controllerName + ".json");
                 if (!File.Exists(jsonPath))
                 {
-                    Debug.LogError("[SteamVRControllerModel->ReadJSON] Unable to find JSON path.");
-                    return;
+                    Debug.LogError("[SteamVRControllerModel->ReadJSON] Unable to find JSON path: " + jsonPath);
+                    yield break;
                 }
 
                 string rawJSON = File.ReadAllText(jsonPath);
@@ -124,19 +129,61 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
                 {
                     SetUpControllerModel(JsonConvert.DeserializeObject<SteamVRControllerModelInfo>(rawJSON));
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
-                    Debug.Log("[SteamVRControllerModel->ReadJSON] Failed to deserialize raw JSON file, attempting to correct.");
+                    Debug.Log("[SteamVRControllerModel->ReadJSON] Failed to deserialize raw JSON file, attempting to correct: " + e.Message);
                     try
                     {
                         SetUpControllerModel(JsonConvert.DeserializeObject<SteamVRControllerModelInfo>(rawJSON.Remove(rawJSON.LastIndexOf("}"), 1)));
                     }
-                    catch (Exception e)
+                    catch (Exception e1)
                     {
-                        Debug.LogError("[SteamVRControllerModel->ReadJSON] Failed to deserialize raw JSON file: " + e.ToString());
+                        Debug.LogError("[SteamVRControllerModel->ReadJSON] Failed to deserialize raw JSON file \'" + jsonPath + "\': " + e1.Message);
                     }
                 }
             }
+
+            yield return null;
+        }
+
+        /// <summary>
+        /// Find SteamVR path from registry.
+        /// </summary>
+        /// <returns>A path to SteamVR's registry entry, or NaN.</returns>
+        private string GetSteamVRPath()
+        {
+            string steamingPath = "NaN";
+            if (Environment.Is64BitOperatingSystem)
+            {
+                steamingPath = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Valve\\Steam", "InstallPath", "NaN").ToString();
+            }
+            else
+            {
+                steamingPath = Microsoft.Win32.Registry.GetValue("HKEY_LOCAL_MACHINE\\SOFTWARE\\Valve\\Steam", "InstallPath", "NaN").ToString();
+            }
+
+            //string x86Path = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+            if (string.IsNullOrEmpty(steamingPath))
+            {
+                Debug.LogError("[SteamVRControllerModel->GetSteamVRPath] Unable to find path to Steam: " + steamingPath);
+                return null;
+            }
+
+            string steamVRPath = Path.Combine(steamingPath, "steamapps\\common\\SteamVR");
+            if (!Directory.Exists(steamVRPath))
+            {
+                steamVRPath = Microsoft.Win32.Registry.GetValue("HKEY_CURRENT_USER\\SOFTWARE\\Classes\\steamvr\\Shell\\Open\\Command", "(Default)", "NaN").ToString();
+                if (steamVRPath.Contains("bin"))
+                {
+                    steamVRPath = steamVRPath.Substring(0, steamVRPath.IndexOf("bin"));
+                }
+            }
+            if (!Directory.Exists(steamVRPath))
+            {
+                Debug.LogError("[SteamVRControllerModel->GetSteamVRPath] Unable to find SteamVR path: " + steamVRPath + "(" + steamingPath + ")");
+                return null;
+            }
+            return steamVRPath;
         }
 
         /// <summary>
@@ -162,6 +209,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
                     continue;
                 }
 
+                Debug.Log("Loading controller model \'" + controllerName + "\' from component: " + componentInfo.Value.filename);
                 GameObject component = LoadModel(controllerName, componentInfo.Value.filename, componentInfo.Value.filename.Replace(".obj", ".mtl"));
                 if (component != null)
                 {
@@ -174,6 +222,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
                         component.SetActive(componentInfo.Value.visibility.def);
                     }
                     continue;
+                }
+                else
+                {
+                    Debug.LogWarning("Controller model \'" + controllerName + "\' component \'" + componentInfo.Value.filename + "\' failed to load.");
                 }
             }
         }
@@ -216,10 +268,14 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK
                     Debug.LogError("[SteamVRControllerModel->LoadModel] Unable to find material path.");
                 }
 
+#if MRET_EXTENSION_OBJIMPORTER
                 return new OBJLoader().Load(modelPath, materialPath);
+#endif
             }
 
             return null;
         }
+
     }
+
 }

@@ -1,0 +1,66 @@
+ManifestFileVersion: 0
+CRC: 1589537266
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 00c79f1e62e922324839d78180b7b39c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: fe4c5eba335243893d0599fde2ba6b78
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 104
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7a70c881415690c418f87514fe62ae5f, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a7503af7db833c840a891458c125d4e9, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 122
+  Script: {instanceID: 0}
+- Class: 157
+  Script: {instanceID: 0}
+- Class: 196
+  Script: {instanceID: 0}
+- Class: 215
+  Script: {instanceID: 0}
+- Class: 258
+  Script: {instanceID: 0}
+- Class: 850595691
+  Script: {instanceID: 0}
+- Class: 1183024399
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/L2.unity
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/LowEarthOrbit.unity
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/NewLowEarthOrbit.unity
+Dependencies:
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/ARM64/earth-assets7
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/ARM64/lunar-assets
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/ARM64/sun-assets

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.example.org/MRET"
+	elementFormDefault="qualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:mt="http://www.example.org/MRET">
+
+	<include schemaLocation="Common.xsd"/>
+	
+	<complexType name="AudioRecording">
+		<sequence>
+			<element name="AudioFile" type="string"/>
+			<element name="StartTime" type="float"/>
+			<element name="Duration" type="float"/>
+			<element name="Speed" type="float"/>
+			<element name="Loop" type="boolean"/>
+			<element name="AttachTo" type="string"/>
+		</sequence>
+		<attribute name="Version" type="string"/>
+	</complexType>
+
+	<element name="AudioRecording" type="mt:AudioRecording"/>
+</schema>

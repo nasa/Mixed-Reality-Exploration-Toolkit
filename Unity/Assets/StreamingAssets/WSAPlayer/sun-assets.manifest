@@ -1,0 +1,54 @@
+ManifestFileVersion: 0
+CRC: 733438556
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 6d6b4576e47c0cf9d6491472792751a3
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 96c24d8587bc437ec9d1628c9fe18448
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: a7503af7db833c840a891458c125d4e9, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 48a79b01ea5641d4aa6daa2e23605641, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 8e6292b2c06870d4495f009f912b9600, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Unity.Postprocessing.Runtime
+  ClassName: UnityEngine.Rendering.PostProcessing.BoolParameter
+- AssemblyName: Unity.Postprocessing.Runtime
+  ClassName: UnityEngine.Rendering.PostProcessing.ColorParameter
+- AssemblyName: Unity.Postprocessing.Runtime
+  ClassName: UnityEngine.Rendering.PostProcessing.FloatParameter
+- AssemblyName: Unity.Postprocessing.Runtime
+  ClassName: UnityEngine.Rendering.PostProcessing.TextureParameter
+Assets:
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Sun/Prefabs/Sun.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Sun/Textures/sun_2k.jpg
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Sun/Materials/Sun.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Sun/Materials/SunGlowProfile.asset
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Sun/Materials/Sun2.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Sun/Materials/Sun1.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/CelestialBodies/Sun/Materials/Sun3.mat
+Dependencies:
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/WSAPlayer/apollo-assets

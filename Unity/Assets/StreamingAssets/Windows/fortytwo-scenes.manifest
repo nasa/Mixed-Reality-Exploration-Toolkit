@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1732012591
+CRC: 557960675
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 68159760f1576d00a494ddbcb4e90d51
+    Hash: e49fa5dc9520df441d6c2004ca10b62a
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 714503e29904dc8e97efd87ad0cc04f5
+    Hash: 89292285013e535ab345aa0b345bc2cf
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -33,72 +33,67 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 81
   Script: {instanceID: 0}
-- Class: 89
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
   Script: {instanceID: 0}
 - Class: 104
   Script: {instanceID: 0}
 - Class: 108
   Script: {instanceID: 0}
 - Class: 114
-  Script: {fileID: 11500000, guid: 564af751c424aea45ac287297593500f, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 11b6f9a17d9088f43be1b95bc83a921d, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 32248b83c1df19f4a8ef144e9268390f, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: fe9ab0048cd94b943a2d4fa60840f044, type: 3}
-- Class: 114
   Script: {fileID: 11500000, guid: ef4b4f75256830e4693ce65f057f3c61, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: d39812e5cc73106449090ab1089b86ca, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 10c43c465da7a764da14710f5aab0faf, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 6d1e75373db5b1d428be95221a3b0cfb, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: a729f957cb5818a4680f22b3b28e8739, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: 00d4bc3a0f31de045984cd433f5e7b74, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: fed46f3ab1775f74a942022521db61f2, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: b0b4412b05e9ee8438ed6365216ca88e, type: 3}
-- Class: 114
   Script: {fileID: 11500000, guid: 0492553b657de3148b70cd94f70338e7, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: f96e039bd3fdfd943a7017f487d7d193, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: e5a1988c018d20e4d80940aaf92c82fe, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 55b4670d0011abb489bfbd42c565be1c, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: bf54e68d8f2eef74fa13ac7f23c099ae, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 62df38ed073a74d4c92c28035436bf01, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 1925a50e3e6d8ca429b774766bc65673, type: 3}
-- Class: 114
-  Script: {fileID: 11500000, guid: 3ca5e43e5d05802488ad43c1984602d2, type: 3}
 - Class: 114
   Script: {fileID: 11500000, guid: d93d585e0b8b5ad4884863fc498981be, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: 4eed404fcb68ec440840f85577ba443c, type: 3}
+  Script: {fileID: 11500000, guid: 7a70c881415690c418f87514fe62ae5f, type: 3}
 - Class: 114
-  Script: {fileID: 11500000, guid: fa0b8cbffa0282c4ca7586ca6a16d5dc, type: 3}
+  Script: {fileID: 11500000, guid: 564af751c424aea45ac287297593500f, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 1925a50e3e6d8ca429b774766bc65673, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fed46f3ab1775f74a942022521db61f2, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a7503af7db833c840a891458c125d4e9, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b0b4412b05e9ee8438ed6365216ca88e, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: e5a1988c018d20e4d80940aaf92c82fe, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: bf54e68d8f2eef74fa13ac7f23c099ae, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 10c43c465da7a764da14710f5aab0faf, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a729f957cb5818a4680f22b3b28e8739, type: 3}
 - Class: 115
   Script: {instanceID: 0}
-- Class: 121
+- Class: 122
   Script: {instanceID: 0}
 - Class: 135
   Script: {instanceID: 0}
 - Class: 157
   Script: {instanceID: 0}
+- Class: 196
+  Script: {instanceID: 0}
 - Class: 258
   Script: {instanceID: 0}
+- Class: 850595691
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/AssetBundleContent/Non-ITAREAR/42/42LEO/42Demo.unity
-- Assets/AssetBundleContent/Non-ITAREAR/42/42LEO/42LowEarthOrbit.unity
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/42Demo.unity
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/42Sim.unity
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/42LowEarthOrbit.unity
 Dependencies:
-- C:/Users/dzbaker/Documents/Unity Projects/MRET/VR_TestProj/MixedRealityEngineeringToolkit/AssetBundles/Windows/apollo-assets
-- C:/Users/dzbaker/Documents/Unity Projects/MRET/VR_TestProj/MixedRealityEngineeringToolkit/AssetBundles/Windows/fortytwo-assets
-- C:/Users/dzbaker/Documents/Unity Projects/MRET/VR_TestProj/MixedRealityEngineeringToolkit/AssetBundles/Windows/earth-assets1
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/apollo-assets
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/apollo-assets-deprecated
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/ds1-assets
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/earth-assets7
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/fortytwo-assets
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/sun-assets

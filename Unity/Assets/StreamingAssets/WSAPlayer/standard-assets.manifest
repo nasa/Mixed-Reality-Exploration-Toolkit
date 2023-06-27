@@ -1,0 +1,191 @@
+ManifestFileVersion: 0
+CRC: 3829165098
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: db6a322f28a27d747c7c5a5196948cd2
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 5f5cc62a64690a0fd4f185ab8df9b239
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 83
+  Script: {instanceID: 0}
+- Class: 84
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b15b3dc4cc93ec54c945bfc854961c68, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 134
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+- Class: 241
+  Script: {instanceID: 0}
+- Class: 243
+  Script: {instanceID: 0}
+- Class: 245
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.FaceInfo_Legacy
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.FontAssetCreationSettings
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.KerningTable
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_Character
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_FontFeatureTable
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_FontWeightPair
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_GlyphAdjustmentRecord
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_GlyphPairAdjustmentRecord
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.TMP_GlyphValueRecord
+- AssemblyName: Unity.TextMeshPro
+  ClassName: TMPro.VertexGradient
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.PersistentCallGroup
+- AssemblyName: UnityEngine.TextCoreModule
+  ClassName: UnityEngine.TextCore.FaceInfo
+- AssemblyName: UnityEngine.TextCoreModule
+  ClassName: UnityEngine.TextCore.Glyph
+- AssemblyName: UnityEngine.TextCoreModule
+  ClassName: UnityEngine.TextCore.GlyphMetrics
+- AssemblyName: UnityEngine.TextCoreModule
+  ClassName: UnityEngine.TextCore.GlyphRect
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
+Assets:
+- Assets/Content/Standard_MRET_Content/Content/Tools/Models/Wiha_ESD_Screwdriver.obj
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/YellowMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/DarkMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/Red.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/Black.mat
+- Assets/Content/Standard_MRET_Content/Content/Tools/Models/hammer.fbx
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/RedMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/DarkGreen.mat
+- Assets/Content/Standard_MRET_Content/Content/Tools/Materials/ratchet.mat
+- Assets/Content/Standard_MRET_Content/Content/Tools/Prefabs/wrench.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Prefabs/Table.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Textures/defaultMat_DetailMap.png
+- Assets/Content/Standard_MRET_Content/Content/General/Animations/Close.anim
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/BlueMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/Green.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/DarkRed.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Images/NASALogo.png
+- Assets/Content/Standard_MRET_Content/Content/General/Models/Cameras/CCTV_Camera.FBX
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/LightBlue.mat
+- Assets/Content/Standard_MRET_Content/Content/SampleAssembly/Prefabs/Part4.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/DarkRedMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/VioletMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Prefabs/AmericanFlag.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Prefabs/WifiCamera.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Models/WorkTable/Materials/worktable
+  orig.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Models/WorkTable/Materials/No
+  Name.mat
+- Assets/MRET/Components/SceneObjects/Marker/Prefabs/Flag.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Images/gray.png
+- Assets/Content/Standard_MRET_Content/Content/Tools/Materials/A5F2EBC5F18A1BB6B010C282BFA1F03044E5AB3E___B8A4396250C5687B1D31E70758B30729E1AC4426Mat.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Audio/Sources/FanNoise-02.wav
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/Gold.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Animations/Open.anim
+- Assets/Content/Standard_MRET_Content/Content/Tools/Models/RunningTorqueWrench.obj
+- Assets/Content/Standard_MRET_Content/Content/General/Models/Flags/american-flag.fbx
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/defaultMat.mat
+- Assets/MRET/Components/SceneObjects/Assets/Physics/InteractablePart.physicMaterial
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/ShinyMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/Yellow.mat
+- Assets/Content/Standard_MRET_Content/Content/Tools/Materials/D8443D5C1412ED59269A27D28DC9355FC290D33B___B8A4396250C5687B1D31E70758B30729E1AC4426Mat.mat
+- Assets/Content/Standard_MRET_Content/Content/Tools/Prefabs/hammer.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/GreenMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Audio/Sources/InstrumentAttach2.wav
+- Assets/Content/Standard_MRET_Content/Content/General/Audio/Sources/InstrumentDetach2.wav
+- Assets/Content/Standard_MRET_Content/Content/General/Audio/Mixers/Main Mixer.mixer
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/Violet.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Prefabs/ComputerMonitor.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Images/NASA-Logo-Large.png
+- Assets/Content/Standard_MRET_Content/Content/SampleAssembly/Prefabs/Enclosure.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Textures/MonitorTexture.renderTexture
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/DarkBlueMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/Tools/Materials/Wiha_ESD_Screwdriver.mat
+- Assets/Content/Standard_MRET_Content/Content/Tools/Materials/wrench.mat
+- Assets/Content/Standard_MRET_Content/Content/Tools/Prefabs/TorqueWrench.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Animations/DoorHolder.controller
+- Assets/Content/Standard_MRET_Content/Content/Tools/Prefabs/ratchet.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/GoldMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/Gray.mat
+- Assets/Content/Standard_MRET_Content/Content/Tools/Materials/C538787FB6C957ABBAD1CB8D3E045566EB166ED5___B8A4396250C5687B1D31E70758B30729E1AC4426Mat.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Models/WorkTable/WorkTable.FBX
+- Assets/Content/Standard_MRET_Content/Content/General/Audio/Sources/DeepHum-01.wav
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/LightBlueMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Audio/Mixers/Room Noise.mixer
+- Assets/Content/Standard_MRET_Content/Content/SampleAssembly/Prefabs/Part2.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Prefabs/WorkTable.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Audio/Mixers/Sound Effects.mixer
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/DarkBlue.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/Blue.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Models/Cameras/wifi_camera.FBX
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/DarkGreenMetal.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Textures/basic-steel_DetailMap.png
+- Assets/Content/Standard_MRET_Content/Content/SampleAssembly/Prefabs/Part1.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/Chrome.mat
+- Assets/Content/Standard_MRET_Content/Content/Tools/Prefabs/Wiha_ESD_TorqueWrench.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Prefabs/CCTVCamera.prefab
+- Assets/Content/Standard_MRET_Content/Content/Tools/Prefabs/Wiha_ESD_Screwdriver.prefab
+- Assets/Content/Standard_MRET_Content/Content/Tools/Models/wrench.fbx
+- Assets/Content/Standard_MRET_Content/Content/Tools/Models/Wiha_ESD_TorqueWrench.obj
+- Assets/Content/Standard_MRET_Content/Content/Tools/Materials/Wiha_ESD_TorqueWrench.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/BlackMetal.mat
+- Assets/MRET/Components/SceneObjects/Marker/Prefabs/Pin.prefab
+- Assets/Content/Standard_MRET_Content/Content/Tools/Models/ratchet.fbx
+- Assets/Content/Standard_MRET_Content/Content/Tools/Materials/RunningTorqueWrench.mat
+- Assets/Content/Standard_MRET_Content/Content/Tools/Materials/hammer.mat
+- Assets/Content/Standard_MRET_Content/Content/SampleAssembly/Prefabs/Part5.prefab
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/MonitorScreen.mat
+- Assets/Content/Standard_MRET_Content/Content/SampleAssembly/Prefabs/Part3.prefab
+- Assets/Resources/Skyboxes/GraySkybox.mat
+- Assets/Content/Standard_MRET_Content/Content/General/Materials/basic-steel.mat
+Dependencies:
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/WSAPlayer/font-assets

@@ -1,28 +1,34 @@
-﻿using UnityEngine;
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
 
-public class PingPongOrbit : MonoBehaviour
+using UnityEngine;
+
+namespace GOV.NASA.GSFC.XR.RecordingCamera
 {
-    public Vector3 RotationStart;
-    public Vector3 RotationEnd;
-    public float Speed;
-
-    bool m_PositiveDirection = true;
-    float m_CurrentValue = 0f;
-	
-	// Update is called once per frame
-	void Update ()
+    public class PingPongOrbit : MonoBehaviour
     {
-        float increment = Speed * Time.deltaTime;
-        if (!m_PositiveDirection)
-            increment *= -1f;
-        m_CurrentValue += increment;
+        public Vector3 RotationStart;
+        public Vector3 RotationEnd;
+        public float Speed;
 
-        float clampedValue = Mathf.Clamp(m_CurrentValue, 0f, 1f);
-        if(m_CurrentValue != clampedValue)
+        bool m_PositiveDirection = true;
+        float m_CurrentValue = 0f;
+
+        // Update is called once per frame
+        void Update()
         {
-            m_PositiveDirection = !m_PositiveDirection;
-        }
+            float increment = Speed * Time.deltaTime;
+            if (!m_PositiveDirection)
+                increment *= -1f;
+            m_CurrentValue += increment;
 
-        transform.rotation = Quaternion.Slerp(Quaternion.Euler(RotationStart), Quaternion.Euler(RotationEnd), m_CurrentValue);
-	}
+            float clampedValue = Mathf.Clamp(m_CurrentValue, 0f, 1f);
+            if (m_CurrentValue != clampedValue)
+            {
+                m_PositiveDirection = !m_PositiveDirection;
+            }
+
+            transform.rotation = Quaternion.Slerp(Quaternion.Euler(RotationStart), Quaternion.Euler(RotationEnd), m_CurrentValue);
+        }
+    }
 }

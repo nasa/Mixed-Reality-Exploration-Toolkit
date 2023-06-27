@@ -1,0 +1,297 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+
+    <complexType name="InterfacesType">
+		<sequence>
+			<element name="Interface" type="mret:InterfaceType" minOccurs="1" maxOccurs="unbounded"/>
+		</sequence>
+    </complexType>
+
+    <complexType name="InterfaceType">
+        <complexContent>
+            <extension base="common:IdentifiableType"/>
+        </complexContent>
+    </complexType>
+
+    <group name="ServerCertificateType">
+        <sequence>
+            <choice>
+                <annotation>
+                    <documentation>Server Certificate Authority (CA). Default is "./.iotServers"</documentation>
+                </annotation>
+                <element name="ServerCertificate" type="string" minOccurs="1" maxOccurs="1"/>
+                <element name="ServerCertificateFile" type="string" minOccurs="1" maxOccurs="1"/>
+                <element name="ServerCertificateStore" type="string" minOccurs="0" maxOccurs="1" default="./.iotServers"/>
+            </choice>
+        </sequence>
+    </group>
+
+    <group name="ClientCertificateType">
+        <sequence>
+            <choice>
+                <annotation>
+                    <documentation>Client Issued Certificate. Default is "./.iotClients"</documentation>
+                </annotation>
+                <element name="ClientCertificate" type="string" minOccurs="1" maxOccurs="1"/>
+                <element name="ClientCertificateFile" type="string" minOccurs="1" maxOccurs="1"/>
+                <element name="ClientCertificateStore" type="string" minOccurs="0" maxOccurs="1" default="./.iotClients"/>
+            </choice>
+        </sequence>
+    </group>
+
+    <complexType name="ClientCertificatesType">
+        <sequence>
+			<group ref="mret:ServerCertificateType" minOccurs="1" maxOccurs="1"/>
+			<group ref="mret:ClientCertificateType" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="ClientInterfaceType">
+        <complexContent>
+            <extension base="mret:InterfaceType">
+		        <sequence>
+		            <element name="Server" type="string" minOccurs="1" maxOccurs="1"/>
+                    <element name="Port" type="common:NonNegativeInteger" minOccurs="1" maxOccurs="1"/>
+                    <element name="ConnectionTimeoutFrequency" type="common:FrequencyType" minOccurs="0" maxOccurs="1" default="0.1"/>
+                    <element name="ConnectionUpdateFrequency" type="common:FrequencyType" minOccurs="0" maxOccurs="1" default="1"/>
+                    <element name="Certificates" type="mret:ClientCertificatesType" minOccurs="0" maxOccurs="1"/>
+		        </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- GMSEC Interface -->
+    <simpleType name="GMSECConnectionType">
+        <restriction base="string">
+            <enumeration value="bolt"/>
+            <enumeration value="mb"/>
+            <enumeration value="amq383"/>
+            <enumeration value="amq384"/>
+            <enumeration value="ws71"/>
+            <enumeration value="ws75"/>
+            <enumeration value="ws80"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="GMSECInterfaceType">
+        <complexContent>
+            <extension base="mret:ClientInterfaceType">
+                <sequence>
+		            <element name="Connection" type="mret:GMSECConnectionType" minOccurs="0" maxOccurs="1" default="bolt"/>
+		            <element name="Subject" type="string" minOccurs="0" maxOccurs="1" default="GMSEC.>"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- Matlab Interface -->
+    <simpleType name="MatlabCommandType">
+        <restriction base="string">
+            <enumeration value="Legacy"/>
+            <enumeration value="JSON"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="MatlabInterfaceType">
+        <complexContent>
+            <extension base="mret:ClientInterfaceType">
+                <sequence>
+                    <element name="CommandType" type="mret:MatlabCommandType" minOccurs="0" maxOccurs="1" default="JSON"/>
+		            <element name="Send" type="boolean" minOccurs="0" maxOccurs="1" default="true"/>
+		            <element name="Receive" type="boolean" minOccurs="0" maxOccurs="1" default="true"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- ROS Interface -->
+    <simpleType name="ROSProtocolType">
+        <restriction base="string">
+            <enumeration value="WebSocketSharp"/>
+            <enumeration value="WebSocketDotNET"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="ROSSerializerType">
+        <restriction base="string">
+            <enumeration value="Microsoft"/>
+            <enumeration value="Newtonsoft_JSON"/>
+            <enumeration value="Newtonsoft_BSON"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="ROSInterfaceType">
+        <complexContent>
+            <extension base="mret:ClientInterfaceType">
+                <sequence>
+                    <element name="Protocol" type="mret:ROSProtocolType" minOccurs="0" maxOccurs="1" default="WebSocketDotNET"/>
+                    <element name="Serializer" type="mret:ROSSerializerType" minOccurs="0" maxOccurs="1" default="Microsoft"/>
+                    <element name="JointStateSubscriberTopic" type="string" minOccurs="0" maxOccurs="1" default="/joint_states"/>
+                    <element name="JointStatePublisherTopic" type="string" minOccurs="0" maxOccurs="1" default="/joint_states"/>
+                    <element name="RobotDescription" type="string" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- VDE Interface -->
+    <simpleType name="VDEConnectionType">
+        <restriction base="string">
+            <enumeration value="GMSEC"/>
+            <enumeration value="SIGNALR"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="VDEInterfaceType">
+        <complexContent>
+            <extension base="mret:ClientInterfaceType">
+                <sequence>
+		            <element name="Standalone" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+		            <element name="RenderInCloud" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+		            <element name="BakedConfigResource" type="string" minOccurs="0" maxOccurs="1" default="config"/>
+		            <element name="BakedEntitiesResource" type="string" minOccurs="0" maxOccurs="1" default="entities"/>
+		            <element name="BakedLinksResource" type="string" minOccurs="0" maxOccurs="1" default="links"/>
+                    <element name="ConnectionType" type="mret:VDEConnectionType" minOccurs="0" maxOccurs="1" default="GMSEC"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <!-- NASA IoT Interface -->
+    <complexType name="IoTTopicType">
+        <annotation>
+            <documentation>Defines a grouping of elements.</documentation>
+        </annotation>
+        <choice>
+            <element name="Coordinate" type="common:CoordinateType" minOccurs="0" maxOccurs="1"/>
+            <element name="Position" type="common:TransformPositionType" minOccurs="0" maxOccurs="1"/>
+        </choice>
+        <attribute name="ThingID" type="IDREF" use="optional">
+	        <annotation>
+	            <documentation>The IoTThing reference identifier. If a ThingID is not
+	            specified and there are no IoTThing definitions that correspond to
+	            the "pattern", the payload data will be processed as strings.</documentation>
+	        </annotation>
+        </attribute>
+        <attribute name="pattern" type="string" use="optional" default="/#">
+            <annotation>
+                <documentation>The topic pattern to register for IoTThing payloads, i.e., "/home".
+                Default is all IoTThing payloads processed as strings.</documentation>
+            </annotation>
+        </attribute>
+    </complexType>
+
+    <complexType name="IoTTopicsType">
+        <annotation>
+            <documentation>Defines a collection of IoT topics.</documentation>
+        </annotation>
+        <sequence>
+            <element name="Topic" type="mret:IoTTopicType" minOccurs="1" maxOccurs="unbounded">
+	            <annotation>
+	                <documentation>The topic that defines the subscription to IoTThing data.</documentation>
+	            </annotation>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="IoTInterfaceType">
+        <complexContent>
+            <extension base="mret:ClientInterfaceType">
+                <sequence>
+		            <element name="Topics" type="mret:IoTTopicsType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <simpleType name="IoTThingPayloadValueTypeType">
+        <restriction base="string">
+            <enumeration value="string"/>
+            <enumeration value="integer"/>
+            <enumeration value="float"/>
+            <enumeration value="double"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="IoTThingPayloadValueThresholdType">
+        <sequence>
+            <element name="Low" type="float" minOccurs="0" maxOccurs="1">
+                <annotation>
+                    <documentation>Low value for threshold range (inclusive). If omitted, low is (-)infinity.</documentation>
+                </annotation>
+            </element>
+            <element name="High" type="float" minOccurs="0" maxOccurs="1">
+                <annotation>
+                    <documentation>High value for threshold range (inclusive). If omitted, high is (+)infinity.</documentation>
+                </annotation>
+            </element>
+            <group ref="common:ColorTypeGroup" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="IoTThingPayloadValueThresholdsType">
+        <sequence>
+            <group ref="common:ColorTypeGroup" minOccurs="0" maxOccurs="1"/>
+            <element name="Threshold" type="mret:IoTThingPayloadValueThresholdType" minOccurs="1" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="IoTThingPayloadValueType">
+        <sequence>
+            <element name="Type" type="mret:IoTThingPayloadValueTypeType" minOccurs="0" maxOccurs="1" default="string"/>
+            <element name="Thresholds" type="mret:IoTThingPayloadValueThresholdsType" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="IoTThingPayloadPairType">
+        <sequence>
+            <element name="Key" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="Value" type="mret:IoTThingPayloadValueType" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="IoTThingPayloadPairsType">
+        <sequence>
+            <element name="Pair" type="mret:IoTThingPayloadPairType" minOccurs="1" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="IoTThingPayloadType">
+	    <choice>
+	        <element name="Value" type="mret:IoTThingPayloadValueType" minOccurs="1" maxOccurs="1"/>
+	        <element name="Pairs" type="mret:IoTThingPayloadPairsType" minOccurs="1" maxOccurs="1"/>
+	    </choice>
+    </complexType>
+
+    <complexType name="IoTThingType">
+        <complexContent>
+            <extension base="common:IdentifiableType">
+		        <sequence>
+		            <element name="Payload" type="mret:IoTThingPayloadType" minOccurs="1" maxOccurs="1"/>
+		        </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="IoTThingsType">
+        <annotation>
+            <documentation>Defines a collection of IoT topics.</documentation>
+        </annotation>
+        <sequence>
+            <element name="Thing" type="mret:IoTThingType" minOccurs="1" maxOccurs="unbounded">
+                <annotation>
+                    <documentation>A list of IoT "thing" definitions.</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+
+</schema>

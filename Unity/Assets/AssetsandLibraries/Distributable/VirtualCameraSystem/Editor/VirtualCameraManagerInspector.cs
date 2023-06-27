@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEditor;
 
 
-namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
+namespace GOV.NASA.GSFC.XR.VirtualCamera
 {
     /// <remarks>
     /// History:

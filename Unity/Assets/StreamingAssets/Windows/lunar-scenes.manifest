@@ -1,0 +1,98 @@
+ManifestFileVersion: 0
+CRC: 124810561
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 6ce49a941df8dbf7110eab526b9d8f3c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 3b46dc5d129047f8604de865e1bc899d
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 104
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 30649d3a9faa99c48a7b1166b86bf2a0, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 59f8146938fff824cb5fd77236b75775, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: eeb81d61bd8289244917d65d6776c559, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b81dd4373435fb048969a03cab8105fa, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7a70c881415690c418f87514fe62ae5f, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fa5b606318c46e64a87b1eee97b295d6, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a7503af7db833c840a891458c125d4e9, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a2b1e05343a256a479aab5a52b9e081b, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 143cd8326c19af7418e87a59f5570c12, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: c9d890d8699dd184ea00b532a2f86721, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 122
+  Script: {instanceID: 0}
+- Class: 128
+  Script: {instanceID: 0}
+- Class: 154
+  Script: {instanceID: 0}
+- Class: 156
+  Script: {instanceID: 0}
+- Class: 157
+  Script: {instanceID: 0}
+- Class: 196
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 218
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 223
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+- Class: 258
+  Script: {instanceID: 0}
+- Class: 850595691
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/LunarLightingSouthPoleScene.unity
+Dependencies:
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/earth-assets7
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/solarsystem-assets
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/sun-assets

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mt:TextAnnotation xsi:schemaLocation="http://www.example.org/MRET TextAnnotation.xsd " xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mt="http://www.example.org/MRET">
+
+<mt:Texts>
+
+<mt:Texts>Lastly, we will go over flying in MRET.</mt:Texts>
+
+<mt:Texts>Go to the locomotion section of the menu once more, and select the "flying" button. Remember to turn off walking!</mt:Texts>
+
+<mt:Texts>You use your hands (controllers) and trigger buttons to fly.</mt:Texts>
+
+<mt:Texts>Aim at something in the distance, press the trigger button, and pull yourself towards the object.</mt:Texts>
+
+<mt:Texts>Try aiming and pulling yourself towards the blue orbs to fly across the room!</mt:Texts>
+
+</mt:Texts>
+
+<mt:TimePerText>7</mt:TimePerText>
+
+<mt:Loop>true</mt:Loop>
+
+<mt:AttachTo>TutorialMenuFlying/Canvas/TutorialTextFly</mt:AttachTo>
+
+</mt:TextAnnotation>

@@ -1,10 +1,10 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
-using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base;
+using GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.Base;
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.SteamVR
 {
     /// <remarks>
     /// History:
@@ -21,5 +21,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
         /// </summary>
         [Tooltip("Reference to SteamVR input hand.")]
         public InputHandSteamVR[] inputHandSteamVR = new InputHandSteamVR[2];
+
+        /// <seealso cref="InputHeadSDK.Initialize"/>
+        public override void Initialize()
+        {
+        }
     }
 }

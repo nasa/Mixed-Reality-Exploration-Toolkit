@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mt:TextAnnotation xsi:schemaLocation="http://www.example.org/MRET TextAnnotation.xsd " xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mt="http://www.example.org/MRET">
+
+<mt:Texts>
+
+<mt:Texts>You can change the mode of locomotion through the in-game menu.</mt:Texts>
+
+<mt:Texts>Open then menu by pressing the primary button on either controller.</mt:Texts>
+
+<mt:Texts>Navigate the menu by using your other hand to select buttons with the trigger button.</mt:Texts>
+
+<mt:Texts>Switch pages by selecting the arrow button at the bottom right of each page.</mt:Texts>
+
+<mt:Texts>Press the primary button again on the hand holding the menu to close it.</mt:Texts>
+
+</mt:Texts>
+
+<mt:TimePerText>7</mt:TimePerText>
+
+<mt:Loop>true</mt:Loop>
+
+<mt:AttachTo>TutorialMenuWalking/Canvas/TutorialTextMenu</mt:AttachTo>
+
+</mt:TextAnnotation>

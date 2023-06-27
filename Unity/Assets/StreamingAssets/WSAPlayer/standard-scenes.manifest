@@ -1,0 +1,102 @@
+ManifestFileVersion: 0
+CRC: 2345471042
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: bd61d120195f14ff43c0f0419b2b730c
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: fc78fbaa670dab9d521729e8c84c85b3
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 20
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 82
+  Script: {instanceID: 0}
+- Class: 83
+  Script: {instanceID: 0}
+- Class: 89
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 104
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 9541d86e2fd84c1d9990edf0852d74ab, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d93d585e0b8b5ad4884863fc498981be, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 71c1514a6bd24e1e882cebbe1904ce04, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: b15b3dc4cc93ec54c945bfc854961c68, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 1db9d24a31c2f5642b22fe41e3f83143, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 128
+  Script: {instanceID: 0}
+- Class: 134
+  Script: {instanceID: 0}
+- Class: 157
+  Script: {instanceID: 0}
+- Class: 196
+  Script: {instanceID: 0}
+- Class: 215
+  Script: {instanceID: 0}
+- Class: 220
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+- Class: 241
+  Script: {instanceID: 0}
+- Class: 243
+  Script: {instanceID: 0}
+- Class: 245
+  Script: {instanceID: 0}
+- Class: 258
+  Script: {instanceID: 0}
+- Class: 850595691
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/Standard_MRET_Content/Content/Scenes/SpaceEnvironmentSimulator.unity
+- Assets/Content/Standard_MRET_Content/Content/Scenes/SSDIF.unity
+- Assets/Content/Standard_MRET_Content/Content/Scenes/Cleanroom_01-collaboration.unity
+- Assets/Content/Standard_MRET_Content/Content/Scenes/Empty.unity
+- Assets/Content/Standard_MRET_Content/Content/Scenes/Cleanroom_01.unity
+Dependencies:
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/WSAPlayer/facilities-cleanroom-assets
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/WSAPlayer/facilities-ses-assets
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/WSAPlayer/facilities-ssdif-assets
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/WSAPlayer/font-assets
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/WSAPlayer/standard-assets

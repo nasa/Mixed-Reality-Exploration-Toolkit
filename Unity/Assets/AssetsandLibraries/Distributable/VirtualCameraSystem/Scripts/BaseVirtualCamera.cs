@@ -2,9 +2,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using GSFC.ARVR.MRET;
+using GOV.NASA.GSFC.XR.MRET;
 
-namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
+namespace GOV.NASA.GSFC.XR.VirtualCamera
 {
     /// <remarks>
     /// History:

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/Common"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+
+    <simpleType name="CelestialBodyType">
+        <restriction base="string">
+            <enumeration value="Earth"/>
+            <enumeration value="Moon"/>
+            <enumeration value="Mars"/>
+        </restriction>
+    </simpleType>
+    
+</schema>

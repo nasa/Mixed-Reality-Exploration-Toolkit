@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mt:AudioRecording xmlns:mt="http://www.example.org/MRET" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/MRET AudioRecording.xsd ">
+  <mt:AudioFile>mt:AudioFile</mt:AudioFile>
+  <mt:StartTime>0.0</mt:StartTime>
+  <mt:Duration>0.0</mt:Duration>
+  <mt:Speed>0.0</mt:Speed>
+  <mt:Loop>true</mt:Loop>
+  <mt:AttachTo>mt:AttachTo</mt:AttachTo>
+</mt:AudioRecording>

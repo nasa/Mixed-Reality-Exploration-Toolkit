@@ -1,11 +1,12 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
-using GSFC.ARVR.MRET.Infrastructure.Components.UIInteraction;
-using GSFC.ARVR.MRET.Infrastructure.Components.Locomotion;
+using GOV.NASA.GSFC.XR.MRET.Locomotion;
+using GOV.NASA.GSFC.XR.MRET.SceneObjects.Drawing;
+using GOV.NASA.GSFC.XR.MRET.UI.Interactions;
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.Base
 {
     /// <remarks>
     /// History:
@@ -19,7 +20,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
     ///     begin isolating the cross platform input system from the MRET application. May have to
     ///     revisit the use of interfaces since they require custom property handling in order to
     ///     make them work in the editor. (J. Hosler)
+    /// 24 July 2021: Added Climbing locomotion (C. Lian)
+    /// 28 July 2021: Adding support for velocity (DZB)
     /// 17 August 2021: Added pointer functions.
+    /// 17 November 2021: Removed RequireInterface for FlyingController reference, does not seem to
+    ///     be assignable from Inspector (DZB)
+    /// 23 December 2021: Adding Drawing Laser (DZB)
     /// </remarks>
     /// <summary>
     /// SDK wrapper for the input hand.
@@ -32,6 +38,21 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         /// </summary>
         [Tooltip("Reference to the input hand class.")]
         public InputHand inputHand;
+
+        /// <summary>
+        /// The hand target. This should not be the hand Transform itself, but a child
+        /// <code>GameObject</code> parented by the hand so that the 'target' can be
+        /// repositioned and oriented within the hand to align the transform to match the
+        /// location of the user's hand.
+        /// </summary>
+        [Tooltip("The hand target. This should not be the hand Transform itself, but a child GameObject parented by the hand so that the 'target' can be repositioned and oriented within the hand to align the transform to match the location of the user's hand.")]
+        public Transform target;
+
+        /// <summary>
+        /// The hand collider.
+        /// </summary>
+        [Tooltip("The hand collider.")]
+        public new Collider collider;
 
         /// <summary>
         /// Teleport Controller for the hand.
@@ -54,7 +75,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         /// </summary>
         [Tooltip("Flying Controller for the hand.")]
 #if UNITY_EDITOR
-        [RequireInterface(typeof(IInputRigLocomotionControl))]
+        //[RequireInterface(typeof(IInputRigLocomotionControl))]
 #endif
         public Object flyingController;
         protected IInputRigLocomotionControl _flyingController => flyingController as IInputRigLocomotionControl;
@@ -70,10 +91,26 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         protected IInputRigLocomotionControl _navigationController => navigationController as IInputRigLocomotionControl;
 
         /// <summary>
+        /// Climbing Controller for this hand.
+        /// </summary>
+        [Tooltip("Climbing Controller for the hand.")]
+#if UNITY_EDITOR
+        [RequireInterface(typeof(IInputRigLocomotionControl))]
+#endif
+        public Object climbingController;
+        protected IInputRigLocomotionControl _climbingController => climbingController as IInputRigLocomotionControl;
+
+        /// <summary>
         /// UI Pointer Controller for the hand.
         /// </summary>
         [Tooltip("UI Pointer Controller for the hand.")]
         public UIPointerController uiPointerController;
+
+        /// <summary>
+        /// Drawing Pointer Controller for the hand.
+        /// </summary>
+        [Tooltip("Drawing Pointer Controller for the hand.")]
+        public DrawingPointerController drawingPointerController;
 
         /// <summary>
         /// Whether or not the pointer is currently on.
@@ -90,6 +127,17 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         /// The current endpoint of the pointer.
         /// </summary>
         public virtual Vector3 pointerEnd
+        {
+            get
+            {
+                return Vector3.zero;
+            }
+        }
+        
+        /// <summary>
+        /// Velocity of the hand.
+        /// </summary>
+        public virtual Vector3 velocity
         {
             get
             {
@@ -239,6 +287,16 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
             {
                 inputHand = GetComponent<InputHand>();
             }
+
+            if (collider == null)
+            {
+                Debug.LogWarning("[InputHandSDK] " + nameof(collider) + " not set.");
+            }
+
+            if (target == null)
+            {
+                Debug.LogWarning("[InputHandSDK] " + nameof(target) + "not set.");
+            }
         }
 
         /// <summary>
@@ -246,7 +304,50 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         /// </summary>
         public virtual void Initialize()
         {
-            Debug.LogWarning("Initialize() not implemented for InputHandSDK.");
+            //Debug.LogWarning("Initialize() not implemented for InputHandSDK.");
+        }
+
+        /// <summary>
+        /// Moves the hand target to the supplied local position and local rotation
+        /// </summary>
+        /// <param name="localPosition">A <code>Vector3</code> representing the new local position of the target</param>
+        /// <param name="localRotation">A <code>Quaternion</code> representing the new local rotation of the target</param>
+        public virtual void MoveTarget(Vector3 localPosition, Quaternion localRotation)
+        {
+            // Adjust the target
+            if (target != null)
+            {
+                target.localPosition = localPosition;
+                target.localRotation = localRotation;
+
+                // Invert the target y position adjustment to compensate for the move
+                // so that the collider remains centered on the hand. x/z remains the same
+                // because it is forward to compensate for the hand position.
+                if (collider is CapsuleCollider)
+                {
+                    CapsuleCollider capsuleCollider = (collider as CapsuleCollider);
+                    capsuleCollider.center = new Vector3(
+                        capsuleCollider.center.x,
+                        -(localPosition.y),
+                        capsuleCollider.center.z);
+                }
+                else if (collider is BoxCollider)
+                {
+                    BoxCollider boxCollider = (collider as BoxCollider);
+                    boxCollider.center = new Vector3(
+                        boxCollider.center.x,
+                        -(localPosition.y),
+                        boxCollider.center.z);
+                }
+                else if (collider is SphereCollider)
+                {
+                    SphereCollider sphereCollider = (collider as SphereCollider);
+                    sphereCollider.center = new Vector3(
+                        sphereCollider.center.x,
+                        -(localPosition.y),
+                        sphereCollider.center.z);
+                }
+            }
         }
 
         /// <summary>
@@ -308,7 +409,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
                 }
                 else
                 {
-                    Debug.LogWarning(nameof(TeleportController) + " not defined for " + nameof(InputHandSDK));
+                    Debug.LogWarning("TeleportController not defined for " + nameof(InputHandSDK));
                 }
             }
             get
@@ -435,6 +536,26 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
 
         #endregion // Locomotion [Navigate]
 
+#region Locomotion [Climb]
+
+        /// <summary>
+        /// Enables climbing for this hand.
+        /// </summary>
+        public virtual void EnableClimb()
+        {
+            Debug.LogWarning("EnableClimb() not implemented for InputHandSDK.");
+        }
+
+        /// <summary>
+        /// Disables climbing for this hand.
+        /// </summary>
+        public virtual void DisableClimb()
+        {
+            Debug.LogWarning("DisableClimb() not implemented for InputHandSDK.");
+        }
+
+        #endregion // Locomotion [Climb]
+
 #endregion // Locomotion
 
         /// <summary>
@@ -464,6 +585,22 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         public virtual void UIPointerSelect()
         {
             Debug.LogWarning("UIPointerSelect() not implemented for InputHandSDK.");
+        }
+
+        /// <summary>
+        /// Turns the Drawing laser on.
+        /// </summary>
+        public virtual void ToggleDrawingPointerOn()
+        {
+            Debug.LogWarning("ToggleDrawingPointerOn() not implemented for InputHandSDK.");
+        }
+
+        /// <summary>
+        /// Turns the Drawing laser off.
+        /// </summary>
+        public virtual void ToggleDrawingPointerOff()
+        {
+            Debug.LogWarning("ToggleDrawingPointerOff() not implemented for InputHandSDK.");
         }
     }
 }

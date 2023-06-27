@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.example.org/MRET"
+	elementFormDefault="qualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:mt="http://www.example.org/MRET">
+
+	<complexType name="ConfigurationType">
+		<sequence>
+			<element name="AssetsPath" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="EnvironmentsPath" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="AssetBundlesPath" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="FBXPath" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="ProjectsPath" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="TemplatesPath" type="string" minOccurs="1" maxOccurs="1"/>
+            <element name="TypeMapPath" type="string" minOccurs="0" maxOccurs="1"/>
+
+			<element name="HudPath" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="AudioRecordingPath" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="TextAnnotationPath" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="AnimationsPath" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="MarkersPath" type="string" minOccurs="1" maxOccurs="1" />
+			<element name="PointCloudsPath" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="TimeSimulationPath" type="string" minOccurs="1" maxOccurs="1"/>
+			<element name="TerrainsPath" type="string" minOccurs="1" maxOccurs="1" />
+			
+            <element name="UserPath" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="PreferencesPath" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="RMITPath" type="string" minOccurs="0" maxOccurs="1"/>
+            <element name="SpiceKernelPath" type="string" minOccurs="0" maxOccurs="1"/>
+
+			<element name="PlacementMode" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+			<element name="Avatars" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+			<element name="VoiceControl" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+
+			<element name="XmlValidation" minOccurs="0" maxOccurs="1" default="false">
+    			<complexType>
+					<simpleContent>
+						<extension base="boolean">
+							<attribute name="type" type="mt:XmlValidationType" use="optional" default="Warning"/>
+						</extension>
+					</simpleContent>
+				</complexType>
+			</element>
+			
+			<element name="ColliderMode">
+				<simpleType>
+					<restriction base="string">
+						<enumeration value="None"/>
+						<enumeration value="Box"/>
+						<enumeration value="NonConvex"/>
+					</restriction>
+				</simpleType>
+			</element>
+
+		</sequence>
+		<attribute name="Version" type="string"/>
+	</complexType>
+
+    <simpleType name="XmlValidationType">
+        <restriction base="string">
+            <enumeration value="None"/>
+            <enumeration value="Warning"/>
+            <enumeration value="Error"/>
+        </restriction>
+    </simpleType>
+
+	<element name="Configuration" type="mt:ConfigurationType"/>
+</schema>

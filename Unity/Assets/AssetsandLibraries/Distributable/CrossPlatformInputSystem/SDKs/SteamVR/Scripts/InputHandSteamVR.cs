@@ -1,13 +1,13 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
-using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base;
+using GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.Base;
 using UnityEngine;
 using UnityEngine.XR;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.SteamVR
 {
     /// <remarks>
     /// History:
@@ -19,14 +19,17 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
     ///     affected the logic in the input system event model, so I disabled the event model
     ///     until we can confirm that the behavior works as expected. (J. Hosler)
     /// 17 March 2021: Removed the unused Steam VR head reference, wrapped debug log messages
-    ///     in the MRET_DEBUG compiler directive, and updated UpdateNavigateState() to support
+    ///     in the CPIS_DEBUG compiler directive, and updated UpdateNavigateState() to support
     ///     the WindowsMixedReality which makes use of the secondary 2D axis for touchpad. (J. Hosler)
     /// 16 April 2021: Removing benign warning message if secondary 2D axis doesn't exist (as in
     ///     non-WMR headsets. Hiding warning message for missing menu button as there is
     ///     currently a SteamVR bug
     ///     https://www.reddit.com/r/Unity3D/comments/mnhtko/openxr_not_detecting_primary_button_of_htc_vive/ (DZB)
     /// 20 July 2021: SteamVR bug has been fixed, uncommenting code (DZB)
+    /// 24 July 2021: Added Climbing locomotion (C. Lian)
+    /// 28 July 2021: Adding support for velocity (DZB)
     /// 17 August 2021: Added pointer functions.
+    /// 23 December 2021: Adding Drawing Laser (DZB)
     /// </remarks>
     /// <summary>
     /// SteamVR wrapper for the input hand.
@@ -37,11 +40,25 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
         /// <summary>
         /// The name of this class
         ///
-        public string ClassName
+        public string ClassName => nameof(InputHandSteamVR);
+
+        public const float NAVIGATION_TOLERANCE = 0.3f;
+
+        /// <summary>
+        /// Velocity of the hand.
+        /// </summary>
+        public override Vector3 velocity
         {
             get
             {
-                return nameof(InputHandSteamVR);
+                Vector3 vel = Vector3.zero;
+                if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.deviceVelocity, out vel))
+                {
+                    Debug.LogWarning("[" + ClassName + "->" + nameof(velocity) + "; " + name + "] '" +
+                    UnityEngine.XR.CommonUsages.deviceVelocity + "' does not exist.");
+                    return Vector3.zero;
+                }
+                return vel;
             }
         }
 
@@ -200,6 +217,14 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
                     }
                 }
 
+                if (drawingPointerController.raycastLaser != null)
+                {
+                    if (drawingPointerController.raycastLaser.active)
+                    {
+                        return true;
+                    }
+                }
+
                 return false;
             }
         }
@@ -211,6 +236,15 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
         {
             get
             {
+                // TODO: May need to support multiple pointers.
+                if (drawingPointerController.raycastLaser != null)
+                {
+                    if (drawingPointerController.raycastLaser.active)
+                    {
+                        return drawingPointerController.raycastLaser.hitPos;
+                    }
+                }
+
                 if (uiPointerController.raycastLaser != null)
                 {
                     if (uiPointerController.raycastLaser.active)
@@ -266,7 +300,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
 #endif
         private UnityEngine.XR.InputDevice inputDevice;
 
-#region XRStateMachine
+        #region XRStateMachine
+
+        private bool initialized = false;
 
         /// <summary>
         /// Initializes the XR input device based upon the characteristics that define the input hand
@@ -289,7 +325,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
             if (inputDeviceCharacteristics != InputDeviceCharacteristics.None)
             {
                 var inputDevices = new List<UnityEngine.XR.InputDevice>();
-                UnityEngine.XR.InputDevices.GetDevicesWithCharacteristics(inputDeviceCharacteristics, inputDevices);
+                InputDevices.GetDevicesWithCharacteristics(inputDeviceCharacteristics, inputDevices);
 
                 if (inputDevices.Count == 1)
                 {
@@ -304,6 +340,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
 
                     // This is the expected state so clear any warning tracking
                     warningReported = false;
+
+                    // Mark as initialized
+                    initialized = true;
                 }
                 else if (!warningReported)
                 {
@@ -332,17 +371,17 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
             // Check assertions
             if (!inputDevice.isValid) return;
             
-            // Trigger/Select
+            // Menu
             if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.menuButton, out _menuPressed))
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(UpdateMenuState) + "; " + name + "] '" +
-                    UnityEngine.XR.CommonUsages.primaryButton + "' does not exist.");
+                    UnityEngine.XR.CommonUsages.menuButton + "' does not exist.");
             }
 
             // Notify listeners if there was a change once all menu state values are obtained
             if (menuPressed && !menuPressing)
             {
-#if MRET_DEBUG
+#if CPIS_DEBUG
                 Debug.Log("[" + ClassName + "->" + nameof(UpdateMenuState) + "; " + name + "] Menu pressed");
 #endif
 
@@ -356,7 +395,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
                 inputHand.MenuReleased(transform);
                 _menuPressing = menuPressed; // After
 
-#if MRET_DEBUG
+#if CPIS_DEBUG
                 Debug.Log("[" + ClassName + "->" + nameof(UpdateMenuState) + "; " + name + "] Menu released");
 #endif
             }
@@ -385,21 +424,23 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
             }
 
             // Notify listeners if there was a change once all select state values are obtained
-            if (selectPressed && !selecting)
+            // MRET UMD change: Notify listeners if there was a change once all select state values are obtained
+            if (selectPressed && !selecting && (_selectValue > 0.75))
             {
 #if MRET_DEBUG
                 Debug.Log("[" + ClassName + "->" + nameof(UpdateSelectState) + "; " + name + "] Selection beginning");
 #endif
 
                 // Begin the selection
-                _selecting = selectPressed; // Before
+                _selecting = true; // Before
                 inputHand.SelectBegin();
+
             }
-            else if (!selectPressed && selecting)
+            else if (selecting && (_selectValue < 0.25))
             {
                 // Complete the selection
                 inputHand.SelectComplete();
-                _selecting = selectPressed; // After
+                _selecting = false; // After
 
 #if MRET_DEBUG
                 Debug.Log("[" + ClassName + "->" + nameof(UpdateSelectState) + "; " + name + "] Selection complete");
@@ -432,7 +473,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
             // Notify listeners if there was a change once all grab state values are obtained
             if (grabPressing && !grabbing)
             {
-#if MRET_DEBUG
+#if CPIS_DEBUG
                 Debug.Log("[" + ClassName + "->" + nameof(UpdateGrabState) + "; " + name + "] Grab beginning");
 #endif
 
@@ -446,7 +487,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
                 inputHand.GrabComplete();
                 _grabbing = grabPressing; // After
 
-#if MRET_DEBUG
+#if CPIS_DEBUG
                 Debug.Log("[" + ClassName + "->" + nameof(UpdateGrabState) + "; " + name + "] Grab complete");
 #endif
             }
@@ -460,42 +501,31 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
             // Check assertions
             if (!inputDevice.isValid) return;
 
-            // Touchpad/Navigate
-            bool primary2DAxisTouching;
-            if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisTouch, out primary2DAxisTouching))
+            // Reset the navigate value
+            _navigateValue = Vector2.zero;
+
+            // Joytick or Touchpad/Navigate
+            bool primary2DAxisMoved = false;
+            if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out _navigateValue))
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(UpdateNavigateState) + "; " + name + "] '" +
-                    UnityEngine.XR.CommonUsages.primary2DAxisTouch + "' does not exist.");
+                    UnityEngine.XR.CommonUsages.primary2DAxis + "' does not exist.");
             }
-            bool primary2DAxisClicking;
-            if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out primary2DAxisClicking))
+            primary2DAxisMoved =
+                (Mathf.Abs(_navigateValue.x) > NAVIGATION_TOLERANCE) ||
+                (Mathf.Abs(_navigateValue.y) > NAVIGATION_TOLERANCE);
+
+            // Joytick or Touchpad/Navigate Pressed
+            if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxisClick, out bool primary2DAxisClicking))
             {
                 Debug.LogWarning("[" + ClassName + "->" + nameof(UpdateNavigateState) + "; " + name + "] '" +
                     UnityEngine.XR.CommonUsages.primary2DAxisClick + "' does not exist.");
             }
 
-            // Touchpad/Navigate Value (WMR is unique because the touchpad is stored in the secondary2DAxis)
-            if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.secondary2DAxis, out _navigateValue))
-            {
-                // DZB
-                //Debug.LogWarning("[" + ClassName + "->" + nameof(UpdateNavigateState) + "; " + name + "] '" +
-                //    UnityEngine.XR.CommonUsages.secondary2DAxis + "' does not exist.");
-            }
-
-            // Make sure the secondary axis was valid. If zero, default to the primary
-            if (_navigateValue == Vector2.zero)
-            {
-                if (!inputDevice.TryGetFeatureValue(UnityEngine.XR.CommonUsages.primary2DAxis, out _navigateValue))
-                {
-                    Debug.LogWarning("[" + ClassName + "->" + nameof(UpdateNavigateState) + "; " + name + "] '" +
-                        UnityEngine.XR.CommonUsages.primary2DAxis + "' does not exist.");
-                }
-            }
-
             // Detect if we are toggling the navigation press
             if (primary2DAxisClicking && !navigatePressing)
             {
-#if MRET_DEBUG
+#if CPIS_DEBUG
                 Debug.Log("[" + ClassName + "->" + nameof(UpdateNavigateState) + "; " + name + "] Navigate press beginning");
 #endif
 
@@ -509,29 +539,29 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
                 inputHand.NavigatePressComplete();
                 _navigatePressing = primary2DAxisClicking; // After
 
-#if MRET_DEBUG
+#if CPIS_DEBUG
                 Debug.Log("[" + ClassName + "->" + nameof(UpdateNavigateState) + "; " + name + "] Navigate press complete");
 #endif
             }
 
             // Notify listeners if there was a change once all navigation state values are obtained
-            if (primary2DAxisTouching && !navigating)
+            if (primary2DAxisMoved && !navigating)
             {
-#if MRET_DEBUG
+#if CPIS_DEBUG
                 Debug.Log("[" + ClassName + "->" + nameof(UpdateNavigateState) + "; " + name + "] Navigate beginning");
 #endif
 
                 // Begin the navigate
-                _navigating = primary2DAxisTouching; // Before
+                _navigating = primary2DAxisMoved; // Before
                 inputHand.NavigateBegin();
             }
-            else if (!primary2DAxisTouching && navigating)
+            else if (!primary2DAxisMoved && navigating)
             {
                 // Complete the navigate
                 inputHand.NavigateComplete();
-                _navigating = primary2DAxisTouching; // After
+                _navigating = primary2DAxisMoved; // After
 
-#if MRET_DEBUG
+#if CPIS_DEBUG
                 Debug.Log("[" + ClassName + "->" + nameof(UpdateNavigateState) + "; " + name + "] Navigate complete");
 #endif
             }
@@ -570,7 +600,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
             base.Start();
 
             // Initialize the input device
-            InitializeInputDevice();
+//            InitializeInputDevice();
         }
 
         /// <summary>
@@ -588,7 +618,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
                 // Check that we have a valid input device and only try to initialize it if
                 // we don't. This can occur if the user didn't power on the controller until
                 // after Start is called
-                if (!inputDevice.isValid)
+                if (!initialized || !inputDevice.isValid)
                 {
                     // Try to initialize the input hand
                     InitializeInputDevice();
@@ -826,6 +856,24 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
 
 #endregion // Locomotion [Navigate]
 
+#region Locomotion [Climb]
+
+        /// <seealso cref="InputHandSDK.EnableClimb"/>
+        public override void EnableClimb()
+        {
+            // Notify the locomotion controller that we are enabled
+            if (_climbingController != null) _climbingController.SetHandActiveState(this.inputHand, true);
+        }
+
+        /// <seealso cref="InputHandSDK.DisableClimb"/>
+        public override void DisableClimb()
+        {
+            // Notify the locomotion controller that we are disabled
+            if (_climbingController != null) _climbingController.SetHandActiveState(this.inputHand, false);
+        }
+
+        #endregion // Locomotion [Climb]
+
 #endregion // Locomotion
 
 #region UI Handling
@@ -855,6 +903,20 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
                 uiPointerController.Select();
             }
         }
-    }
 #endregion
+
+#region Drawing
+        public override void ToggleDrawingPointerOn()
+        {
+            drawingPointerController.EnterMode();
+            drawingPointerController.TogglePointingOn();
+        }
+
+        public override void ToggleDrawingPointerOff()
+        {
+            drawingPointerController.TogglePointingOff();
+            drawingPointerController.ExitMode();
+        }
+#endregion
+    }
 }

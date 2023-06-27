@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="Types/PointCloudTypes.xsd"/>
+
+    <element name="PointCloud" type="mret:PointCloudType"/>
+
+</schema>

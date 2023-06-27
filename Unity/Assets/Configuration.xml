@@ -3,40 +3,59 @@
   <!-- DO NOT MODIFY BEFORE THIS LINE. -->
 
   <!-- Default path (relative to the application datapath) for part/asset files. -->
-  <Q1:AssetsPath>Content/Standard_MRET_Content/Parts</Q1:AssetsPath>
+  <Q1:AssetsPath>Content/Parts</Q1:AssetsPath>
 
   <!-- Default path (relative to the application datapath) for environment files. -->
-  <Q1:EnvironmentsPath>Content/Standard_MRET_Content/Environments</Q1:EnvironmentsPath>
+  <Q1:EnvironmentsPath>Content/Environments</Q1:EnvironmentsPath>
 
   <!-- Default path (relative to the application datapath) for asset bundle files. -->
-  <Q1:AssetBundlesPath>Content/Standard_MRET_Content/AssetBundles</Q1:AssetBundlesPath>
+  <Q1:AssetBundlesPath>StreamingAssets/Windows</Q1:AssetBundlesPath>
 
   <!-- Default path (relative to the application datapath) for asset bundle files. -->
-  <Q1:FBXPath>Content/Standard_MRET_Content/FBX</Q1:FBXPath>
+  <Q1:FBXPath>Content/FBX</Q1:FBXPath>
 
   <!-- Default path (relative to the application datapath) for project files. -->
-  <Q1:ProjectsPath>Content/Standard_MRET_Content/Projects</Q1:ProjectsPath>
-
+  <Q1:ProjectsPath>Content/Projects</Q1:ProjectsPath>
+  
   <!-- Default path (relative to the application datapath) for project template files. -->
-  <Q1:TemplatesPath>Content/Standard_MRET_Content/Templates</Q1:TemplatesPath>
+  <Q1:TemplatesPath>Content/Templates</Q1:TemplatesPath>
 
   <!-- Default path (relative to the application datapath) for HUD files. -->
-  <Q1:HudPath>Content/Standard_MRET_Content/HUDs</Q1:HudPath>
+  <Q1:HudPath>Content/Huds</Q1:HudPath>
   
   <!-- Default path (relative to the application datapath) for audio recording files. -->
-  <Q1:AudioRecordingPath>Content/Standard_MRET_Content/AudioRecordings</Q1:AudioRecordingPath>
+  <Q1:AudioRecordingPath>Content/AudioRecordings</Q1:AudioRecordingPath>
 
   <!-- Default path (relative to the application datapath) for text annotation files. -->
-  <Q1:TextAnnotationPath>Content/Standard_MRET_Content/TextAnnotations</Q1:TextAnnotationPath>
+  <Q1:TextAnnotationPath>Content/TextAnnotations</Q1:TextAnnotationPath>
 
   <!-- Default path (relative to the application datapath) for animation files. -->
-  <Q1:AnimationsPath>Content/Standard_MRET_Content/Animations</Q1:AnimationsPath>
+  <Q1:AnimationsPath>Content/Animations</Q1:AnimationsPath>
 
   <!-- Default path (relative to the application datapath) for point cloud files. -->
-  <Q1:PointCloudsPath>Content/Standard_MRET_Content/PointClouds</Q1:PointCloudsPath>
+  <Q1:MarkersPath>Content/Markers</Q1:MarkersPath>
+
+  <!-- Default path (relative to the application datapath) for point cloud files. -->
+  <Q1:PointCloudsPath>Content/PointClouds</Q1:PointCloudsPath>
 
   <!-- Default path (relative to the application datapath) for time simulation files. -->
-  <Q1:TimeSimulationPath>Content/Standard_MRET_Content/TimeSimulations</Q1:TimeSimulationPath>
+  <Q1:TimeSimulationPath>Content/TimeSimulations</Q1:TimeSimulationPath>
+
+  <!-- Default path (relative to the application datapath) for terrain files. -->
+  <Q1:TerrainsPath>Content/Terrains</Q1:TerrainsPath>
+
+  <!-- Default user preferences path. Created in the user home directory if not specified
+  <Q1:PreferencesPath>.mret</Q1:PreferencesPath>
+  -->
+  
+  <!-- RMIT installation path. If not specified, RMIT is not available -->
+  <!-- https://github.com/nasa/Rapid-Model-Import-Tool -->
+  <!--
+  <Q1:RMITPath>C:\Program Files\RMIT_V2.0_Release</Q1:RMITPath>
+  -->
+  
+  <!-- Spice Kernel path (relative to the application datapath) for the SpiceToolkit meta kernel. -->
+  <Q1:SpiceKernelPath>Content/SPICE</Q1:SpiceKernelPath>
 
   <!-- Whether or not to enable snap placement mode. -->
   <Q1:PlacementMode>false</Q1:PlacementMode>
@@ -47,6 +66,9 @@
   <!-- Whether or not to enable voice control. -->
   <Q1:VoiceControl>false</Q1:VoiceControl>
 
+  <!-- Whether or not to validate XML and the type of response when validation is violated. -->
+  <Q1:XmlValidation type="Warning">false</Q1:XmlValidation>
+  
   <!-- Type of collider that will be auto-applied to objects missing colliders.
        Options:
           None - no collider is applied

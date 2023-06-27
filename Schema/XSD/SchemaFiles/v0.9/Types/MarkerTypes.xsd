@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="SceneObjectTypes.xsd"/>
+    <include schemaLocation="DrawingTypes.xsd"/>
+
+    <simpleType name="MarkerReferenceBasisType">
+        <restriction base="string">
+            <enumeration value="Fiducial"/>
+            <enumeration value="Relative"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="MarkerReferencesType">
+        <sequence>
+			<element name="MarkerID" type="IDREF" minOccurs="2" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="MarkerPathsType">
+        <sequence>
+            <element name="Path" type="mret:MarkerPathType" minOccurs="1" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="MarkerPathType">
+        <complexContent>
+            <extension base="mret:InteractableSceneObjectType">
+                <sequence>
+                    <element name="Material" type="common:MaterialType" minOccurs="0" maxOccurs="1"/>
+                    <choice>
+						<group ref="common:ColorTypeGroup" minOccurs="0" maxOccurs="1"/>
+	                    <element name="Gradient" type="common:ColorGradientType" minOccurs="0" maxOccurs="1"/>
+	                </choice>
+                    <element name="Width" type="common:LengthType" minOccurs="0" maxOccurs="1" default="0.01"/>
+                    <element name="Type" type="mret:DrawingRender3dType" minOccurs="0" maxOccurs="1" default="Basic"/>
+                    <element name="DisplayMeasurement" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+                    <element name="DisplaySegmentMeasurements" type="boolean" minOccurs="0" maxOccurs="1" default="false"/>
+                    <element name="Units" type="common:LengthUnitType" minOccurs="0" maxOccurs="1" default="Meter"/>
+					<element name="PathMarkers" type="mret:MarkerReferencesType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="MarkersType">
+        <sequence>
+            <element name="Marker" type="mret:MarkerType" minOccurs="1" maxOccurs="unbounded"/>
+            <element name="Paths" type="mret:MarkerPathsType" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="MarkerType">
+        <complexContent>
+            <extension base="mret:PhysicalSceneObjectType">
+                <sequence>
+                    <element name="Material" type="common:MaterialType" minOccurs="0" maxOccurs="1"/>
+                    <choice>
+						<group ref="common:ColorTypeGroup" minOccurs="0" maxOccurs="1"/>
+	                    <element name="Gradient" type="common:ColorGradientType" minOccurs="0" maxOccurs="1"/>
+	                </choice>
+                    <element name="ReferenceBasis" type="mret:MarkerReferenceBasisType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

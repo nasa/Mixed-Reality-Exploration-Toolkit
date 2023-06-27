@@ -1,19 +1,22 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
 using UnityEngine.Events;
-using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base;
+using GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.Base;
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem
 {
     /// <remarks>
     /// History:
     /// 27 October 2020: Created
     /// 03 February 2021: Added ArmSwing locomotion (J. Hosler)
+    /// 24 July 2021: Added Climbing locomotion (C. Lian)
+    /// 28 July 2021: Adding support for velocity (DZB)
     /// 17 August 2021: Added pointer functions.
     //  29 September 2021: Checking for teleport blocking when performing
     //  a teleport complete (D Baker)
+    /// 14 December 2021: Added holding and double pressing (DZB)
     /// </remarks>
     /// <summary>
     /// InputHand is a class that contains references
@@ -27,6 +30,32 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// </summary>
         [Tooltip("The input rig.")]
         public InputRig inputRig;
+
+        /// <summary>
+        /// The hand target. This should not be the hand Transform itself, but a child
+        /// <code>GameObject</code> parented by the hand so that the 'target' can be
+        /// repositioned and oriented within the hand to align the transform to match the
+        /// location of the user's hand.
+        /// </summary>
+        /// <returns>The <code>Transform</code> of the hand target</returns>
+        public Transform Target
+        {
+            get
+            {
+                return inputHandSDK.target;
+            }
+        }
+
+        /// <summary>
+        /// The hand collider.
+        /// </summary>
+        public Collider Collider
+        {
+            get
+            {
+                return inputHandSDK.collider;
+            }
+        }
 
         /// <summary>
         /// Mode of what is being displayed for the controller.
@@ -57,6 +86,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         public Material uiLaserMaterial;
 
         /// <summary>
+        /// Material to use for drawing laser.
+        /// </summary>
+        [Tooltip("Material to use for drawing laser.")]
+        public Material drawingLaserMaterial;
+
+        /// <summary>
         /// Material to use for invalid laser.
         /// </summary>
         [Tooltip("Material to use for invalid laser.")]
@@ -75,6 +110,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         public GameObject uiCursor;
 
         /// <summary>
+        /// The object to use for the drawing cursor.
+        /// </summary>
+        [Tooltip("The object to use for the drawing cursor.")]
+        public GameObject drawingCursor;
+
+        /// <summary>
         /// Scale to apply to the teleportation cursor.
         /// </summary>
         [Tooltip("Scale to apply to the teleportation cursor.")]
@@ -85,6 +126,30 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// </summary>
         [Tooltip("Scale to apply to the UI cursor.")]
         public Vector3 uiCursorScale;
+
+        /// <summary>
+        /// Scale to apply to the drawing cursor;
+        /// </summary>
+        [Tooltip("Scale to apply to the drawing cursor.")]
+        public Vector3 drawingCursorScale;
+
+        /// <summary>
+        /// Elapsed time that constitutes a hold.
+        /// </summary>
+        [Tooltip("Elapsed time that constitutes a hold.")]
+        public float holdThreshold = 1f;
+
+        /// <summary>
+        /// Minimum time to hold on each press for it to be considered a double press.
+        /// </summary>
+        [Tooltip("Minimum time to hold on each press for it to be considered a double press.")]
+        public float doublePressMinHold = 0.025f;
+
+        /// <summary>
+        /// Maximum time between presses for it to be considered a double press.
+        /// </summary>
+        [Tooltip("Maximum time between presses for it to be considered a double press.")]
+        public float doublePressMaxTime = 0.5f;
 
         /// <summary>
         /// Whether or not the pointer is currently on.
@@ -120,6 +185,17 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         public Handedness handedness = Handedness.neutral;
 
         /// <summary>
+        /// Velocity of the hand.
+        /// </summary>
+        public Vector3 velocity
+        {
+            get
+            {
+                return inputHandSDK.velocity;
+            }
+        }
+
+        /// <summary>
         /// Reference to the input hand SDK.
         /// </summary>
         [Tooltip("Reference to the input hand SDK.")]
@@ -150,6 +226,30 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         public MenuPressEvent menuReleaseEvent;
 
         /// <summary>
+        /// The event to call on menu hold.
+        /// </summary>
+        [Tooltip("The event to call on menu hold.")]
+        public MenuPressEvent menuHoldEvent;
+
+        /// <summary>
+        /// Event to call on menu hold release.
+        /// </summary>
+        [Tooltip("The event to call on menu hold release.")]
+        public MenuPressEvent menuHoldReleaseEvent;
+
+        /// <summary>
+        /// The event to call on menu double press.
+        /// </summary>
+        [Tooltip("The event to call on menu double press.")]
+        public MenuPressEvent menuDoublePressEvent;
+
+        /// <summary>
+        /// The event to call on menu exclusive (not double) press.
+        /// </summary>
+        [Tooltip("The event to call on menu exclusive (not double) press.")]
+        public MenuPressEvent menuExclusivePressEvent;
+
+        /// <summary>
         /// Used to poll menu press.
         /// </summary>
         public bool menuPressed
@@ -161,16 +261,45 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         }
 
         /// <summary>
+        /// Used to poll menu hold.
+        /// </summary>
+        public bool menuHolding { get; private set; }
+
+        /// <summary>
         /// The event to call when the hand initiates a selection.
         /// </summary>
         [Tooltip("The event to call when the hand initiates a selection.")]
-        public UnityEvent selectBeginEvent;
+        public InputHandEvent selectBeginEvent;
 
         /// <summary>
         /// The event to call when the hand completes a selection.
         /// </summary>
         [Tooltip("The event to call when the hand completes a selection.")]
-        public UnityEvent selectCompleteEvent;
+        public InputHandEvent selectCompleteEvent;
+
+        /// <summary>
+        /// The event to call on select hold.
+        /// </summary>
+        [Tooltip("The event to call on select hold.")]
+        public InputHandEvent selectHoldEvent;
+
+        /// <summary>
+        /// The event to call on select hold release.
+        /// </summary>
+        [Tooltip("The event to call on select hold release.")]
+        public InputHandEvent selectHoldReleaseEvent;
+
+        /// <summary>
+        /// The event to call on select double press.
+        /// </summary>
+        [Tooltip("The event to call on select double press.")]
+        public InputHandEvent selectDoublePressEvent;
+
+        /// <summary>
+        /// The event to call on select exclusive (not double) press.
+        /// </summary>
+        [Tooltip("The event to call on select exclusive (not double) press.")]
+        public InputHandEvent selectExclusivePressEvent;
 
         /// <summary>
         /// Used to poll select press.
@@ -188,6 +317,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
                 return inputHandSDK.selectPressed;
             }
         }
+
+        /// <summary>
+        /// Used to poll select hold.
+        /// </summary>
+        public bool selectHolding { get; private set; }
 
         /// <summary>
         /// Used to poll select value.
@@ -220,6 +354,30 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         public InputHandEvent grabCompleteEvent;
 
         /// <summary>
+        /// The event to call on grab hold.
+        /// </summary>
+        [Tooltip("The event to call on grab hold.")]
+        public InputHandEvent grabHoldEvent;
+
+        /// <summary>
+        /// The event to call on grab hold release.
+        /// </summary>
+        [Tooltip("The event to call on grab hold release.")]
+        public InputHandEvent grabHoldReleaseEvent;
+
+        /// <summary>
+        /// The event to call on grab double press.
+        /// </summary>
+        [Tooltip("The event to call on grab double press.")]
+        public InputHandEvent grabDoublePressEvent;
+
+        /// <summary>
+        /// The event to call on grab exclusive (not double) press.
+        /// </summary>
+        [Tooltip("The event to call on grab exclusive (not double) press.")]
+        public InputHandEvent grabExclusivePressEvent;
+
+        /// <summary>
         /// Used to poll grabbing.
         /// </summary>
         public bool grabbing
@@ -229,6 +387,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
                 return inputHandSDK.grabbing;
             }
         }
+
+        /// <summary>
+        /// Used to poll grab hold.
+        /// </summary>
+        public bool grabHolding { get; private set; }
 
         /// <summary>
         /// The event to call when the hand initiates a navigate action.
@@ -266,6 +429,30 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         public InputHandEvent navigatePressCompleteEvent;
 
         /// <summary>
+        /// The event to call on navigate press hold.
+        /// </summary>
+        [Tooltip("The event to call on navigate press hold.")]
+        public InputHandEvent navigatePressHoldEvent;
+
+        /// <summary>
+        /// The event to call on navigate press hold release.
+        /// </summary>
+        [Tooltip("The event to call on navigate press hold release.")]
+        public InputHandEvent navigatePressHoldReleaseEvent;
+
+        /// <summary>
+        /// The event to call on navigate press double press.
+        /// </summary>
+        [Tooltip("The event to call on navigate press double press.")]
+        public InputHandEvent navigatePressDoublePressEvent;
+
+        /// <summary>
+        /// The event to call on navigate press exclusive (not double) press.
+        /// </summary>
+        [Tooltip("The event to call on navigate press exclusive (not double) press.")]
+        public InputHandEvent navigatePressExclusivePressEvent;
+
+        /// <summary>
         /// Used to poll navigate pressing.
         /// 
         /// Oculus: Joystick
@@ -281,6 +468,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
                 return inputHandSDK.navigatePressing;
             }
         }
+
+        /// <summary>
+        /// Used to poll navigate press hold.
+        /// </summary>
+        public bool navigatePressHolding { get; private set; }
 
         /// <summary>
         /// Used to poll navigate value.
@@ -315,6 +507,16 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         }
 
         /// <summary>
+        /// Moves the hand target to the supplied local position and local rotation
+        /// </summary>
+        /// <param name="localPosition">A <code>Vector3</code> representing the new local position of the target</param>
+        /// <param name="localRotation">A <code>Quaternion</code> representing the new local rotation of the target</param>
+        public void MoveTarget(Vector3 localPosition, Quaternion localRotation)
+        {
+            inputHandSDK.MoveTarget(localPosition, localRotation);
+        }
+
+        /// <summary>
         /// Switch to the given mode.
         /// </summary>
         /// <param name="modeToSet">Mode to set the controller to.</param>
@@ -329,15 +531,25 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             // If not already in mode, instantiate appropriate prefab and position it.
             if (controllerPrefab != null)
             {
-                activeHandModel = Instantiate(controllerPrefab);
+                activeHandModel = Instantiate(controllerPrefab, transform);
                 if (activeHandModel == null)
                 {
                     Debug.LogError("[InputHand] Error instantiating model.");
                     return;
                 }
-                activeHandModel.transform.SetParent(transform);
+
+                // Initialize the controller model if defined
+                IControllerModel controllerModel = activeHandModel.GetComponentInChildren<IControllerModel>();
+                if (controllerModel != null)
+                {
+                    controllerModel.Initialize(this);
+                }
+
+                // Zero the local transform
                 activeHandModel.transform.localPosition = Vector3.zero;
                 activeHandModel.transform.localRotation = Quaternion.identity;
+
+                // Provide the controller model to the SDK
                 inputHandSDK.SetHandObject(activeHandModel);
             }
         }
@@ -361,6 +573,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         public void MenuPressed(Transform hand)
         {
             menuPressEvent.Invoke(hand);
+            menuPressingTransform = hand;
         }
 
         /// <summary>
@@ -370,6 +583,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         public void MenuReleased(Transform hand)
         {
             menuReleaseEvent.Invoke(hand);
+            menuPressingTransform = null;
         }
 
         /// <summary>
@@ -377,7 +591,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// </summary>
         public void SelectBegin()
         {
-            selectBeginEvent.Invoke();
+            selectBeginEvent.Invoke(this);
         }
 
         /// <summary>
@@ -385,7 +599,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// </summary>
         public void SelectComplete()
         {
-            selectCompleteEvent.Invoke();
+            selectCompleteEvent.Invoke(this);
         }
 
         /// <summary>
@@ -436,9 +650,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             navigateCompleteEvent.Invoke(this);
         }
 
-        #region Locomotion
+#region Locomotion
 
-        #region Locomotion [Teleport]
+#region Locomotion [Teleport]
 
         /// <summary>
         /// The maximum distance for teleporting (meters).
@@ -460,7 +674,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// </summary>
         public void EnableTeleport()
         {
-            inputHandSDK.EnableTeleportation();
+            if (inputHandSDK.teleportBlocked == false)
+            {
+                inputHandSDK.EnableTeleportation();
+            }
         }
 
         /// <summary>
@@ -468,7 +685,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// </summary>
         public void DisableTeleport()
         {
-            inputHandSDK.DisableTeleportation();
+            if (inputHandSDK.teleportBlocked == false)
+            {
+                inputHandSDK.DisableTeleportation();
+            }
         }
 
         /// <summary>
@@ -522,9 +742,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             inputHandSDK.UnblockTeleport();
         }
 
-        #endregion // Locomotion [Teleport]
+#endregion // Locomotion [Teleport]
 
-        #region Locomotion [Armswing]
+#region Locomotion [Armswing]
 
         /// <summary>
         /// Enables armswing for this hand.
@@ -542,9 +762,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             inputHandSDK.DisableArmswing();
         }
 
-        #endregion // Locomotion [Armswing]
+#endregion // Locomotion [Armswing]
 
-        #region Locomotion [Fly]
+#region Locomotion [Fly]
 
         /// <summary>
         /// Enables flying for this hand.
@@ -562,9 +782,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             inputHandSDK.DisableFly();
         }
 
-        #endregion // Locomotion [Fly]
+#endregion // Locomotion [Fly]
 
-        #region Locomotion [Navigate]
+#region Locomotion [Navigate]
 
         /// <summary>
         /// Enables navigation for this hand.
@@ -582,11 +802,32 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             inputHandSDK.DisableNavigate();
         }
 
-        #endregion // Locomotion [Navigate]
+#endregion // Locomotion [Navigate]
 
-        #endregion // Locomotion
+#region Locomotion [Climb]
 
-        #region UI Handling
+        /// <summary>
+        /// Enables climbing for this hand.
+        /// </summary>
+        public void EnableClimb()
+        {
+            inputHandSDK.EnableClimb();
+        }
+
+        /// <summary>
+        /// Disables climbing for this hand.
+        /// </summary>
+        public void DisableClimb()
+        {
+            inputHandSDK.DisableClimb();
+        }
+
+
+#endregion // Locomotion [Climb]
+
+#endregion // Locomotion
+
+#region UI Handling
         /// <summary>
         /// Turns the UI laser on.
         /// </summary>
@@ -601,7 +842,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// <summary>
         /// Turns the UI laser off.
         /// </summary>
-        /// /// <param name="soft">Whether or not this is a soft disable. Soft enables can be disabled with soft
+        /// <param name="soft">Whether or not this is a soft disable. Soft enables can be disabled with soft
         /// or hard disables, while hard enables can only be disabled with hard disables.</param>
         public void ToggleUIPointerOff(bool soft)
         {
@@ -615,7 +856,413 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         {
             inputHandSDK.UIPointerSelect();
         }
-        #endregion
+#endregion
+
+#region Drawing
+        /// <summary>
+        /// Turns the Drawing laser on.
+        /// </summary>
+        public void ToggleDrawingPointerOn()
+        {
+            inputHandSDK.ToggleDrawingPointerOn();
+        }
+
+        /// <summary>
+        /// Turns the Drawing laser off.
+        /// </summary>
+        public void ToggleDrawingPointerOff()
+        {
+            inputHandSDK.ToggleDrawingPointerOff();
+        }
+#endregion
+
+        private void Update()
+        {
+            float elapsed = UnityEngine.Time.deltaTime;
+            CheckDoublePresses(elapsed);
+            CheckHolds(elapsed);
+        }
+
+#region Hold
+        // TODO: Clean up
+
+        /// <summary>
+        /// Timers for individual holds.
+        /// </summary>
+        private float menuTimer = 0, selectTimer = 0, grabTimer = 0, navigateTimer = 0;
+
+        /// <summary>
+        /// Transform of currently pressed menu.
+        /// </summary>
+        private Transform menuPressingTransform = null;
+
+        /// <summary>
+        /// Checks if individual holds are being performed.
+        /// </summary>
+        /// <param name="elapsed"></param>
+        private void CheckHolds(float elapsed)
+        {
+            if (menuPressed)
+            {
+                menuTimer += elapsed;
+            }
+            else
+            {
+                menuTimer = 0;
+            }
+            if (menuTimer > holdThreshold)
+            {
+                if (menuHolding == false)
+                {
+                    menuHolding = true;
+                    menuHoldEvent.Invoke(menuPressingTransform);
+                }
+            }
+            else
+            {
+                if (menuHolding)
+                {
+                    menuHoldReleaseEvent.Invoke(menuPressingTransform);
+                }
+                menuHolding = false;
+            }
+            if (selectPressed)
+            {
+                selectTimer += elapsed;
+            }
+            else
+            {
+                selectTimer = 0;
+            }
+            if (selectTimer > holdThreshold)
+            {
+                if (selectHolding == false)
+                {
+                    selectHolding = true;
+                    selectHoldEvent.Invoke(this);
+                }
+            }
+            else
+            {
+                if (selectHolding)
+                {
+                    selectHoldReleaseEvent.Invoke(this);
+                }
+                selectHolding = false;
+            }
+            if (grabbing)
+            {
+                grabTimer += elapsed;
+            }
+            else
+            {
+                grabTimer = 0;
+            }
+            if (grabTimer > holdThreshold)
+            {
+                if (grabHolding == false)
+                {
+                    grabHolding = true;
+                    grabHoldEvent.Invoke(this);
+                }
+            }
+            else
+            {
+                if (grabHolding)
+                {
+                    grabHoldReleaseEvent.Invoke(this);
+                }
+                grabHolding = false;
+            }
+            if (navigatePressing)
+            {
+                navigateTimer += elapsed;
+            }
+            else
+            {
+                navigateTimer = 0;
+            }
+            if (navigateTimer > holdThreshold)
+            {
+                if (navigatePressHolding == false)
+                {
+                    navigatePressHolding = true;
+                    navigatePressHoldEvent.Invoke(this);
+                }
+            }
+            else
+            {
+                if (navigatePressHolding)
+                {
+                    navigatePressHoldReleaseEvent.Invoke(this);
+                }
+                navigatePressHolding = false;
+            }
+        }
+#endregion
+
+#region Double Press
+        // TODO: Clean up
+
+        private enum DoublePressState { Unpressed, Single, Released, Reset }
+        private float menuDPTimer = 0, selectDPTimer = 0, grabDPTimer = 0, navigateDPTimer = 0;
+        private float menuDPTimeoutTimer = 0, selectDPTimeoutTimer = 0, grabDPTimeoutTimer = 0,
+            navigateDPTimeoutTimer = 0;
+        private DoublePressState menuDPState = DoublePressState.Unpressed,
+            selectDPState = DoublePressState.Unpressed, grabDPState = DoublePressState.Unpressed,
+            navigateDPState = DoublePressState.Unpressed;
+        private void CheckDoublePresses(float elapsed)
+        {
+            if (menuPressed || menuDPState == DoublePressState.Single || menuDPState == DoublePressState.Released)
+            {
+                menuDPTimeoutTimer += elapsed;
+            }
+            if (menuDPTimeoutTimer > doublePressMaxTime && menuDPState == DoublePressState.Released && menuHolding == false)
+            {
+                menuExclusivePressEvent.Invoke(menuPressingTransform);
+                menuDPState = DoublePressState.Reset;
+            }
+            if (menuPressed)
+            {
+                menuDPTimer += elapsed;
+                if (menuDPTimer > doublePressMaxTime)
+                {
+                    menuDPState = DoublePressState.Unpressed;
+                    menuDPTimer = 0;
+                }
+            }
+            else
+            {
+                menuDPTimer = 0;
+            }
+            switch (menuDPState)
+            {
+                case DoublePressState.Unpressed:
+                    if (menuDPTimer > doublePressMinHold)
+                    {
+                        menuDPState = DoublePressState.Single;
+                        menuDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Single:
+                    if (menuPressed == false)
+                    {
+                        menuDPState = DoublePressState.Released;
+                        menuDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Released:
+                    if (menuDPTimer > doublePressMinHold)
+                    {
+                        menuDoublePressEvent.Invoke(menuPressingTransform);
+                        menuDPState = DoublePressState.Reset;
+                        menuDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Reset:
+                    if (menuPressed == false)
+                    {
+                        menuDPState = DoublePressState.Unpressed;
+                        menuDPTimer = 0;
+                        menuDPTimeoutTimer = 0;
+                    }
+                    break;
+
+                default:
+                    Debug.LogError("[InputHand->CheckDoublePresses] Unknown state.");
+                    break;
+            }
+            if (selectPressed || selectDPState == DoublePressState.Single || selectDPState == DoublePressState.Released)
+            {
+                selectDPTimeoutTimer += elapsed;
+            }
+            if (selectDPTimeoutTimer > doublePressMaxTime && selectDPState == DoublePressState.Released && selectHolding == false)
+            {
+                selectExclusivePressEvent.Invoke(this);
+                selectDPState = DoublePressState.Reset;
+            }
+            if (selectPressed)
+            {
+                selectDPTimer += elapsed;
+                if (selectDPTimer > doublePressMaxTime)
+                {
+                    selectDPState = DoublePressState.Unpressed;
+                    selectDPTimer = 0;
+                }
+            }
+            else
+            {
+                selectDPTimer = 0;
+            }
+            switch (selectDPState)
+            {
+                case DoublePressState.Unpressed:
+                    if (selectDPTimer > doublePressMinHold)
+                    {
+                        selectDPState = DoublePressState.Single;
+                        selectDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Single:
+                    if (selectPressed == false)
+                    {
+                        selectDPState = DoublePressState.Released;
+                        selectDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Released:
+                    if (selectDPTimer > doublePressMinHold)
+                    {
+                        selectDoublePressEvent.Invoke(this);
+                        selectDPState = DoublePressState.Reset;
+                        selectDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Reset:
+                    if (selectPressed == false)
+                    {
+                        selectDPState = DoublePressState.Unpressed;
+                        selectDPTimer = 0;
+                        selectDPTimeoutTimer = 0;
+                    }
+                    break;
+
+                default:
+                    Debug.LogError("[InputHand->CheckDoublePresses] Unknown state.");
+                    break;
+            }
+            if (grabbing || grabDPState == DoublePressState.Single || grabDPState == DoublePressState.Released)
+            {
+                grabDPTimeoutTimer += elapsed;
+            }
+            if (grabDPTimeoutTimer > doublePressMaxTime && grabDPState == DoublePressState.Released && grabHolding == false)
+            {
+                grabExclusivePressEvent.Invoke(this);
+                grabDPState = DoublePressState.Reset;
+            }
+            if (grabbing)
+            {
+                grabDPTimer += elapsed;
+                if (grabDPTimer > doublePressMaxTime)
+                {
+                    grabDPState = DoublePressState.Unpressed;
+                    grabDPTimer = 0;
+                }
+            }
+            else
+            {
+                grabDPTimer = 0;
+            }
+            switch (grabDPState)
+            {
+                case DoublePressState.Unpressed:
+                    if (grabDPTimer > doublePressMinHold)
+                    {
+                        grabDPState = DoublePressState.Single;
+                        grabDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Single:
+                    if (grabbing == false)
+                    {
+                        grabDPState = DoublePressState.Released;
+                        grabDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Released:
+                    if (grabDPTimer > doublePressMinHold)
+                    {
+                        grabDoublePressEvent.Invoke(this);
+                        grabDPState = DoublePressState.Reset;
+                        grabDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Reset:
+                    if (grabbing == false)
+                    {
+                        grabDPState = DoublePressState.Unpressed;
+                        grabDPTimer = 0;
+                        grabDPTimeoutTimer = 0;
+                    }
+                    break;
+
+                default:
+                    Debug.LogError("[InputHand->CheckDoublePresses] Unknown state.");
+                    break;
+            }
+            if (navigatePressing || navigateDPState == DoublePressState.Single || navigateDPState == DoublePressState.Released)
+            {
+                navigateDPTimeoutTimer += elapsed;
+            }
+            if (navigateDPTimeoutTimer > doublePressMaxTime && navigateDPState == DoublePressState.Released && navigatePressHolding == false)
+            {
+                navigatePressExclusivePressEvent.Invoke(this);
+                navigateDPState = DoublePressState.Reset;
+            }
+            if (navigatePressing)
+            {
+                navigateDPTimer += elapsed;
+                if (navigateDPTimer > doublePressMaxTime)
+                {
+                    navigateDPState = DoublePressState.Unpressed;
+                    navigateDPTimer = 0;
+                }
+            }
+            else
+            {
+                navigateDPTimer = 0;
+            }
+            switch (navigateDPState)
+            {
+                case DoublePressState.Unpressed:
+                    if (navigateDPTimer > doublePressMinHold)
+                    {
+                        navigateDPState = DoublePressState.Single;
+                        navigateDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Single:
+                    if (navigatePressing == false)
+                    {
+                        navigateDPState = DoublePressState.Released;
+                        navigateDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Released:
+                    if (navigateDPTimer > doublePressMinHold)
+                    {
+                        navigatePressDoublePressEvent.Invoke(this);
+                        navigateDPState = DoublePressState.Reset;
+                        navigateDPTimer = 0;
+                    }
+                    break;
+
+                case DoublePressState.Reset:
+                    if (navigatePressing == false)
+                    {
+                        navigateDPState = DoublePressState.Unpressed;
+                        navigateDPTimer = 0;
+                        navigateDPTimeoutTimer = 0;
+                    }
+                    break;
+
+                default:
+                    Debug.LogError("[InputHand->CheckDoublePresses] Unknown state.");
+                    break;
+            }
+        }
+#endregion
     }
 
     /// <summary>
@@ -635,5 +1282,4 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
     {
 
     }
-
 }

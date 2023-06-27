@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/Common"
+    elementFormDefault="unqualified"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common">
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="CoreTypes.xsd"/>
+    <include schemaLocation="GisTypes.xsd"/>
+    <include schemaLocation="GraphicsTypes.xsd"/>
+    <include schemaLocation="NumericTypes.xsd"/>
+    <include schemaLocation="SolarSystemTypes.xsd"/>
+    <include schemaLocation="TimeTypes.xsd"/>
+    <include schemaLocation="UnitTypes.xsd"/>
+
+</schema>

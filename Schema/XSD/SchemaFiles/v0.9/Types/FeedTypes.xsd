@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="SceneObjectTypes.xsd"/>
+
+    <complexType name="FeedsType">
+        <sequence>
+	        <element name="VirtualFeeds" type="mret:VirtualFeedsType" minOccurs="0" maxOccurs="1"/>
+	        <element name="DataFeeds" type="mret:DataFeedsType" minOccurs="0" maxOccurs="1"/>
+	        <element name="HtmlFeeds" type="mret:HtmlFeedsType" minOccurs="0" maxOccurs="1"/>
+	        <element name="SpriteFeeds" type="mret:SpriteFeedsType" minOccurs="0" maxOccurs="1"/>
+	        <element name="ExternalFeeds" type="mret:ExternalFeedsType" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="FeedType">
+        <complexContent>
+            <extension base="mret:SceneObjectType">
+                <sequence>
+                    <element name="ParentID" type="IDREF" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="VirtualFeedsType">
+        <complexContent>
+            <extension base="common:GroupType">
+		        <choice>
+		            <element name="VirtualFeed" type="mret:VirtualFeedType" minOccurs="1" maxOccurs="unbounded"/>
+		            <element name="VirtualFeeds" type="mret:VirtualFeedsType" minOccurs="0" maxOccurs="unbounded"/>
+		        </choice>
+		    </extension>
+		</complexContent>
+    </complexType>
+
+    <complexType name="VirtualFeedType">
+        <complexContent>
+            <extension base="mret:FeedType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="LinkFeedType">
+        <complexContent>
+            <extension base="mret:FeedType">
+                <sequence>
+                    <element name="URL" type="anyURI" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ExternalFeedsType">
+        <complexContent>
+            <extension base="common:GroupType">
+		        <choice>
+		            <element name="ExternalFeed" type="mret:ExternalFeedType" minOccurs="1" maxOccurs="unbounded"/>
+		            <element name="ExternalFeeds" type="mret:ExternalFeedsType" minOccurs="0" maxOccurs="unbounded"/>
+		        </choice>
+		    </extension>
+		</complexContent>
+    </complexType>
+
+    <complexType name="ExternalFeedType">
+        <complexContent>
+            <extension base="mret:LinkFeedType">
+                <sequence>
+                    <element name="TimeMillis" type="long" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="DataFeedsType">
+        <complexContent>
+            <extension base="common:GroupType">
+		        <choice>
+		            <element name="DataFeed" type="mret:DataFeedType" minOccurs="1" maxOccurs="unbounded"/>
+		            <element name="DataFeeds" type="mret:DataFeedsType" minOccurs="0" maxOccurs="unbounded"/>
+		        </choice>
+		    </extension>
+		</complexContent>
+    </complexType>
+
+    <complexType name="DataFeedType">
+        <complexContent>
+            <extension base="mret:FeedType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="HtmlFeedsType">
+        <complexContent>
+            <extension base="common:GroupType">
+		        <choice>
+		            <element name="HtmlFeed" type="mret:HtmlFeedType" minOccurs="1" maxOccurs="unbounded"/>
+		            <element name="HtmlFeeds" type="mret:HtmlFeedsType" minOccurs="0" maxOccurs="unbounded"/>
+		        </choice>
+		    </extension>
+		</complexContent>
+    </complexType>
+
+    <complexType name="HtmlFeedType">
+        <complexContent>
+            <extension base="mret:LinkFeedType"/>
+        </complexContent>
+    </complexType>
+
+    <complexType name="SpriteFeedsType">
+        <complexContent>
+            <extension base="common:GroupType">
+		        <choice>
+		            <element name="SpriteFeed" type="mret:SpriteFeedType" minOccurs="1" maxOccurs="unbounded"/>
+		            <element name="SpriteFeeds" type="mret:SpriteFeedsType" minOccurs="0" maxOccurs="unbounded"/>
+		        </choice>
+		    </extension>
+		</complexContent>
+    </complexType>
+
+    <complexType name="SpriteFeedType">
+        <complexContent>
+            <extension base="mret:FeedType">
+                <sequence>
+                    <element name="SpriteType" minOccurs="1" maxOccurs="1">
+                        <simpleType>
+                            <restriction base="string">
+                                <enumeration value="Toggle"/>
+                                <enumeration value="Number"/>
+                            </restriction>
+                        </simpleType>
+                    </element>
+                    <element name="Image" type="string" minOccurs="1" maxOccurs="1"/>
+                    <element name="Standby" type="string" minOccurs="1" maxOccurs="1"/>
+                    <element name="Alert" type="string" minOccurs="1" maxOccurs="1"/>
+                    <element name="Value" type="string" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

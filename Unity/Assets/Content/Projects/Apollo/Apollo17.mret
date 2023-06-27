@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.9" xmlns="http://www.nasa.gov/MRET">
+  <Description xmlns="">Lunar - Apollo 17</Description>
+  <Environment version="0.9" xmlns="">
+    <Asset>
+      <AssetName>LunarLightingApollo17</AssetName>
+      <AssetBundle>apollo-scenes</AssetBundle>
+    </Asset>
+    <SkyBox>
+      <Asset>
+        <AssetName>skyboxv1_starsonly</AssetName>
+        <AssetBundle>skybox-stars</AssetBundle>
+      </Asset>
+    </SkyBox>
+	<Gravity>1.62</Gravity>
+    <ClippingPlane>
+      <Near>0.15</Near>
+      <Far>500000</Far>
+    </ClippingPlane>
+  </Environment>
+  <UserTransform xmlns="">
+    <Position>
+      <X>-307.489</X>
+      <Y>367.1</Y>
+      <Z>-4702.583</Z>
+    </Position>
+  </UserTransform>
+  <Time version="0.9" xmlns="">
+    <Name>Apollo17LunarLanding</Name>
+    <Description>Apollo 17 Lunar Landing</Description>
+    <StartTime>
+      <TimeString>1972-12-11T19:54:57</TimeString>
+    </StartTime>
+    <UpdateRate>1</UpdateRate>
+    <Paused>false</Paused>
+  </Time>
+  <Content version="0.9" xmlns="">
+    <Parts version="0.9" group="0">
+      <Part version="0.9" ID="id-apollolunarlander">
+        <UUID>4ed3addf-8248-49b0-bce3-4008270b34e1</UUID>
+        <Name>Apollo Lunar Lander</Name>
+        <Description>Apollo Lunar Lander</Description>
+        <Transform>
+          <Position>
+            <X>-305</X>
+            <Y>366.8</Y>
+            <Z>-4677</Z>
+          </Position>
+          <QRotation>
+            <X>-0.7071078</X>
+            <W>0.7071058</W>
+          </QRotation>
+          <Size>
+            <X>11.2821045</X>
+            <Y>11.2755737</Y>
+            <Z>9.46875</Z>
+          </Size>
+        </Transform>
+        <Interactions>
+          <EnableInteraction>false</EnableInteraction>
+          <EnableUsability>false</EnableUsability>
+        </Interactions>
+        <Model>
+          <Asset>
+            <AssetName>LunarLander</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Mass>
+            <Min>4.28</Min>
+            <Max>4.92</Max>
+            <Contingency>0.05</Contingency>
+          </Mass>
+        </PartSpecifications>
+        <Category>Test Fixture</Category>
+      </Part>
+      <Part version="0.9" ID="id-apollolrv">
+        <UUID>87eefa8b-9b23-4523-bf7d-aaa41869dde4</UUID>
+        <Name>Apollo LRV</Name>
+        <Description>Apollo LRV</Description>
+        <Transform>
+          <Position>
+            <X>-304.28</X>
+            <Y>368.18</Y>
+            <Z>-4698.97</Z>
+          </Position>
+          <QRotation>
+            <X>-0.6880492</X>
+            <Y>0.1630588</Y>
+            <Z>0.1630603</Z>
+            <W>0.6880491</W>
+          </QRotation>
+          <Size>
+            <X>2.106018</X>
+            <Y>3.84753418</Y>
+            <Z>2.83398438</Z>
+          </Size>
+        </Transform>
+        <Interactions>
+          <EnableInteraction>false</EnableInteraction>
+          <EnableUsability>false</EnableUsability>
+        </Interactions>
+        <Model>
+          <Asset>
+            <AssetName>LunarRovingVehicle</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Mass>
+            <Min>0.034</Min>
+            <Max>0.034</Max>
+            <Contingency>0.002</Contingency>
+          </Mass>
+        </PartSpecifications>
+        <Category>Test Fixture</Category>
+      </Part>
+      <Part version="0.9" ID="id-astronaut">
+        <UUID>fe18a0e5-886f-4341-81a4-e87294853463</UUID>
+        <Name>Astronaut</Name>
+        <Description>Astronaut</Description>
+        <Transform>
+          <Position>
+            <X>-316</X>
+            <Y>367.0114</Y>
+            <Z>-4675</Z>
+          </Position>
+          <Size>
+            <X>1</X>
+            <Y>2.20001221</Y>
+            <Z>1.40039063</Z>
+          </Size>
+        </Transform>
+        <Interactions>
+          <EnableInteraction>false</EnableInteraction>
+          <EnableUsability>false</EnableUsability>
+        </Interactions>
+        <Model>
+          <Asset>
+            <AssetName>SpaceSuitZ2</AssetName>
+            <AssetBundle>mars-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Mass>
+            <Min>0.220000014</Min>
+            <Max>0.23</Max>
+            <Contingency>0.0100000007</Contingency>
+          </Mass>
+        </PartSpecifications>
+        <Category>Test Fixture</Category>
+      </Part>
+      <Part version="0.9" ID="id-centralstation">
+        <UUID>bbdc9254-8349-4928-a6db-aa4d95edc18b</UUID>
+        <Name>Central Station</Name>
+        <Description>The Central Station was the control center for all the ALSEP instruments, and it received data and commands from Earth and distributed power to each instrument.</Description>
+        <Transform>
+          <Position>
+            <X>-312.6003</X>
+            <Y>367.1011</Y>
+            <Z>-4678</Z>
+          </Position>
+          <QRotation>
+            <X>-0.205806315</X>
+            <Y>-0.6764871</Y>
+            <Z>-0.676498234</Z>
+            <W>0.205813617</W>
+          </QRotation>
+          <Size>
+            <X>0.6081543</X>
+            <Y>0.5576782</Y>
+            <Z>1.58496094</Z>
+          </Size>
+        </Transform>
+        <Model>
+          <Asset>
+            <AssetName>CentralStation</AssetName>
+            <AssetBundle>apollo-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <Physics>
+          <EnableCollisions>true</EnableCollisions>
+          <EnableGravity>true</EnableGravity>
+        </Physics>
+        <PartSpecifications>
+          <Vendor>Vendor</Vendor>
+          <Version>Unknown</Version>
+          <Mass>
+            <Min units="Kilogram">25.0</Min>
+            <Max units="Kilogram">25.0</Max>
+          </Mass>
+        </PartSpecifications>
+        <Category>Power Distribution Board</Category>
+      </Part>
+    </Parts>
+  </Content>
+</Project>

@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/Common"
+    elementFormDefault="unqualified"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common">
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="NumericTypes.xsd"/>
+    <include schemaLocation="UnitTypes.xsd"/>
+
+    <complexType name="TimeStringType">
+        <annotation>
+            <documentation>Time in string format</documentation>
+        </annotation>
+        <simpleContent>
+            <extension base="string">
+                <attribute name="format" type="string" default="s">
+                    <annotation>
+                        <documentation>
+                            The format of the time as specified by C# DateTimeFormatInfo
+                            class. Default format is the sortable DateTime pattern, e.g.
+                            0001-01-01T00:00:00
+                        </documentation>
+                    </annotation>
+                </attribute>
+            </extension>
+        </simpleContent>
+    </complexType>
+    
+    <simpleType name="YearType">
+        <restriction base="int">
+            <minInclusive value="1"/>
+            <maxInclusive value="9999"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="MonthType">
+        <restriction base="int">
+            <minInclusive value="1"/>
+            <maxInclusive value="12"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="DayType">
+        <restriction base="int">
+            <minInclusive value="1"/>
+            <maxInclusive value="31"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="HourType">
+        <restriction base="int">
+            <minInclusive value="0"/>
+            <maxInclusive value="23"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="MinuteType">
+        <restriction base="int">
+            <minInclusive value="0"/>
+            <maxInclusive value="59"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="SecondType">
+        <restriction base="int">
+            <minInclusive value="0"/>
+            <maxInclusive value="59"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="MillisecondType">
+        <restriction base="int">
+            <minInclusive value="0"/>
+            <maxInclusive value="999"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="TimeZoneType">
+        <restriction base="string">
+            <enumeration value="Local"/>
+            <enumeration value="UTC"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="TimeType">
+        <annotation>
+            <documentation>Defines a time</documentation>
+        </annotation>
+        <choice minOccurs="0" maxOccurs="1">
+            <annotation>
+                <documentation>Defines the time in different formats. If not specified, the current time will be used</documentation>
+            </annotation>
+            <element name="TimeString" type="common:TimeStringType" minOccurs="1">
+                <annotation>
+                    <documentation>The time value in string format</documentation>
+                </annotation>
+            </element>
+            <sequence minOccurs="1" maxOccurs="1">
+                <annotation>
+                    <documentation>The time specified in integer components</documentation>
+                </annotation>
+                <element name="Year" type="common:YearType" minOccurs="1"/>
+                <element name="Month" type="common:MonthType" minOccurs="1"/>
+                <element name="Day" type="common:DayType" minOccurs="1"/>
+                <element name="Hour" type="common:HourType" minOccurs="0"/>
+                <element name="Minute" type="common:MinuteType" minOccurs="0"/>
+                <element name="Second" type="common:SecondType" minOccurs="0"/>
+                <element name="Millisecond" type="common:MillisecondType" minOccurs="0"/>
+                <element name="TimeZone" type="common:TimeZoneType" minOccurs="0" default="UTC"/>
+            </sequence>
+        </choice>
+    </complexType>
+    
+</schema>

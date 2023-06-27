@@ -1,0 +1,310 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.9" xmlns="http://www.nasa.gov/MRET"
+xsi:schemaLocation="http://www.nasa.gov/MRET ../../SchemaFiles/v0.9/Project.xsd">
+  <Description xmlns="">Small cleanroom from std assets.</Description>
+  <Environment version="0.9" xmlns="">
+    <Asset>
+      <AssetName>Cleanroom_01</AssetName>
+      <AssetBundle>standard-scenes</AssetBundle>
+    </Asset>
+    <SkyBox>
+      <Asset>
+        <AssetName>GraySkybox</AssetName>
+        <AssetBundle>standard-assets</AssetBundle>
+      </Asset>
+    </SkyBox>
+    <ClippingPlane>
+      <Near>0.05</Near>
+    </ClippingPlane>
+  </Environment>
+  <UserTransform xmlns="">
+    <Position>
+      <X>4.544117</X>
+      <Z>-1.41370463</Z>
+    </Position>
+    <Scale referenceSpace="Relative">
+      <X>1</X>
+      <Y>1</Y>
+      <Z>1</Z>
+    </Scale>
+  </UserTransform>
+  <Content version="0.9" xmlns="">
+    <Parts version="0.9" group="0">
+      <Part version="0.9" ID="id-sampleassembly">
+        <UUID>15fdab72-de75-41b0-813b-2be34d130696</UUID>
+        <Name>SampleAssembly</Name>
+        <Description>An example of a hierarchical assembly of parts.</Description>
+        <Transform>
+          <Position>
+            <X>0.843</X>
+            <Y>1.063</Y>
+            <Z>-1.979</Z>
+          </Position>
+          <Size>
+            <X>0.94275</X>
+            <Y>0.924999952</Y>
+            <Z>0.925709963</Z>
+          </Size>
+        </Transform>
+        <PartSpecifications>
+          <Vendor>DylanCorp</Vendor>
+          <Version>Unknown</Version>
+          <Mass>
+            <Min>0.001</Min>
+            <Max>0.001</Max>
+          </Mass>
+        </PartSpecifications>
+        <ChildParts version="0.9" group="0">
+          <Enclosure version="0.9" ID="id-enclosure1">
+            <UUID>1fe16707-87ba-4e87-93ed-b16b4d2f5e89</UUID>
+            <Name>Enclosure</Name>
+            <Description>Sample assembly enclosure.</Description>
+            <Transform>
+              <Position>
+                <X>0.843</X>
+                <Y>1.063</Y>
+                <Z>-1.979</Z>
+              </Position>
+              <Scale referenceSpace="Relative">
+                <X>0.5</X>
+                <Y>0.5</Y>
+                <Z>0.5</Z>
+              </Scale>
+            </Transform>
+            <Model>
+              <Asset>
+                <AssetName>Enclosure</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <Specifications>
+              <Mass>
+                <Min>0.001</Min>
+                <Max>0.001</Max>
+              </Mass>
+            </Specifications>
+          </Enclosure>
+          <Part version="0.9" ID="id-part1">
+            <UUID>89b0934c-03e9-469a-b80a-7bb2144ae75d</UUID>
+            <Name>Part1</Name>
+            <Description>Sample part of assembly.</Description>
+            <Transform>
+              <Position>
+                <X>0.843</X>
+                <Y>1.063</Y>
+                <Z>-1.979</Z>
+              </Position>
+              <Scale referenceSpace="Relative">
+                <X>0.5</X>
+                <Y>0.05</Y>
+                <Z>0.5</Z>
+              </Scale>
+            </Transform>
+            <Model>
+              <Asset>
+                <AssetName>Part1</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <PartSpecifications>
+              <Vendor>Vendor</Vendor>
+              <Version>Unknown</Version>
+              <Mass>
+                <Min>0.001</Min>
+                <Max>0.001</Max>
+              </Mass>
+            </PartSpecifications>
+          </Part>
+          <Part version="0.9" ID="id-part2">
+            <UUID>0cc64287-e042-453d-b3e9-c309fc283dd2</UUID>
+            <Name>Part2</Name>
+            <Description>Sample part of assembly.</Description>
+            <Transform>
+              <Position>
+                <X>0.718</X>
+                <Y>1.213</Y>
+                <Z>-1.854</Z>
+              </Position>
+              <Scale referenceSpace="Relative">
+                <X>0.25</X>
+                <Y>0.25</Y>
+                <Z>0.25</Z>
+              </Scale>
+            </Transform>
+            <Model>
+              <Asset>
+                <AssetName>Part2</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <PartSpecifications>
+              <Vendor>Vendor</Vendor>
+              <Version>Unknown</Version>
+              <Mass>
+                <Min>0.001</Min>
+                <Max>0.001</Max>
+              </Mass>
+            </PartSpecifications>
+          </Part>
+          <Part version="0.9" ID="id-part3">
+            <UUID>ff8f520a-0275-41ee-a934-b957ac53b495</UUID>
+            <Name>Part3</Name>
+            <Description>Sample part of assembly.</Description>
+            <Transform>
+              <Position>
+                <X>0.968</X>
+                <Y>1.213</Y>
+                <Z>-1.854</Z>
+              </Position>
+              <Scale referenceSpace="Relative">
+                <X>0.25</X>
+                <Y>0.25</Y>
+                <Z>0.25</Z>
+              </Scale>
+            </Transform>
+            <Model>
+              <Asset>
+                <AssetName>Part3</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <PartSpecifications>
+              <Vendor>Vendor</Vendor>
+              <Version>Unknown</Version>
+              <Mass>
+                <Min>0.001</Min>
+                <Max>0.001</Max>
+              </Mass>
+            </PartSpecifications>
+          </Part>
+          <Part version="0.9" ID="id-part4">
+            <UUID>898100e9-5445-422d-a6d2-e650f0238da7</UUID>
+            <Name>Part4</Name>
+            <Description>Sample part of assembly.</Description>
+            <Transform>
+              <Position>
+                <X>0.968</X>
+                <Y>1.213</Y>
+                <Z>-2.104</Z>
+              </Position>
+              <Scale referenceSpace="Relative">
+                <X>0.25</X>
+                <Y>0.25</Y>
+                <Z>0.25</Z>
+              </Scale>
+            </Transform>
+            <Model>
+              <Asset>
+                <AssetName>Part4</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <PartSpecifications>
+              <Vendor>Vendor</Vendor>
+              <Version>Unknown</Version>
+              <Mass>
+                <Min>0.001</Min>
+                <Max>0.001</Max>
+              </Mass>
+            </PartSpecifications>
+          </Part>
+          <Part version="0.9" ID="id-part5">
+            <UUID>877eeefa-7aad-4ac9-8dc5-c95dc9d180ee</UUID>
+            <Name>Part5</Name>
+            <Description>Sample part of assembly.</Description>
+            <Transform>
+              <Position>
+                <X>0.718</X>
+                <Y>1.213</Y>
+                <Z>-2.104</Z>
+              </Position>
+              <Scale referenceSpace="Relative">
+                <X>0.25</X>
+                <Y>0.25</Y>
+                <Z>0.25</Z>
+              </Scale>
+            </Transform>
+            <Model>
+              <Asset>
+                <AssetName>Part5</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <PartSpecifications>
+              <Vendor>Vendor</Vendor>
+              <Version>Unknown</Version>
+              <Mass>
+                <Min>0.001</Min>
+                <Max>0.001</Max>
+              </Mass>
+            </PartSpecifications>
+          </Part>
+        </ChildParts>
+      </Part>
+      <Part version="0.9" ID="id-1u_structure">
+        <UUID>724f8a5f-6b6a-4268-8914-f394381044f2</UUID>
+        <Name>1U_Structure</Name>
+        <Description>Description Here</Description>
+        <Transform>
+          <Position>
+            <X>3.06745</X>
+            <Y>1.70971119</Y>
+            <Z>-2.96694779</Z>
+          </Position>
+          <QRotation>
+            <X>0.06541486</X>
+            <Y>-0.224025249</Y>
+            <Z>0.0627305955</Z>
+            <W>0.970360041</W>
+          </QRotation>
+          <Size>
+            <X>0.0999999046</X>
+            <Y>0.0999999046</Y>
+            <Z>0.113999844</Z>
+          </Size>
+        </Transform>
+        <Model>
+          <Asset>
+            <AssetName>1U_Structure</AssetName>
+            <AssetBundle>cubesat-assets</AssetBundle>
+          </Asset>
+        </Model>
+        <RandomizeTextures>true</RandomizeTextures>
+        <PartSpecifications>
+          <Vendor>Clyde Space</Vendor>
+          <Version>Unknown</Version>
+          <Mass>
+            <Min>0.155</Min>
+            <Max>0.155</Max>
+          </Mass>
+        </PartSpecifications>
+      </Part>
+    </Parts>
+    <Displays version="0.9" group="0">
+      <Notes version="0.9" group="0">
+        <Note version="0.9" ID="id-note" Zorder="0">
+          <UUID>0b1dc829-2973-4544-90b6-9dc792a2c5f8</UUID>
+          <Name>Note</Name>
+          <Transform>
+            <Position>
+              <X>3.41706967</X>
+              <Y>1.20999992</Y>
+              <Z>-2.107241</Z>
+            </Position>
+            <Size>
+              <X>0.800000668</X>
+              <Y>0.6500001</Y>
+              <Z>0.00250005722</Z>
+            </Size>
+          </Transform>
+          <Visible>false</Visible>
+          <Title>This is the note title</Title>
+          <Width>800.0006</Width>
+          <Height>650.000061</Height>
+          <State>Maximized</State>
+          <Content>This is the note text</Content>
+        </Note>
+      </Notes>
+    </Displays>
+  </Content>
+</Project>

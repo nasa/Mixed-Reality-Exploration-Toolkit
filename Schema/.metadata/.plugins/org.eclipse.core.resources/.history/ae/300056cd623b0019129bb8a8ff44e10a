@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.example.org/MRET"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:mt="http://www.example.org/MRET">
+
+	<include schemaLocation="Common.xsd"></include>
+	
+	<element name="Project" type="mt:ProjectType"></element>
+
+	<complexType name="ProjectType">
+		<choice maxOccurs="unbounded" minOccurs="0">
+			<element name="CurrentView" type="mt:ViewType" maxOccurs="1"
+				minOccurs="0">
+			</element>
+			<element name="SavedViews" type="mt:ViewType"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+			<element name="Description" type="string" maxOccurs="1"
+				minOccurs="0">
+			</element>
+			<element name="Environment" type="mt:VirtualEnvironmentType"
+				minOccurs="1" maxOccurs="1">
+			</element>
+			<element name="Parts" type="mt:PartsType"></element>
+			<element name="Drawings" type="mt:DrawingsType"></element>
+			<element name="DualAxisRotatableObjects"
+				type="mt:DualAxisRotatableObjectType" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+			<element name="VideoSources" type="mt:VideoSourceType"
+				minOccurs="0" maxOccurs="unbounded">
+			</element>
+			<element name="Notes" type="mt:NotesType"></element>
+			<element name="GMSECSources" type="mt:GMSECSourcesType"></element>
+			<element name="MatlabConnection" type="mt:MatlabConnectionType"></element>
+		</choice>
+	</complexType>
+
+	<complexType name="ViewType">
+		<sequence>
+			<element name="Location" type="mt:Vector3Type"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="Rotation" type="mt:Vector3Type"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="Zoom" type="mt:NonNegativeFloat"
+				maxOccurs="1" minOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="Name" type="ID" use="required"></attribute>
+	</complexType>
+</schema>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mt:TextAnnotation xmlns:mt="http://www.example.org/MRET" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/MRET TextAnnotation.xsd ">
+  <mt:Texts>
+  	<mt:Texts>I used to think that I was indecisive...</mt:Texts>
+  	<mt:Texts>But now, I'm not too sure.</mt:Texts>
+  	<mt:Texts>-Dylan Z. Baker</mt:Texts></mt:Texts>
+  <mt:TimePerText>0.0</mt:TimePerText>
+  <mt:Loop>true</mt:Loop>
+  <mt:AttachTo>mt:AttachTo</mt:AttachTo>
+</mt:TextAnnotation>

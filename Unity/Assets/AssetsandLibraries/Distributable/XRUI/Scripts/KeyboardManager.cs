@@ -1,12 +1,11 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
 using System.Collections;
-using GSFC.ARVR.MRET.Components.UI;
-using GSFC.ARVR.XRUI.WorldSpaceMenu;
+using GOV.NASA.GSFC.XR.XRUI.WorldSpaceMenu;
 
-namespace GSFC.ARVR.MRET.Components.Keyboard
+namespace GOV.NASA.GSFC.XR.XRUI.Keyboard
 {
     /// <remarks>
     /// History:
@@ -15,7 +14,7 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
     /// 17 August 2021: Not parenting keyboard
     /// </remarks>
     /// <summary>
-    /// This script manages virtual keyboards in MRET.
+    /// This script manages virtual keyboards.
     /// Author: Dylan Z. Baker
     /// </summary>
     public class KeyboardManager : MonoBehaviour
@@ -136,7 +135,8 @@ namespace GSFC.ARVR.MRET.Components.Keyboard
             keyboard.transform.SetParent(textMenu.transform);
             keyboard.transform.localPosition = Vector3.zero;
             keyboard.transform.localRotation = Quaternion.identity;
-            
+            yield return new WaitForFixedUpdate();
+
             int iterations = 0;
             float amtToIncrement = -0.1f;
             while (iterations < maxIterations)

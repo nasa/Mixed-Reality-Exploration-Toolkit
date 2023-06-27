@@ -1,27 +1,33 @@
-﻿using System.Collections;
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class CameraAttachPoint : MonoBehaviour 
+namespace GOV.NASA.GSFC.XR.RecordingCamera
 {
-	public Transform AttachPoint;
+    public class CameraAttachPoint : MonoBehaviour
+    {
+        public Transform AttachPoint;
 
-	public Material OffMaterial;
-	public Material OnMaterial;
+        public Material OffMaterial;
+        public Material OnMaterial;
 
-	public MeshRenderer CameraVisual;
-    public GameObject PreviewVisual;
+        public MeshRenderer CameraVisual;
+        public GameObject PreviewVisual;
 
-	public void SetCameraAttached(bool attached)
-	{
-		if(CameraVisual != null)
-		{
-			CameraVisual.material = attached ? OnMaterial : OffMaterial;
-		}
-
-        if(PreviewVisual != null)
+        public void SetCameraAttached(bool attached)
         {
-            PreviewVisual.SetActive(attached);
+            if (CameraVisual != null)
+            {
+                CameraVisual.material = attached ? OnMaterial : OffMaterial;
+            }
+
+            if (PreviewVisual != null)
+            {
+                PreviewVisual.SetActive(attached);
+            }
         }
-	}
+    }
 }

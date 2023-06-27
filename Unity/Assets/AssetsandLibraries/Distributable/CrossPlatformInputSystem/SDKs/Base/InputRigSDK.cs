@@ -1,9 +1,10 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
+using System;
 using UnityEngine;
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.Base
 {
     /// <remarks>
     /// History:
@@ -19,6 +20,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
     /// 17 March 2021: Added the motion constraint properties and multipliers to support fast, normal
     ///     and slow motion to centralize the logic for locomotion controllers across input rig
     ///     implementations (J. Hosler)
+    /// 24 July 2021: Added Climbing locomotion (C. Lian)
+    /// 17 November 2021: Removed RequireInterface for FlyingController reference, does not seem to
+    ///     be assignable from inspector (DZB)
+    /// 08 September 2022: Added player height and event model to listen for changes
     /// </remarks>
     /// <summary>
     /// SDK wrapper for the input rig.
@@ -27,10 +32,22 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
     public class InputRigSDK : MonoBehaviour
     {
         /// <summary>
+        /// The default rig height in meters. 1.67m is about the average human height.
+        /// </summary>
+        public const float DEFAULT_PLAYER_HEIGHT = 1.67f;
+
+        /// <summary>
         /// Reference to the input rig class.
         /// </summary>
         [Tooltip("Reference to the input rig class.")]
         public InputRig inputRig;
+
+        /// <summary>
+        /// The player height in meters.
+        /// </summary>
+        [SerializeField]
+        [Tooltip("The player height in meters.")]
+        float playerHeight = DEFAULT_PLAYER_HEIGHT;
 
         /// <summary>
         /// Physics for this input rig.
@@ -51,7 +68,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
 #if UNITY_EDITOR
         [RequireInterface(typeof(IInputRigLocomotionControl))]
 #endif
-        public Object armswingController;
+        public UnityEngine.Object armswingController;
         protected IInputRigLocomotionControl _armswingController => armswingController as IInputRigLocomotionControl;
 
         /// <summary>
@@ -61,7 +78,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
 #if UNITY_EDITOR
         [RequireInterface(typeof(IInputRigLocomotionControl))]
 #endif
-        public Object flyingController;
+        public UnityEngine.Object flyingController;
         protected IInputRigLocomotionControl _flyingController => flyingController as IInputRigLocomotionControl;
 
         /// <summary>
@@ -71,8 +88,18 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
 #if UNITY_EDITOR
         [RequireInterface(typeof(IInputRigLocomotionControl))]
 #endif
-        public Object navigationController;
+        public UnityEngine.Object navigationController;
         protected IInputRigLocomotionControl _navigationController => navigationController as IInputRigLocomotionControl;
+
+        /// <summary>
+        /// Climbing Controller for this input rig.
+        /// </summary>
+        [Tooltip("Climbing Controller for the input rig.")]
+#if UNITY_EDITOR
+        [RequireInterface(typeof(IInputRigLocomotionControl))]
+#endif
+        public UnityEngine.Object climbingController;
+        protected IInputRigLocomotionControl _climbingController => climbingController as IInputRigLocomotionControl;
 
         /// <summary>
         /// The hand used for placing.
@@ -99,8 +126,47 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
         /// </summary>
         public virtual void Initialize()
         {
-            Debug.LogWarning("Initialize() not implemented for InputRigSDK.");
+            //Debug.LogWarning("Initialize() not implemented for InputRigSDK.");
         }
+
+#region Player
+
+        /// <summary>
+        /// The player height in meters
+        /// </summary>
+        public float PlayerHeight
+        {
+            get => playerHeight;
+            set
+            {
+                if (playerHeight != value)
+                {
+                    // Update the player height
+                    float previousValue = playerHeight;
+                    playerHeight = value;
+
+                    // Notify listeners
+                    OnPlayerHeightChange(previousValue, playerHeight);
+                }
+            }
+        }
+
+        /// <summary>
+        /// <code>Action</code> to respond to player height changes
+        /// </summary>
+        public event Action<float,float> PlayerHeightChange;
+
+        /// <summary>
+        /// Invokes the <code>PlayerHeightChange</code> action on a player height change
+        /// </summary>
+        /// <param name="previousHeight">Previous player height</param>
+        /// <param name="newHeight">New player height</param>
+        public void OnPlayerHeightChange(float previousHeight, float newHeight)
+        {
+            PlayerHeightChange?.Invoke(previousHeight, newHeight);
+        }
+
+#endregion Player
 
 #region Physics
 
@@ -541,9 +607,134 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base
             Debug.LogWarning("DisableNavigation() not implemented for InputRigSDK.");
         }
 
-#endregion // Locomotion [Navigation]
+        #endregion // Locomotion [Navigation]
 
-#endregion // Locomotion
+#region Locomotion [Climbing]
+
+        /// <summary>
+        /// The multiplier to be applied to the normal motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingNormalMotionConstraintMultiplier
+        {
+            set
+            {
+                // Set the controller motion multiplier if assigned
+                if (climbingController != null)
+                {
+                    _climbingController.SetMotionConstraintMultiplier(MotionConstraint.Normal, value);
+                }
+                else
+                {
+                    Debug.LogWarning(nameof(IInputRigLocomotionControl) + " for Climbing not defined for " + nameof(InputRigSDK));
+                }
+            }
+            get
+            {
+                return (climbingController != null) ? _climbingController.GetMotionConstraintMultiplier(MotionConstraint.Normal) : 0f;
+            }
+        }
+
+        /// <summary>
+        /// The multiplier to be applied to the slow motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingSlowMotionConstraintMultiplier
+        {
+            set
+            {
+                // Set the controller motion multiplier if assigned
+                if (climbingController != null)
+                {
+                    _climbingController.SetMotionConstraintMultiplier(MotionConstraint.Slow, value);
+                }
+                else
+                {
+                    Debug.LogWarning(nameof(IInputRigLocomotionControl) + " for Climbing not defined for " + nameof(InputRigSDK));
+                }
+            }
+            get
+            {
+                return (climbingController != null) ? _climbingController.GetMotionConstraintMultiplier(MotionConstraint.Slow) : 0f;
+            }
+        }
+
+        /// <summary>
+        /// The multiplier to be applied to the fast motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingFastMotionConstraintMultiplier
+        {
+            set
+            {
+                // Set the controller motion multiplier if assigned
+                if (climbingController != null)
+                {
+                    _climbingController.SetMotionConstraintMultiplier(MotionConstraint.Fast, value);
+                }
+                else
+                {
+                    Debug.LogWarning(nameof(IInputRigLocomotionControl) + " for Climbing not defined for " + nameof(InputRigSDK));
+                }
+            }
+            get
+            {
+                return (climbingController != null) ? _climbingController.GetMotionConstraintMultiplier(MotionConstraint.Fast) : 0f;
+            }
+        }
+
+        /// <summary>
+        /// The gravity constraint to be applied to the climbing motion.
+        /// </summary>
+        public GravityConstraint ClimbingGravityConstraint
+        {
+            set
+            {
+                // Set the controller gravity constraint if assigned
+                if (climbingController != null)
+                {
+                    _climbingController.SetGravityConstraint(value);
+                }
+                else
+                {
+                    Debug.LogWarning(nameof(IInputRigLocomotionControl) + " for Climbing not defined for " + nameof(InputRigSDK));
+                }
+            }
+            get
+            {
+                return (climbingController != null) ? _climbingController.GetGravityConstraint() : GravityConstraint.Allowed;
+            }
+        }
+
+        /// <summary>
+        /// Indicates if climbing is enabled for this rig.
+        /// </summary>
+        /// <returns>A boolean value indicating whether or not climbing is enabled</returns>
+        public virtual bool ClimbingEnabled
+        {
+            get
+            {
+                Debug.LogWarning("ClimbingEnabled not implemented for InputRigSDK.");
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Enables climbing for this rig.
+        /// </summary>
+        public virtual void EnableClimbing()
+        {
+            Debug.LogWarning("EnableClimbing() not implemented for InputRigSDK.");
+        }
+
+        /// <summary>
+        /// Disables climbing for this rig.
+        /// </summary>
+        public virtual void DisableClimbing()
+        {
+            Debug.LogWarning("DisableClimbing() not implemented for InputRigSDK.");
+        }
+
+        #endregion // Locomotion [Climbing]
+
+        #endregion // Locomotion
 
     }
 }

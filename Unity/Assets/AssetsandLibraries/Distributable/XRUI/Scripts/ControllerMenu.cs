@@ -1,4 +1,4 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using System.Collections;
@@ -6,8 +6,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Events;
+using GOV.NASA.GSFC.XR.XRUI.WorldSpaceMenu;
 
-namespace GSFC.ARVR.XRUI.ControllerMenu
+namespace GOV.NASA.GSFC.XR.XRUI.ControllerMenu
 {
     /// <remarks>
     /// History:
@@ -111,7 +112,7 @@ namespace GSFC.ARVR.XRUI.ControllerMenu
         /// <summary>
         /// Whether or not the menu is dimmed.
         /// </summary>
-        private bool menuDimmed = false;
+        public bool menuDimmed = false;
 
         /// <summary>
         /// Must be called when first instantiating menu and
@@ -195,7 +196,16 @@ namespace GSFC.ARVR.XRUI.ControllerMenu
             {
                 menuLoader.DestroyMenu();
             }
+
             menuDimmed = false;
+        }
+
+        /// <summary>
+        /// Whether or not the menu is currently shown.
+        /// </summary>
+        public bool IsShown()
+        {
+            return menuObject.activeSelf;
         }
 
         /// <summary>
@@ -354,7 +364,13 @@ namespace GSFC.ARVR.XRUI.ControllerMenu
             menuPanel.nextButton.onClick = new Button.ButtonClickedEvent();
             menuPanel.nextButton.onClick.AddListener(() => { NextMenuPanel(); });
 
+            //disable menu panels that are not in front
+            menuPanel.enableInteractions();
             menuPanels.Add(menuPanel);
+            menuPanels[menuPanels.Count - 1].disableInteractions();
+
+
+
 
             // Add menu bar button.
             AddMenuBarButton(menuPanels.IndexOf(menuPanel));
@@ -546,6 +562,12 @@ namespace GSFC.ARVR.XRUI.ControllerMenu
                 yield break;
             }
 
+            ///FIXME: Prevent tapping on buttons that are not on the top layer for other UIElements
+            //Enable selectables on the final panel
+            finalPanel.enableInteractions();
+            //Disable selectables on the original panel
+            origPanel.disableInteractions();
+
             for (int i = 0; i < panelSwitchSteps; i++)
             {
                 // Position.
@@ -580,6 +602,7 @@ namespace GSFC.ARVR.XRUI.ControllerMenu
             origPanel.transform.localScale = new Vector3(secondaryPanelScale, secondaryPanelScale, secondaryPanelScale);
             finalPanel.transform.localScale = new Vector3(activePanelScale, activePanelScale, activePanelScale);
             finalPanel.transform.SetAsLastSibling();
+
         }
 
         private void Start()

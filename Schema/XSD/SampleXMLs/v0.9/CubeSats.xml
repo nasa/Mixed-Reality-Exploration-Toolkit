@@ -1,0 +1,297 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.9"
+  xmlns="http://www.nasa.gov/MRET"
+  xsi:schemaLocation="http://www.nasa.gov/MRET ../../SchemaFiles/v0.9/Project.xsd">
+  <Description
+    xmlns="">Small cleanroom from std assets.
+  </Description>
+  <Environment version="0.9" xmlns="">
+    <Asset>
+      <AssetName>Cleanroom_01</AssetName>
+      <AssetBundle>standard-scenes</AssetBundle>
+    </Asset>
+    <SkyBox>
+      <Asset>
+        <AssetName>GraySkybox</AssetName>
+        <AssetBundle>standard-assets</AssetBundle>
+      </Asset>
+    </SkyBox>
+    <ClippingPlane>
+      <Near>0.05</Near>
+    </ClippingPlane>
+  </Environment>
+  <UserTransform xmlns="">
+    <Position>
+      <X>4.7</X>
+      <Z>-1</Z>
+    </Position>
+    <QRotation>
+      <W>0</W>
+    </QRotation>
+    <Scale>
+      <X>1</X>
+      <Y>1</Y>
+      <Z>1</Z>
+    </Scale>
+  </UserTransform>
+  <Content version="0.9" xmlns="">
+    <Parts version="0.9" group="0">
+      <Part version="0.9" ID="id-sampleassembly">
+        <Name>SampleAssembly</Name>
+        <Description>An example of a hierarchical assembly of parts.</Description>
+        <Transform>
+          <Position>
+            <X>0.843</X>
+            <Y>1.063</Y>
+            <Z>-1.979</Z>
+          </Position>
+          <QRotation>
+            <W>0</W>
+          </QRotation>
+          <Scale>
+            <X>0.5</X>
+            <Y>0.5</Y>
+            <Z>0.5</Z>
+          </Scale>
+        </Transform>
+        <Interactions>
+          <EnableInteraction>true</EnableInteraction>
+          <EnableUsability>true</EnableUsability>
+        </Interactions>
+        <Physics />
+        <PartSpecifications>
+          <Vendor>DylanCorp</Vendor>
+          <Version>Unknown</Version>
+          <Mass>
+            <Min>0.001</Min>
+            <Max>0.001</Max>
+          </Mass>
+        </PartSpecifications>
+        <ChildParts version="0.9" group="0">
+          <Enclosure version="0.9" ID="id-enclosure">
+            <Name>Enclosure</Name>
+            <Description>Sample assembly enclosure.</Description>
+            <Transform>
+              <Position>
+                <X>0.843</X>
+                <Y>1.063</Y>
+                <Z>-1.979</Z>
+              </Position>
+              <QRotation>
+                <W>0</W>
+              </QRotation>
+              <Scale>
+                <X>0.5</X>
+                <Y>0.5</Y>
+                <Z>0.5</Z>
+              </Scale>
+            </Transform>
+            <Interactions>
+              <EnableInteraction>true</EnableInteraction>
+              <EnableUsability>true</EnableUsability>
+            </Interactions>
+            <Model>
+              <Asset>
+                <AssetName>Enclosure</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <Physics />
+          </Enclosure>
+          <Part version="0.9" ID="id-part1">
+            <Name>Part1</Name>
+            <Description>Sample part of assembly.</Description>
+            <Transform>
+              <Position>
+                <X>0.843</X>
+                <Y>1.063</Y>
+                <Z>-1.979</Z>
+              </Position>
+              <QRotation>
+                <W>0</W>
+              </QRotation>
+              <Scale>
+                <X>0.5</X>
+                <Y>0.05</Y>
+                <Z>0.5</Z>
+              </Scale>
+            </Transform>
+            <Interactions>
+              <EnableInteraction>true</EnableInteraction>
+              <EnableUsability>true</EnableUsability>
+            </Interactions>
+            <Model>
+              <Asset>
+                <AssetName>Part1</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <Physics />
+            <PartSpecifications>
+              <Vendor>Vendor</Vendor>
+              <Version>Unknown</Version>
+              <Mass>
+                <Min>0.001</Min>
+                <Max>0.001</Max>
+              </Mass>
+            </PartSpecifications>
+          </Part>
+          <Part version="0.9" ID="id-part2">
+            <Name>Part2</Name>
+            <Description>Sample part of assembly.</Description>
+            <Transform>
+              <Position>
+                <X>0.718</X>
+                <Y>1.213</Y>
+                <Z>-1.854</Z>
+              </Position>
+              <QRotation>
+                <W>0</W>
+              </QRotation>
+              <Scale>
+                <X>0.25</X>
+                <Y>0.25</Y>
+                <Z>0.25</Z>
+              </Scale>
+            </Transform>
+            <Interactions>
+              <EnableInteraction>true</EnableInteraction>
+              <EnableUsability>true</EnableUsability>
+            </Interactions>
+            <Model>
+              <Asset>
+                <AssetName>Part2</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <Physics />
+            <PartSpecifications>
+              <Vendor>Vendor</Vendor>
+              <Version>Unknown</Version>
+              <Mass>
+                <Min>0.001</Min>
+                <Max>0.001</Max>
+              </Mass>
+            </PartSpecifications>
+          </Part>
+          <Part version="0.9" ID="id-part3">
+            <Name>Part3</Name>
+            <Description>Sample part of assembly.</Description>
+            <Transform>
+              <Position>
+                <X>0.968</X>
+                <Y>1.213</Y>
+                <Z>-1.854</Z>
+              </Position>
+              <QRotation>
+                <W>0</W>
+              </QRotation>
+              <Scale>
+                <X>0.25</X>
+                <Y>0.25</Y>
+                <Z>0.25</Z>
+              </Scale>
+            </Transform>
+            <Interactions>
+              <EnableInteraction>true</EnableInteraction>
+              <EnableUsability>true</EnableUsability>
+            </Interactions>
+            <Model>
+              <Asset>
+                <AssetName>Part3</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <Physics />
+            <PartSpecifications>
+              <Vendor>Vendor</Vendor>
+              <Version>Unknown</Version>
+              <Mass>
+                <Min>0.001</Min>
+                <Max>0.001</Max>
+              </Mass>
+            </PartSpecifications>
+          </Part>
+          <Part version="0.9" ID="id-part4">
+            <Name>Part4</Name>
+            <Description>Sample part of assembly.</Description>
+            <Transform>
+              <Position>
+                <X>0.968</X>
+                <Y>1.213</Y>
+                <Z>-2.104</Z>
+              </Position>
+              <QRotation>
+                <W>0</W>
+              </QRotation>
+              <Scale>
+                <X>0.25</X>
+                <Y>0.25</Y>
+                <Z>0.25</Z>
+              </Scale>
+            </Transform>
+            <Interactions>
+              <EnableInteraction>true</EnableInteraction>
+              <EnableUsability>true</EnableUsability>
+            </Interactions>
+            <Model>
+              <Asset>
+                <AssetName>Part4</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <Physics />
+            <PartSpecifications>
+              <Vendor>Vendor</Vendor>
+              <Version>Unknown</Version>
+              <Mass>
+                <Min>0.001</Min>
+                <Max>0.001</Max>
+              </Mass>
+            </PartSpecifications>
+          </Part>
+          <Part version="0.9" ID="id-part5">
+            <Name>Part5</Name>
+            <Description>Sample part of assembly.</Description>
+            <Transform>
+              <Position>
+                <X>0.718</X>
+                <Y>1.213</Y>
+                <Z>-2.104</Z>
+              </Position>
+              <QRotation>
+                <W>0</W>
+              </QRotation>
+              <Scale>
+                <X>0.25</X>
+                <Y>0.25</Y>
+                <Z>0.25</Z>
+              </Scale>
+            </Transform>
+            <Interactions>
+              <EnableInteraction>true</EnableInteraction>
+              <EnableUsability>true</EnableUsability>
+            </Interactions>
+            <Model>
+              <Asset>
+                <AssetName>Part5</AssetName>
+                <AssetBundle>standard-assets</AssetBundle>
+              </Asset>
+            </Model>
+            <Physics />
+            <PartSpecifications>
+              <Vendor>Vendor</Vendor>
+              <Version>Unknown</Version>
+              <Mass>
+                <Min>0.001</Min>
+                <Max>0.001</Max>
+              </Mass>
+            </PartSpecifications>
+          </Part>
+        </ChildParts>
+      </Part>
+    </Parts>
+  </Content>
+</Project>

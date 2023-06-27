@@ -4,7 +4,7 @@
 QualitySettings:
   m_ObjectHideFlags: 0
   serializedVersion: 5
-  m_CurrentQuality: 5
+  m_CurrentQuality: 3
   m_QualitySettings:
   - serializedVersion: 2
     name: Fastest
@@ -17,17 +17,17 @@ QualitySettings:
     shadowNearPlaneOffset: 3
     shadowCascade2Split: 0.33333334
     shadowCascade4Split: {x: 0.06666667, y: 0.2, z: 0.46666667}
-    shadowmaskMode: 0
-    blendWeights: 1
-    textureQuality: 1
+    shadowmaskMode: 1
+    skinWeights: 1
+    textureQuality: 0
     anisotropicTextures: 0
     antiAliasing: 0
     softParticles: 0
     softVegetation: 0
-    realtimeReflectionProbes: 0
+    realtimeReflectionProbes: 1
     billboardsFaceCameraPosition: 0
     vSyncCount: 0
-    lodBias: 0.3
+    lodBias: 1
     maximumLODLevel: 0
     streamingMipmapsActive: 0
     streamingMipmapsAddAllCameras: 1
@@ -38,7 +38,10 @@ QualitySettings:
     particleRaycastBudget: 4
     asyncUploadTimeSlice: 2
     asyncUploadBufferSize: 4
+    asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+    customRenderPipeline: {fileID: 11400000, guid: f84459267c319c34897e7eaf72f2b92e,
+      type: 2}
     excludedTargetPlatforms: []
   - serializedVersion: 2
     name: Fast
@@ -52,7 +55,7 @@ QualitySettings:
     shadowCascade2Split: 0.33333334
     shadowCascade4Split: {x: 0.06666667, y: 0.2, z: 0.46666667}
     shadowmaskMode: 0
-    blendWeights: 2
+    skinWeights: 2
     textureQuality: 0
     anisotropicTextures: 0
     antiAliasing: 0
@@ -72,7 +75,9 @@ QualitySettings:
     particleRaycastBudget: 16
     asyncUploadTimeSlice: 2
     asyncUploadBufferSize: 4
+    asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+    customRenderPipeline: {fileID: 0}
     excludedTargetPlatforms: []
   - serializedVersion: 2
     name: Simple
@@ -86,7 +91,7 @@ QualitySettings:
     shadowCascade2Split: 0.33333334
     shadowCascade4Split: {x: 0.06666667, y: 0.2, z: 0.46666667}
     shadowmaskMode: 0
-    blendWeights: 2
+    skinWeights: 2
     textureQuality: 0
     anisotropicTextures: 1
     antiAliasing: 0
@@ -106,7 +111,9 @@ QualitySettings:
     particleRaycastBudget: 64
     asyncUploadTimeSlice: 2
     asyncUploadBufferSize: 4
+    asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+    customRenderPipeline: {fileID: 0}
     excludedTargetPlatforms: []
   - serializedVersion: 2
     name: Good
@@ -120,7 +127,7 @@ QualitySettings:
     shadowCascade2Split: 0.33333334
     shadowCascade4Split: {x: 0.06666667, y: 0.2, z: 0.46666667}
     shadowmaskMode: 1
-    blendWeights: 2
+    skinWeights: 2
     textureQuality: 0
     anisotropicTextures: 1
     antiAliasing: 0
@@ -140,7 +147,10 @@ QualitySettings:
     particleRaycastBudget: 256
     asyncUploadTimeSlice: 2
     asyncUploadBufferSize: 4
+    asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+    customRenderPipeline: {fileID: 11400000, guid: f84459267c319c34897e7eaf72f2b92e,
+      type: 2}
     excludedTargetPlatforms: []
   - serializedVersion: 2
     name: Beautiful
@@ -154,7 +164,7 @@ QualitySettings:
     shadowCascade2Split: 0.33333334
     shadowCascade4Split: {x: 0.06666667, y: 0.2, z: 0.46666667}
     shadowmaskMode: 1
-    blendWeights: 4
+    skinWeights: 4
     textureQuality: 0
     anisotropicTextures: 2
     antiAliasing: 2
@@ -174,7 +184,9 @@ QualitySettings:
     particleRaycastBudget: 1024
     asyncUploadTimeSlice: 2
     asyncUploadBufferSize: 4
+    asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+    customRenderPipeline: {fileID: 0}
     excludedTargetPlatforms: []
   - serializedVersion: 2
     name: Fantastic
@@ -188,16 +200,16 @@ QualitySettings:
     shadowCascade2Split: 0.33333334
     shadowCascade4Split: {x: 0.06666667, y: 0.19999999, z: 0.46666664}
     shadowmaskMode: 1
-    blendWeights: 4
+    skinWeights: 4
     textureQuality: 0
     anisotropicTextures: 2
-    antiAliasing: 2
+    antiAliasing: 0
     softParticles: 1
     softVegetation: 1
     realtimeReflectionProbes: 1
     billboardsFaceCameraPosition: 1
     vSyncCount: 0
-    lodBias: 2
+    lodBias: 1
     maximumLODLevel: 0
     streamingMipmapsActive: 0
     streamingMipmapsAddAllCameras: 1
@@ -208,14 +220,10 @@ QualitySettings:
     particleRaycastBudget: 4096
     asyncUploadTimeSlice: 2
     asyncUploadBufferSize: 4
+    asyncUploadPersistentBuffer: 1
     resolutionScalingFixedDPIFactor: 1
+    customRenderPipeline: {fileID: 0}
     excludedTargetPlatforms: []
   m_PerPlatformDefaultQuality:
-    Android: 0
-    BlackBerry: 0
-    Standalone: 0
-    WP8: 0
-    Web: 0
-    WebGL: 0
-    Windows Store Apps: 0
-    iPhone: 0
+    Standalone: 3
+    Windows Store Apps: 3

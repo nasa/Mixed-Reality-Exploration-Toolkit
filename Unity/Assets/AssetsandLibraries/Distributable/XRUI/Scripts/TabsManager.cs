@@ -1,55 +1,58 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
-public class TabsManager : MonoBehaviour
+namespace GOV.NASA.GSFC.XR.XRUI.Widget
 {
-    public List<Button> tabButtons = new List<Button>();
-    public List<GameObject> tabPanels = new List<GameObject>();
-
-    private int lastHighlightedTabIndex = -1;
-    private ColorBlock lastHighlightedTabColorBlock;
-
-	void Start ()
+    public class TabsManager : MonoBehaviour
     {
-        SetActiveTab(0);
-	}
+        public List<Button> tabButtons = new List<Button>();
+        public List<GameObject> tabPanels = new List<GameObject>();
 
-    public void SetActiveTab(int tabNumber)
-    {
-        RevertLastActiveTab();
-        if (tabButtons[tabNumber])
+        private int lastHighlightedTabIndex = -1;
+        private ColorBlock lastHighlightedTabColorBlock;
+
+        void Start()
         {
-            lastHighlightedTabIndex = tabNumber;
-            lastHighlightedTabColorBlock = tabButtons[tabNumber].colors;
-            ColorBlock tempColors = tabButtons[tabNumber].colors;
-            tempColors.normalColor = tabButtons[tabNumber].colors.pressedColor;
-            tabButtons[tabNumber].colors = tempColors;
+            SetActiveTab(0);
         }
 
-        for (int i = 0; i < tabPanels.Count; i++)
+        public void SetActiveTab(int tabNumber)
         {
-            if (i != tabNumber)
+            RevertLastActiveTab();
+            if (tabButtons[tabNumber])
             {
-                tabPanels[i].SetActive(false);
+                lastHighlightedTabIndex = tabNumber;
+                lastHighlightedTabColorBlock = tabButtons[tabNumber].colors;
+                ColorBlock tempColors = tabButtons[tabNumber].colors;
+                tempColors.normalColor = tabButtons[tabNumber].colors.pressedColor;
+                tabButtons[tabNumber].colors = tempColors;
+            }
+
+            for (int i = 0; i < tabPanels.Count; i++)
+            {
+                if (i != tabNumber)
+                {
+                    tabPanels[i].SetActive(false);
+                }
+            }
+
+            if (tabPanels[tabNumber])
+            {
+                tabPanels[tabNumber].SetActive(true);
             }
         }
 
-        if (tabPanels[tabNumber])
+        private void RevertLastActiveTab()
         {
-            tabPanels[tabNumber].SetActive(true);
-        }
-    }
-
-    private void RevertLastActiveTab()
-    {
-        if (lastHighlightedTabIndex != -1)
-        {
-            tabButtons[lastHighlightedTabIndex].colors = lastHighlightedTabColorBlock;
-            lastHighlightedTabIndex = -1;
+            if (lastHighlightedTabIndex != -1)
+            {
+                tabButtons[lastHighlightedTabIndex].colors = lastHighlightedTabColorBlock;
+                lastHighlightedTabIndex = -1;
+            }
         }
     }
 }

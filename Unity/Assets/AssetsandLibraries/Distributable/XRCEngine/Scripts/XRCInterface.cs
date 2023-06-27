@@ -1,4 +1,4 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using System;
@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace GSFC.ARVR.XRC
+namespace GOV.NASA.GSFC.XR.XRC
 {
     #region Enumerations
 
@@ -102,35 +102,45 @@ namespace GSFC.ARVR.XRC
 
     public class XRCInterface
     {
-        #if !HOLOLENS_BUILD
         public const string UNDEFINED = "UNSET";
         public const int ID_LEN = 128;
         public const int NAME_LEN = 256;
         public const int DATA_LEN = 512;
         public const char NULL_CHAR = '\0';
 
-#region Remote Session Callback Delegates
+        #region Remote Session Callback Delegates
+#if !HOLOLENS_BUILD
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+#endif
         public delegate void RemoteSessionFunctionCallBack(string sessionId);
-#endregion
+        #endregion
 
-#region Active Session Callback Delegates
+        #region Active Session Callback Delegates
+#if !HOLOLENS_BUILD
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+#endif
         public delegate void ActiveSessionFunctionCallBack();
 
+#if !HOLOLENS_BUILD
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+#endif
         public delegate void ActiveSessionJoinedFunctionCallBack();
 
+#if !HOLOLENS_BUILD
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+#endif
         public delegate void ActiveSessionParticipantFunctionCallBack(string participantId);
-#endregion
+        #endregion
 
-#region Entity Callback delegates
+        #region Entity Callback delegates
+#if !HOLOLENS_BUILD
         [UnmanagedFunctionPointer(CallingConvention.StdCall)]
+#endif
         public delegate void EntityFunctionCallBack(string entityId);
-#endregion
+        #endregion
 
-#region CLI DLL Imports
+#if !HOLOLENS_BUILD
+        #region CLI DLL Imports
         /********************************************************************
          * STAGED ATTRIBUTE FUNCTIONS (MANAGED OBJECT BRIDGE)
          ********************************************************************/
@@ -868,10 +878,10 @@ namespace GSFC.ARVR.XRC
             [MarshalAs(UnmanagedType.LPArray)] byte[] buf,
             long bufLen);
 
-#endregion
+        #endregion
+#endif
 
-#region C# Declarations
-
+        #region C# Declarations
         static void MarshalUnmanagedStrArray2ManagedStrArray(IntPtr pUnmanagedStrArray, long count, out string[] ManagedStrArray)
         {
             IntPtr[] pIntPtrArray = new IntPtr[count];
@@ -898,16 +908,20 @@ namespace GSFC.ARVR.XRC
          ********************************************************************/
         public static long GetEntityAttributeCount(string stagedEntityId)
         {
+#if !HOLOLENS_BUILD
             return I_GetEntityAttributeCount(Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue));
+#else
+            return 0;
+#endif
         }
 
         public static bool GetEntityAttributeIds(string stagedEntityId,
             out string[] attributeIds)
         {
+            // Populate the attribute array
+#if !HOLOLENS_BUILD
             long attributeIdsCount = 0;
             IntPtr attributeIdsArrayPtr = IntPtr.Zero;
-
-            // Populate the attribute array
             I_GetEntityAttributeIds(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 out attributeIdsArrayPtr,
@@ -915,30 +929,37 @@ namespace GSFC.ARVR.XRC
 
             // Build the managed string array
             MarshalUnmanagedStrArray2ManagedStrArray(attributeIdsArrayPtr, attributeIdsCount, out attributeIds);
+#else
+            attributeIds = new string[0];
+#endif
 
             return true;
         }
 
         public static bool GetEntityAttributeType(string stagedEntityId, string attributeId, out AttributeType type)
         {
-            bool result;
-            int tmpType = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpType = 0;
             result = I_GetEntityAttributeType(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out tmpType);
             type = (AttributeType)tmpType;
+#else
+            type = default;
+#endif
 
             return result;
         }
 
         public static bool GetEntityAttributeAsString(string stagedEntityId, string attributeId, out string value)
         {
-            bool result;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
             byte[] valueBytes = new byte[DATA_LEN];
-
             result = I_GetEntityAttributeAsString(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
@@ -951,32 +972,44 @@ namespace GSFC.ARVR.XRC
             {
                 value = "";
             }
+#else
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool GetEntityBlobAttribute(string stagedEntityId, string attributeId, byte[] dest, long destsz, out int dataLen)
         {
+#if !HOLOLENS_BUILD
             return I_GetEntityBlobAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 dest, destsz, out dataLen);
+#else
+            dataLen = 0;
+            return false;
+#endif
         }
 
         public static bool SetEntityBlobAttribute(string stagedEntityId, string attributeId, byte[] data, int dataLen)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityBlobAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 data, dataLen);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityStringAttribute(string stagedEntityId, string attributeId, out string value)
         {
-            bool result;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
             byte[] valueBytes = new byte[DATA_LEN];
-
             result = I_GetEntityStringAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
@@ -989,200 +1022,294 @@ namespace GSFC.ARVR.XRC
             {
                 value = "";
             }
+#else
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool SetEntityStringAttribute(string stagedEntityId, string attributeId, string value)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityStringAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 Encoding.ASCII.GetBytes(value + char.MinValue));
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityBooleanAttribute(string stagedEntityId, string attributeId, out bool value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEntityBooleanAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool SetEntityBooleanAttribute(string stagedEntityId, string attributeId, bool value)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityBooleanAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 value);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityIntegerAttribute(string stagedEntityId, string attributeId, out int value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEntityIntegerAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool SetEntityIntegerAttribute(string stagedEntityId, string attributeId, int value)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityIntegerAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 value);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityLongAttribute(string stagedEntityId, string attributeId, out long value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEntityLongAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool SetEntityLongAttribute(string stagedEntityId, string attributeId, long value)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityLongAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 value);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityFloatAttribute(string stagedEntityId, string attributeId, out float value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEntityFloatAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool SetEntityFloatAttribute(string stagedEntityId, string attributeId, float value)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityFloatAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 value);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityDoubleAttribute(string stagedEntityId, string attributeId, out double value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEntityDoubleAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool SetEntityDoubleAttribute(string stagedEntityId, string attributeId, double value)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityDoubleAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 value);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityIntegerQuantityAttribute(string stagedEntityId, string attributeId, out int value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEntityIntegerQuantityAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            value = default;
+            units = default;
+#endif
 
             return result;
         }
 
         public static bool SetEntityIntegerQuantityAttribute(string stagedEntityId, string attributeId, int value, UnitType units = UnitType.unitless)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityIntegerQuantityAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 value, (int)units);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityLongQuantityAttribute(string stagedEntityId, string attributeId, out long value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEntityLongQuantityAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            value = default;
+            units = default;
+#endif
 
             return result;
         }
 
         public static bool SetEntityLongQuantityAttribute(string stagedEntityId, string attributeId, long value, UnitType units = UnitType.unitless)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityLongQuantityAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 value, (int)units);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityFloatQuantityAttribute(string stagedEntityId, string attributeId, out float value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEntityFloatQuantityAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            value = default;
+            units = default;
+#endif
 
             return result;
         }
 
         public static bool SetEntityFloatQuantityAttribute(string stagedEntityId, string attributeId, float value, UnitType units = UnitType.unitless)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityFloatQuantityAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 value, (int)units);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityDoubleQuantityAttribute(string stagedEntityId, string attributeId, out double value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEntityDoubleQuantityAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            value = default;
+            units = default;
+#endif
 
             return result;
         }
 
         public static bool SetEntityDoubleQuantityAttribute(string stagedEntityId, string attributeId, double value, UnitType units = UnitType.unitless)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityDoubleQuantityAttribute(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 value, (int)units);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityPosition(string stagedEntityId,
             out double x, out double y, out double z,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
-
             result = I_GetEntityPosition(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 out x, out y, out z,
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -1191,26 +1318,36 @@ namespace GSFC.ARVR.XRC
             double x, double y, double z,
             UnitType units = UnitType.meter, ReferenceSpaceType refSpace = ReferenceSpaceType.global)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityPosition(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 x, y, z,
                 (int)units, (int)refSpace);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityScale(string stagedEntityId,
             out double x, out double y, out double z,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
-
             result = I_GetEntityScale(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 out x, out y, out z,
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -1219,17 +1356,23 @@ namespace GSFC.ARVR.XRC
             double x, double y, double z,
             UnitType units = UnitType.meter, ReferenceSpaceType refSpace = ReferenceSpaceType.global)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityScale(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 x, y, z,
                 (int)units, (int)refSpace);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityEulerRotation(string stagedEntityId,
             out double x, out double y, out double z,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
 
@@ -1239,6 +1382,11 @@ namespace GSFC.ARVR.XRC
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -1247,26 +1395,36 @@ namespace GSFC.ARVR.XRC
             double x, double y, double z,
             UnitType units = UnitType.meter, ReferenceSpaceType refSpace = ReferenceSpaceType.global)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityEulerRotation(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 x, y, z,
                 (int)units, (int)refSpace);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityQRotation(string stagedEntityId,
             out double x, out double y, out double z, out double w,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
-
             result = I_GetEntityQRotation(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 out x, out y, out z, out w,
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = w = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -1275,10 +1433,14 @@ namespace GSFC.ARVR.XRC
             double x, double y, double z, double w,
             UnitType units = UnitType.meter, ReferenceSpaceType refSpace = ReferenceSpaceType.global)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityQRotation(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 x, y, z, w,
                 (int)units, (int)refSpace);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityTransform(string stagedEntityId,
@@ -1286,14 +1448,15 @@ namespace GSFC.ARVR.XRC
             out double xScl, out double yScl, out double zScl, out UnitType unitsScl, out ReferenceSpaceType refScl,
             out double xRot, out double yRot, out double zRot, out UnitType unitsRot, out ReferenceSpaceType refRot)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnitsPos = 0;
             int tmpUnitsScl = 0;
             int tmpUnitsRot = 0;
             int tmpRefPos = 0;
             int tmpRefScl = 0;
             int tmpRefRot = 0;
-
             result = I_GetEntityTransform(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 out xPos, out yPos, out zPos, out tmpUnitsPos, out tmpRefPos,
@@ -1305,6 +1468,13 @@ namespace GSFC.ARVR.XRC
             refPos = (ReferenceSpaceType)tmpRefPos;
             refScl = (ReferenceSpaceType)tmpRefScl;
             refRot = (ReferenceSpaceType)tmpRefRot;
+#else
+            xPos = yPos = zPos = default;
+            xScl = yScl = zScl = default;
+            xRot = yRot = zRot = default;
+            unitsPos = unitsScl = unitsRot = default;
+            refPos = refScl = refRot = default;
+#endif
 
             return result;
         }
@@ -1314,11 +1484,15 @@ namespace GSFC.ARVR.XRC
             double xScl, double yScl, double zScl, UnitType unitsScl, ReferenceSpaceType refScl,
             double xRot, double yRot, double zRot, UnitType unitsRot, ReferenceSpaceType refRot)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityTransform(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 xPos, yPos, zPos, (int)unitsPos, (int)refPos,
                 xScl, yScl, zScl, (int)unitsScl, (int)refScl,
                 xRot, yRot, zRot, (int)unitsRot, (int)refRot);
+#else
+            return false;
+#endif
         }
 
         public static bool GetEntityQTransform(string stagedEntityId,
@@ -1326,14 +1500,15 @@ namespace GSFC.ARVR.XRC
             out double xScl, out double yScl, out double zScl, out UnitType unitsScl, out ReferenceSpaceType refScl,
             out double xRot, out double yRot, out double zRot, out double wRot, out UnitType unitsRot, out ReferenceSpaceType refRot)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnitsPos = 0;
             int tmpUnitsScl = 0;
             int tmpUnitsRot = 0;
             int tmpRefPos = 0;
             int tmpRefScl = 0;
             int tmpRefRot = 0;
-
             result = I_GetEntityQTransform(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 out xPos, out yPos, out zPos, out tmpUnitsPos, out tmpRefPos,
@@ -1345,6 +1520,13 @@ namespace GSFC.ARVR.XRC
             refPos = (ReferenceSpaceType)tmpRefPos;
             refScl = (ReferenceSpaceType)tmpRefScl;
             refRot = (ReferenceSpaceType)tmpRefRot;
+#else
+            xPos = yPos = zPos = default;
+            xScl = yScl = zScl = default;
+            xRot = yRot = zRot = wRot = default;
+            unitsPos = unitsScl = unitsRot = default;
+            refPos = refScl = refRot = default;
+#endif
 
             return result;
         }
@@ -1354,11 +1536,15 @@ namespace GSFC.ARVR.XRC
             double xScl, double yScl, double zScl, UnitType unitsScl, ReferenceSpaceType refScl,
             double xRot, double yRot, double zRot, double wRot, UnitType unitsRot, ReferenceSpaceType refRot)
         {
+#if !HOLOLENS_BUILD
             return I_SetEntityQTransform(
                 Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue),
                 xPos, yPos, zPos, (int)unitsPos, (int)refPos,
                 xScl, yScl, zScl, (int)unitsScl, (int)refScl,
                 xRot, yRot, zRot, wRot, (int)unitsRot, (int)refRot);
+#else
+            return false;
+#endif
         }
 
         /********************************************************************
@@ -1366,23 +1552,27 @@ namespace GSFC.ARVR.XRC
          ********************************************************************/
         public static bool GetStagedEntityType(string entityId, out EntityType type)
         {
-            bool result;
-            int tmpType = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpType = 0;
             result = I_GetStagedEntityType(
                 Encoding.ASCII.GetBytes(entityId + char.MinValue),
                 out tmpType);
             type = (EntityType)tmpType;
+#else
+            type = default;
+#endif
 
             return result;
         }
 
         public static bool GetStagedEntityAsString(string entityId, out string value)
         {
-            bool result;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
             byte[] valueBytes = new byte[DATA_LEN];
-
             result = I_GetStagedEntityAsString(
                 Encoding.ASCII.GetBytes(entityId + char.MinValue),
                 valueBytes, DATA_LEN);
@@ -1394,12 +1584,16 @@ namespace GSFC.ARVR.XRC
             {
                 value = "";
             }
+#else
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool GetStagedEntityIds(out string[] entityIds)
         {
+#if !HOLOLENS_BUILD
             long entityIdsCount = 0;
             IntPtr entityIdsArrayPtr = IntPtr.Zero;
 
@@ -1410,6 +1604,9 @@ namespace GSFC.ARVR.XRC
 
             // Build the managed string array
             MarshalUnmanagedStrArray2ManagedStrArray(entityIdsArrayPtr, entityIdsCount, out entityIds);
+#else
+            entityIds = new string[0];
+#endif
 
             return true;
         }
@@ -1417,19 +1614,25 @@ namespace GSFC.ARVR.XRC
         public static void StagedEntityCreate(string entityId,
             EntityType objectType = EntityType.entity)
         {
+#if !HOLOLENS_BUILD
             I_StagedEntityCreate(
                 Encoding.ASCII.GetBytes(entityId + char.MinValue),
                 (int)objectType);
+#endif
         }
 
         public static void StagedEntityDelete(string entityId)
         {
+#if !HOLOLENS_BUILD
             I_StagedEntityDelete(Encoding.ASCII.GetBytes(entityId + char.MinValue));
+#endif
         }
 
         public static void StagedEntitiesClear()
         {
+#if !HOLOLENS_BUILD
             I_StagedEntitiesClear();
+#endif
         }
 
         /********************************************************************
@@ -1437,14 +1640,18 @@ namespace GSFC.ARVR.XRC
          ********************************************************************/
         public static bool ConfigureSystem(LogLevel logLevel)
         {
-            return I_ConfigureSystem(
-                (int)logLevel);
+#if !HOLOLENS_BUILD
+            return I_ConfigureSystem((int)logLevel);
+#else
+            return false;
+#endif
         }
 
         public static bool ConfigureSession(string project, string group, string sessionName,
             int participantCheckin, int cleanupThreadSleep, int inquiryThreadSleep,
             bool enableAutoCleanup = true)
         {
+#if !HOLOLENS_BUILD
             return I_ConfigureSession(
                 Encoding.ASCII.GetBytes(project + char.MinValue),
                 Encoding.ASCII.GetBytes(group + char.MinValue),
@@ -1453,16 +1660,23 @@ namespace GSFC.ARVR.XRC
                 cleanupThreadSleep,
                 inquiryThreadSleep,
                 enableAutoCleanup);
+#else
+            return false;
+#endif
         }
 
         public static bool ConfigureEvents(int heartbeatThreadSleep, int incomingThreadSleep, int outgoingThreadSleep,
             bool enableHeartbeat = true)
         {
+#if !HOLOLENS_BUILD
             return I_ConfigureEvents(
                 heartbeatThreadSleep,
                 incomingThreadSleep,
                 outgoingThreadSleep,
                 enableHeartbeat);
+#else
+            return false;
+#endif
         }
 
         public static bool ConfigureMessageBus(string server, int port, ConnectionTypes connectionType,
@@ -1472,6 +1686,7 @@ namespace GSFC.ARVR.XRC
             string subcomponent1 = UNDEFINED, string subcomponent2 = UNDEFINED,
             MessageBusLogLevel logLevel = MessageBusLogLevel.NONE, string logFile = "STDERR")
         {
+#if !HOLOLENS_BUILD
             return I_ConfigureMessageBus(
                 Encoding.ASCII.GetBytes(server + char.MinValue),
                 port,
@@ -1488,24 +1703,39 @@ namespace GSFC.ARVR.XRC
                 Encoding.ASCII.GetBytes(subcomponent2 + char.MinValue),
                 (int)logLevel,
                 Encoding.ASCII.GetBytes(logFile + char.MinValue));
+#else
+            return false;
+#endif
         }
 
         public static bool IsStarted
         {
             get
             {
+#if !HOLOLENS_BUILD
                 return I_IsStarted();
+#else
+                return false;
+#endif
             }
         }
 
         public static bool StartUp()
         {
+#if !HOLOLENS_BUILD
             return I_StartUp();
+#else
+            return false;
+#endif
         }
 
         public static bool ShutDown()
         {
+#if !HOLOLENS_BUILD
             return I_ShutDown();
+#else
+            return false;
+#endif
         }
 
         /********************************************************************
@@ -1513,7 +1743,11 @@ namespace GSFC.ARVR.XRC
          ********************************************************************/
         public static long InitializeRemoteServerSessionList()
         {
+#if !HOLOLENS_BUILD
             return I_InitializeRemoteSessionList();
+#else
+            return 0;
+#endif
         }
 
         public static XRCSessionInfo[] GetRemoteSessions()
@@ -1522,6 +1756,7 @@ namespace GSFC.ARVR.XRC
             long numSessions = InitializeRemoteServerSessionList();
             for (int i = 0; i < numSessions; i++)
             {
+#if !HOLOLENS_BUILD
                 // Extract all of the session information
                 byte[] id = new byte[ID_LEN];
                 if (!I_GetRemoteSessionID(i, id, ID_LEN)) continue;
@@ -1546,6 +1781,7 @@ namespace GSFC.ARVR.XRC
                     Encoding.ASCII.GetString(proj).TrimEnd(NULL_CHAR),
                     Encoding.ASCII.GetString(sess).TrimEnd(NULL_CHAR),
                     Encoding.ASCII.GetString(plat).TrimEnd(NULL_CHAR)));
+#endif
             }
 
             return sessInfos.ToArray();
@@ -1558,7 +1794,11 @@ namespace GSFC.ARVR.XRC
         {
             get
             {
+#if !HOLOLENS_BUILD
                 return I_IsSessionActive();
+#else
+                return false;
+#endif
             }
         }
 
@@ -1566,35 +1806,59 @@ namespace GSFC.ARVR.XRC
         {
             get
             {
+#if !HOLOLENS_BUILD
                 return I_IsMaster();
+#else
+                return false;
+#endif
             }
         }
 
         public static bool StartSession(string stagedUserId)
         {
+#if !HOLOLENS_BUILD
             return I_StartSession(Encoding.ASCII.GetBytes(stagedUserId + char.MinValue));
+#else
+            return false;
+#endif
         }
 
         public static bool EndSession()
         {
+#if !HOLOLENS_BUILD
             return I_EndSession();
+#else
+            return false;
+#endif
         }
 
         public static bool JoinSession(string sessionId, string stagedUserId)
         {
+#if !HOLOLENS_BUILD
             return I_JoinSession(
                 Encoding.ASCII.GetBytes(sessionId + char.MinValue),
                 Encoding.ASCII.GetBytes(stagedUserId + char.MinValue));
+#else
+            return false;
+#endif
         }
 
         public static bool CancelJoinSession()
         {
+#if !HOLOLENS_BUILD
             return I_CancelJoinSession();
+#else
+            return false;
+#endif
         }
 
         public static bool LeaveSession()
         {
+#if !HOLOLENS_BUILD
             return I_LeaveSession();
+#else
+            return false;
+#endif
         }
 
         /********************************************************************
@@ -1604,6 +1868,7 @@ namespace GSFC.ARVR.XRC
         {
             XRCSessionInfo sessInfo;
 
+#if !HOLOLENS_BUILD
             // Extract all of the session information
             byte[] id = new byte[ID_LEN];
             I_GetSessionID(id, ID_LEN);
@@ -1628,7 +1893,9 @@ namespace GSFC.ARVR.XRC
                 Encoding.ASCII.GetString(proj).TrimEnd(NULL_CHAR),
                 Encoding.ASCII.GetString(sess).TrimEnd(NULL_CHAR),
                 Encoding.ASCII.GetString(plat).TrimEnd(NULL_CHAR));
-
+#else
+            sessInfo = new XRCSessionInfo(0, "", "", "", "", "");
+#endif
             return sessInfo;
         }
 
@@ -1637,37 +1904,65 @@ namespace GSFC.ARVR.XRC
          ********************************************************************/
         public static long GetSessionEntityCount()
         {
+#if !HOLOLENS_BUILD
             return I_GetSessionEntityCount();
+#else
+            return 0;
+#endif
         }
 
         public static bool SessionEntityExists(string entityId)
         {
+#if !HOLOLENS_BUILD
             return I_SessionEntityExists(Encoding.ASCII.GetBytes(entityId + char.MinValue));
+#else
+            return false;
+#endif
         }
 
         public static bool GetSessionEntity(string entityId)
         {
+#if !HOLOLENS_BUILD
             return I_GetSessionEntity(Encoding.ASCII.GetBytes(entityId + char.MinValue));
+#else
+            return false;
+#endif
         }
 
         public static bool GetSessionEntities()
         {
+#if !HOLOLENS_BUILD
             return I_GetSessionEntities();
+#else
+            return false;
+#endif
         }
 
         public static bool AddSessionEntity(string stagedEntityId)
         {
+#if !HOLOLENS_BUILD
             return I_AddSessionEntity(Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue));
+#else
+            return false;
+#endif
         }
 
         public static bool RemoveSessionEntity(string stagedEntityId)
         {
+#if !HOLOLENS_BUILD
             return I_RemoveSessionEntity(Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue));
+#else
+            return false;
+#endif
         }
 
         public static bool UpdateSessionEntity(string stagedEntityId)
         {
+#if !HOLOLENS_BUILD
             return I_UpdateSessionEntity(Encoding.ASCII.GetBytes(stagedEntityId + char.MinValue));
+#else
+            return false;
+#endif
         }
 
         public static void AddRemoteSessionEventListeners(
@@ -1675,12 +1970,16 @@ namespace GSFC.ARVR.XRC
             RemoteSessionFunctionCallBack rsUpdateCB,
             RemoteSessionFunctionCallBack rsDeleteCB)
         {
+#if !HOLOLENS_BUILD
             I_AddRemoteSessionEventListeners(rsAddCB, rsUpdateCB, rsDeleteCB);
+#endif
         }
 
         public static void RemoveRemoteSessionEventListeners()
         {
+#if !HOLOLENS_BUILD
             I_RemoveRemoteSessionEventListeners();
+#endif
         }
 
         public static void AddActiveSessionEventListeners(
@@ -1689,12 +1988,16 @@ namespace GSFC.ARVR.XRC
             ActiveSessionParticipantFunctionCallBack asPResyncCB,
             ActiveSessionParticipantFunctionCallBack asPDeleteCB)
         {
+#if !HOLOLENS_BUILD
             I_AddActiveSessionEventListeners(asJoinCB, asPAddCB, asPResyncCB, asPDeleteCB);
+#endif
         }
 
         public static void RemoveActiveSessionEventListeners()
         {
+#if !HOLOLENS_BUILD
             I_RemoveActiveSessionEventListeners();
+#endif
         }
 
         public static void AddEntityEventListeners(
@@ -1704,12 +2007,16 @@ namespace GSFC.ARVR.XRC
             EntityFunctionCallBack entityUpdateCB,
             EntityFunctionCallBack entityEditCB)
         {
+#if !HOLOLENS_BUILD
             I_AddEntityEventListeners(entityCreateCB, entityDestroyCB, entityReinitCB, entityUpdateCB, entityEditCB);
+#endif
         }
 
         public static void RemoveEntityEventListeners()
         {
+#if !HOLOLENS_BUILD
             I_RemoveEntityEventListeners();
+#endif
         }
 
         /********************************************************************
@@ -1717,11 +2024,16 @@ namespace GSFC.ARVR.XRC
          ********************************************************************/
         public static long GetEventEntityAttributeCount()
         {
+#if !HOLOLENS_BUILD
             return I_GetEventEntityAttributeCount();
+#else
+            return 0;
+#endif
         }
 
         public static bool GetEventEntityAttributeIds(out string[] attributeIds)
         {
+#if !HOLOLENS_BUILD
             long attributeIdsCount = 0;
             IntPtr attributeIdsArrayPtr = IntPtr.Zero;
 
@@ -1732,27 +2044,35 @@ namespace GSFC.ARVR.XRC
 
             // Build the managed string array
             MarshalUnmanagedStrArray2ManagedStrArray(attributeIdsArrayPtr, attributeIdsCount, out attributeIds);
+#else
+            attributeIds = new string[0];
+#endif
 
             return true;
         }
 
         public static bool GetEventEntityAttributeType(string attributeId, out AttributeType type)
         {
-            bool result;
-            int tmpType = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpType = 0;
             result = I_GetEventEntityAttributeType(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out tmpType);
             type = (AttributeType)tmpType;
+#else
+            type = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventEntityAttributeAsString(string attributeId, out string value)
         {
-            bool result;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
             byte[] valueBytes = new byte[DATA_LEN];
 
             result = I_GetEventEntityAttributeAsString(
@@ -1766,23 +2086,31 @@ namespace GSFC.ARVR.XRC
             {
                 value = "";
             }
+#else
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventEntityBlobAttribute(string attributeId, byte[] dest, long destsz, out int dataLen)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventEntityBlobAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 dest, destsz, out dataLen);
+#else
+            dataLen = 0;
+            return false;
+#endif
         }
 
         public static bool GetEventEntityStringAttribute(string attributeId, out string value)
         {
-            bool result;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
             byte[] valueBytes = new byte[DATA_LEN];
-
             result = I_GetEventEntityStringAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 valueBytes, DATA_LEN);
@@ -1794,93 +2122,141 @@ namespace GSFC.ARVR.XRC
             {
                 value = "";
             }
+#else
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventEntityBooleanAttribute(string attributeId, out bool value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventEntityBooleanAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool GetEventEntityIntegerAttribute(string attributeId, out int value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventEntityIntegerAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool GetEventEntityLongAttribute(string attributeId, out long value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventEntityLongAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool GetEventEntityFloatAttribute(string attributeId, out float value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventEntityFloatAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool GetEventEntityDoubleAttribute(string attributeId, out double value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventEntityDoubleAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool GetEventEntityIntegerQuantityAttribute(string attributeId, out int value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEventEntityIntegerQuantityAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            units = default;
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventEntityLongQuantityAttribute(string attributeId, out long value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEventEntityLongQuantityAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            units = default;
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventEntityFloatQuantityAttribute(string attributeId, out float value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEventEntityFloatQuantityAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            units = default;
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventEntityDoubleQuantityAttribute(string attributeId, out double value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEventEntityDoubleQuantityAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            units = default;
+            value = default;
+#endif
 
             return result;
         }
@@ -1889,15 +2265,21 @@ namespace GSFC.ARVR.XRC
             out double x, out double y, out double z,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
-
             result = I_GetEventEntityPosition(
                 out x, out y, out z,
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -1906,15 +2288,21 @@ namespace GSFC.ARVR.XRC
             out double x, out double y, out double z,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
-
             result = I_GetEventEntityScale(
                 out x, out y, out z,
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -1923,15 +2311,21 @@ namespace GSFC.ARVR.XRC
             out double x, out double y, out double z,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
-
             result = I_GetEventEntityEulerRotation(
                 out x, out y, out z,
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -1940,15 +2334,21 @@ namespace GSFC.ARVR.XRC
             out double x, out double y, out double z, out double w,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
-
             result = I_GetEventEntityQRotation(
                 out x, out y, out z, out w,
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = w = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -1958,14 +2358,15 @@ namespace GSFC.ARVR.XRC
             out double xScl, out double yScl, out double zScl, out UnitType unitsScl, out ReferenceSpaceType refScl,
             out double xRot, out double yRot, out double zRot, out UnitType unitsRot, out ReferenceSpaceType refRot)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnitsPos = 0;
             int tmpUnitsScl = 0;
             int tmpUnitsRot = 0;
             int tmpRefPos = 0;
             int tmpRefScl = 0;
             int tmpRefRot = 0;
-
             result = I_GetEventEntityTransform(
                 out xPos, out yPos, out zPos, out tmpUnitsPos, out tmpRefPos,
                 out xScl, out yScl, out zScl, out tmpUnitsScl, out tmpRefScl,
@@ -1976,6 +2377,13 @@ namespace GSFC.ARVR.XRC
             refPos = (ReferenceSpaceType)tmpRefPos;
             refScl = (ReferenceSpaceType)tmpRefScl;
             refRot = (ReferenceSpaceType)tmpRefRot;
+#else
+            xPos = yPos = zPos = default;
+            xScl = yScl = zScl = default;
+            xRot = yRot = zRot = default;
+            unitsPos = unitsScl = unitsRot = default;
+            refPos = refScl = refRot = default;
+#endif
 
             return result;
         }
@@ -1985,7 +2393,9 @@ namespace GSFC.ARVR.XRC
             out double xScl, out double yScl, out double zScl, out UnitType unitsScl, out ReferenceSpaceType refScl,
             out double xRot, out double yRot, out double zRot, out double wRot, out UnitType unitsRot, out ReferenceSpaceType refRot)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnitsPos = 0;
             int tmpUnitsScl = 0;
             int tmpUnitsRot = 0;
@@ -2003,6 +2413,13 @@ namespace GSFC.ARVR.XRC
             refPos = (ReferenceSpaceType)tmpRefPos;
             refScl = (ReferenceSpaceType)tmpRefScl;
             refRot = (ReferenceSpaceType)tmpRefRot;
+#else
+            xPos = yPos = zPos = default;
+            xScl = yScl = zScl = default;
+            xRot = yRot = zRot = wRot = default;
+            unitsPos = unitsScl = unitsRot = default;
+            refPos = refScl = refRot = default;
+#endif
 
             return result;
         }
@@ -2012,8 +2429,9 @@ namespace GSFC.ARVR.XRC
          ********************************************************************/
         public static bool GetEventEntityId(out string value)
         {
-            bool result;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
             byte[] valueBytes = new byte[ID_LEN];
 
             result = I_GetEventEntityId(valueBytes, ID_LEN);
@@ -2025,26 +2443,34 @@ namespace GSFC.ARVR.XRC
             {
                 value = "";
             }
+#else
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventEntityType(out EntityType type)
         {
-            bool result;
-            int tmpType = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpType = 0;
             result = I_GetEventEntityType(
                 out tmpType);
             type = (EntityType)tmpType;
+#else
+            type = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventEntityAsString(out string value)
         {
-            bool result;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
             byte[] valueBytes = new byte[DATA_LEN];
 
             result = I_GetEventEntityAsString(valueBytes, DATA_LEN);
@@ -2056,6 +2482,9 @@ namespace GSFC.ARVR.XRC
             {
                 value = "";
             }
+#else
+            value = default;
+#endif
 
             return result;
         }
@@ -2065,11 +2494,16 @@ namespace GSFC.ARVR.XRC
          *******************************************************************************/
         public static long GetEventActiveSessionParticipantAttributeCount()
         {
+#if !HOLOLENS_BUILD
             return I_GetEventActiveSessionParticipantAttributeCount();
+#else
+            return 0;
+#endif
         }
 
         public static bool GetEventActiveSessionParticipantAttributeIds(out string[] attributeIds)
         {
+#if !HOLOLENS_BUILD
             long attributeIdsCount = 0;
             IntPtr attributeIdsArrayPtr = IntPtr.Zero;
 
@@ -2080,29 +2514,36 @@ namespace GSFC.ARVR.XRC
 
             // Build the managed string array
             MarshalUnmanagedStrArray2ManagedStrArray(attributeIdsArrayPtr, attributeIdsCount, out attributeIds);
+#else
+            attributeIds = new string[0];
+#endif
 
             return true;
         }
 
         public static bool GetEventActiveSessionParticipantAttributeType(string attributeId, out AttributeType type)
         {
-            bool result;
-            int tmpType = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpType = 0;
             result = I_GetEventActiveSessionParticipantAttributeType(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out tmpType);
             type = (AttributeType)tmpType;
+#else
+            type = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventActiveSessionParticipantAttributeAsString(string attributeId, out string value)
         {
-            bool result;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
             byte[] valueBytes = new byte[DATA_LEN];
-
             result = I_GetEventActiveSessionParticipantAttributeAsString(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 valueBytes, DATA_LEN);
@@ -2114,23 +2555,31 @@ namespace GSFC.ARVR.XRC
             {
                 value = "";
             }
+#else
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventActiveSessionParticipantBlobAttribute(string attributeId, byte[] dest, long destsz, out int dataLen)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventActiveSessionParticipantBlobAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 dest, destsz, out dataLen);
+#else
+            dataLen = 0;
+            return false;
+#endif
         }
 
         public static bool GetEventActiveSessionParticipantStringAttribute(string attributeId, out string value)
         {
-            bool result;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
             byte[] valueBytes = new byte[DATA_LEN];
-
             result = I_GetEventActiveSessionParticipantStringAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 valueBytes, DATA_LEN);
@@ -2142,93 +2591,141 @@ namespace GSFC.ARVR.XRC
             {
                 value = "";
             }
+#else
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventActiveSessionParticipantBooleanAttribute(string attributeId, out bool value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventActiveSessionParticipantBooleanAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool GetEventActiveSessionParticipantIntegerAttribute(string attributeId, out int value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventActiveSessionParticipantIntegerAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool GetEventActiveSessionParticipantLongAttribute(string attributeId, out long value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventActiveSessionParticipantLongAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool GetEventActiveSessionParticipantFloatAttribute(string attributeId, out float value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventActiveSessionParticipantFloatAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool GetEventActiveSessionParticipantDoubleAttribute(string attributeId, out double value)
         {
+#if !HOLOLENS_BUILD
             return I_GetEventActiveSessionParticipantDoubleAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value);
+#else
+            value = default;
+            return false;
+#endif
         }
 
         public static bool GetEventActiveSessionParticipantIntegerQuantityAttribute(string attributeId, out int value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEventActiveSessionParticipantIntegerQuantityAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            value = default;
+            units = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventActiveSessionParticipantLongQuantityAttribute(string attributeId, out long value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEventActiveSessionParticipantLongQuantityAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            value = default;
+            units = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventActiveSessionParticipantFloatQuantityAttribute(string attributeId, out float value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEventActiveSessionParticipantFloatQuantityAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            value = default;
+            units = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventActiveSessionParticipantDoubleQuantityAttribute(string attributeId, out double value, out UnitType units)
         {
-            bool result;
-            int tmpUnits = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpUnits = 0;
             result = I_GetEventActiveSessionParticipantDoubleQuantityAttribute(
                 Encoding.ASCII.GetBytes(attributeId + char.MinValue),
                 out value, out tmpUnits);
             units = (UnitType)tmpUnits;
+#else
+            value = default;
+            units = default;
+#endif
 
             return result;
         }
@@ -2237,15 +2734,21 @@ namespace GSFC.ARVR.XRC
             out double x, out double y, out double z,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
-
             result = I_GetEventActiveSessionParticipantPosition(
                 out x, out y, out z,
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -2254,15 +2757,21 @@ namespace GSFC.ARVR.XRC
             out double x, out double y, out double z,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
-
             result = I_GetEventActiveSessionParticipantScale(
                 out x, out y, out z,
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -2271,15 +2780,21 @@ namespace GSFC.ARVR.XRC
             out double x, out double y, out double z,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
-
             result = I_GetEventActiveSessionParticipantEulerRotation(
                 out x, out y, out z,
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -2288,15 +2803,21 @@ namespace GSFC.ARVR.XRC
             out double x, out double y, out double z, out double w,
             out UnitType units, out ReferenceSpaceType refSpace)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnits = 0;
             int tmpRefSpace = 0;
-
             result = I_GetEventActiveSessionParticipantQRotation(
                 out x, out y, out z, out w,
                 out tmpUnits, out tmpRefSpace);
             units = (UnitType)tmpUnits;
             refSpace = (ReferenceSpaceType)tmpRefSpace;
+#else
+            x = y = z = w = default;
+            units = default;
+            refSpace = default;
+#endif
 
             return result;
         }
@@ -2306,7 +2827,9 @@ namespace GSFC.ARVR.XRC
             out double xScl, out double yScl, out double zScl, out UnitType unitsScl, out ReferenceSpaceType refScl,
             out double xRot, out double yRot, out double zRot, out UnitType unitsRot, out ReferenceSpaceType refRot)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnitsPos = 0;
             int tmpUnitsScl = 0;
             int tmpUnitsRot = 0;
@@ -2324,6 +2847,13 @@ namespace GSFC.ARVR.XRC
             refPos = (ReferenceSpaceType)tmpRefPos;
             refScl = (ReferenceSpaceType)tmpRefScl;
             refRot = (ReferenceSpaceType)tmpRefRot;
+#else
+            xPos = yPos = zPos = default;
+            xScl = yScl = zScl = default;
+            xRot = yRot = zRot = default;
+            unitsPos = unitsScl = unitsRot = default;
+            refPos = refScl = refRot = default;
+#endif
 
             return result;
         }
@@ -2333,14 +2863,15 @@ namespace GSFC.ARVR.XRC
             out double xScl, out double yScl, out double zScl, out UnitType unitsScl, out ReferenceSpaceType refScl,
             out double xRot, out double yRot, out double zRot, out double wRot, out UnitType unitsRot, out ReferenceSpaceType refRot)
         {
-            bool result;
+            bool result = false;
+
+#if !HOLOLENS_BUILD
             int tmpUnitsPos = 0;
             int tmpUnitsScl = 0;
             int tmpUnitsRot = 0;
             int tmpRefPos = 0;
             int tmpRefScl = 0;
             int tmpRefRot = 0;
-
             result = I_GetEventActiveSessionParticipantQTransform(
                 out xPos, out yPos, out zPos, out tmpUnitsPos, out tmpRefPos,
                 out xScl, out yScl, out zScl, out tmpUnitsScl, out tmpRefScl,
@@ -2351,6 +2882,13 @@ namespace GSFC.ARVR.XRC
             refPos = (ReferenceSpaceType)tmpRefPos;
             refScl = (ReferenceSpaceType)tmpRefScl;
             refRot = (ReferenceSpaceType)tmpRefRot;
+#else
+            xPos = yPos = zPos = default;
+            xScl = yScl = zScl = default;
+            xRot = yRot = zRot = wRot = default;
+            unitsPos = unitsScl = unitsRot = default;
+            refPos = refScl = refRot = default;
+#endif
 
             return result;
         }
@@ -2360,10 +2898,10 @@ namespace GSFC.ARVR.XRC
          ********************************************************************/
         public static bool GetEventActiveSessionParticipantId(out string value)
         {
-            bool result;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
             byte[] valueBytes = new byte[ID_LEN];
-
             result = I_GetEventActiveSessionParticipantId(
                 valueBytes, ID_LEN);
             if (result)
@@ -2374,26 +2912,34 @@ namespace GSFC.ARVR.XRC
             {
                 value = "";
             }
+#else
+            value = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventActiveSessionParticipantType(out EntityType type)
         {
-            bool result;
-            int tmpType = 0;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
+            int tmpType = 0;
             result = I_GetEventActiveSessionParticipantType(
                 out tmpType);
             type = (EntityType)tmpType;
+#else
+            type = default;
+#endif
 
             return result;
         }
 
         public static bool GetEventActiveSessionParticipantAsString(out string value)
         {
-            bool result;
+            bool result = false;
 
+#if !HOLOLENS_BUILD
             byte[] valueBytes = new byte[DATA_LEN];
 
             result = I_GetEventActiveSessionParticipantAsString(
@@ -2406,11 +2952,13 @@ namespace GSFC.ARVR.XRC
             {
                 value = "";
             }
+#else
+            value = default;
+#endif
 
             return result;
         }
+        #endregion
 
-#endregion
-#endif
     }
 }

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.example.org/MRET"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:mt="http://www.example.org/MRET">
+	<include schemaLocation=""></include>
+</schema>

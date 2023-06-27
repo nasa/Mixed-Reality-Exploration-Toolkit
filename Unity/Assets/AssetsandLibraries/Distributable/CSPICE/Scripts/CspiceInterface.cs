@@ -1,12 +1,13 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using UnityEngine;
 
-namespace CSPICE
+namespace GOV.NASA.GSFC.XR.CSPICE
 {
     public class CspiceInterface
     {
@@ -155,7 +156,7 @@ namespace CSPICE
             [MarshalAs(UnmanagedType.LPArray)] double[] _v1,
             [MarshalAs(UnmanagedType.LPArray)] double[] _v2,
             [MarshalAs(UnmanagedType.LPArray)] [Out] double[] _vout);
-
+#endif
 
         /*
         ======================================================================
@@ -173,7 +174,9 @@ namespace CSPICE
             ErrorAction(ErrorOperationType.Set, ref action);
 
             // Reset the error status
+#if !HOLOLENS_BUILD
             I_ErrorStatusReset();
+#endif
         }
 
         /*
@@ -183,6 +186,7 @@ namespace CSPICE
         static void CheckForError()
         {
             // Check for failure code
+#if !HOLOLENS_BUILD
             if (I_Failed())
             {
                 string message;
@@ -205,7 +209,7 @@ namespace CSPICE
 
                 throw e;
             }
-
+#endif
         }
 
 #region Angle functions
@@ -217,7 +221,11 @@ namespace CSPICE
         ====================================================================== */
         public static double DegreesPerRadian()
         {
+#if !HOLOLENS_BUILD
             return I_DegreesPerRadian();
+#else
+            return 0;
+#endif
         }
 
         /*
@@ -228,7 +236,11 @@ namespace CSPICE
         ====================================================================== */
         public static double ToRadians(double degrees)
         {
+#if !HOLOLENS_BUILD
             return (degrees * I_RadiansPerDegree());
+#else
+            return 0;
+#endif
         }
 
         /*
@@ -239,7 +251,11 @@ namespace CSPICE
         ====================================================================== */
         public static double RadiansPerDegree()
         {
+#if !HOLOLENS_BUILD
             return I_RadiansPerDegree();
+#else
+            return 0;
+#endif
         }
 
         /*
@@ -250,7 +266,11 @@ namespace CSPICE
         ====================================================================== */
         public static double ToDegrees(double radians)
         {
+#if !HOLOLENS_BUILD
             return (radians * I_DegreesPerRadian());
+#else
+            return 0;
+#endif
         }
 #endregion
 
@@ -273,10 +293,12 @@ namespace CSPICE
             System.Buffer.BlockCopy(srcBytes, 0, dstBytes, 0, srcBytes.Length);
 
             // Set default error action
+#if !HOLOLENS_BUILD
             I_ErrorAction(
                 Encoding.ASCII.GetBytes(op.ToString() + char.MinValue),
                 dstBytes.Length,
                 dstBytes);
+#endif
 
             // Check for error
             CheckForError();
@@ -303,10 +325,12 @@ namespace CSPICE
             System.Buffer.BlockCopy(srcBytes, 0, dstBytes, 0, srcBytes.Length);
 
             // Set default error device
+#if !HOLOLENS_BUILD
             I_ErrorDevice(
                 Encoding.ASCII.GetBytes(op.ToString() + char.MinValue),
                 dstBytes.Length,
                 dstBytes);
+#endif
 
             // Check for error
             CheckForError();
@@ -333,10 +357,12 @@ namespace CSPICE
             System.Buffer.BlockCopy(srcBytes, 0, dstBytes, 0, srcBytes.Length);
 
             // Set default error output
+#if !HOLOLENS_BUILD
             I_ErrorPrint(
                 Encoding.ASCII.GetBytes(op.ToString() + char.MinValue),
                 dstBytes.Length,
                 dstBytes);
+#endif
 
             // Check for error
             CheckForError();
@@ -361,10 +387,12 @@ namespace CSPICE
             byte[] dstBytes = new byte[512];
 
             // Get Error Message
+#if !HOLOLENS_BUILD
             I_GetErrorMessage(
                 Encoding.ASCII.GetBytes(option.ToString() + char.MinValue),
                 dstBytes.Length,
                 dstBytes);
+#endif
 
             message = Encoding.ASCII.GetString(dstBytes).TrimEnd(TRIM_CHARS);
         }
@@ -391,11 +419,13 @@ namespace CSPICE
             byte[] tmpOutput = new byte[128];
 
             // Convert the time to a string
+#if !HOLOLENS_BUILD
             I_TimeOutput(
                 et,
                 Encoding.ASCII.GetBytes(format + char.MinValue),
                 tmpOutput.Length,
                 tmpOutput);
+#endif
 
             // Check for error
             CheckForError();
@@ -418,9 +448,13 @@ namespace CSPICE
         public static void UTC2EphemerisTime(string utc, out double et)
         {
             // Convert the UTC string to an ephemeris time
+#if !HOLOLENS_BUILD
             I_UTC2EphemerisTime(
                 Encoding.ASCII.GetBytes(utc + char.MinValue),
                 out et);
+#else
+            et = 0;
+#endif
 
             // Check for error
             CheckForError();
@@ -442,7 +476,7 @@ namespace CSPICE
         public static bool LoadMetaKernel(string path, string file = META_KERNEL)
         {
             bool result = false;
-            if (path != "")
+            if (!string.IsNullOrEmpty(path))
             {
                 // Fix the path separators
                 path = path.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
@@ -451,7 +485,10 @@ namespace CSPICE
                 string kernel_file = path + "\\" + file;
 
                 // Load the meta kernel file
+#if !HOLOLENS_BUILD
+                Debug.Log("Loading Spice kernel file: " + kernel_file);
                 I_FurnishSpiceKernel(Encoding.ASCII.GetBytes(kernel_file + char.MinValue));
+#endif
 
                 // Check for error
                 CheckForError();
@@ -480,11 +517,15 @@ namespace CSPICE
             /*out*/ double[] coords)
         {
             /* the surface point in Moon-fixed cartesian coordinates */
+#if !HOLOLENS_BUILD
             I_Latitudinal2RectangularCoordinates(
                 radius,
                 longitude,
                 latitude,
                 coords);
+#else
+            coords = new double[0];
+#endif
         }
 
         /*
@@ -504,11 +545,17 @@ namespace CSPICE
             out double radius, out double longitude, out double latitude)
         {
             /* change rectangular coordinates into radians */
+#if !HOLOLENS_BUILD
             I_Rectangular2LatitudinalCoordinates(
                 coords,
                 out radius,
                 out longitude,
                 out latitude);
+#else
+            radius = 0;
+            longitude = 0;
+            latitude = 0;
+#endif
         }
 #endregion
 
@@ -532,10 +579,14 @@ namespace CSPICE
             /*out*/ double[] vout)
         {
             /* Matrix times vector, 3x3 */
+#if !HOLOLENS_BUILD
             I_MatrixTimesVector(
                 min,
                 vin,
                 vout);
+#else
+            vout = new double[0];
+#endif
 
             // Check for error
             CheckForError();
@@ -564,12 +615,16 @@ namespace CSPICE
             /*out*/double[,] mout)
         {
             /* Two vectors defining an orthonormal frame */
+#if !HOLOLENS_BUILD
             I_TwoVectorTransformation(
                 vaxis,
                 indexa,
                 vplane,
                 indexp,
                 mout);
+#else
+            mout = new double[0,0];
+#endif
 
             // Check for error
             CheckForError();
@@ -595,10 +650,14 @@ namespace CSPICE
             /*out*/ double[] vout)
         {
             /* Unitized cross product, 3 dimensions */
+#if !HOLOLENS_BUILD
             I_UnitizedCrossProduct(
                 v1,
                 v2,
                 vout);
+#else
+            vout = new double[0];
+#endif
         }
 
         /*
@@ -616,9 +675,13 @@ namespace CSPICE
         public static void UnitVector(double[] v1, /*out*/ double[] vout)
         {
             /* "V-Hat", unit vector along V, 3 dimensions */
+#if !HOLOLENS_BUILD
             I_UnitVector(
                 v1,
                 vout);
+#else
+            vout = new double[0];
+#endif
         }
 
         /*
@@ -639,10 +702,14 @@ namespace CSPICE
             /*out*/ double[] vout)
         {
             /* Vector subtraction, 3 dimensions */
+#if !HOLOLENS_BUILD
             I_VectorSubtraction(
                 v1,
                 v2,
                 vout);
+#else
+            vout = new double[0];
+#endif
         }
 #endregion
 
@@ -674,6 +741,7 @@ namespace CSPICE
             out double lt)
         {
             /* S/P Kernel, easy position */
+#if !HOLOLENS_BUILD
             I_SPKernelEasyPosition(
                 target,
                 et,
@@ -682,6 +750,10 @@ namespace CSPICE
                 observer,
                 position,
                 out lt);
+#else
+            position = new double[0];
+            lt = 0;
+#endif
 
             // Check for error
             CheckForError();
@@ -722,6 +794,7 @@ namespace CSPICE
             /*out*/ double[] srfvec)
         {
             /* Sub-solar point */
+#if !HOLOLENS_BUILD
             I_SubSolarPoint(
                 Encoding.ASCII.GetBytes(method + char.MinValue),
                 Encoding.ASCII.GetBytes(target + char.MinValue),
@@ -732,11 +805,15 @@ namespace CSPICE
                 spoint,
                 out trgepc,
                 srfvec);
+#else
+            spoint = new double[0];
+            trgepc = 0;
+            srfvec = new double[0];
+#endif
 
             // Check for error
             CheckForError();
         }
-#endif
     }
 
 }

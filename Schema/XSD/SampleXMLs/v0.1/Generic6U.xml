@@ -1,0 +1,356 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Part ID="Generic6U" Name="Generic6U"
+	xmlns="http://www.example.org/MRET"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.example.org/MRET ../../SchemaFiles/v0.1/Part.xsd">
+	
+	<Vendor>ILG</Vendor>
+	<Description>Generic 6U Cubesat Design</Description>
+	<AssetBundle>NULL</AssetBundle>
+	<PartName>Generic6U</PartName>
+	<PartTransform>
+		<Position>
+			<X>0.0</X>
+			<Y>0.0</Y>
+			<Z>0.0</Z>
+		</Position>
+		<Rotation>
+			<X>0.0</X>
+			<Y>0.0</Y>
+			<Z>0.0</Z>
+			<W>1.0</W>
+		</Rotation>
+		<Scale>
+			<X>1</X>
+			<Y>1</Y>
+			<Z>1</Z>
+		</Scale>
+	</PartTransform>
+	<EnableCollisions>false</EnableCollisions>
+	<EnableGravity>false</EnableGravity>
+	<EnableInteraction>true</EnableInteraction>
+	<MinMass>1</MinMass>
+	<MaxMass>1</MaxMass>
+	<MassContingency>1</MassContingency>
+	<PartType>Chassis</PartType>
+	<ChildParts>
+		<Parts Name="CubeSpaceSmallCubeWheelsimple" ID="CubeSpaceSmallCubeWheelsimple">
+			<Vendor>Cubespace</Vendor>
+			<Description>A thing</Description>
+			<AssetBundle>cubesat-assets</AssetBundle>
+			<PartName>CubeSpace Small CubeWheel simple</PartName>
+			<PartTransform>
+				<Position>
+					<X>-0.0084</X>
+					<Y>0.00349985</Y>
+					<Z>-0.0106</Z>
+				</Position>
+				<Rotation>
+					<X>-180</X>
+					<Y>0.0</Y>
+					<Z>0.0</Z>
+                    <W>1.0</W>
+				</Rotation>
+				<Scale>
+					<X>0.1</X>
+					<Y>0.1</Y>
+					<Z>0.1</Z>
+				</Scale>
+			</PartTransform>
+			<EnableCollisions>false</EnableCollisions>
+			<EnableGravity>false</EnableGravity>
+			<EnableInteraction>true</EnableInteraction>
+			<MinMass>1</MinMass>
+			<MaxMass>1</MaxMass>
+            <MassContingency>1</MassContingency>
+			<PartType>Reaction Wheel</PartType>
+			<ChildParts></ChildParts>
+			<Notes>Nothing</Notes>
+			<Reference>Nothing</Reference>
+			<Subsystem>Subsystem1</Subsystem>
+		</Parts>
+		<Parts Name="CubeSpaceSmallCubeWheelsimple" ID="CubeSpaceSmallCubeWheelsimple1">
+			<Vendor>Cubespace</Vendor>
+			<Description>A thing</Description>
+			<AssetBundle>cubesat-assets</AssetBundle>
+			<PartName>CubeSpace Small CubeWheel simple</PartName>
+			<PartTransform>
+				<Position>
+					<X>-0.00851</X>
+					<Y>-0.003499985</Y>
+					<Z>-0.0097</Z>
+				</Position>
+				<Rotation>
+					<X>0</X>
+					<Y>0.0</Y>
+					<Z>-90</Z>
+                    <W>1.0</W>
+				</Rotation>
+				<Scale>
+					<X>0.1</X>
+					<Y>0.1</Y>
+					<Z>0.1</Z>
+				</Scale>
+			</PartTransform>
+			<EnableCollisions>false</EnableCollisions>
+			<EnableGravity>false</EnableGravity>
+			<EnableInteraction>true</EnableInteraction>
+			<MinMass>1</MinMass>
+			<MaxMass>1</MaxMass>
+            <MassContingency>1</MassContingency>
+			<PartType>Reaction Wheel</PartType>
+			<ChildParts></ChildParts>
+			<Notes>Nothing</Notes>
+			<Reference>Nothing</Reference>
+			<Subsystem>Subsystem1</Subsystem>
+		</Parts>
+		<Parts Name="CubeSpaceSmallCubeWheelsimple" ID="CubeSpaceSmallCubeWheelsimple2">
+			<Vendor>Cubespace</Vendor>
+			<Description>A thing</Description>
+			<AssetBundle>cubesat-assets</AssetBundle>
+			<PartName>CubeSpace Small CubeWheel simple</PartName>
+			<PartTransform>
+				<Position>
+					<X>-0.0077</X>
+					<Y>0.0016</Y>
+					<Z>-0.0135</Z>
+				</Position>
+				<Rotation>
+					<X>0</X>
+					<Y>90</Y>
+					<Z>90</Z>
+                    <W>1.0</W>
+				</Rotation>
+				<Scale>
+					<X>0.1</X>
+					<Y>0.1</Y>
+					<Z>0.1</Z>
+				</Scale>
+			</PartTransform>
+			<EnableCollisions>false</EnableCollisions>
+			<EnableGravity>false</EnableGravity>
+			<EnableInteraction>true</EnableInteraction>
+			<MinMass>1</MinMass>
+			<MaxMass>1</MaxMass>
+            <MassContingency>1</MassContingency>
+			<PartType>Reaction Wheel</PartType>
+			<ChildParts></ChildParts>
+			<Notes>Nothing</Notes>
+			<Reference>Nothing</Reference>
+			<Subsystem>Subsystem1</Subsystem>
+		</Parts>
+		<Parts Name="GomSpaceNanoMindA712Dsimple" ID="GomSpaceNanoMindA712Dsimple">
+			<Vendor>Gom Space</Vendor>
+			<Description>A thing</Description>
+			<AssetBundle>cubesat-assets</AssetBundle>
+			<PartName>GomSpaceNanoMindA712Dsimple</PartName>
+			<PartTransform>
+				<Position>
+					<X>0.0052</X>
+					<Y>0</Y>
+					<Z>-0.0106</Z>
+				</Position>
+				<Rotation>
+					<X>0</X>
+					<Y>0.0</Y>
+					<Z>0.0</Z>
+                    <W>1.0</W>
+				</Rotation>
+				<Scale>
+					<X>0.1</X>
+					<Y>0.1</Y>
+					<Z>0.1</Z>
+				</Scale>
+			</PartTransform>
+			<EnableCollisions>false</EnableCollisions>
+			<EnableGravity>false</EnableGravity>
+			<EnableInteraction>true</EnableInteraction>
+			<MinMass>1</MinMass>
+			<MaxMass>1</MaxMass>
+            <MassContingency>1</MassContingency>
+			<PartType>Processor Board</PartType>
+			<ChildParts></ChildParts>
+			<Notes>Nothing</Notes>
+			<Reference>Nothing</Reference>
+			<Subsystem>Subsystem1</Subsystem>
+		</Parts>
+		<Parts Name="isisantenna_stowedasm0013" ID="isisantenna_stowedasm0013">
+			<Vendor>Uhh... ISIS</Vendor>
+			<Description>A thing</Description>
+			<AssetBundle>cubesat-assets</AssetBundle>
+			<PartName>isisantenna_stowedasm0013</PartName>
+			<PartTransform>
+				<Position>
+					<X>0.0045</X>
+					<Y>0</Y>
+					<Z>-0.0155</Z>
+				</Position>
+				<Rotation>
+					<X>0</X>
+					<Y>0.0</Y>
+					<Z>0.0</Z>
+                    <W>1.0</W>
+				</Rotation>
+				<Scale>
+					<X>1</X>
+					<Y>1</Y>
+					<Z>1</Z>
+				</Scale>
+			</PartTransform>
+			<EnableCollisions>false</EnableCollisions>
+			<EnableGravity>false</EnableGravity>
+			<EnableInteraction>true</EnableInteraction>
+			<MinMass>1</MinMass>
+			<MaxMass>1</MaxMass>
+            <MassContingency>1</MassContingency>
+			<PartType>Antenna</PartType>
+			<ChildParts></ChildParts>
+			<Notes>Nothing</Notes>
+			<Reference>Nothing</Reference>
+			<Subsystem>Subsystem2</Subsystem>
+		</Parts>
+		<Parts Name="ANT-GPSPatchAntennaAssembly" ID="ANT-GPSPatchAntennaAssembly">
+			<Vendor>ANT</Vendor>
+			<Description>A thing</Description>
+			<AssetBundle>cubesat-assets</AssetBundle>
+			<PartName>ANT-GPSPatchAntennaAssembly</PartName>
+			<PartTransform>
+				<Position>
+					<X>-0.0065</X>
+					<Y>-0.006</Y>
+					<Z>0.0116</Z>
+				</Position>
+				<Rotation>
+					<X>0</X>
+					<Y>90</Y>
+					<Z>180</Z>
+                    <W>1.0</W>
+				</Rotation>
+				<Scale>
+					<X>0.1</X>
+					<Y>0.1</Y>
+					<Z>0.1</Z>
+				</Scale>
+			</PartTransform>
+			<EnableCollisions>false</EnableCollisions>
+			<EnableGravity>false</EnableGravity>
+			<EnableInteraction>true</EnableInteraction>
+			<MinMass>1</MinMass>
+			<MaxMass>1</MaxMass>
+            <MassContingency>1</MassContingency>
+			<PartType>GPS</PartType>
+			<ChildParts></ChildParts>
+			<Notes>Nothing</Notes>
+			<Reference>Nothing</Reference>
+			<Subsystem>Subsystem2</Subsystem>
+		</Parts>
+		<Parts Name="clydespaceeps_asm_simple" ID="clydespaceeps_asm_simple">
+			<Vendor>Clyde Space</Vendor>
+			<Description>A thing</Description>
+			<AssetBundle>cubesat-assets</AssetBundle>
+			<PartName>clydespaceeps_asm_simple</PartName>
+			<PartTransform>
+				<Position>
+					<X>0.0052</X>
+					<Y>-0.0003</Y>
+					<Z>-0.0126</Z>
+				</Position>
+				<Rotation>
+					<X>0</X>
+					<Y>0.0</Y>
+					<Z>180</Z>
+                    <W>1.0</W>
+				</Rotation>
+				<Scale>
+					<X>0.1</X>
+					<Y>0.1</Y>
+					<Z>0.1</Z>
+				</Scale>
+			</PartTransform>
+			<EnableCollisions>false</EnableCollisions>
+			<EnableGravity>false</EnableGravity>
+			<EnableInteraction>true</EnableInteraction>
+			<MinMass>1</MinMass>
+			<MaxMass>1</MaxMass>
+            <MassContingency>1</MassContingency>
+			<PartType>Electric</PartType>
+			<ChildParts></ChildParts>
+			<Notes>Nothing</Notes>
+			<Reference>Nothing</Reference>
+			<Subsystem>Subsystem3</Subsystem>
+		</Parts>
+		<Parts Name="BlueCanyonXB12UStacksimple" ID="BlueCanyonXB12UStacksimple">
+			<Vendor>Blue Canyon</Vendor>
+			<Description>A thing</Description>
+			<AssetBundle>cubesat-assets</AssetBundle>
+			<PartName>BlueCanyonXB12UStacksimple</PartName>
+			<PartTransform>
+				<Position>
+					<X>-0.005</X>
+					<Y>0</Y>
+					<Z>-0.001</Z>
+				</Position>
+				<Rotation>
+					<X>0</X>
+					<Y>90</Y>
+					<Z>0.0</Z>
+                    <W>1.0</W>
+				</Rotation>
+				<Scale>
+					<X>0.1</X>
+					<Y>0.1</Y>
+					<Z>0.1</Z>
+				</Scale>
+			</PartTransform>
+			<EnableCollisions>false</EnableCollisions>
+			<EnableGravity>false</EnableGravity>
+			<EnableInteraction>true</EnableInteraction>
+			<MinMass>1</MinMass>
+			<MaxMass>1</MaxMass>
+            <MassContingency>1</MassContingency>
+			<PartType>Instrument</PartType>
+			<ChildParts></ChildParts>
+			<Notes>Nothing</Notes>
+			<Reference>Nothing</Reference>
+			<Subsystem>Subsystem3</Subsystem>
+		</Parts>
+		<Parts Name="MMAHaWKSolarArraydeployedsimple" ID="MMAHaWKSolarArraydeployedsimple">
+			<Vendor>MMA HaWK</Vendor>
+			<Description>A thing</Description>
+			<AssetBundle>cubesat-assets</AssetBundle>
+			<PartName>MMAHaWKSolarArraydeployedsimple</PartName>
+			<PartTransform>
+				<Position>
+					<X>0</X>
+					<Y>-0.005</Y>
+					<Z>0</Z>
+				</Position>
+				<Rotation>
+					<X>0</X>
+					<Y>0</Y>
+					<Z>0.0</Z>
+                    <W>1.0</W>
+				</Rotation>
+				<Scale>
+					<X>0.1</X>
+					<Y>0.1</Y>
+					<Z>0.1</Z>
+				</Scale>
+			</PartTransform>
+			<EnableCollisions>false</EnableCollisions>
+			<EnableGravity>false</EnableGravity>
+			<EnableInteraction>true</EnableInteraction>
+			<MinMass>1</MinMass>
+			<MaxMass>1</MaxMass>
+            <MassContingency>1</MassContingency>
+			<PartType>Solar Panel</PartType>
+			<ChildParts></ChildParts>
+			<Notes>Nothing</Notes>
+			<Reference>Nothing</Reference>
+			<Subsystem>Subsystem4</Subsystem>
+		</Parts>
+	</ChildParts>
+	<Notes>None</Notes>
+	<Reference>None</Reference>
+	<Subsystem>Subsystem0</Subsystem>
+</Part>

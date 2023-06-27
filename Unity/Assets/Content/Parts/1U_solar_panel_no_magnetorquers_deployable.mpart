@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Part xmlns="http://www.example.org/MRET" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="_x0031_U_solar_panel_no_magnetorquers_deployable" ID="1U_solar_panel_no_magnetorquers_deployable">
+   <Vendor>Clyde Space</Vendor>
+   <Description>Description Here</Description>
+   <AssetBundle>cubesat-assets</AssetBundle>
+   <PartName>1U_solar_panel_no_magnetorquers_deployable</PartName>
+   <PartTransform>
+      <Position>
+         <X>0</X>
+         <Y>0</Y>
+         <Z>0</Z>
+      </Position>
+      <Rotation>
+         <X>0</X>
+         <Y>0</Y>
+         <Z>0</Z>
+         <W>1</W>
+      </Rotation>
+      <Scale>
+         <X>0.082</X>
+         <Y>0.111</Y>
+         <Z>0.007</Z>
+      </Scale>
+   </PartTransform>
+   <EnableCollisions>false</EnableCollisions>
+   <EnableGravity>false</EnableGravity>
+   <EnableInteraction>true</EnableInteraction>
+   <NonInteractable>false</NonInteractable>
+   <MinMass>42</MinMass>
+   <MaxMass>0</MaxMass>
+   <MassContingency>0</MassContingency>
+   <PartType>Chassis</PartType>
+   <PartFileName>mt:PartFileName</PartFileName>
+   <ChildParts />
+   <Notes />
+   <Reference>https://www.clyde.space/products/46-1u-deployable-solar-panels</Reference>
+   <Subsystem>Power</Subsystem>
+   <IdlePower>0</IdlePower>
+   <AveragePower>0</AveragePower>
+   <PeakPower>0</PeakPower>
+   <PowerContingency>0</PowerContingency>
+   <RandomizeTexture>true</RandomizeTexture>
+</Part>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mret:Part version="0.9"
+    ID="id-part0-childpart2"
+    xmlns:mret="http://www.nasa.gov/MRET"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xsi:schemaLocation="http://www.nasa.gov/MRET ../../SchemaFiles/v0.9/Part.xsd">
+	
+    <UUID>d2d5f18b-c563-4275-abf6-7a49e0936c88</UUID>
+    <Name>10SP-M Microwheel</Name>
+    <Description>10SP-M microwheel description</Description>
+    <Transform>
+        <Position>
+            <X>-27.8574619</X>
+            <Y>1.00811815</Y>
+            <Z>26.2709961</Z>
+        </Position>
+        <QRotation>
+            <X>0.359615177</X>
+            <Y>-0.122851849</Y>
+            <Z>-0.62700063</Z>
+            <W>0.6800402</W>
+        </QRotation>
+        <Scale>
+            <X>0.109</X>
+            <Y>0.1</Y>
+            <Z>0.109</Z>
+        </Scale>
+    </Transform>
+	<Interactions>
+	    <EnableInteraction>true</EnableInteraction>
+	</Interactions>
+    <Model>
+        <Asset>
+            <AssetName>10SP-M_Microwheel</AssetName>
+            <AssetBundle>cubesat-assets</AssetBundle>
+        </Asset>
+    </Model>
+    <Physics>
+        <EnableCollisions>false</EnableCollisions>
+        <EnableGravity>false</EnableGravity>
+    </Physics>
+    <RandomizeTextures>true</RandomizeTextures>
+    <PartSpecifications>
+        <Vendor>SSTL</Vendor>
+        <Version>1.0</Version>
+        <Power>
+            <Min>0</Min>
+            <Max>10</Max>
+            <Idle>0</Idle>
+            <Average>10</Average>
+            <Contingency>0</Contingency>
+        </Power>
+	    <Mass>
+	        <Min>960.0</Min>
+	        <Max>960.0</Max>
+	        <Contingency>0.0</Contingency>
+	    </Mass>
+	    <Notes>Dimensions Listed: 109 mm diameter (x and z), 101 mm length (y)</Notes>
+	    <Reference>http://www.sstl.co.uk/getattachment/f31aaa67-3750-4a8a-9742-c1cd800c0a5b/Microwheels-Reaction-Wheel</Reference>
+    </PartSpecifications>    
+    <Category>Chassis</Category>
+    <Subsystem>AttitudeDeterminationAndControl</Subsystem>
+</mret:Part>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><Part xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Syrlinks_X-Band_Transmitter" ID="Syrlinks_X-Band_Transmitter" xmlns="http://www.example.org/MRET"><Vendor>Syrlinks</Vendor><Description>Description Here</Description><AssetBundle>cubesat-assets</AssetBundle><PartName>Syrlinks_X-Band_Transmitter</PartName><PartTransform><Position><X>0</X><Y>0</Y><Z>0</Z></Position><Rotation><X>0</X><Y>0</Y><Z>0</Z><W>0</W></Rotation><Scale><X>0.095</X><Y>0.09</Y><Z>0.023</Z></Scale></PartTransform><EnableCollisions>false</EnableCollisions><EnableGravity>false</EnableGravity><EnableInteraction>true</EnableInteraction><MinMass>400</MinMass><MaxMass>400</MaxMass><MassContingency>0</MassContingency><PartType>Chassis</PartType><PartFileName>mt:PartFileName</PartFileName><ChildParts /><Notes>From Website: 
+
+With a bit rate commutation operated in time splitting or versus predicted Eb/N0 during a pass, up to 13.3 GB per pass can be downloaded on a 5 m station or 5,8 GB per pass on a 3,4 m station.
+
+The equipment operates in the 8025/8450 MHz frequency range with a 1MHz step. It exhibits a data rate up to 50 Mbps (100 Mbps in specific case). The RF output power is selectable from 30 to 33 dBm with 1-dB step which can be programmable in flight (option). The equipment was designed for missions of 2 year-lifetime at Low Earth Orbit (LEO).
+
+
+Qualified COTS design
+- Faster, Cheaper, Lighter
+- Miniature (24mm + cubesat compliant)
+Link budget optimisation, by in-flight configuration
+Option: S band TT&amp;C receiver
+Export licence free (Worldwide ITAR Free)
+Low consumption
+QUALITY &amp; RELIABILITY
+
+Radiation tested &amp; hardened
+Functional, Mechanical, Thermal Tests
+Smart protections against SEL
+Flight heritage:
+- GOMX-3, ESA/Gomspace (Ongoing Summer 2015)
+- EYE-SAT, CNES (Ongoing)
+- OPS-SAT, ESA/TU-Graz (Ongoing)
+- Based on EWC28 - X band Tx inflight proven: Proba-V (ESA), KENT (BST &amp; NUS),...
+</Notes><Reference>http://www.syrlinks.com/en/products/cubesats/hdr-x-band-transmitter.html</Reference><Subsystem>Communications</Subsystem><IdlePower>0</IdlePower><AveragePower>10</AveragePower><PeakPower>0</PeakPower><PowerContingency>0</PowerContingency><RandomizeTexture>true</RandomizeTexture></Part>

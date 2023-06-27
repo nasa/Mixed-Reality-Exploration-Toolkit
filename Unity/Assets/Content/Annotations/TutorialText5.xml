@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mt:TextAnnotation xsi:schemaLocation="http://www.example.org/MRET TextAnnotation.xsd " xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mt="http://www.example.org/MRET">
+
+<mt:Texts>
+
+<mt:Texts>You have now completed the Locomotion section of the MRET Tutorial.</mt:Texts>
+
+<mt:Texts>Choose whichever locomotion system you like the best to navigate the rest of MRET!</mt:Texts>
+
+<mt:Texts>In the next section, you will learn about interable objects and different menu features.</mt:Texts>
+
+</mt:Texts>
+
+<mt:TimePerText>7</mt:TimePerText>
+
+<mt:Loop>true</mt:Loop>
+
+<mt:AttachTo>TutorialMenuEnd/Canvas/TutorialTextEnd</mt:AttachTo>
+
+</mt:TextAnnotation>

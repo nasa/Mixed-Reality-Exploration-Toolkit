@@ -1,0 +1,54 @@
+ManifestFileVersion: 0
+CRC: 2557841083
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: f3c9b89c5e77d561ce8b13ffbdf195df
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 1ece94d51f2c386b2c4cab789c08c2ec
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 134
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_3.bmp
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_3.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_w.bmp
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_wfc_1.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_1.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_2.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Prefabs/Hubble.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_1_DetailMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_4.mat
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_4.bmp
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_1.bmp
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_2_DetailMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_2.bmp
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_3_DetailMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_wfc_1_DetailMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Materials/hbltel_4_DetailMap.png
+- Assets/Content/SolarSystem_MRET_Content/Content/Spacecraft/Hubble/Models/Hubble.fbx
+Dependencies:
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/ARM64/standard-assets

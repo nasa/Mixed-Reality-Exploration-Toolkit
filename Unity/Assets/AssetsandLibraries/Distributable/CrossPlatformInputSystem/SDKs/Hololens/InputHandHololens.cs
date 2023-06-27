@@ -1,13 +1,15 @@
-// Copyright © 2018-2021 United States Government as represented by the Administrator
+// Copyright ï¿½ 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
-using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base;
 using UnityEngine;
+using GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.Base;
+#if MRET_EXTENSION_MRTK
 using Microsoft.MixedReality.Toolkit;
 using Microsoft.MixedReality.Toolkit.Input;
 using Microsoft.MixedReality.Toolkit.Utilities;
+#endif
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.Hololens
 {
     /// <remarks>
     /// History:
@@ -19,6 +21,16 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
     /// </summary>
     public class InputHandHololens : InputHandSDK //, IMixedRealityGestureHandler<Vector3>
     {
+        protected override void Start()
+        {
+            base.Start();
+
+#if !MRET_EXTENSION_MRTK
+            Debug.LogWarning("MRTK is required for the Hololens but is not installed.");
+#endif
+        }
+
+#if MRET_EXTENSION_MRTK
         /// <summary>
         /// Used to poll navigating.
         /// </summary>
@@ -267,32 +279,123 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
         }
 
         /// <summary>
-        /// The menu gesture starts with an open hand, followed by a closed hand, followed by another open hand.
+        /// Whether or not the pointer is currently on.
         /// </summary>
-        private enum MenuGesturePhase { None, Start, HandClose, Finish }
+        public override bool pointerOn
+        {
+            get
+            {
+                //I am unsure if these if statements for ui and drawing are necessary since they no longer use raycasts (but some related methods still access pointerOn)
+                if (uiPointerController.raycastLaser != null)
+                {
+                    if (uiPointerController.raycastLaser.active)
+                    {
+                        return true;
+                    }
+                }
+
+                if (teleportController.raycastLaser != null)
+                {
+                    if (teleportController.raycastLaser.active)
+                    {
+                        return true;
+                    }
+                }
+
+                if (drawingPointerController.raycastLaser != null)
+                {
+                    if (drawingPointerController.raycastLaser.active)
+                    {
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// TODO: The current endpoint of the pointer.
+        /// </summary>
+        public override Vector3 pointerEnd
+        {
+            get
+            {
+                if (drawingPointerController.raycastLaser != null)
+                {
+                    if (drawingPointerController.raycastLaser.active)
+                    {
+                        return drawingPointerController.raycastLaser.hitPos;
+                    }
+                }
+
+                if (uiPointerController.raycastLaser != null)
+                {
+                    return GetComponentInChildren<FingerTracker>().transform.position;
+                }
+
+                if (teleportController.raycastLaser != null)
+                {
+                    if (teleportController.raycastLaser.active)
+                    {
+                        return teleportController.raycastLaser.hitPos;
+                    }
+                }
+
+                return Vector3.zero;
+            }
+        }
+
+        //Added by Rod for updated CheckMenuGesture method functionality
+        /// <summary>
+        /// Returns whether the opposite hand's "index tip" is touching the input hand's outer "wrist" (Usually where a wrist watch is worn)
+        /// </summary>
+        private bool OppositeHandTouchingWatch(Handedness hand)
+        {
+            MixedRealityPose oppHandIndexTip, currHandWatch;
+
+            if (HandJointUtils.TryGetJointPose(TrackedHandJoint.IndexTip, hand.GetOppositeHandedness(), out oppHandIndexTip) &&
+                HandJointUtils.TryGetJointPose(TrackedHandJoint.Wrist, hand, out currHandWatch))
+            {
+                float error_radius = 0.035f;
+
+                        //we need to be within a sphere of error with radius "error_radius"
+                return (Vector3.Distance(oppHandIndexTip.Position, currHandWatch.Position) < error_radius &&
+                    
+                        //only if your wrist is pointing up
+                        (Vector3.Dot(currHandWatch.Up, Vector3.up) > 0));
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// The menu appears once the user taps their "index knuckle" with their opposite "index tip" all while keeping an open hand
+        /// </summary>
+        private enum MenuGesturePhase { None, Start, InProgress, Finish }
 
         private MenuGesturePhase menuGesturePhase = MenuGesturePhase.None;
 
         private void CheckMenuGesture(Handedness hand)
         {
+
             switch (menuGesturePhase)
             {
                 case MenuGesturePhase.None:
-                    if (AllFingersUp(hand))
+                    if ( !OppositeHandTouchingWatch(hand))
                     {
                         menuGesturePhase = MenuGesturePhase.Start;
                     }
                     break;
 
                 case MenuGesturePhase.Start:
-                    if (AllFingersDown(hand))
+                    if (OppositeHandTouchingWatch(hand))
                     {
-                        menuGesturePhase = MenuGesturePhase.HandClose;
+                        menuGesturePhase = MenuGesturePhase.InProgress;
                     }
                     break;
 
-                case MenuGesturePhase.HandClose:
-                    if (AllFingersUp(hand))
+                case MenuGesturePhase.InProgress:
+                    if ( !OppositeHandTouchingWatch(hand))
                     {
                         menuGesturePhase = MenuGesturePhase.Finish;
 
@@ -316,46 +419,193 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
         }
 
         /// <summary>
+        //         /// The Old/Simulator menu gesture starts with an open hand, followed by a closed hand, followed by another open hand.
+        //         /// </summary>
+        // private enum MenuGesturePhase { None, Start, HandClose, Finish }
+
+        // private MenuGesturePhase menuGesturePhase = MenuGesturePhase.None;
+
+        // private void CheckMenuGesture(Handedness hand)
+        // {
+        //     switch (menuGesturePhase)
+        //     {
+        //         case MenuGesturePhase.None:
+        //             if (AllFingersUp(hand))
+        //             {
+        //                 menuGesturePhase = MenuGesturePhase.Start;
+        //             }
+        //             break;
+
+        //         case MenuGesturePhase.Start:
+        //             if (AllFingersDown(hand))
+        //             {
+        //                 menuGesturePhase = MenuGesturePhase.HandClose;
+        //             }
+        //             break;
+
+        //         case MenuGesturePhase.HandClose:
+        //             if (AllFingersUp(hand))
+        //             {
+        //                 menuGesturePhase = MenuGesturePhase.Finish;
+
+        //                 // Call menu press event.
+        //                 inputHand.MenuPressed(transform);
+        //             }
+        //             break;
+
+        //         case MenuGesturePhase.Finish:
+        //             menuGesturePhase = MenuGesturePhase.None;
+
+        //             // Call menu release event.
+        //             inputHand.MenuReleased(transform);
+        //             break;
+
+        //         default:
+        //             Debug.LogError("[InputHandHololens] Menu Gesture Phase state error.");
+        //             menuGesturePhase = MenuGesturePhase.None;
+        //             break;
+        //     }
+        // }
+        /// <summary>
         /// Whether or not the select gesture is being performed.
         /// </summary>
+        /// 
+        private bool GetTriFingerPinch(Handedness hand, float error_radius)
+        {
+
+            MixedRealityPose indexTip, middleTip, thumbTip;
+
+
+            if (HandJointUtils.TryGetJointPose(TrackedHandJoint.IndexTip, hand, out indexTip) &&
+                HandJointUtils.TryGetJointPose(TrackedHandJoint.MiddleTip, hand, out middleTip) &&
+                HandJointUtils.TryGetJointPose(TrackedHandJoint.ThumbTip, hand, out thumbTip))
+            {
+
+                //we need to be within a sphere of error with radius "error_radius"
+                return (Vector3.Distance(thumbTip.Position, indexTip.Position) < error_radius &&
+                        Vector3.Distance(thumbTip.Position, middleTip.Position) < error_radius &&
+                        Vector3.Distance(indexTip.Position, middleTip.Position) < error_radius);
+
+            }
+            return false;
+        }
+
         private bool isSelecting = false;
 
         private void CheckSelectGesture(Handedness hand)
         {
-            if (isSelecting)
+            if (!isSelecting)
             {
-                if (PointerUp(hand))
+
+                if (GetTriFingerPinch(hand, 0.035f))
+                {
+                    isSelecting = true;
+                    inputHand.SelectBegin();
+                }
+
+            }
+            else
+            {
+                if (!GetTriFingerPinch(hand, 0.035f))
                 {
                     isSelecting = false;
+                    inputHand.SelectComplete();
+                }
 
-                    // Call select begin event.
-                    inputHand.SelectBegin();
+            }
+        }
+
+        private bool isDrawing = false;
+        /// <summary>
+        /// INCOMPLETE METHOD: currently redundant with navigate
+        /// </summary>
+        /// 
+        private void CheckDrawGesture(Handedness hand)
+        {
+            //TODO: make it context sensitive to only do the navigate press begin when drawing
+            if (!_navigatePressing)
+            {
+                if (PointerUp(hand) && MiddleUp(hand))
+                {
+                    _navigatePressing = true;
+
+                    // Call navigate press begin event.
+                    //inputHand.NavigatePressBegin();
+                }    
+            }
+            else
+            {
+                if (PointerDown(hand) && MiddleDown(hand))
+                {
+                    _navigatePressing = false;
+
+                    // Call navigate press complete event.
+                    //inputHand.NavigatePressComplete();
+                }
+            }
+            // if (!isDrawing)
+            // {
+            //     if (PinkyDown(hand) && RingDown(hand) && MiddleDown(hand) && Pinching(hand))
+            //     {
+            //         isDrawing = true;
+            //         inputHand.ToggleDrawingPointerOn();
+            //     }
+            // }
+            // else
+            // {
+
+            //     if (!(PinkyDown(hand) && RingDown(hand) && MiddleDown(hand) && Pinching(hand)))
+            //     {
+            //         isDrawing = false;
+            //         inputHand.ToggleDrawingPointerOff();
+            //     }
+            // }
+
+        }
+
+
+        private bool isScaling = false;
+        /// <summary>
+        /// INCOMPLETE METHOD: need to enable and disable scaling where indicated
+        /// </summary>
+        /// 
+        private void CheckScaleGesture(Handedness hand)
+        {
+            Handedness oppHand = hand.GetOppositeHandedness();
+
+            if (!isScaling)
+            {
+                if (PinkyUp(hand) && RingUp(hand) && MiddleUp(hand) && Pinching(hand) &&
+                    PinkyUp(oppHand) && RingUp(oppHand) && MiddleUp(oppHand) && Pinching(oppHand))
+                {
+                    isScaling = true;
+                    
                 }
             }
             else
             {
-                if (PointerDown(hand))
-                {
-                    isSelecting = true;
 
-                    // Call select complete event.
-                    inputHand.SelectComplete();
+                if (!(PinkyUp(hand) && RingUp(hand) && MiddleUp(hand) && Pinching(hand) &&
+                    PinkyUp(oppHand) && RingUp(oppHand) && MiddleUp(oppHand) && Pinching(oppHand)))
+                {
+                    isScaling = false;
+                    //disable scaling here
                 }
             }
+
         }
 
         /// <summary>
         /// Whether or not the navigate press gesture is being performed.
         /// </summary>
-        private bool isNavigatePressing = false;
 
         private void CheckNavigatePressGesture(Handedness hand)
         {
-            if (isNavigatePressing)
+            if (!_navigatePressing)
             {
                 if (PointerUp(hand) && MiddleUp(hand))
                 {
-                    isNavigatePressing = false;
+                    _navigatePressing = true;
 
                     // Call navigate press begin event.
                     inputHand.NavigatePressBegin();
@@ -365,7 +615,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
             {
                 if (PointerDown(hand) && MiddleDown(hand))
                 {
-                    isNavigatePressing = true;
+                    _navigatePressing = false;
 
                     // Call navigate press complete event.
                     inputHand.NavigatePressComplete();
@@ -380,24 +630,28 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
 
         private void CheckGrabGesture(Handedness hand)
         {
-            if (isGrabbing)
-            {
-                if (!Pinching(hand))
-                {
-                    isGrabbing = false;
 
-                    // Call grab begin event.
+            if (AllFingersDown(hand))
+            {
+                //if doing grab action
+
+                //and grab hasn't started yet
+                if (isGrabbing != true)
+                {
+                    isGrabbing = true;
                     inputHand.GrabBegin();
                 }
+
             }
             else
             {
-                if (Pinching(hand))
-                {
-                    isGrabbing = true;
+                //if not doing grab action
 
-                    // Call grab complete event.
+                //but user was previously grabbing
+                if (isGrabbing)
+                {
                     inputHand.GrabComplete();
+                    isGrabbing = false;
                 }
             }
         }
@@ -408,6 +662,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
             CheckSelectGesture(hand);
             CheckNavigatePressGesture(hand);
             CheckGrabGesture(hand);
+            CheckScaleGesture(hand);
+            //TODO: CheckTeleportGesture(hand);
+            CheckDrawGesture(hand);
         }
 
         /*private void OnEnable()
@@ -419,6 +676,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
         {
             //CoreServices.InputSystem?.UnregisterHandler<IMixedRealityGestureHandler<Vector3>>(this);
         }*/
+
 
         private void Update()
         {
@@ -440,41 +698,41 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
 #region Locomotion
 
 #region Locomotion [Teleport]
-
         public override void EnableTeleportation()
         {
-
+            teleportController.EnterMode();
         }
 
         public override void DisableTeleportation()
         {
-
+            teleportController.ExitMode();
         }
 
         public override void ToggleTeleportOn()
         {
-
+            teleportController.ToggleTeleportOn();
         }
 
         public override void ToggleTeleportOff()
         {
-
+            teleportController.ToggleTeleportOff();
         }
 
         public override void CompleteTeleport()
         {
-
+            teleportController.CompleteTeleport(inputHand.inputRig.gameObject);
         }
 
         public override void BlockTeleport()
         {
-
+            teleportController.TeleportBlocked = true;
         }
 
         public override void UnblockTeleport()
         {
-
+            teleportController.TeleportBlocked = false;
         }
+
 
 #endregion // Locomotion [Teleport]
 
@@ -566,6 +824,20 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.SteamVR
         }
 
 #endregion
+#region Drawing
+        public override void ToggleDrawingPointerOn()
+        {
+            drawingPointerController.EnterMode();
+            drawingPointerController.TogglePointingOn();
+        }
 
+        public override void ToggleDrawingPointerOff()
+        {
+            drawingPointerController.TogglePointingOff();
+            drawingPointerController.ExitMode();
+        }
+#endregion
+#endif
     }
+
 }

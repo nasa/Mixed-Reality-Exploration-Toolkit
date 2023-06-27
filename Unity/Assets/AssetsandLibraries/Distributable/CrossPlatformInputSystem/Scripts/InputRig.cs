@@ -1,11 +1,11 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
-using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base;
+using GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.Base;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem
 {
     /// <remarks>
     /// History:
@@ -49,10 +49,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         public List<InputHand> hands = new List<InputHand>();
 
         /// <summary>
-        /// The body collider.
+        /// The body object.
         /// </summary>
-        [Tooltip("The body collider.")]
-        public Collider bodyCollider;
+        [Tooltip("The body object.")]
+        public InputBody body;
 
         /// <summary>
         /// The user avatar.
@@ -75,6 +75,8 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             {
                 if (head != null)
                 {
+                    // FIXME: We should not search every time. We should defer to the
+                    // InputRigSDK or perhaps the InputHeadSDK?
                     return head.GetComponentInChildren<Camera>();
                 }
 
@@ -133,19 +135,28 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// Initializes the input rig.
         /// </summary>
         /// <param name="controllerMode">The mode to set all controllers to.</param>
-        public void Initialize(bool avatarActive, InputHand.ControllerMode controllerMode = InputHand.ControllerMode.Controller)
+        public void Initialize(InputHand.ControllerMode controllerMode = InputHand.ControllerMode.Controller)
         {
             // Call sdk initialize.
             inputRigSDK.Initialize();
+
+            // Initialize the head.
+            if (head != null)
+            {
+                head.Initialize();
+            }
+
+            // Initialize the body.
+            if (body != null)
+            {
+                body.Initialize();
+            }
 
             // Initialize all input hands.
             foreach (InputHand hand in hands)
             {
                 hand.Initialize(controllerMode);
             }
-
-            // Set avatar active state.
-            avatar.SetActive(avatarActive);
         }
 
         /// <summary>
@@ -155,6 +166,25 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         {
             Destroy(gameObject);
         }
+
+#region Player
+
+        /// <summary>
+        /// The value of player height in meters.
+        /// </summary>
+        public virtual float PlayerHeight
+        {
+            set
+            {
+                inputRigSDK.PlayerHeight = value;
+            }
+            get
+            {
+                return inputRigSDK.PlayerHeight;
+            }
+        }
+
+#endregion Player
 
 #region Physics
 
@@ -494,7 +524,99 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             inputRigSDK.DisableNavigation();
         }
 
-#endregion // Locomotion [Navigation]
+        #endregion // Locomotion [Navigation]
+
+#region Locomotion [Climbing]
+
+        /// <summary>
+        /// The multiplier to be applied to the normal motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingNormalMotionConstraintMultiplier
+        {
+            set
+            {
+                inputRigSDK.ClimbingNormalMotionConstraintMultiplier = value;
+            }
+            get
+            {
+                return inputRigSDK.ClimbingNormalMotionConstraintMultiplier;
+            }
+        }
+
+        /// <summary>
+        /// The multiplier to be applied to the slow motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingSlowMotionConstraintMultiplier
+        {
+            set
+            {
+                inputRigSDK.ClimbingSlowMotionConstraintMultiplier = value;
+            }
+            get
+            {
+                return inputRigSDK.ClimbingSlowMotionConstraintMultiplier;
+            }
+        }
+
+        /// <summary>
+        /// The multiplier to be applied to the fast motion constraint climbing motion.
+        /// </summary>
+        public float ClimbingFastMotionConstraintMultiplier
+        {
+            set
+            {
+                inputRigSDK.ClimbingFastMotionConstraintMultiplier = value;
+            }
+            get
+            {
+                return inputRigSDK.ClimbingFastMotionConstraintMultiplier;
+            }
+        }
+
+        /// <summary>
+        /// The gravity constraint for climbing locomotion.
+        /// </summary>
+        public GravityConstraint ClimbingGravityConstraint
+        {
+            set
+            {
+                inputRigSDK.ClimbingGravityConstraint = value;
+            }
+            get
+            {
+                return inputRigSDK.ClimbingGravityConstraint;
+            }
+        }
+
+        /// <summary>
+        /// Indicates if climbing is enabled for this rig.
+        /// </summary>
+        /// <returns>A boolean value indicating whether or not climbing is enabled</returns>
+        public bool ClimbingEnabled
+        {
+            get
+            {
+                return inputRigSDK.ClimbingEnabled;
+            }
+        }
+
+        /// <summary>
+        /// Enables climbing for this rig.
+        /// </summary>
+        public void EnableClimbing()
+        {
+            inputRigSDK.EnableClimbing();
+        }
+
+        /// <summary>
+        /// Disables climbing for this rig.
+        /// </summary>
+        public void DisableClimbing()
+        {
+            inputRigSDK.DisableClimbing();
+        }
+
+        #endregion // Locomotion [Climbing]
 
 #endregion // Locomotion
 

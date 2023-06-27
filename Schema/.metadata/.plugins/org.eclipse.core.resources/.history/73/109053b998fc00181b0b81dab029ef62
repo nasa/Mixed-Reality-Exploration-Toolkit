@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mt:AudioRecording xmlns:mt="http://www.example.org/MRET" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.example.org/MRET AudioRecording.xsd ">
+  <mt:AudioFile>C:/Users/dzbaker/Documents/Unity Projects/MRET/VR_TestProj/MixedRealityEngineeringToolkit/Assets/VR/3rd-party/SteamVR/InteractionSystem/Longbow/Sounds/ArrowFireLoop01.wav</mt:AudioFile>
+  <mt:StartTime>0:00:00</mt:StartTime>
+  <mt:Duration>00:12:00</mt:Duration>
+  <mt:Speed>1</mt:Speed>
+  <mt:Loop>true</mt:Loop>
+  <mt:AttachTo>testobject</mt:AttachTo>
+</mt:AudioRecording>

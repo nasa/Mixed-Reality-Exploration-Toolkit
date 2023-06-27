@@ -1,0 +1,296 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/Common"
+    elementFormDefault="unqualified"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common">
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="NumericTypes.xsd"/>
+    <include schemaLocation="UnitTypes.xsd"/>
+
+    <simpleType name="ColorPredefinedType">
+        <restriction base="string">
+            <enumeration value="Black"/>
+            <enumeration value="Blue"/>
+            <enumeration value="Cyan"/>
+            <enumeration value="DarkGray"/>
+            <enumeration value="Gray"/>
+            <enumeration value="Green"/>
+            <enumeration value="LightGray"/>
+            <enumeration value="Magenta"/>
+            <enumeration value="Orange"/>
+            <enumeration value="Pink"/>
+            <enumeration value="Red"/>
+            <enumeration value="White"/>
+            <enumeration value="Yellow"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="ColorComponentsType">
+        <annotation>
+            <documentation>Color components</documentation>
+        </annotation>
+        <sequence>
+            <element name="R" type="unsignedByte" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="G" type="unsignedByte" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="B" type="unsignedByte" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="A" type="unsignedByte" minOccurs="0" maxOccurs="1" default="0"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="ColorGradientType">
+        <sequence minOccurs="1" maxOccurs="unbounded">
+            <element name="Time" type="common:PercentType" minOccurs="1" maxOccurs="1"/>
+            <group ref="common:ColorTypeGroup" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    
+    <group name="ColorTypeGroup">
+	    <sequence>
+	        <choice>
+		        <annotation>
+		            <documentation>Color. Default is black</documentation>
+		        </annotation>
+	            <element name="Color" type="common:ColorPredefinedType" minOccurs="0" maxOccurs="1" default="Black"/>
+	            <element name="RGBA" type="common:ColorComponentsType" minOccurs="0" maxOccurs="1"/>
+	        </choice>
+        </sequence>
+    </group>
+
+    <simpleType name="PrimitiveShapeType">
+        <restriction base="string">
+            <enumeration value="Cube"/>
+            <enumeration value="Plane"/>
+            <enumeration value="Sphere"/>
+        </restriction>
+    </simpleType>
+    
+    <simpleType name="ReferenceSpaceType">
+        <restriction base="string">
+            <enumeration value="Global"/>
+            <enumeration value="Relative"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="LevelOfDetailType">
+        <annotation>
+            <documentation>Level of detail. Smaller values are closer to the camera.</documentation>
+        </annotation>
+        <restriction base="int">
+            <minInclusive value="0"/>
+            <maxInclusive value="7"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="AxisType">
+        <restriction base="string">
+            <enumeration value="X"/>
+            <enumeration value="Y"/>
+            <enumeration value="Z"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="Vector3Type">
+        <sequence>
+            <element name="X" type="float" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Y" type="float" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Z" type="float" minOccurs="0" maxOccurs="1" default="0"/>
+        </sequence>
+    </complexType>
+    
+    <complexType name="QuaternionType">
+        <complexContent>
+            <extension base="common:Vector3Type">
+                <sequence>
+                    <element name="W" type="float" minOccurs="0" maxOccurs="1" default="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="TransformAttributeType">
+        <complexContent>
+            <extension base="common:Vector3Type">
+                <attribute name="referenceSpace" type="common:ReferenceSpaceType" use="optional" default="Global"/>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="TransformPositionType">
+        <complexContent>
+            <extension base="common:TransformAttributeType"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="TransformRotationType">
+        <complexContent>
+            <extension base="common:TransformAttributeType"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="TransformEulerRotationType">
+        <complexContent>
+            <extension base="common:TransformRotationType"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="TransformQRotationType">
+        <complexContent>
+            <extension base="common:TransformRotationType">
+                <sequence>
+                    <element name="W" type="float" minOccurs="0" maxOccurs="1" default="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+    
+    <group name="TransformRotationTypeGroup">
+        <sequence>
+	        <choice>
+		        <element name="EulerRotation" type="common:TransformEulerRotationType" minOccurs="0" maxOccurs="1"/>
+		        <element name="QRotation" type="common:TransformQRotationType" minOccurs="0" maxOccurs="1"/>
+	        </choice>
+        </sequence>
+    </group>
+
+    <complexType name="TransformScaleType">
+	    <complexContent>
+	        <restriction base="common:TransformAttributeType">
+	            <sequence>
+	                <element name="X" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1" default="1.0"/>
+	                <element name="Y" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1" default="1.0"/>
+	                <element name="Z" type="common:NonNegativeFloat" minOccurs="0" maxOccurs="1" default="1.0"/>
+	            </sequence>
+	        </restriction>
+	    </complexContent>
+    </complexType>
+
+    <complexType name="TransformSizeType">
+        <complexContent>
+            <extension base="common:TransformScaleType">
+                <attribute name="units" type="common:LengthUnitType" use="optional" default="Meter"/>
+            </extension>
+        </complexContent>
+    </complexType>
+        
+    <group name="TransformScaleTypeGroup">
+        <sequence>
+            <choice>
+                <element name="Scale" type="common:TransformScaleType" minOccurs="0" maxOccurs="1"/>
+                <element name="Size" type="common:TransformSizeType" minOccurs="0" maxOccurs="1"/>
+            </choice>
+        </sequence>
+    </group>
+    
+    <complexType name="TransformType">
+        <sequence>
+            <element name="Position" type="common:TransformPositionType" minOccurs="0" maxOccurs="1"/>
+            <group ref="common:TransformRotationTypeGroup" minOccurs="0" maxOccurs="1"/>
+            <group ref="common:TransformScaleTypeGroup" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    
+    <complexType name="PointType">
+        <complexContent>
+            <extension base="common:Vector3Type"/>
+        </complexContent>
+    </complexType>
+    
+    <complexType name="PointsType">
+        <choice>
+            <element name="Point" type="common:PointType" minOccurs="1" maxOccurs="unbounded"/>
+        </choice>
+    </complexType>
+
+    <simpleType name="MaterialShaderPredefinedType">
+        <restriction base="string">
+            <enumeration value="Standard"/>
+            <enumeration value="Specular"/>
+            <enumeration value="Lit"/>
+            <enumeration value="Unlit"/>
+            <enumeration value="Skybox"/>
+            <enumeration value="Custom"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="MaterialShaderType">
+        <simpleContent>
+            <extension base="string">
+                <attribute name="shader" type="common:MaterialShaderPredefinedType" use="optional" default="Standard"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <simpleType name="MaterialFormatType">
+        <restriction base="string">
+            <enumeration value="Material"/>
+            <enumeration value="Texture"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="MaterialFileType">
+        <simpleContent>
+            <extension base="string">
+                <attribute name="format" type="common:MaterialFormatType" use="optional" default="Material"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <group name="MaterialDefinitionTypeGroup">
+        <sequence>
+            <element name="Shader" type="common:MaterialShaderType" minOccurs="0" maxOccurs="1"/>
+            <group ref="common:ColorTypeGroup" minOccurs="1" maxOccurs="1"/>
+        </sequence>
+    </group>
+
+    <complexType name="MaterialType">
+        <choice>
+			<element name="File" type="common:MaterialFileType" minOccurs="1" maxOccurs="1"/>
+			<element name="Asset" type="common:AssetType" minOccurs="1" maxOccurs="1"/>
+            <group ref="common:MaterialDefinitionTypeGroup" minOccurs="1" maxOccurs="1"/>
+        </choice>
+    </complexType>
+
+    <simpleType name="ModelFormatType">
+        <restriction base="string">
+            <enumeration value="GLTF"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="ModelFileType">
+        <simpleContent>
+            <extension base="string">
+                <attribute name="format" type="common:ModelFormatType" use="optional" default="GLTF"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <complexType name="ModelType">
+		<sequence>
+			<choice>
+				<element name="File" type="common:ModelFileType" minOccurs="1" maxOccurs="1"/>
+				<element name="Asset" type="common:AssetType" minOccurs="1" maxOccurs="1"/>
+				<element name="Shape" type="common:PrimitiveShapeType" minOccurs="0" maxOccurs="1" default="Cube"/>
+			</choice>
+			<element name="Material" type="common:MaterialType" minOccurs="0" maxOccurs="1"/>
+		</sequence>
+    </complexType>
+    
+    <complexType name="AssetType">
+        <annotation>
+            <documentation>Defines an asset</documentation>
+        </annotation>
+        <sequence minOccurs="1" maxOccurs="1">
+            <element name="AssetName" type="string" maxOccurs="1" minOccurs="1"/>
+            <element name="AssetBundle" type="string" maxOccurs="1" minOccurs="1"/>
+        </sequence>
+    </complexType>
+
+    <simpleType name="LayerMaskType">
+        <restriction base="int">
+            <minInclusive value="-1"/>
+        </restriction>
+    </simpleType>
+ 
+</schema>

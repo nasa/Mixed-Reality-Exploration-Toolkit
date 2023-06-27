@@ -1,17 +1,19 @@
 ManifestFileVersion: 0
-CRC: 1574900323
+CRC: 2891498265
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 50d4844866ac09ff41c2dfef41631338
+    Hash: ac9ec490cf76e6aa6fd6fb77b18907f4
   TypeTreeHash:
     serializedVersion: 2
-    Hash: b891a8bca12d59fc8c4db6f97ce45afd
+    Hash: 597a523c33d0c3532fb08f34a2301bf6
 HashAppended: 0
 ClassTypes:
 - Class: 1
   Script: {instanceID: 0}
 - Class: 4
+  Script: {instanceID: 0}
+- Class: 20
   Script: {instanceID: 0}
 - Class: 21
   Script: {instanceID: 0}
@@ -25,20 +27,40 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
-- Class: 89
+- Class: 64
   Script: {instanceID: 0}
 - Class: 104
   Script: {instanceID: 0}
 - Class: 108
   Script: {instanceID: 0}
-- Class: 121
+- Class: 114
+  Script: {fileID: 11500000, guid: f3201a327c9e0924ab32f4b7a8f6579d, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 97b79c862f2742645bcf9e215a914af2, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d93d585e0b8b5ad4884863fc498981be, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 640ff4fc5832e7645a84d837b1b1b533, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a0fd7e182827f934b9d2599213465588, type: 3}
+- Class: 115
   Script: {instanceID: 0}
 - Class: 157
   Script: {instanceID: 0}
+- Class: 196
+  Script: {instanceID: 0}
 - Class: 258
   Script: {instanceID: 0}
+- Class: 850595691
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/AssetBundleContent/Non-ITAREAR/Comet67p/Comet67p.unity
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/Comet67p.unity
+- Assets/Content/SolarSystem_MRET_Content/Content/Scenes/DeepSpace.unity
 Dependencies:
-- C:/Users/dzbaker/Documents/Unity Projects/MRET/VR_TestProj/MixedRealityEngineeringToolkit/AssetBundles/Windows/solarsystem-models
-- C:/Users/dzbaker/Documents/Unity Projects/MRET/VR_TestProj/MixedRealityEngineeringToolkit/AssetBundles/Windows/earth-assets1
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/comet67p-assets
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/Windows/earth-assets7

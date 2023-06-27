@@ -1,4 +1,9 @@
+// Copyright © 2018-2022 United States Government as represented by the Administrator
+// of the National Aeronautics and Space Administration. All Rights Reserved.
+
+#if MRET_EXTENSION_ROCKVR && !HOLOLENS_BUILD
 using RockVR.Video;
+#endif
 using System;
 using System.Collections.Generic;
 #if UNITY_EDITOR
@@ -6,8 +11,7 @@ using UnityEditor;
 #endif
 using UnityEngine;
 
-
-namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
+namespace GOV.NASA.GSFC.XR.VirtualCamera
 {
     /// <remarks>
     /// History:
@@ -15,26 +19,15 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
     /// </remarks>
     /// <summary>
     /// VirtualCameraManager is a class that provides
-    /// top-level control of The Virtual Camera System in MRET.
+    /// top-level control of The Virtual Camera System in a VR application.
     /// Author: Jonathan T. Reynolds
     /// </summary>
     [ExecuteInEditMode]
-    public class VirtualCameraManager : MRETUpdateBehaviour
+    public class VirtualCameraManager : MonoBehaviour
     {
-
-        /// <seealso cref="MRETBehaviour.ClassName"/>
-        public override string ClassName
-        {
-            get
-            {
-                return nameof(VirtualCameraManager);
-            }
-        }
-
         [Header("Main Scene Controlled Variables")]
         [Tooltip("When added by the Wizard the camera added is whatever is tagged as the MainCamera, change this to the Rig Camera")]
         public GameObject RigHMDCamera;
-
 
         [Header("Preset Cameras and displays"),]
         [Tooltip("Any preset cameras will not be removed from scene when calling add/remove on Cam")]
@@ -74,7 +67,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
         /// <summary>
         /// Adds any preset cams to the virtual cam list. 
         /// </summary>
-        protected override void MRETStart()
+        private void Start()
         {
             if (Application.isPlaying)
             {
@@ -91,7 +84,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
 
         }
 
-        protected override void MRETUpdate()
+        private void Update()
         {
 #if UNITY_EDITOR
             if (Application.isPlaying == false)
@@ -571,8 +564,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
         /// </summary>
         public void StartRecording()
         {
+#if MRET_EXTENSION_ROCKVR && !HOLOLENS_BUILD
             VCMPresetVariables.RecordCameraCtrl.StartCapture();
             VirtualCameras[_CurrentCameraIndex].cameraBaseScript.SetRecordActive(true);
+#endif
         }
 
 
@@ -581,8 +576,10 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
         /// </summary>
         public void StopRecording()
         {
+#if MRET_EXTENSION_ROCKVR && !HOLOLENS_BUILD
             VCMPresetVariables.RecordCameraCtrl.StopCapture();
             VirtualCameras[_CurrentCameraIndex].cameraBaseScript.SetRecordActive(false);
+#endif
         }
 
         /// <summary>
@@ -590,10 +587,12 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
         /// </summary>
         public void PauseCapture()
         {
+#if MRET_EXTENSION_ROCKVR && !HOLOLENS_BUILD
             VCMPresetVariables.RecordCameraCtrl.ToggleCapture();
+#endif
         }
 
-
+#if MRET_EXTENSION_ROCKVR && !HOLOLENS_BUILD
         /// <summary>
         /// This get the current record status of the camera
         /// </summary>
@@ -621,8 +620,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
         {
             return VCMPresetVariables.RecordCameraCtrl.audioCapture;
         }
-
-
+#endif
 
         #endregion
 
@@ -777,7 +775,9 @@ namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
         public GameObject BaseVirtualCamera;
         public GameObject BaseVirtualDisplay;
         public Transform RecordCamTransform;
+#if MRET_EXTENSION_ROCKVR && !HOLOLENS_BUILD
         public VideoCaptureCtrl RecordCameraCtrl;
+#endif
     }
 
 

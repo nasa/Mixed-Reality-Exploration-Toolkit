@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/Common"
+    elementFormDefault="unqualified"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common">
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="NumericTypes.xsd"/>
+
+    <simpleType name="DurationUnitType">
+        <restriction base="string">
+            <enumeration value="Year"/>
+            <enumeration value="Month"/>
+            <enumeration value="Day"/>
+            <enumeration value="Hour"/>
+            <enumeration value="Minute"/>
+            <enumeration value="Second"/>
+            <enumeration value="Millisecond"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="PowerUnitType">
+        <restriction base="string">
+            <enumeration value="Kilowatt"/>
+            <enumeration value="Watt"/>
+            <enumeration value="Milliwatt"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="MassUnitType">
+        <restriction base="string">
+            <enumeration value="Kilogram"/>
+            <enumeration value="Gram"/>
+            <enumeration value="Decigram"/>
+            <enumeration value="Centigram"/>
+            <enumeration value="Milligram"/>
+            <enumeration value="Pound"/>
+            <enumeration value="Ounce"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="NormalizedType">
+        <restriction base="float">
+            <minInclusive value="0"/>
+            <maxInclusive value="1"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="Normalized3Type">
+        <sequence>
+            <element name="X" type="common:NormalizedType" minOccurs="0" maxOccurs="1" default="1"/>
+            <element name="Y" type="common:NormalizedType" minOccurs="0" maxOccurs="1" default="1"/>
+            <element name="Z" type="common:NormalizedType" minOccurs="0" maxOccurs="1" default="1"/>
+        </sequence>
+    </complexType>
+
+    <simpleType name="PercentType">
+        <restriction base="float">
+            <minInclusive value="0"/>
+            <maxInclusive value="100"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="Percent3Type">
+        <sequence>
+            <element name="X" type="common:PercentType" minOccurs="0" maxOccurs="1" default="100"/>
+            <element name="Y" type="common:PercentType" minOccurs="0" maxOccurs="1" default="100"/>
+            <element name="Z" type="common:PercentType" minOccurs="0" maxOccurs="1" default="100"/>
+        </sequence>
+    </complexType>
+
+    <simpleType name="DegreeType">
+        <restriction base="float">
+            <minInclusive value="0"/>
+            <maxInclusive value="360"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="Degree3Type">
+        <sequence>
+            <element name="X" type="common:DegreeType" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Y" type="common:DegreeType" minOccurs="0" maxOccurs="1" default="0"/>
+            <element name="Z" type="common:DegreeType" minOccurs="0" maxOccurs="1" default="0"/>
+        </sequence>
+    </complexType>
+
+    <simpleType name="LengthUnitType">
+        <restriction base="string">
+            <enumeration value="Kilometer"/>
+            <enumeration value="Meter"/>
+            <enumeration value="Decimeter"/>
+            <enumeration value="Centimeter"/>
+            <enumeration value="Millimeter"/>
+            <enumeration value="Micrometer"/>
+            <enumeration value="Nanometer"/>
+            <enumeration value="Mile"/>
+            <enumeration value="Yard"/>
+            <enumeration value="Foot"/>
+            <enumeration value="Inch"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="SpeedUnitType">
+        <restriction base="string">
+            <enumeration value="Meter per Second"/>
+            <enumeration value="Feet per Second"/>
+            <enumeration value="Mile per Hour"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="AccelerationUnitType">
+        <restriction base="string">
+            <enumeration value="Meter per Second Squared"/>
+            <enumeration value="Newton per Kilogram"/>
+            <enumeration value="Feet per Second Squared"/>
+            <enumeration value="Mile per Hour Squared"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="ForceUnitType">
+        <restriction base="string">
+            <enumeration value="Kilonewton"/>
+            <enumeration value="Newton"/>
+            <enumeration value="Decinewton"/>
+            <enumeration value="Centinewton"/>
+            <enumeration value="Millinewton"/>
+            <enumeration value="PoundForce"/>
+            <enumeration value="OunceForce"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="FrequencyUnitType">
+        <restriction base="string">
+            <enumeration value="Kilohertz"/>
+            <enumeration value="Hertz"/>
+            <enumeration value="Millihertz"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="DurationType">
+        <simpleContent>
+            <extension base="common:NonNegativeFloat">
+                <annotation>
+                    <documentation>Defines a duration of time</documentation>
+                </annotation>
+                <attribute name="units" type="common:DurationUnitType" use="optional" default="Second"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <complexType name="FrequencyType">
+        <simpleContent>
+            <extension base="common:NonNegativeFloat">
+                <annotation>
+                    <documentation>Defines a frequency</documentation>
+                </annotation>
+                <attribute name="units" type="common:FrequencyUnitType" use="optional" default="Hertz"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <complexType name="SpeedType">
+        <simpleContent>
+            <extension base="common:NonNegativeFloat">
+                <annotation>
+                    <documentation>Defines a speed (velocity)</documentation>
+                </annotation>
+                <attribute name="units" type="common:SpeedUnitType" use="optional" default="Meter per Second"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <complexType name="AccelerationType">
+        <simpleContent>
+            <extension base="common:NonNegativeFloat">
+                <annotation>
+                    <documentation>Defines an acceleration</documentation>
+                </annotation>
+                <attribute name="units" type="common:AccelerationUnitType" use="optional" default="Meter per Second Squared"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <complexType name="ForceType">
+        <simpleContent>
+            <extension base="common:NonNegativeFloat">
+                <annotation>
+                    <documentation>Defines a force</documentation>
+                </annotation>
+                <attribute name="units" type="common:ForceUnitType" use="optional" default="Newton"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <complexType name="LengthType">
+        <simpleContent>
+            <extension base="common:NonNegativeFloat">
+                <annotation>
+                    <documentation>Defines a length</documentation>
+                </annotation>
+                <attribute name="units" type="common:LengthUnitType" use="optional" default="Meter"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <complexType name="MassType">
+        <simpleContent>
+            <extension base="common:NonNegativeFloat">
+                <annotation>
+                    <documentation>Defines a mass</documentation>
+                </annotation>
+                <attribute name="units" type="common:MassUnitType" use="optional" default="Kilogram"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <complexType name="PowerType">
+        <simpleContent>
+            <extension base="common:NonNegativeFloat">
+                <annotation>
+                    <documentation>Defines power</documentation>
+                </annotation>
+                <attribute name="units" type="common:PowerUnitType" use="optional" default="Watt"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+</schema>

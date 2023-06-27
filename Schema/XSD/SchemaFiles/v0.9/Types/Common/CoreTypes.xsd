@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/Common"
+    elementFormDefault="unqualified"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common">
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="NumericTypes.xsd"/>
+
+    <complexType name="VersionedType">
+        <annotation>
+            <documentation>Defines a type associated with a version.
+                Defaults to the current schema version.</documentation>
+        </annotation>
+        <attribute name="version" type="string" use="required" fixed="0.9"/>
+    </complexType>
+
+    <complexType name="GroupType">
+        <complexContent>
+            <extension base="common:VersionedType">
+		        <annotation>
+		            <documentation>Defines a grouping of elements.</documentation>
+		        </annotation>
+		        <attribute name="group" type="common:NonNegativeInteger" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="XRType">
+        <complexContent>
+            <extension base="common:VersionedType">
+                <sequence>
+                    <element name="AR-Enabled" type="boolean" minOccurs="0" maxOccurs="1" default="true"/>
+                    <element name="VR-Enabled" type="boolean" minOccurs="0" maxOccurs="1" default="true"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+	<complexType name="IdentifiableType">
+        <complexContent>
+            <extension base="common:XRType">
+		        <sequence>
+		            <element name="UUID" type="string" minOccurs="0" maxOccurs="1"/>
+		            <element name="Name" type="string" minOccurs="1" maxOccurs="1"/>
+		            <element name="Description" type="string" minOccurs="0" maxOccurs="1"/>
+		        </sequence>
+		        <attribute name="ID" type="ID" use="required"/>
+            </extension>
+        </complexContent>
+	</complexType>
+
+</schema>

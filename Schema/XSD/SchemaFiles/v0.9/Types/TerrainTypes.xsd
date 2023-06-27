@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+    
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="SceneObjectTypes.xsd"/>
+
+    <simpleType name="HeightmapFormatType">
+        <restriction base="string">
+            <enumeration value="RAW"/>
+            <enumeration value="GeoTIFF"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="HeightmapFileType">
+        <simpleContent>
+            <extension base="string">
+                <attribute name="format" type="mret:HeightmapFormatType" use="optional" default="RAW"/>
+            </extension>
+        </simpleContent>
+    </complexType>
+
+    <simpleType name="TerrainTileGridType">
+        <restriction base="string">
+            <enumeration value="1x1"/>
+            <enumeration value="2x2"/>
+            <enumeration value="4x4"/>
+            <enumeration value="8x8"/>
+            <enumeration value="16x16"/>
+            <enumeration value="32x32"/>
+            <enumeration value="64x64"/>
+        </restriction>
+    </simpleType>
+
+    <simpleType name="TerrainTileResolutionType">
+        <restriction base="string">
+            <enumeration value="32"/>
+            <enumeration value="64"/>
+            <enumeration value="128"/>
+            <enumeration value="256"/>
+            <enumeration value="512"/>
+            <enumeration value="1024"/>
+            <enumeration value="2048"/>
+            <enumeration value="4096"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="HeightmapBoundsType">
+        <annotation>
+            <documentation>Defines the source heightmap bounds to be used to generate the terrain</documentation>
+        </annotation>
+	    <sequence minOccurs="1" maxOccurs="1">
+		    <choice>
+		        <sequence minOccurs="1" maxOccurs="1">
+		            <annotation>
+		                <documentation>Specifies the center pixel</documentation>
+		            </annotation>
+		            <element name="PixelOffsetX" type="common:NonNegativeFloat" minOccurs="1" maxOccurs="1"/>
+		            <element name="PixelOffsetY" type="common:NonNegativeFloat" minOccurs="1" maxOccurs="1"/>
+		        </sequence>
+		        <sequence minOccurs="1" maxOccurs="1">
+		            <element name="Center" type="common:CoordinateType" minOccurs="1" maxOccurs="1">
+		             <annotation>
+		                 <documentation>Specifies the center coordinate</documentation>
+		             </annotation>
+		            </element>
+		        </sequence>
+		    </choice>
+            <element name="TileGrid" type="mret:TerrainTileGridType" minOccurs="1" maxOccurs="1">
+                <annotation>
+                    <documentation>Specifies the tile grid to generate</documentation>
+                </annotation>
+            </element>
+            <element name="TileResolution" type="mret:TerrainTileResolutionType" minOccurs="1" maxOccurs="1">
+                <annotation>
+                    <documentation>Specifies the tile resolution to generate</documentation>
+                </annotation>
+            </element>
+		</sequence>
+    </complexType>
+
+    <complexType name="TerrainBoundsType">
+        <annotation>
+            <documentation>Describes the bounds of the terrain</documentation>
+        </annotation>
+        <sequence minOccurs="1" maxOccurs="1">
+            <element name="TopLeft" type="common:CoordinateType" minOccurs="1" maxOccurs="1">
+                <annotation>
+                    <documentation>Specifies the top/left coordinate</documentation>
+                </annotation>
+            </element>
+            <element name="BottomRight" type="common:CoordinateType" minOccurs="1" maxOccurs="1">
+                <annotation>
+                    <documentation>Specifies the bottom/right coordinate</documentation>
+                </annotation>
+            </element>
+        </sequence>
+    </complexType>
+
+    <complexType name="TerrainDataType">
+        <sequence>
+            <element name="MapProjection" type="common:MapProjectionType" minOccurs="0" maxOccurs="1" default="Equirectangular"/>
+            <choice>
+                <sequence minOccurs="1" maxOccurs="1">
+                    <element name="File" type="mret:HeightmapFileType" minOccurs="1" maxOccurs="1"/>
+                    <element name="HeightmapBounds" type="mret:HeightmapBoundsType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+                <sequence minOccurs="1" maxOccurs="1">
+                    <element name="Asset" type="common:AssetType" minOccurs="1" maxOccurs="1"/>
+                    <element name="TerrainBounds" type="mret:TerrainBoundsType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </choice>
+            <element name="Material" type="common:MaterialType" minOccurs="0" maxOccurs="1"/>
+        </sequence>
+    </complexType>
+    
+    <complexType name="TerrainsType">
+        <complexContent>
+            <extension base="common:GroupType">
+		        <choice>
+			        <element name="Terrain" type="mret:TerrainType" minOccurs="1" maxOccurs="unbounded"/>
+		            <element name="Terrains" type="mret:TerrainsType" minOccurs="0" maxOccurs="unbounded"/>
+		        </choice>
+		    </extension>
+		</complexContent>
+    </complexType>
+
+    <complexType name="TerrainType">
+        <complexContent>
+            <extension base="mret:SceneObjectType">
+                <sequence>
+                    <element name="CelestialBody" type="common:CelestialBodyType" minOccurs="0" maxOccurs="1" default="Earth"/>
+                    <element name="TerrainData" type="mret:TerrainDataType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

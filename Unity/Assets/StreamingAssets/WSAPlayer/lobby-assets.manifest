@@ -1,0 +1,163 @@
+ManifestFileVersion: 0
+CRC: 1054140535
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: aea08be6ff8cbf50c51fa578fca158d7
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 800d5efb7d83eee1d0528435bbd59500
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 54
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 91
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4e29b1a8efbd4b44bb3f3716e73f07ff, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5f7201a12d95ffc409449d95f23cf332, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 1aa08ab6e0800fa44ae55d278d1423e3, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 9085046f02f69544eb97fd06b6048fe2, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0d0b652f32a2cc243917e4028fa0f046, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 31a19414c41e5ae4aae2af33fee712f6, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dc42784cf147c0c48a680349fa168899, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d199490a83bb2b844b9695cbf13b01ef, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d9557a013119eb5448a768ff6a20b1f1, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: f75dec4693452cd48a00a9dd4f5cdb00, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4a6a595c83ef99446bd05ce93ecf88a3, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 6ab716324cc21eb41bad6e9b3b5ffd1a, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: dc4a153d13ecb034abc6c35c22360588, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: d430ab63595017a458fa2dacbcf5ad61, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 2599234caf866a046850c43529ea4ac3, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ad7f95f0d9ee7fa40bc71fad20c85aeb, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: ef6c09f0d840e2c4ab0848c09c340f67, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 56dda15352f454c47a52833faf332b69, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a722aebab5b6d024c863750ec3ef912e, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 7f6fa6ebbe7f95242af3fde4e47feb66, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 5db09bd62551b1d4cb00df9d175c88f3, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: cb1e1a5cbdb4c0745b8cd942099c5506, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 0fa488014df97324898cefc20e89a312, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 4740d76ec1fd6a94995e621eb3761d27, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: 05252e206a2c47f439c2cc7c2cc4b38d, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 128
+  Script: {instanceID: 0}
+- Class: 213
+  Script: {instanceID: 0}
+- Class: 215
+  Script: {instanceID: 0}
+- Class: 222
+  Script: {instanceID: 0}
+- Class: 223
+  Script: {instanceID: 0}
+- Class: 224
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers:
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.ArgumentCache
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.PersistentCallGroup
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.PersistentListenerMode
+- AssemblyName: UnityEngine.CoreModule
+  ClassName: UnityEngine.Events.UnityEvent
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.AnimationTriggers
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Button/ButtonClickedEvent
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.ColorBlock
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Dropdown/DropdownEvent
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Dropdown/OptionData
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Dropdown/OptionDataList
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.FontData
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.InputField/OnChangeEvent
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.InputField/SubmitEvent
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.MaskableGraphic/CullStateChangedEvent
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Navigation
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.ScrollRect/ScrollRectEvent
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.SpriteState
+- AssemblyName: UnityEngine.UI
+  ClassName: UnityEngine.UI.Toggle/ToggleEvent
+Assets:
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Prefabs/ProjectCube.prefab
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Prefabs/TemplateCube.prefab
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Textures/Newlobby_MaskMap.png
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Materials/Newlobby.mat
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Materials/Billboard.mat
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Textures/DOMELOBBYlo_Material_MetallicSmoothness.png
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Models/DOMELOBBYlo3.fbx
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Materials/lobbyglass.mat
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Textures/DOMELOBBYlo_Material_Normal.png
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Sprites/DefaultBillboard.png
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Prefabs/Lobby.prefab
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Textures/DOMELOBBYlo_Material_AlbedoTransparency.png
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Sprites/MRETLOGO.PNG
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Materials/ProjectCube.mat
+- Assets/Content/Standard_MRET_Content/Content/Lobby/Assets/Materials/MRETLOGO.mat
+Dependencies: []

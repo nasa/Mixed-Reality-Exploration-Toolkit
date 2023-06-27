@@ -1,12 +1,12 @@
 ManifestFileVersion: 0
-CRC: 1200573302
+CRC: 3030194707
 Hashes:
   AssetFileHash:
     serializedVersion: 2
-    Hash: 33f00bef6e9e85461bf32d08a827baba
+    Hash: 16a24e2eaa864d7731bd9f09c5b3e830
   TypeTreeHash:
     serializedVersion: 2
-    Hash: 07353491aca6e6a29636b555171f2e48
+    Hash: 4a51026d08bf40f7f6eea65537d2ffbc
 HashAppended: 0
 ClassTypes:
 - Class: 1
@@ -25,7 +25,11 @@ ClassTypes:
   Script: {instanceID: 0}
 - Class: 48
   Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
 Assets:
-- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/MKIII/MKIII.obj
-- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/MKIII/texturelogo.png
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/MKIII/Models/MKIII.obj
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/MKIII/Prefabs/SpaceSuitMKIII.prefab
+- Assets/Content/SolarSystem_MRET_Content/Content/SpaceSuits/MKIII/Models/texturelogo.png
 Dependencies: []

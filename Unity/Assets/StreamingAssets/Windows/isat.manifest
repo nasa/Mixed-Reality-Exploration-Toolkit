@@ -1,0 +1,31 @@
+ManifestFileVersion: 0
+CRC: 3651359469
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: bd1427713f90c3bf68a5635297911a86
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 15c9a2bb003d9c8aefa54452d579f457
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 64
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 215
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/SSPD_MRET_Content/Content/iSAT/Models/iSAT.prefab
+Dependencies: []

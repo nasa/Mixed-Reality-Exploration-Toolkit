@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LookupTable name="mretTypeMap" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xsi:schemaLocation="http://aaa.gsfc.nasa.gov/ltml ltml.xsd"
+	xmlns="http://aaa.gsfc.nasa.gov/ltml">
+	
+	<NamespaceTable name="SerializableTypes">
+		<Mapping name="TextAnnotationType" value="GOV.NASA.GSFC.XR.MRET.Annotation.TextAnnotationPlayer"/>
+		<Mapping name="AudioAnnotationType" value="GOV.NASA.GSFC.XR.MRET.Annotation.AudioPlayer"/>
+
+		<Mapping name="IdentifiableType" value="GOV.NASA.GSFC.XR.MRET.Identifiable"/>
+		<Mapping name="SceneObjectType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.SceneObject"/>
+		<Mapping name="InteractableSceneObjectType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.InteractableSceneObject"/>
+		<Mapping name="PhysicalSceneObjectType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.PhysicalSceneObject"/>
+
+		<Mapping name="Drawing2dType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.Drawing.Interactable2dDrawing"/>
+		<Mapping name="Drawing3dType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.Drawing.Interactable3dDrawing"/>
+		<Mapping name="NoteType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.Note.InteractableNote"/>
+		<Mapping name="EnclosureType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.Part.InteractableEnclosure"/>
+		<Mapping name="PartType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.Part.InteractablePart"/>
+
+		<Mapping name="TimeSimulationType" value="GOV.NASA.GSFC.XR.MRET.Time.TimeSimulation"/>
+
+		<Mapping name="UserType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.User.User"/>
+		
+		<Mapping name="EnvironmentType" value="GOV.NASA.GSFC.XR.MRET.Project.Environment"/>
+		<Mapping name="ContentType" value="GOV.NASA.GSFC.XR.MRET.Project.ProjectContent"/>
+		<Mapping name="ProjectType" value="GOV.NASA.GSFC.XR.MRET.Project.UnityProject"/>
+
+		<Mapping name="SceneObjectsType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.SceneObjectGroup"/>
+		<Mapping name="NotesType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.Note.InteractableNoteGroup"/>
+		<Mapping name="PartsType" value="GOV.NASA.GSFC.XR.MRET.SceneObjects.Part.InteractablePartGroup"/>
+
+		<Mapping name="IoTThingType" value="GOV.NASA.GSFC.XR.MRET.Integrations.IoT.IoTThing"/>
+
+	</NamespaceTable>
+	
+</LookupTable>

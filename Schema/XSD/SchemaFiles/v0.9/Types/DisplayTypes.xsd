@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+
+    <!-- Include schemas from same namespace -->
+    <include schemaLocation="SceneObjectTypes.xsd"/>
+    <include schemaLocation="DrawingTypes.xsd"/>
+    <include schemaLocation="FeedTypes.xsd"/>
+
+    <simpleType name="DisplayStateType">
+        <restriction base="string">
+            <enumeration value="Minimized"/>
+            <enumeration value="Maximized"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="DisplaysType">
+        <complexContent>
+            <extension base="common:GroupType">
+                <sequence>
+                    <element name="HUD" type="mret:HUDType" minOccurs="0" maxOccurs="1"/>
+                    <element name="Notes" type="mret:NotesType" minOccurs="0" maxOccurs="1"/>
+                    <element name="Panels" type="mret:PanelsType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="DisplayType">
+        <complexContent>
+            <extension base="mret:InteractableSceneObjectType">
+                <sequence>
+                    <element name="ParentID" type="IDREF" minOccurs="0" maxOccurs="1"/>
+                    <element name="Title" type="string" minOccurs="0" maxOccurs="1"/>
+		            <element name="Width" type="common:NonNegativeFloat" minOccurs="1" maxOccurs="1"/>
+		            <element name="Height" type="common:NonNegativeFloat" minOccurs="1" maxOccurs="1"/>
+                    <element name="State" type="mret:DisplayStateType" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+                <attribute name="Zorder" type="int" use="required"/>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="NotesType">
+        <complexContent>
+            <extension base="common:GroupType">
+		        <choice>
+		            <element name="Note" type="mret:NoteType" minOccurs="1" maxOccurs="unbounded"/>
+		            <element name="Notes" type="mret:NotesType" minOccurs="0" maxOccurs="unbounded"/>
+		        </choice>
+		    </extension>
+		</complexContent>
+    </complexType>
+
+    <complexType name="NoteType">
+        <complexContent>
+            <extension base="mret:DisplayType">
+                <sequence>
+                    <element name="Content" type="string" minOccurs="1" maxOccurs="1"/>
+                    <element name="Drawings" type="mret:Drawings2dType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="PanelsType">
+        <complexContent>
+            <extension base="common:GroupType">
+		        <choice>
+		            <element name="Panel" type="mret:PanelType" minOccurs="1" maxOccurs="unbounded"/>
+		            <element name="Panels" type="mret:PanelsType" minOccurs="0" maxOccurs="unbounded"/>
+		        </choice>
+		    </extension>
+		</complexContent>
+    </complexType>
+
+    <complexType name="PanelType">
+        <complexContent>
+            <extension base="mret:DisplayType">
+                <choice>
+                    <choice>
+			            <element name="VirtualFeed" type="mret:VirtualFeedType" minOccurs="1" maxOccurs="1"/>
+			            <element name="DataFeed" type="mret:DataFeedType" minOccurs="1" maxOccurs="1"/>
+			            <element name="HtmlFeed" type="mret:HtmlFeedType" minOccurs="1" maxOccurs="1"/>
+			            <element name="SpriteFeed" type="mret:SpriteFeedType" minOccurs="1" maxOccurs="1"/>
+			            <element name="ExternalFeed" type="mret:ExternalFeedType" minOccurs="1" maxOccurs="1"/>
+                    </choice>
+                    <element name="FeedSourceID" type="IDREF" minOccurs="1" maxOccurs="1"/>
+                </choice>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="HUDType">
+        <complexContent>
+            <extension base="common:VersionedType">
+		        <sequence>
+		            <element name="Panel" type="mret:PanelType" minOccurs="1" maxOccurs="unbounded"/>
+		        </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+</schema>

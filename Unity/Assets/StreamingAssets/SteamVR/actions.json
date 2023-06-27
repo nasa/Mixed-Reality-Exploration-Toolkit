@@ -49,12 +49,51 @@
     {
       "name": "/actions/default/out/HapticRightHand",
       "type": "vibration"
+    },
+    {
+      "name": "/actions/ui/in/InteractMain",
+      "type": "boolean",
+      "requirement": "mandatory"
+    },
+    {
+      "name": "/actions/ui/in/InteractMiddle",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/ui/in/InteractContext",
+      "type": "boolean",
+      "requirement": "suggested"
+    },
+    {
+      "name": "/actions/ui/in/JoystickScroll",
+      "type": "vector2",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/ui/in/TouchpadScrollTouch",
+      "type": "boolean",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/ui/in/TouchpadScrollPosition",
+      "type": "vector2",
+      "requirement": "optional"
+    },
+    {
+      "name": "/actions/ui/in/UIPointer",
+      "type": "pose",
+      "requirement": "mandatory"
     }
   ],
   "action_sets": [
     {
       "name": "/actions/default",
       "usage": "leftright"
+    },
+    {
+      "name": "/actions/ui",
+      "usage": "single"
     }
   ],
   "default_bindings": [
@@ -86,7 +125,14 @@
       "/actions/default/in/SkeletonRightHand": "Skeleton (Right)",
       "/actions/default/out/HapticLeftHand": "Haptic (Left)",
       "/actions/default/out/HapticRightHand": "Haptic (Right)",
-      "/actions/default/in/Plant": "Plant"
+      "/actions/default/in/Plant": "Plant",
+      "/actions/ui/in/InteractMain": "Interact With UI",
+      "/actions/ui/in/InteractMiddle": "\"Middle Click\"",
+      "/actions/ui/in/InteractContext": "Context Menu",
+      "/actions/ui/in/JoystickScroll": "Scroll (Joystick)",
+      "/actions/ui/in/TouchpadScrollTouch": "Scroll (Touchpad Touch)",
+      "/actions/ui/in/TouchpadScrollPosition": "Scroll (Touchpad Position)",
+      "/actions/ui/in/UIPointer": "UI Pointer"
     }
   ]
 }

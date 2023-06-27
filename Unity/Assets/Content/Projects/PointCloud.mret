@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="0.9" xmlns="http://www.nasa.gov/MRET">
+  <Description xmlns="">Sample point cloud</Description>
+  <Environment version="0.9" xmlns="">
+    <Asset>
+      <AssetName>Empty</AssetName>
+      <AssetBundle>standard-scenes</AssetBundle>
+    </Asset>
+    <SkyBox>
+      <Asset>
+        <AssetName>GraySkybox</AssetName>
+        <AssetBundle>standard-assets</AssetBundle>
+      </Asset>
+    </SkyBox>
+    <ClippingPlane>
+      <Near>0.015</Near>
+      <Far>100000</Far>
+    </ClippingPlane>
+  </Environment>
+  <UserTransform xmlns="">
+    <Position>
+      <X>4.7</X>
+      <Z>-1</Z>
+    </Position>
+  </UserTransform>
+  <Content version="0.9" xmlns="">
+    <PointClouds version="0.9" group="0">
+      <PointCloud version="0.9" ID="id-sample">
+        <Name>Sample</Name>
+        <Transform />
+        <Source>
+          <File format="Binary">xyzrgb_dragon.bin</File>
+        </Source>
+        <LODLevel>1</LODLevel>
+      </PointCloud>
+    </PointClouds>
+  </Content>
+</Project>

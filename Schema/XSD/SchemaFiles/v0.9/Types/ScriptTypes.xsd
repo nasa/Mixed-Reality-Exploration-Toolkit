@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/MRET"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:common="http://www.nasa.gov/Common"
+    xmlns:mret="http://www.nasa.gov/MRET">
+
+    <!-- Import schemas from other namespaces -->
+    <import schemaLocation="Common/CommonTypes.xsd" namespace="http://www.nasa.gov/Common"/>
+
+    <complexType name="ArgumentType">
+        <complexContent>
+            <extension base="common:IdentifiableType">
+                <sequence>
+                    <element name="Value" type="string" minOccurs="1" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ArgumentsType">
+        <sequence>
+            <element name="Argument" type="mret:ArgumentType" minOccurs="1" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+    <complexType name="ScriptType">
+        <complexContent>
+            <extension base="common:IdentifiableType">
+                <sequence>
+                    <element name="Path" type="string" minOccurs="1" maxOccurs="1"/>
+                    <element name="Arguments" type="mret:ArgumentsType" minOccurs="0" maxOccurs="1"/>
+                </sequence>
+            </extension>
+        </complexContent>
+    </complexType>
+
+    <complexType name="ScriptsType">
+        <sequence>
+            <element name="Script" type="mret:ScriptType" minOccurs="1" maxOccurs="unbounded"/>
+        </sequence>
+    </complexType>
+
+</schema>

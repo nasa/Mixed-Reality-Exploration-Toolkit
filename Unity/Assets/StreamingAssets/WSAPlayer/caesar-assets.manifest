@@ -1,0 +1,31 @@
+ManifestFileVersion: 0
+CRC: 295348932
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 20f026f627ae0d782aaa47746e745313
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: aedaf79186484ea664475485d5059b6f
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 205
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/SSPD_MRET_Content/Content/CAESAR/CAESAR.prefab
+Dependencies: []

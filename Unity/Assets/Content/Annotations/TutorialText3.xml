@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mt:TextAnnotation xsi:schemaLocation="http://www.example.org/MRET TextAnnotation.xsd " xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mt="http://www.example.org/MRET">
+
+<mt:Texts>
+
+<mt:Texts>Next, we will go over walking in MRET.</mt:Texts>
+
+<mt:Texts>Open the menu, and navigate to the Locomotion section.</mt:Texts>
+
+<mt:Texts>Select the "walking" button with the trigger, and deselect the "teleportation" button.</mt:Texts>
+
+<mt:Texts>Note: you can have multiple locomotion modes active at once, so make sure to turn off what you do not want to use.</mt:Texts>
+
+<mt:Texts>Now walk down the hallway and enter the next part of the tutorial!</mt:Texts>
+
+</mt:Texts>
+
+<mt:TimePerText>7</mt:TimePerText>
+
+<mt:Loop>true</mt:Loop>
+
+<mt:AttachTo>TutorialMenuWalking/Canvas/TutorialTextWalking</mt:AttachTo>
+
+</mt:TextAnnotation>

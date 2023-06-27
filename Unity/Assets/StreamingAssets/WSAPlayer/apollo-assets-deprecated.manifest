@@ -1,0 +1,105 @@
+ManifestFileVersion: 0
+CRC: 2786851258
+Hashes:
+  AssetFileHash:
+    serializedVersion: 2
+    Hash: 681d40a7d78983401d114c5c1805adb3
+  TypeTreeHash:
+    serializedVersion: 2
+    Hash: 342b3cdeab55890b5d9059824415116c
+HashAppended: 0
+ClassTypes:
+- Class: 1
+  Script: {instanceID: 0}
+- Class: 4
+  Script: {instanceID: 0}
+- Class: 20
+  Script: {instanceID: 0}
+- Class: 21
+  Script: {instanceID: 0}
+- Class: 23
+  Script: {instanceID: 0}
+- Class: 28
+  Script: {instanceID: 0}
+- Class: 33
+  Script: {instanceID: 0}
+- Class: 43
+  Script: {instanceID: 0}
+- Class: 48
+  Script: {instanceID: 0}
+- Class: 65
+  Script: {instanceID: 0}
+- Class: 74
+  Script: {instanceID: 0}
+- Class: 90
+  Script: {instanceID: 0}
+- Class: 95
+  Script: {instanceID: 0}
+- Class: 108
+  Script: {instanceID: 0}
+- Class: 114
+  Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+- Class: 114
+  Script: {fileID: 11500000, guid: a79441f348de89743a2939f4d699eac1, type: 3}
+- Class: 115
+  Script: {instanceID: 0}
+- Class: 137
+  Script: {instanceID: 0}
+- Class: 156
+  Script: {instanceID: 0}
+SerializeReferenceClassIdentifiers: []
+Assets:
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Materials/New Material 1.mat
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Terrains/New Terrain 2.asset
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/second dirt normal.png
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/Dirt texture tn (1
+  of 1).jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/possible texture.jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/OFFSET_Dirt texture
+  tn (1 of 1).jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Terrains/New Terrain.asset
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/metal_06_MaskMap.png
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/passive seismic experiment
+  1.blend
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/lunar-surface-magnetometer1.blend
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/metal_plates_06_dif.jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/heat flow experiment.blend
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/2EDITED_max.jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/dirt normal map.png
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Materials/2k_mercury.mat
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/offset dirt tn 1 on
+  1 normal map.png
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/earth_clouds.jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/laser ranging retroreflector
+  1.blend
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/central station 2.blend
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/skydome.blend
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/2OFFSET_Dirt texture
+  tn (1 of 1).jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/Apollo_LRV.FBX
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Materials/metal_06.mat
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/lunarSurface.png
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/metal_plates_06_ao.tga
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/possible texture 2.jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/metal_plates_06_nm.tga
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/lunarlandernofoil_carbajal.3ds
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/SIDE CCIG 1.blend
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Materials/EARTH.mat
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/metal_plates_06_spec.tga
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/solar wind spectrometer.blend
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/2k_mercury.jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/ribbon cable.blend
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Models/Astronauta2.blend
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/2paving-sand-canberra.jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/world.topo.bathy.200401.3x5400x2700.jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/metal_plates_06_dif.tga
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Prefabs/Astronaut.prefab
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/lunarSurface2.jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/Dirt 03 seamless.jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Terrains/New Terrain 1.asset
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/mountain possible
+  texture.jpg
+- Assets/Content/Standard_MRET_Content/Content/Apollo/Materials/lunarSurface.mat
+- Assets/Content/Standard_MRET_Content/Content/Apollo/textures/COLOR_EDITED_max.jpg
+Dependencies:
+- C:/Development/repos/MRET_Core_22_1/Unity/Assets/StreamingAssets/ARM64/apollo-assets

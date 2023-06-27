@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.example.org/MRET"
+    elementFormDefault="qualified"
+    xmlns="http://www.w3.org/2001/XMLSchema"
+    xmlns:mt="http://www.example.org/MRET">
+	
+	<include schemaLocation="Common.xsd"/>
+	
+	<element name="Project" type="mt:ProjectType"/>
+
+	<complexType name="ProjectType">
+		<choice maxOccurs="unbounded" minOccurs="0">
+			<element name="CurrentView" type="mt:ViewType" maxOccurs="1"
+				minOccurs="0">
+			</element>
+			<element name="SavedViews" type="mt:ViewType"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+			<element name="Description" type="string" maxOccurs="1"
+				minOccurs="0">
+			</element>
+			<element name="Environment" type="mt:VirtualEnvironmentType"
+				minOccurs="1" maxOccurs="1">
+			</element>
+			<element name="Parts" type="mt:PartsType"></element>
+			<element name="Drawings" type="mt:DrawingsType" minOccurs="0"/>
+			<element name="DualAxisRotatableObjects"
+				type="mt:DualAxisRotatableObjectType" minOccurs="0"
+				maxOccurs="unbounded">
+			</element>
+			<element name="VideoSources" type="mt:VideoSourceType"
+				minOccurs="0" maxOccurs="unbounded">
+			</element>
+			<element name="Notes" type="mt:NotesType" minOccurs="0"/>
+			<element name="GMSECSources" type="mt:GMSECSourcesType" minOccurs="0"/>
+			<element name="MatlabConnection" type="mt:MatlabConnectionType" minOccurs="0"/>
+            <element name="VDEConnection" type="mt:VDEConnectionType" minOccurs="0"/>
+            <element name="IoTThings" type="mt:IoTThingsType" minOccurs="0"/>
+            <element name="IoTConnections" type="mt:IoTConnectionsType" minOccurs="0"/>
+			<element name="AnimationPanels" type="mt:AnimationPanelsType" minOccurs="0"/>
+			<element name="Marker" type="mt:MarkerType" minOccurs="0"/>
+			<element name="PointClouds" type="mt:StaticPointCloudsType" minOccurs="0"/>
+			<element name="ObjectGenerators" type="mt:ObjectGeneratorsType" minOccurs="0"/>
+		</choice>
+		<attribute name="Version" type="string"></attribute>
+	</complexType>
+
+	<complexType name="ViewType">
+		<sequence>
+			<element name="Location" type="mt:Vector3Type"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="Rotation" type="mt:Vector3Type"
+				maxOccurs="1" minOccurs="1">
+			</element>
+			<element name="Zoom" type="mt:NonNegativeFloat"
+				maxOccurs="1" minOccurs="1">
+			</element>
+		</sequence>
+		<attribute name="Name" type="ID" use="required"></attribute>
+	</complexType>
+</schema>

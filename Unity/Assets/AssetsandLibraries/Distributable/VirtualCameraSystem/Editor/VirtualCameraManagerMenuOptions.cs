@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace GSFC.ARVR.MRET.Infrastructure.Framework.VirtualCameras
+namespace GOV.NASA.GSFC.XR.VirtualCamera
 {
     /// <remarks>
     /// History:

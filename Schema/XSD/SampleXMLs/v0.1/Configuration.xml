@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Q1:Configuration
+    xmlns:Q1="http://www.example.org/MRET"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.example.org/MRET ../../SchemaFiles/v0.1/Configuration.xsd ">
+
+  <!-- DO NOT MODIFY BEFORE THIS LINE. -->
+  <!-- Default path (relative to the application datapath) for part/asset files. -->
+  <Q1:AssetsPath>Content/Standard_MRET_Content/Parts</Q1:AssetsPath>
+
+  <!-- Default path (relative to the application datapath) for environment files. -->
+  <Q1:EnvironmentsPath>Content/Standard_MRET_Content/Environments</Q1:EnvironmentsPath>
+
+  <!-- Default path (relative to the application datapath) for asset bundle files. -->
+  <Q1:AssetBundlesPath>StreamingAssets/Windows</Q1:AssetBundlesPath>
+
+  <!-- Default path (relative to the application datapath) for asset bundle files. -->
+  <Q1:FBXPath>Content/Standard_MRET_Content/FBX</Q1:FBXPath>
+
+  <!-- Default path (relative to the application datapath) for project files. -->
+  <Q1:ProjectsPath>Content/Standard_MRET_Content/Projects</Q1:ProjectsPath>
+  
+  <!-- Default path (relative to the application datapath) for project template files. -->
+  <Q1:TemplatesPath>Content/Standard_MRET_Content/Templates</Q1:TemplatesPath>
+
+  <!-- Default path (relative to the application datapath) for HUD files. -->
+  <Q1:HudPath>Content/Standard_MRET_Content/HUDs</Q1:HudPath>
+  
+  <!-- Default path (relative to the application datapath) for audio recording files. -->
+  <Q1:AudioRecordingPath>Content/Standard_MRET_Content/AudioRecordings</Q1:AudioRecordingPath>
+
+  <!-- Default path (relative to the application datapath) for text annotation files. -->
+  <Q1:TextAnnotationPath>Content/Standard_MRET_Content/TextAnnotations</Q1:TextAnnotationPath>
+
+  <!-- Default path (relative to the application datapath) for animation files. -->
+  <Q1:AnimationsPath>Content/Standard_MRET_Content/Animations</Q1:AnimationsPath>
+
+  <!-- Default path (relative to the application datapath) for point cloud files. -->
+  <Q1:PointCloudsPath>Content/Standard_MRET_Content/PointClouds</Q1:PointCloudsPath>
+
+  <!-- Default path (relative to the application datapath) for time simulation files. -->
+  <Q1:TimeSimulationPath>Content/Standard_MRET_Content/TimeSimulations</Q1:TimeSimulationPath>
+
+  <!-- Default path (relative to the application datapath) for terrain files. -->
+  <Q1:TerrainsPath>Content/Standard_MRET_Content/Terrains</Q1:TerrainsPath>
+
+  <!-- Default user path. Created in the user home directory if not specified
+  <Q1:UserPath>.mret</Q1:UserPath>
+  -->
+  
+  <!-- Whether or not to enable snap placement mode. -->
+  <Q1:PlacementMode>false</Q1:PlacementMode>
+
+  <!-- Whether or not to enable avatars. -->
+  <Q1:Avatars>false</Q1:Avatars>
+
+  <!-- Whether or not to enable voice control. -->
+  <Q1:VoiceControl>false</Q1:VoiceControl>
+
+  <!-- Whether or not to validate XML and the type of response when validation is violated. -->
+  <Q1:XmlValidation type="Error">true</Q1:XmlValidation>
+  
+  <!-- Type of collider that will be auto-applied to objects missing colliders.
+       Options:
+          None - no collider is applied
+          Box - box collider is applied to the mesh bounds
+          NonConvex - non-convex collider (voxel colliders) is applied -->
+  <Q1:ColliderMode>Box</Q1:ColliderMode>
+  
+  <!-- DO NOT MODIFY AFTER THIS LINE. -->
+</Q1:Configuration>

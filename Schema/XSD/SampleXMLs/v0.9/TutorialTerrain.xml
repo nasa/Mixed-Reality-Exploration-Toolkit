@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mret:Terrain version="0.9"
+    ID="id-terrain0"
+    xmlns:mret="http://www.nasa.gov/MRET"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:xi="http://www.w3.org/2001/XInclude"
+    xsi:schemaLocation="http://www.nasa.gov/MRET ../../SchemaFiles/v0.9/Terrain.xsd">
+
+    <UUID>d2d5f18b-c563-4275-abf6-7a49e0938734</UUID>
+    <Name>LDEM_875S_5M</Name>
+    <Description>LRO Digital Elevation Map - Shackleton Crater</Description>
+    <Transform>
+        <Position>
+            <X>-40960</X>
+            <Y>140</Y>
+            <Z>-40960</Z>
+        </Position>
+    </Transform>
+    <CelestialBody>Moon</CelestialBody>
+    <TerrainData>
+        <MapProjection>Polar Stereographic</MapProjection>
+        <!-- 
+        <File format="GeoTIFF">../LDEM_875S_5M.TIF</File>
+        <- <File>../LDEM_875S_5M.RAW</File> ->
+        <HeightmapBounds>
+            <Center>
+                <Latitude>0</Latitude>
+                <Longitude>0</Longitude>
+            </Center>
+            <TileGrid>4x4</TileGrid>
+            <TileResolution>4096</TileResolution>
+        </HeightmapBounds>
+        -->
+        <Asset>
+            <AssetName>LunarLightingSouthPoleScene</AssetName>
+            <AssetBundle>solarsystem-scenes</AssetBundle>
+        </Asset>
+        <TerrainBounds>
+            <TopLeft>
+                <Latitude>-88.0898944444444</Latitude>
+                <Longitude>-45</Longitude>
+            </TopLeft>
+            <BottomRight>
+                <Latitude>-88.0898944444444</Latitude>
+                <Longitude>135</Longitude>
+            </BottomRight>
+        </TerrainBounds>
+        <Material>
+            <Asset>
+                <AssetName>TerrainProceduralMaterial</AssetName>
+                <AssetBundle>solarsystem-assets</AssetBundle>
+            </Asset>
+        </Material>
+    </TerrainData>
+    
+</mret:Terrain>

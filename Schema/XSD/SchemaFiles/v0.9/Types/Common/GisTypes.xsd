@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema version="0.9"
+    targetNamespace="http://www.nasa.gov/Common"
+    elementFormDefault="unqualified"
+	xmlns="http://www.w3.org/2001/XMLSchema">
+
+    <simpleType name="MapProjectionType">
+        <restriction base="string">
+            <enumeration value="Equirectangular"/>
+            <enumeration value="Polar Stereographic"/>
+        </restriction>
+    </simpleType>
+
+    <complexType name="CoordinateType">
+        <sequence>
+            <element name="Latitude" minOccurs="1" maxOccurs="1">
+                <simpleType>
+			        <restriction base="float">
+			            <minInclusive value="-90" />
+	                    <maxInclusive value="90" />
+			        </restriction>
+                </simpleType>
+            </element>
+            <element name="Longitude" minOccurs="1" maxOccurs="1">
+                <simpleType>
+                    <restriction base="float">
+                        <minInclusive value="-180" />
+                        <maxInclusive value="180" />
+                    </restriction>
+                </simpleType>
+            </element>
+        </sequence>
+    </complexType>
+    
+</schema>

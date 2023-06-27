@@ -1,11 +1,11 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
 using UnityEngine.InputSystem;
-using GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Base;
+using GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.Base;
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem.SDK.Desktop
 {
     /// <remarks>
     /// History:
@@ -86,6 +86,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem.SDK.Desktop
                 playerYaw = BetweenPlusAndMinusand180(playerYaw + look.x * rotationSpeed);
             }
 
+            // FIXME: This is rotating from the center of the head, but should be from the neck.
             controlled.eulerAngles = new Vector3(playerPitch, playerYaw, 0);
         }
 

@@ -1,10 +1,10 @@
-﻿// Copyright © 2018-2021 United States Government as represented by the Administrator
+﻿// Copyright © 2018-2022 United States Government as represented by the Administrator
 // of the National Aeronautics and Space Administration. All Rights Reserved.
 
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
+namespace GOV.NASA.GSFC.XR.CrossPlatformInputSystem
 {
     /// <remarks>
     /// History:
@@ -20,7 +20,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// <summary>
         /// The type of pointer that is rendered.
         /// </summary>
-        public enum PointerType { straight }
+        public enum PointerType { straight, arc }
 
         /// <summary>
         /// Whether or not the laser is active.
@@ -43,7 +43,7 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
         /// The type of pointer that is rendered.
         /// </summary>
         [Tooltip("The type of pointer that is rendered.")]
-        public PointerType pointerType;
+        public PointerType pointerType = PointerType.straight;
 
         /// <summary>
         /// The width of the line.
@@ -150,78 +150,101 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
 
                 bool invokeHit = false, invokeUnhit = false;
 
-                // Update the line position and raycast information.
-                switch (pointerType)
+                // Update the raycast information.
+                RaycastHit hit;
+                if (Physics.Raycast(transform.position, transform.forward, out hit, maxLength, layerMask))
                 {
-                    case PointerType.straight:
-                    default:
-                        RaycastHit hit;
-                        if (Physics.Raycast(transform.position, transform.forward, out hit, maxLength, layerMask))
+                    // Ensure that the cursor exists.
+                    if (cursorObject == null)
+                    {
+                        cursorObject = Instantiate(cursorPrefab);
+                        cursorObject.name = "Cursor";
+                        cursorObject.transform.SetParent(transform);
+                        cursorObject.transform.localScale = cursorScale;
+                        MeshRenderer rend = cursorObject.GetComponent<MeshRenderer>();
+                        if (rend)
                         {
-                            // Ensure that the cursor exists.
-                            if (cursorObject == null)
-                            {
-                                cursorObject = Instantiate(cursorPrefab);
-                                cursorObject.name = "Cursor";
-                                cursorObject.transform.SetParent(transform);
-                                cursorObject.transform.localScale = cursorScale;
-                                MeshRenderer rend = cursorObject.GetComponent<MeshRenderer>();
-                                if (rend)
-                                {
-                                    rend.material = validMaterial;
-                                }
-                            }
-
-                            // If just started hitting, send message.
-                            if (hit.collider.gameObject != null)
-                            {
-                                if (hitObj != hit.collider.gameObject)
-                                {
-                                    if (hitObj != null)
-                                    {
-                                        hitObj.SendMessage("StoppedHitting", SendMessageOptions.DontRequireReceiver);
-                                        invokeUnhit = true;
-                                    }
-                                    hit.collider.gameObject.SendMessage("StartedHitting", SendMessageOptions.DontRequireReceiver);
-                                    invokeHit = true;
-                                }
-                            }
-                            isHitting = true;
-                            hitPos = hit.point;
-                            hitObj = hit.collider.gameObject;
-                            renderedLine.material = validMaterial;
+                            rend.material = validMaterial;
                         }
-                        else
+                    }
+
+                    // If just started hitting, send message.
+                    if (hit.collider.gameObject != null)
+                    {
+                        if (hitObj != hit.collider.gameObject)
                         {
-                            // If was hitting, send message.
                             if (hitObj != null)
                             {
                                 hitObj.SendMessage("StoppedHitting", SendMessageOptions.DontRequireReceiver);
                                 invokeUnhit = true;
                             }
-
-                            isHitting = false;
-                            if (showInvalid == true)
-                            {
-                                hitPos = transform.position + transform.forward * maxLength;
-                            }
-                            else
-                            {
-                                hitPos = transform.position;
-                            }
-                            hitObj = null;
-                            renderedLine.material = invalidMaterial;
-
-                            // Destroy cursor object.
-                            if (cursorObject != null)
-                            {
-                                Destroy(cursorObject);
-                            }
+                            hit.collider.gameObject.SendMessage("StartedHitting", SendMessageOptions.DontRequireReceiver);
+                            invokeHit = true;
                         }
-                        if (cursorObject)
+                    }
+                    isHitting = true;
+                    hitPos = hit.point;
+                    hitObj = hit.collider.gameObject;
+                    renderedLine.material = validMaterial;
+                }
+                else
+                {
+                    // If was hitting, send message.
+                    if (hitObj != null)
+                    {
+                        hitObj.SendMessage("StoppedHitting", SendMessageOptions.DontRequireReceiver);
+                        invokeUnhit = true;
+                    }
+
+                    isHitting = false;
+                    if (showInvalid == true)
+                    {
+                        hitPos = transform.position + transform.forward * maxLength;
+                    }
+                    else
+                    {
+                        hitPos = transform.position;
+                    }
+                    hitObj = null;
+                    renderedLine.material = invalidMaterial;
+
+                    // Destroy cursor object.
+                    if (cursorObject != null)
+                    {
+                        Destroy(cursorObject);
+                    }
+                }
+                if (cursorObject)
+                {
+                    cursorObject.transform.position = hitPos;
+                }
+
+                // Update the line renderer points
+                switch (pointerType)
+                {
+                    case PointerType.arc:
+                        // UMD: Rod, Olivia, and Kevin update to create bezier curve for teleportation
+                        if (hitPos != transform.position)
                         {
-                            cursorObject.transform.position = hitPos;
+                            renderedLine.positionCount = 200;
+                            var point0 = transform.position;
+                            var point2 = hitPos;
+                            var point_mid = (transform.position + hitPos) / 2;
+                            point_mid[1] *= 4;
+
+                            float t = 0f;
+                            Vector3 B = new Vector3(0, 0, 0);
+                            for (int i = 0; i < renderedLine.positionCount; i++)
+                            {
+                                B = (1 - t) * (1 - t) * point0 + 2 * (1 - t) * t * point_mid + t * t * point2;
+                                renderedLine.SetPosition(i, B);
+                                t += (1 / (float)renderedLine.positionCount);
+                            }
                         }
+                        break;
+
+                    case PointerType.straight:
+                    default:
                         renderedLine.SetPositions(new Vector3[] { transform.position, hitPos });
                         break;
                 }
@@ -244,6 +267,11 @@ namespace GSFC.ARVR.MRET.Infrastructure.CrossPlatformInputSystem
             }
             else
             {
+                // Reset the state
+                isHitting = false;
+                hitPos = Vector3.zero;
+                hitObj = null;
+
                 // Ensure that the line doesn't exist.
                 if (renderedLine != null)
                 {

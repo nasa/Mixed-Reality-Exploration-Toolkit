@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Part xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" Name="Solar Wind Spectrometer"
+	ID="SolarWindSpectrometer" xmlns="http://www.example.org/MRET">
+	
+   <Vendor>Vendor</Vendor>
+   <Description>The Solar Wind Spectrometer (SWS) compared the solar wind
+       properties of the lunar surface with those in space around the Moon,
+       and it determined any effects of the Moon on solar wind properties.
+   </Description>
+   <AssetBundle>apollo-assets</AssetBundle>
+   <PartName>SolarWindSpectrometer</PartName>
+   <PartTransform>
+       <Position>
+           <X>0</X>
+           <Y>0</Y>
+           <Z>0</Z>
+       </Position>
+       <Rotation>
+           <X>0</X>
+           <Y>0</Y>
+           <Z>0</Z>
+           <W>1</W>
+       </Rotation>
+       <Scale>
+	       <X>0.3529741</X>
+	       <Y>0.4428205</Y>
+	       <Z>0.4756669</Z>
+       </Scale>
+   </PartTransform>
+   <EnableCollisions>false</EnableCollisions>
+   <EnableGravity>false</EnableGravity>
+   <EnableInteraction>true</EnableInteraction>
+   <NonInteractable>false</NonInteractable>
+   <MinMass>25</MinMass>
+   <MaxMass>25</MaxMass>
+   <MassContingency>0</MassContingency>
+   <PartType>Instrument</PartType>
+   <PartFileName />
+   <ChildParts />
+   <IdlePower>0</IdlePower>
+   <AveragePower>0</AveragePower>
+   <PeakPower>0</PeakPower>
+   <PowerContingency>0</PowerContingency>
+   <RandomizeTexture>false</RandomizeTexture>
+</Part>

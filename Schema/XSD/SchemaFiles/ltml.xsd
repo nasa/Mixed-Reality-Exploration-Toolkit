@@ -1,0 +1,61 @@
+<?xml version="1.0"?>
+<!--
+#=========================================================================
+#  This code was developed by NASA, Goddard Space Flight Center, Code 580
+#  for the Instrument Remote Control (IRC) project.
+#== Warning ============================================================== 
+#  This software is property of the National Aeronautics and Space
+#  Administration. Unauthorized use or duplication of this software is
+#  strictly prohibited. Authorized users are subject to the following
+#  restrictions:
+#  * Neither the author, their corporation, nor NASA is responsible for
+#    any consequence of the use of this software.
+#  * The origin of this software must not be misrepresented either by
+#    explicit claim or by omission.
+#  * Altered versions of this software must be plainly marked as such.
+#  * This notice may not be removed or altered.
+#=========================================================================
+-->
+<xsd:schema targetNamespace="http://aaa.gsfc.nasa.gov/ltml" 
+	xmlns="http://aaa.gsfc.nasa.gov/ltml" 
+	xmlns:ltml="http://aaa.gsfc.nasa.gov/ltml"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	elementFormDefault="qualified" 
+	attributeFormDefault="unqualified">
+
+	<!--LookupTable: Collection of namespace tables.-->
+	<xsd:element name="LookupTable" type="LookupTableType">
+		<xsd:unique name="NamespaceTableUnique">
+			<xsd:selector xpath="ltml:NamespaceTable"/>
+			<xsd:field xpath="@name"/>
+		</xsd:unique>
+	</xsd:element>
+	
+	<!--LookupTableType:  Collection of tables.-->
+	<xsd:complexType name="LookupTableType">
+		<xsd:sequence>
+			<xsd:element name="NamespaceTable" type="NamespaceTableType" minOccurs="0" maxOccurs="unbounded">
+				<xsd:unique name="MappingUnique">
+					<xsd:selector xpath="ltml:Mapping"/>
+					<xsd:field xpath="@name"/>
+				</xsd:unique>
+			</xsd:element>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<!--NamespaceTableType:  Collection of mappings, grouped by namespace.-->
+	<xsd:complexType name="NamespaceTableType">
+		<xsd:sequence>
+			<xsd:element name="Mapping" type="MappingType" minOccurs="0" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+	</xsd:complexType>
+	
+	<!--MappingType:  Mapping between a name and a value.-->
+	<xsd:complexType name="MappingType">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+		<xsd:anyAttribute namespace="##local" processContents="lax"/>
+	</xsd:complexType>
+</xsd:schema>
