@@ -29,6 +29,6 @@ Full name and company/organization/center of all contributors ("Personal" if ind
 - If NASA Civil Servant Employee or GSFC Contractor on SES II
   - Address/email/phone and contract/task information (if applicable) must be on file
 - Else if Company/University
-  - **HAND SIGNED** Company/University CLA must be on file (once per release): [MRET Company/University CLA](Corp_CLA_GSC-18602-1_MRET%20v2.0.pdf)
+  - **HAND SIGNED** Company/University CLA must be on file (once per release): [MRET Company/University CLA](CLA_CORP_GSC-19106-1_MRET_2022.pdf)
 - Else if Individual
-  - **HAND SIGNED** Individual CLA must be on file (once per release): [MRET Individual CLA](Individual_CLA_GSC-18602-1_MRET%20v2.0.pdf)
+  - **HAND SIGNED** Individual CLA must be on file (once per release): [MRET Individual CLA](CLA_INDV_GSC-19106-1_MRET_2022.pdf)
