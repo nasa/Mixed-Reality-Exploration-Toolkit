@@ -15,13 +15,11 @@ Download the release package from the [release page](https://github.com/nasa/Mix
 
 `git clone https://github.com/nasa/Mixed-Reality-Exploration-Toolkit` into the folder you would like the MRET project to be for your Unity **2020.3.47f1 LTS**. Yes, that specific Unity version is important!
 
-Refer to the Release Guide for release notes and detailed installation instructions:
-(https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/blob/master/Release_Guide_MRET_2022.pdf)
+Refer to the [Release Guide](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/blob/master/Release_Guide_MRET_2022.pdf) for release notes and detailed installation instructions
 
 ## Contributing
 
-Pull requests are welcome. For more information on contributing, please see [Contributing.md]:
-(https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/blob/master/CONTRIBUTING.md).
+Pull requests are welcome. For more information on contributing, please see [Contributing.md](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/blob/master/CONTRIBUTING.md).
 
 ## License
 
