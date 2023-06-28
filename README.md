@@ -6,10 +6,10 @@ The Mixed Reality Exploration Toolkit (MRET) is an XR toolkit designed for rapid
 
 ## Installation (Built Package)
 
-Download the release package from the [release page](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/tag/v22.1.0). Simply extract the zip folder and run MRET.exe.
+Download the release package from the [release page](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/tag/v2022.1.0). Simply extract the zip folder and run MRET.exe.
 
-* [VR](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/download/v22.1.0/MRET22.1VR.zip)
-* [Desktop](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/download/v22.1.0/MRET22.1Desktop.zip)
+* [VR](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/download/v2022.1.0/MRET22.1VR.zip)
+* [Desktop](https://github.com/nasa/Mixed-Reality-Exploration-Toolkit/releases/download/v2022.1.0/MRET22.1Desktop.zip)
 
 ## Installation (Development Environment)
 
